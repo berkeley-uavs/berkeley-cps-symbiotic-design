@@ -22,7 +22,7 @@ def evaluate_design(design_json_path: Path,
     print("Sending Design to Broker")
     if info_only:
         print("Generating info...")
-        msg = direct2cad.gen_info_files.send(str(design_json_path), metadata=metadata)
+        msg = direct2cad.gen_info_files.send(design, metadata=metadata)
     else:
         print("Processing design...")
         msg = direct2cad.process_design.send(design, metadata=metadata)
