@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "pulling the submodules"
+git submodule init
+git submodule update --remote --merge
 echo "creating conda environment..."
 conda create --prefix ./.venv python=3.10 -y
 echo "activating conda environment..."

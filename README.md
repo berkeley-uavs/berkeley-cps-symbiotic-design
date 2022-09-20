@@ -57,6 +57,13 @@ python src/sym_cps/examples/topology.py
 Check the example folder for more examples. Look at the code in the examples to understand the APIs available.
 
 
+
+### Design Evaluation
+Make sure you are connected via the VPN to AWS and that the shared drive is mounted.
+
+Look at `src/sym_cps/examples/evaluation.py` and at the module `sym_cps/evaluation`
+
+
 ### Documentation
 ```bash
 make docs-serve

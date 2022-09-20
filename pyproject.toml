@@ -11,6 +11,8 @@ readme = "README.md"
 keywords = []
 dynamic = ["version"]
 dependencies = [
+    "editables>=0.3",
+    "eval-pipeline @ file:///${PROJECT_ROOT}/eval_pipeline",
     "networkx>=2.8.6",
     "dill>=0.3.5.1",
     "python-igraph>=0.10.0",
