@@ -8,8 +8,9 @@ from pathlib import Path
 
 from simple_uam import direct2cad
 from simple_uam.worker import has_backend
+import argparse
 
-from sym_cps.evaluation.evaluation import load_design, load_metadata, wait_on_result, get_result_archive_path, \
+from sym_cps.evaluation.tools import load_design, load_metadata, wait_on_result, get_result_archive_path, \
     watch_results_dir, get_zip_metadata
 
 def get_args():

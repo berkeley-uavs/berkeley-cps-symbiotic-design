@@ -15,5 +15,5 @@ def example_generate_info_design():
 
 
 if __name__ == '__main__':
-    example_evaluate_design_json()
-    # example_generate_info_design()
+    # example_evaluate_design_json()
+    example_generate_info_design()

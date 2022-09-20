@@ -9,8 +9,6 @@ import zipfile
 from pathlib import Path
 
 import dramatiq
-from simple_uam import direct2cad
-from simple_uam.worker import has_backend
 from typing import Optional, Union
 
 from sym_cps.shared.paths import output_folder
@@ -207,7 +205,3 @@ def polling_results(msg, timeout: int = 800):
     print(f"Command completed. Results can be found at:{result_archive}")
     return result_archive
 
-
-
-if __name__ == '__main__':
-    main()
