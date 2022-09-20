@@ -194,12 +194,12 @@ def watch_results_dir(
     raise RuntimeError(f"No result found by {elapsed}s")
 
 
-def polling_results(msg):
+def polling_results(msg, timeout: int = 800):
     print("Waiting for the results to appear...")
     result_archive = watch_results_dir(
         msg,
         results_dir=output_folder,
-        timeout=600
+        timeout=timeout
     )
     result = get_zip_metadata(result_archive)
     print("Result archive found in results dir w/ metadata:")
