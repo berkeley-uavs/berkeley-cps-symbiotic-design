@@ -38,6 +38,8 @@ def load_metadata(metadata_file: Union[Path, str, None]) -> dict:
     """
     if not metadata_file:
         return dict()
+    if isinstance(metadata_file, dict):
+        return metadata_file
     with Path(metadata_file).open('r') as fp:
         meta = json.load(fp)
         if not isinstance(meta, dict):
