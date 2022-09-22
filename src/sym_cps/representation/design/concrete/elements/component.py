@@ -34,8 +34,13 @@ class Component:
                         component=self,
                     )
                 else:
-                    raise Exception(
-                        f"Parameter {parameter_accepted.id} does not have assigned_val nor default_val"
+                    # raise Exception(
+                    #     f"Parameter {parameter_accepted.id} does not have assigned_val nor default_val"
+                    # )
+                    new_parameter = Parameter(
+                        value=float(parameter_accepted.values["min_val"]),
+                        c_parameter=parameter_accepted,
+                        component=self,
                     )
                 self.parameters[parameter_accepted.id] = new_parameter
             for parameter in self.parameters.values():
