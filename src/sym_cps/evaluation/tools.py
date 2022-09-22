@@ -11,7 +11,7 @@ from pathlib import Path
 import dramatiq
 from typing import Optional, Union
 
-from sym_cps.shared.paths import output_folder
+from sym_cps.shared.paths import aws_folder
 
 
 def load_design(design_file: Path) -> object:
@@ -198,7 +198,7 @@ def polling_results(msg, timeout: int = 800):
     print("Waiting for the results to appear...")
     result_archive = watch_results_dir(
         msg,
-        results_dir=output_folder,
+        results_dir=aws_folder,
         timeout=timeout
     )
     result = get_zip_metadata(result_archive)

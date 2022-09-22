@@ -17,6 +17,7 @@ class ExportType(Enum):
 data_folder: Path = root / "data"
 configuration_files_path: Path = root / "configurations"
 output_folder: Path = root / "output"
+aws_folder: Path = output_folder / "aws"
 designs_folder: Path = output_folder / "designs"
 library_folder: Path = output_folder / "library"
 
