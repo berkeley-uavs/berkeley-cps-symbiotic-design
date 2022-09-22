@@ -1,3 +1,8 @@
+"""
+File adapted from:
+https://github.com/LOGiCS-Project/swri-simple-uam-example
+"""
+
 from pathlib import Path
 
 from simple_uam import direct2cad
