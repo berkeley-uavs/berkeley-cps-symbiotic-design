@@ -4,7 +4,7 @@
 
 Project description available [here](https://www.darpa.mil/program/symbiotic-design-for-cyber-physical-systems)
 
-Documentation available [here](https://logics-project.github.io/berkeley-cps-symbiotic-design/)
+Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/)
 
 
 ## Installation
