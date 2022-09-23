@@ -9,20 +9,80 @@ Documentation available [here](https://logics-project.github.io/berkeley-cps-sym
 
 ## Installation
 
-We use [pdm](https://github.com/pdm-project/pdm) to most of the dependencies, and
-[conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html). Make sure they are installed on your system.
+### System Requirements
 
-To install the environment, simply run:
+1. [pdm](https://github.com/pdm-project/pdm)
+2. [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+3. Access to the `INPUT` folder on Google Drive.
+   1. Copy `data` and `output` directories in the root of the repo
+
+### Dependencies
+
+To install the dependencies and environment, simply run:
 
 ```bash
 make setup
 ```
 
 The setup script will:
-* Install all the dependecies via pdm
-* Create a new conda environment and isntall the conda dependencies
+* Pull the submodules
+* Install dependencies via pdm
+* Create a new conda environment and install the conda dependencies
 
-Once the dependencies are installed you can activate the environments and launching python scripts.
+
+### Activate conda
+
+Once script terminates successfully you can activate the environment:
+
+```bash
+conda activate ./.venv
+```
+
+### Configure AWS
+
+1. Download the `aws-cvpn-config.ovpn` configuration file from the `INPUT` folder on Google Drive and use it to connect to the AWS VPN. Here are the instructions for [Linux](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/linux.html), [MacOS](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/macos.html) and [Windows](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/windows.html).
+2. Create `./output/aws` if it does not exist already.
+    1. (Optional) notify your IDE to _exclude_ the `aws` folder from being indexed. For example in PyCharm do `Right Click on aws - Mark directory as - Excluded`
+3. Mount the shared folder in `./output/aws`. Instructions [here](https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/mount-openzfs-volumes.html).
+    1. Suggestion: from the root folder of the repo, you can try one of the following commands, according to your OS and preferences
+        1. `sudo mount -t nfs 10.0.137.113:/fsx/ ./output/aws`
+        2. `sudo mount_nfs -o resvport 10.0.137.113:/fsx/ ./output/aws`
+4. After have successfully installed the dependencies and activated the conda environment. Launch the following command from the root of the repo 
+```bash
+pdm run suam-config install --no-symlink --input=./eval_pipeline/docs/assets/config/broker.conf.yaml
+```
+
+
+
+### Launch examples
+
+Check the example folder and look at the code of the python files to get familiar with the API. Here's some example you can launch.
+
+Populate the library of components from the `data` folder
+```bash
+python src/sym_cps/examples/library.py
+```
+
+Extracts the _seed designs_
+```bash
+python src/sym_cps/examples/designs.py
+```
+
+Create a new design from scratch. First choosing and topology and then concretize it.
+```bash
+python src/sym_cps/examples/topology.py
+```
+
+
+Evaluate designs
+```bash
+python src/sym_cps/examples/evaluation.py
+```
+
+
+## Troubleshooting
+
+> NOTE:
 
 If you have problems with the environment you can clean up the files and folders created by pdm and conda by running
 
@@ -34,47 +94,9 @@ Then try `make setup` again.
 
 
 
-### Activating conda enviornment
-
-```bash
-conda activate ./.venv
-```
-
-### Launch examples
-
-```bash
-python src/sym_cps/examples/library.py
-```
-
-```bash
-python src/sym_cps/examples/designs.py
-```
-
-```bash
-python src/sym_cps/examples/topology.py
-```
-
-Check the example folder for more examples. Look at the code in the examples to understand the APIs available.
-
-
-
-### Design Evaluation
-Make sure you are connected via the VPN to AWS and that the shared drive is mounted.
-
-Look at `src/sym_cps/examples/evaluation.py` and at the module `sym_cps/evaluation`
-
-
-### Documentation
-```bash
-make docs-serve
-```
-
-
-## Troubleshooting
 
 > NOTE:
-> If it fails for some reason,
-> you'll need to install
+> Install 
 > [PDM](https://github.com/pdm-project/pdm)
 > manually.
 >
@@ -86,6 +108,14 @@ make docs-serve
 > ```
 >
 > Now you can try running `make setup` again.
+
+
+> NOTE:
+> Problems installing dependencies
+>
+> Look at the setup script located in `scripts/setup.sh` and launch the commands individually. 
+>
+> You can make a clean installation by first running `make uninstall` and then `make setup` again.
 
 > NOTE: Apple Silicon
 > Make sure that you are running a x86 terminal.
