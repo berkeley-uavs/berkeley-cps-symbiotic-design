@@ -74,16 +74,21 @@ python src/sym_cps/examples/topology.py
 ```
 
 
-Evaluate designs
-```bash
-python src/sym_cps/examples/evaluation.py
-```
-
 Evaluate designs from command line specifying the path of the `design_swri,json` in `<design-file>`:
 ```bash
 pdm run suam-client direct2cad.process-design --design=<design-file> --results=./output/aws/results
 ```
 
+For example:
+```bash
+pdm run suam-client direct2cad.process-design --design=./output/designs/TestQuad/design_swri.json --results=./output/aws/results
+```
+
+
+Evaluate designs from python (might not work)
+```bash
+python src/sym_cps/examples/evaluation.py
+```
 
 
 ## Troubleshooting
