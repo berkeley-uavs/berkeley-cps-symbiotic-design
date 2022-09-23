@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/changelog/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/changelog/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/contributing/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/contributing/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/credits/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/credits/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/license/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/license/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -31,277 +31,277 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/cli/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/cli/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/classifier/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/classifier/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/control/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/control/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/database/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/database/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/cli/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/cli/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/tools/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/tools/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/design_swri/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/design_swri/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/designs/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/designs/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/evaluation/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/evaluation/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/library/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/library/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/topology/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/topology/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/grammar/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/grammar/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/hci/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/hci/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/concrete_opt/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/concrete_opt/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/params_opt/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/params_opt/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/topo_opt/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/topo_opt/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/component/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/component/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/connection/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/connection/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/design_parameters/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/design_parameters/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/parameter/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/parameter/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/topology/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/topology/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_connector/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_connector/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_parameter/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_parameter/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_property/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_property/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_type/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/c_type/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/library_component/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/library_component/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/analyze/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/analyze/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/connectors/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/connectors/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/ids/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/ids/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/export/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/export/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/export/design_swri/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/export/design_swri/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/learn_from_designs/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/learn_from_designs/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parse/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parse/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parsing_designs/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parsing_designs/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parsing_library/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parsing_library/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/temp_objects/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/temp_objects/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/shared/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/shared/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/shared/paths/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/shared/paths/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/io/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/io/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/persistance/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/persistance/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/strings/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/strings/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://logics-project.github.io/berkeley-cps-symbiotic-design/coverage/</loc>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/coverage/</loc>
          <lastmod>2022-09-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
