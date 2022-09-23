@@ -25,15 +25,13 @@ theme:
   - navigation.tabs.sticky
   - navigation.top
   palette:
-  - media: "(prefers-color-scheme: light)"
-    scheme: default
+  - scheme: default
     primary: teal
     accent: purple
     toggle:
       icon: material/weather-sunny
       name: Switch to dark mode
-  - media: "(prefers-color-scheme: dark)"
-    scheme: slate
+  - scheme: slate
     primary: black
     accent: lime
     toggle:
