@@ -54,7 +54,7 @@ pdm run suam-config install --no-symlink --input=./eval_pipeline/docs/assets/con
 
 
 
-### Launch examples
+## Examples
 
 Check the example folder and look at the code of the python files to get familiar with the API. Here's some example you can launch.
 
