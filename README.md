@@ -41,9 +41,9 @@ conda activate ./.venv
 ### Configure AWS
 
 1. Download the `aws-cvpn-config.ovpn` configuration file from the `INPUT` folder on Google Drive and use it to connect to the AWS VPN. Here are the instructions for [Linux](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/linux.html), [MacOS](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/macos.html) and [Windows](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/windows.html).
-2. Create `./output/aws` if it does not exist already.
+2. Create the folder `./output/aws` if it does not exist already.
     1. (Optional) notify your IDE to _exclude_ the `aws` folder from being indexed. For example in PyCharm do `Right Click on aws - Mark directory as - Excluded`
-3. Mount the shared folder in `./output/aws`. Instructions [here](https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/mount-openzfs-volumes.html).
+3. Mount the shared folder in `./output/aws`. Instructions [here](https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/mount-openzfs-volumes.html). Make sure you are connected via the VPN before mounting the shared drive.
     1. Suggestion: from the root folder of the repo, you can try one of the following commands, according to your OS and preferences
         1. `sudo mount -t nfs 10.0.137.113:/fsx/ ./output/aws`
         2. `sudo mount_nfs -o resvport 10.0.137.113:/fsx/ ./output/aws`
