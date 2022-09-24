@@ -78,7 +78,7 @@ python src/sym_cps/examples/topology.py
 
 Evaluate designs from command line specifying the path of the `design_swri,json` in `<design-file>`:
 ```bash
-pdm run suam-client direct2cad.process-design --design=<design-file> --results=./output/aws/results
+sudo pdm run suam-client direct2cad.process-design --design=<design-file> --results=./output/aws/results
 ```
 
 For example:
