@@ -24,11 +24,13 @@ To install the dependencies and environment, simply run:
 make setup
 ```
 
-The setup script will:
+Make sure that the script does:
 * Pull the submodules
 * Install dependencies via pdm
 * Create a new conda environment and install the conda dependencies
 
+Make sure that `eval_pipeline` folder is not empty. 
+If the submodule was not pulled correctly you can simply clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content inside `eval_pipeline`.
 
 ### Activate conda
 
