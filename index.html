@@ -1849,10 +1849,12 @@
 <p>To install the dependencies and environment, simply run:</p>
 <div class="highlight"><pre><span></span><code>make setup
 </code></pre></div>
-<p>The setup script will:
+<p>Make sure that the script does:
 * Pull the submodules
 * Install dependencies via pdm
 * Create a new conda environment and install the conda dependencies</p>
+<p>Make sure that <code>eval_pipeline</code> folder is not empty. 
+If the submodule was not pulled correctly you can simply clone <a href="https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git">this</a> repo and copy its content inside <code>eval_pipeline</code>.</p>
 <h3 id="activate-conda">Activate conda<a class="headerlink" href="#activate-conda" title="Permanent link">&para;</a></h3>
 <p>Once script terminates successfully you can activate the environment:</p>
 <div class="highlight"><pre><span></span><code>conda activate ./.venv
@@ -1860,11 +1862,11 @@
 <h3 id="configure-aws">Configure AWS<a class="headerlink" href="#configure-aws" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Download the <code>aws-cvpn-config.ovpn</code> configuration file from the <code>INPUT</code> folder on Google Drive and use it to connect to the AWS VPN. Here are the instructions for <a href="https://docs.aws.amazon.com/vpn/latest/clientvpn-user/linux.html">Linux</a>, <a href="https://docs.aws.amazon.com/vpn/latest/clientvpn-user/macos.html">MacOS</a> and <a href="https://docs.aws.amazon.com/vpn/latest/clientvpn-user/windows.html">Windows</a>.</li>
-<li>Create <code>./output/aws</code> if it does not exist already.<ol>
+<li>Create the folder <code>./output/aws</code> if it does not exist already.<ol>
 <li>(Optional) notify your IDE to <em>exclude</em> the <code>aws</code> folder from being indexed. For example in PyCharm do <code>Right Click on aws - Mark directory as - Excluded</code></li>
 </ol>
 </li>
-<li>Mount the shared folder in <code>./output/aws</code>. Instructions <a href="https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/mount-openzfs-volumes.html">here</a>.<ol>
+<li>Mount the shared folder in <code>./output/aws</code>. Instructions <a href="https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/mount-openzfs-volumes.html">here</a>. Make sure you are connected via the VPN before mounting the shared drive.<ol>
 <li>Suggestion: from the root folder of the repo, you can try one of the following commands, according to your OS and preferences<ol>
 <li><code>sudo mount -t nfs 10.0.137.113:/fsx/ ./output/aws</code></li>
 <li><code>sudo mount_nfs -o resvport 10.0.137.113:/fsx/ ./output/aws</code></li>
