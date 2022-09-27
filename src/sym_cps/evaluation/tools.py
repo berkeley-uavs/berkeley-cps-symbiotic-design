@@ -198,7 +198,7 @@ def polling_results(msg, timeout: int = 800):
     print("Waiting for the results to appear...")
     result_archive = watch_results_dir(
         msg,
-        results_dir=aws_folder,
+        results_dir=aws_folder / "results",
         timeout=timeout
     )
     result = get_zip_metadata(result_archive)
