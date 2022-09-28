@@ -87,7 +87,7 @@ pdm run suam-client direct2cad.process-design --design=./output/designs/TestQuad
 ```
 
 
-Evaluate designs from python (might not work)
+Evaluate designs from python
 ```bash
 python src/sym_cps/examples/evaluation.py
 ```
