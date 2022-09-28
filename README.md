@@ -51,7 +51,7 @@ conda activate ./.venv
         2. `sudo mount_nfs -o resvport 10.0.137.113:/fsx/ ./output/aws`
 4. After have successfully installed the dependencies and activated the conda environment. Launch the following command from the root of the repo 
 ```bash
-pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
+sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
 ```
 
 
