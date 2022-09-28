@@ -207,3 +207,41 @@ def polling_results(msg, timeout: int = 800):
     print(f"Command completed. Results can be found at:{result_archive}")
     return result_archive
 
+def extract_results(result_archive_path: Path):
+
+    print("Extracting results from result zip file...")
+    with zipfile.ZipFile(result_archive_path) as result_zip_file:
+        # checking the fdm 
+        fdm_folder = zipfile.Path(result_zip_file) / 'Results'
+
+        # Check if `Results` exists
+        if not fdm_folder.exists() or not fdm_folder.is_dir():
+            print(f"FDM Results folder (Results/) does not exist in the result archive!")
+            return None
+        # Extracting score from control optimization
+        design_score_path = fdm_folder /"control_opt_result.out"
+        if design_score_path.exists() and design_score_path.is_file():
+            with design_score_path.open("r") as fdm_input_file:
+                #TODO: Read the files to get the scores and their corresponding control parameters
+                pass
+        # Check the Results folder
+        folders = [fdm_test for fdm_test in fdm_folder.iterdir()]
+        if len(folders) != 4:
+            print(f"Not 4 folders in fdm results, meaning that the design is problematic or pipeline had problem.")
+            return None
+        for fdm_test in folders:
+            fdm_input = fdm_test / "fdmTB"/ "flightDynFast.inp"
+            fdm_output = fdm_test / "fdmTB"/"flightDynFastOut.out"
+            
+            if fdm_input.is_file():
+                with fdm_input.open("r") as fdm_input_file:
+                    #TODO: read the fdm input files
+                    pass
+
+            if fdm_output.is_file():
+                with fdm_output.open("r") as fdm_output_file:
+                    #TODO: read the fdm output files
+                    pass
+
+    #TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
+    return None

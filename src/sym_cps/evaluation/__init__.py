@@ -6,7 +6,7 @@ https://github.com/LOGiCS-Project/swri-simple-uam-example
 from pathlib import Path
 
 from simple_uam import direct2cad
-from sym_cps.evaluation.tools import polling_results, load_design, load_metadata
+from sym_cps.evaluation.tools import polling_results, load_design, load_metadata, extract_results
 
 
 def evaluate_design(design_json_path: Path,
@@ -34,3 +34,8 @@ def evaluate_design(design_json_path: Path,
     print("Waiting for results...")
     result_path = polling_results(msg, timeout)
     print(f"Command completed. Results can be found at:{result_path}")
+    # Obtain information from the result foleder
+    if not info_only:
+        return extract_results(result_path)
+    else:
+        return None
