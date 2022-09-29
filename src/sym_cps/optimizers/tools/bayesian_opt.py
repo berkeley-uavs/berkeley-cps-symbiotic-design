@@ -1,0 +1,3 @@
+
+class BayesianOptimizer():
+    pass
