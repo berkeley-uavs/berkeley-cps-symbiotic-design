@@ -4,7 +4,7 @@ site_url: "https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbio
 repo_url: "https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git"
 repo_name: "uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design"
 site_dir: "site"
-watch: [README.md, CONTRIBUTING.md, CHANGELOG.md, src/sym_cps]
+watch: [README.md, CONTRIBUTING.md, CHANGELOG.md, src/sym_cps, src/backend, src/frontend]
 
 nav:
 - Home:

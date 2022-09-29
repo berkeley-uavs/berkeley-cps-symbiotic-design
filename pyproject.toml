@@ -18,6 +18,9 @@ dependencies = [
     "python-igraph>=0.10.0",
     "matplotlib>=3.5.3",
     "scipy>=1.9.1",
+    "flask>=2.2.2",
+    "flask-socketio>=5.3.1",
+    "eventlet>=0.33.1",
 ]
 requires-python = ">=3.10,<3.11"
 

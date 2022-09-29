@@ -22,3 +22,4 @@ def load(file: str) -> object | None:
         obj = pickle.load(f)
     print(f"Object loaded from: {str(file_path)}")
     return obj
+
