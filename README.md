@@ -55,7 +55,6 @@ sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
 ```
 
 
-
 ## Examples
 
 Check the example folder and look at the code of the python files to get familiar with the API. Here's some example you can launch.
@@ -91,6 +90,27 @@ Evaluate designs from python
 ```bash
 python src/sym_cps/examples/evaluation.py
 ```
+
+
+## Web interface
+
+Run the back-end by executing `backend/app.py`
+
+Install react dependencies via npm by running:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+inside the `frontend` folder.
+
+Then run the front-end:
+
+```bash
+npm run start
+```
+
+
 
 
 ## Troubleshooting
