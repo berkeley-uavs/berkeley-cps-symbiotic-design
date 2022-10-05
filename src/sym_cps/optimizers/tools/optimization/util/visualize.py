@@ -12,7 +12,7 @@ from sym_cps.optimizers.tools.optimization.problem_base import ProblemBase # pyl
 class ContinuousProblemVisualizer(object):
     """Used for visualizing the design problem and design space"""
     def __init__(self, resolution: int = 100):
-        self._problem
+        self._problem = None
         self._res = resolution
         self._x = None
         self._y = None
@@ -25,6 +25,11 @@ class ContinuousProblemVisualizer(object):
     @property
     def res(self) -> int:
         return self._res
+
+    @res.setter
+    def res(self, res):
+        self._res = res
+
 
     def initialize_design_space(self, problem: ProblemBase):
         """Plot the design space (Only apply to 1d or 2d design space)"""

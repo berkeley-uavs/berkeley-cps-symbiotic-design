@@ -74,4 +74,5 @@ class ParametersOptimizer(Optimizer):
         print(problem._bounds)
         if strategy == ParametersStrategy.bayesian_strategy:
             print("Optimizing Parameters using Bayesian Optimization!")
-            optimizer = BayesianOptimizer()
+            optimizer = BayesianOptimizer(problem)
+            

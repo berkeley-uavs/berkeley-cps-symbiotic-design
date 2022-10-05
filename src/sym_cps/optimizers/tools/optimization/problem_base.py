@@ -33,6 +33,9 @@ class ProblemBase(ABC):
     def set_con_dim(self, dim: int):
         self._con_dim = dim
 
+    @abstractmethod
+    def obj_dominate(self, obj1: npt.ArrayLike, obj2: npt.ArrayLike):
+        pass
 
     @property
     def bounds(self):

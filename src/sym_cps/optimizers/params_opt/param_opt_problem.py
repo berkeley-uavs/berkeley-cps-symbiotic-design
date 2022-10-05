@@ -56,12 +56,15 @@ class ParameterOptimizationProblem(ProblemBase):
         # call the pipeline for evaluation
         design_json_path = designs_folder / self._d_concrete.name /"design_swri.json"
 
+        #TODO: Return obj_vals and con_vals 
         ret = evaluate_design(design_json_path=design_json_path,
                         metadata={"extra_info": "full evaluation example"},
                         timeout=800)
         return ret
-        
-
+    
+    def obj_dominate(self, obj1: npt.ArrayLike, obj2: npt.ArrayLike):
+        """Compare multi-objective"""
+        return obj1[0] > obj2[0]
 
 
     def _vectorize_d_concrete(self, d_concrete: DConcrete)-> tuple[list[Parameter | DesignParameter], list[float]]:

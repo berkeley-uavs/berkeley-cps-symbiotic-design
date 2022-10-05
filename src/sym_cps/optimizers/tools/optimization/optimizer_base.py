@@ -34,12 +34,10 @@ class OptimizerBase(ABC):
         Implementation
         """
 
-    def reset_history(self, single_obj = True, single_con = True):
+    def reset_history(self):
         """Clear all history"""
-        x_dim = self._design_space.dim
-        num_obj = 1 if single_obj else self.problem.obj_dim
-        num_con = 1 if single_con else self._design_problem.num_constraints
-        self._hist.reset_history(x_dim, num_obj, num_con)
+        x_dim = self._problem.dim
+        self._hist.reset_history(x_dim, self._problem.obj_dim, self._problem.con_dim)
 
     @property
     def hist(self) -> History:
