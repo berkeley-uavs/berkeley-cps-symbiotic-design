@@ -315,14 +315,20 @@ class DConcrete:
                 "\n\t+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
             )
 
+        connection_list = []
+        for connection in self.connections:
+            connection_list.append(str(connection))
+
         components_str = "\n".join(components_list)
+        connection_str = "\n".join(connection_list)
 
         s1 = (
             f"name: {self.name}\n"
             f"#_components: {len(self.components)}\n"
             f"#_connections: {len(self.connections)}\n"
             f"#_component_classes:\n{n_library_component_by_class_str}\n"
-            f"components:\n{components_str}\n"
+            f"\n\nconnections:\n{connection_str}\n"
+            f"\n\ncomponents:\n{components_str}\n"
         )
 
         return s1

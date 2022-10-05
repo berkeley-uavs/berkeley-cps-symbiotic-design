@@ -59,5 +59,15 @@ class Connection:
 
         return not self.__eq__(other)
 
+    def __str__(self):
+        a1 = self.component_a.id
+        a2 = self.connector_a.id
+        b1 = self.component_b.id
+        b2 = self.connector_b.id
+
+        s1 = f"FROM\n\tCOMPONENT\t{a1}\n\tCONNECTOR\t{a2}\n"
+        s2 = f"TO\n\tCOMPONENT\t{b1}\n\tCONNECTOR\t{b2}\n"
+        return f"{s1}{s2}"
+
     def __hash__(self):
         return abs(hash(self.key))

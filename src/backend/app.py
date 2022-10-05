@@ -2,7 +2,7 @@ import argparse
 import threading
 import time
 
-from backend.operations.rating import Rating
+from operations.rating import Rating
 from os import walk
 from time import strftime
 
@@ -15,7 +15,7 @@ from typing import Any, Dict
 from flask import Flask, Response, request
 from flask_socketio import SocketIO, emit
 
-from src.backend.shared.paths import build_path, storage_path
+from shared.paths import build_path, storage_path
 
 parser = argparse.ArgumentParser(description="Launching Flask Backend")
 parser.add_argument("--serve", default=False, type=bool, help="indicate if serving the pages")
