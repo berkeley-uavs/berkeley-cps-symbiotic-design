@@ -4,7 +4,7 @@ from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.optimizers.params_opt.param_opt_problem import ParameterOptimizationProblem, ParametersStrategy, ParametersConstraint
-
+from sklearn.gaussian_process.kernels import Matern
 
 class ParametersOptimizer(Optimizer):
 
@@ -74,5 +74,18 @@ class ParametersOptimizer(Optimizer):
         print(problem._bounds)
         if strategy == ParametersStrategy.bayesian_strategy:
             print("Optimizing Parameters using Bayesian Optimization!")
-            optimizer = BayesianOptimizer(problem)
+
+            length_scale = [ub -lb for (lb, ub) in problem.bounds]
+            kernel = Matern(nu=2.5, length_scale=length_scale, length_scale_bounds = "fixed")
+            kwarg = {}
+            kwarg["plot_debug"] = False
+            kwarg["plot_freq"] = 100
+            kwarg["plot_freq"] = 100
+            kwarg["plot_freq"] = 100
+            kwarg["consider_constraint"] = False
+            kwarg["explore_num_samples"] = 1000
+            kwarg["kernel"] = kernel
+
+            optimizer = BayesianOptimizer(problem=problem, **kwarg)
+            x_max_valid, y_max_valid = optimizer.optimize()
             

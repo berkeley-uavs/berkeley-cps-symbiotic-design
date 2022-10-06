@@ -44,7 +44,7 @@ class ProblemBase(ABC):
 
 
     @abstractmethod
-    def evaluate(self, parameters: npt.ArrayLike):
+    def evaluate(self, parameters: npt.ArrayLike) -> tuple[list[float], list[bool]]:
         """return the objective function or invalid parameters"""
         pass
 
