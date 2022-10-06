@@ -37,8 +37,12 @@ class ParameterOptimizationProblem(ProblemBase):
         # set the attribute from the ProblemBase
         self._bounds = self._get_bounds(self._params)
         self._opt_array = np.array(self._init_params_val_array)
-        self.set_obj_dim(4) # 4 objective : four tests supported
+        self.set_obj_dim(1) # 4 objective : four tests supported
         self.set_con_dim(1) # 1 constraint: the design is valid (can have FDM output) or not 
+
+    @property
+    def init_param_val_array(self) -> npt.ArrayLike:
+        return self._init_params_val_array
 
     def set_parameters(self, parameters: npt.ArrayLike) -> None:
         """Set the d concrete using the param_val as the value for each design parameter"""
@@ -48,19 +52,21 @@ class ParameterOptimizationProblem(ProblemBase):
         for param, val in zip(self._params, parameters):
             param.value = val
 
-    def evaluate(self, parameters: npt.ArrayLike):
+    def evaluate(self, parameters: npt.ArrayLike) -> tuple[list[float], list[bool]]:
         # set the parameters
         self.set_parameters(parameters)
         # export to design_swri
         self._d_concrete.export(ExportType.JSON) 
         # call the pipeline for evaluation
         design_json_path = designs_folder / self._d_concrete.name /"design_swri.json"
-
+        obj_vals = np.array([-np.sum(parameters**2)])
+        con_vals = np.array([parameters[0] > parameters[1] and parameters[1]**2 - parameters[2] > 1])
+        print("Warning, it is still not connected to evaluation pipeline!!!")
         #TODO: Return obj_vals and con_vals 
-        ret = evaluate_design(design_json_path=design_json_path,
-                        metadata={"extra_info": "full evaluation example"},
-                        timeout=800)
-        return ret
+        # ret = evaluate_design(design_json_path=design_json_path,
+        #                 metadata={"extra_info": "full evaluation example"},
+        #                 timeout=800)
+        return obj_vals, con_vals
     
     def obj_dominate(self, obj1: npt.ArrayLike, obj2: npt.ArrayLike):
         """Compare multi-objective"""

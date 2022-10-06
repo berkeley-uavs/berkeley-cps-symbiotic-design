@@ -21,6 +21,7 @@ class BayesianOptimizer(OptimizerBase):
         super().__init__(problem=problem)
         self._visualizer = BayesianOptimizationVisualizer()
         self._kernel = Matern(nu=2.5, length_scale=0.05, length_scale_bounds = "fixed")
+        #self._kernel = Matern(nu=2.5, length_scale=5000, length_scale_bounds = "fixed")
         self._acq_function = self.expected_improvement
         self._surrogate_model_obj: SurrogateInterface = ScikitGPR
         self._surrogate_model_con: SurrogateInterface = LogisticClassifier
@@ -40,6 +41,7 @@ class BayesianOptimizer(OptimizerBase):
 
     def set_args(self, **kwarg):
         if "kernel" in kwarg.keys():
+            print("Setting Kernel...")
             self._kernel = kwarg["kernel"]
         if "acquisition_function" in kwarg.keys():
             self._acq_function = kwarg["acquisition_function"]
@@ -75,22 +77,27 @@ class BayesianOptimizer(OptimizerBase):
 
     def optimize(self, **kwarg):
         """This function performs maximization!!"""
-
-        self._visualizer.plot_objectives()
-        self._visualizer.plot_finalize()
-        self._visualizer.plot_constraints()
-        self._visualizer.plot_finalize()
+        if self._plot_debug:
+            self._visualizer.plot_objectives()
+            self._visualizer.plot_finalize()
+            self._visualizer.plot_constraints()
+            self._visualizer.plot_finalize()
         self.set_args(**kwarg)
 
         x_max_valid = None
         y_max_ind_valid = np.full(self._problem.obj_dim, -float('inf')) #record the best obj value of valid design
         y_max_valid = np.full(self._problem.obj_dim, -float('inf')) #record the best obj value of valid design
     
+        # seed init
+        x_init = np.array(self._problem.init_param_val_array)
         #warnup with random samples
         x_sample = self._get_samples(n_samples=self._num_warn_up_samples)
+        print(x_init, x_sample)
+        x_sample = np.concatenate((x_init.reshape(1, -1), x_sample))
         # evaluate the random samples
         for x in x_sample:
             y, v = self._evaluate(parameters=x)
+            print(y, v)
             valid = np.all(v)
             if valid or not self._consider_constraint:
                 y_max_ind_valid = np.maximum(y, y_max_ind_valid)
@@ -133,6 +140,7 @@ class BayesianOptimizer(OptimizerBase):
                     #TODO: handle multi-objective parato front
                     y_max_valid = y
                     x_max_valid = x
+            print(f"Iteration {i}: x = {x_min}, y = {y}, y_max = {y_max_valid}")
 
 
         return x_max_valid, y_max_valid
