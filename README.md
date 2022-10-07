@@ -49,6 +49,7 @@ conda activate ./.venv
     1. Suggestion: from the root folder of the repo, you can try one of the following commands, according to your OS and preferences
         1. `sudo mount -t nfs 10.0.137.113:/fsx/ ./output/aws`
         2. `sudo mount_nfs -o resvport 10.0.137.113:/fsx/ ./output/aws`
+        3. `sudo mount -o resvport -t nfs 10.0.137.113:/fsx/ ./output/aws`
 4. After have successfully installed the dependencies and activated the conda environment. Launch the following command from the root of the repo 
 ```bash
 sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
