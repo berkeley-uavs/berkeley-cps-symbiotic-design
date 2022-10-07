@@ -27,6 +27,9 @@ def merge_connection_rules(folder: Path, library: Library):
     abstract_connection_dict = {}
     concrete_connection_dict = {}
 
+    empty_ = {}
+    concrete_connection_dict = {}
+
     for name in file_name_list:
         if "connections.json" in name:
             file_path = folder / name
@@ -49,12 +52,16 @@ def merge_connection_rules(folder: Path, library: Library):
                             if direction != "":
                                 if direction in concrete_connection_dict[comp_a][comp_b].keys():
                                     if (comp_a_conn, comp_b_conn) != concrete_connection_dict[comp_a][comp_b][direction]:
+                                        if "Hub" in comp_b_conn:
+                                            continue
                                         raise Exception(f"Contradicting Rules\n"
                                                         f"{comp_a} -> {comp_b} ({direction})\n"
                                                         f"{(comp_a_conn, comp_b_conn)}\n"
                                                         f"{concrete_connection_dict[comp_a][comp_b][direction]}")
                                 if direction in abstract_connection_dict[type_a][type_b].keys():
                                     if (comp_a_conn, comp_b_conn) != abstract_connection_dict[type_a][type_b][direction]:
+                                        if "Hub" in comp_b_conn:
+                                            continue
                                         raise Exception(f"Contradicting Rules\n"
                                                         f"{type_a} -> {type_b} ({direction})\n"
                                                         f"{comp_a} -> {comp_b} ({direction})\n"
@@ -92,3 +99,9 @@ if __name__ == '__main__':
         file_name=f"geometry_rules_abstract.json",
         absolute_folder_path=connections_folder,
     )
+
+    print("\n\nMISSING CONNECTIONS")
+    for comp_a, connections in abstract_connection_dict.items():
+        for comp_b, conn in connections.items():
+            if conn == {}:
+                print(f"{comp_a} - {comp_b}")

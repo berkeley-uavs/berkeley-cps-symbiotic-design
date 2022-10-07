@@ -87,6 +87,7 @@ def export_library(library_txt_file: str = "library.txt",
     designs: dict[str, tuple[DConcrete, DTopology]] = load(designs_dat_file)  # type: ignore
 
     for d_concrete, d_topology in designs.values():
+        d_concrete.export(ExportType.JSON)
         save_to_file(
             str(d_concrete),
             file_name=f"DConcrete",
