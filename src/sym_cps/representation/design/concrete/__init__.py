@@ -133,8 +133,8 @@ class DConcrete:
         return components
 
     @property
-    def all_library_components_component_class(
-        self,
+    def all_library_components_in_type(
+            self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -290,18 +290,55 @@ class DConcrete:
 
         return not self.__eq__(other)
 
+    def generate_connections_json(self):
+
+        connection_dict = {}
+        for (
+                components_class,
+                library_components,
+        ) in self.all_library_components_in_type.items():
+            for library_component in library_components:
+                connection_dict[library_component.id] = {}
+                components = self.select(library_component=library_component)
+                for component in components:
+                    for connection in self.connections:
+                        if component.id == connection.component_a.id:
+                            if connection.component_b.library_component.id in connection_dict[
+                                library_component.id].keys():
+                                connection_dict[library_component.id][
+                                    connection.component_b.library_component.id].append(
+                                    (connection.connector_a.id, connection.connector_b.id, ""))
+                            else:
+                                connection_dict[library_component.id][connection.component_b.library_component.id] = [
+                                    (connection.connector_a.id, connection.connector_b.id, "")]
+
+                        if component.id == connection.component_b.id:
+                            if connection.component_a.library_component.id in connection_dict[
+                                library_component.id].keys():
+                                connection_dict[library_component.id][
+                                    connection.component_a.library_component.id].append(
+                                    (connection.connector_b.id, connection.connector_a.id, ""))
+                            else:
+                                connection_dict[library_component.id][connection.component_a.library_component.id] = [
+                                    (connection.connector_b.id, connection.connector_a.id, "")]
+
+        connection_json = json.dumps(connection_dict, indent=4)
+        return connection_json
+
     def __str__(self):
 
         n_library_component_by_class = []
-        for k, v in self.all_library_components_component_class.items():
+        for k, v in self.all_library_components_in_type.items():
             n_library_component_by_class.append(f"\t{k}: {len(v)}")
         n_library_component_by_class_str = "\n".join(n_library_component_by_class)
 
         components_list = []
+        # connections_by_components = {}
+
         for (
-            components_class,
-            library_components,
-        ) in self.all_library_components_component_class.items():
+                components_class,
+                library_components,
+        ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:
                 components_list.append(
@@ -310,7 +347,17 @@ class DConcrete:
                 components = self.select(library_component=library_component)
                 for component in components:
                     components_list.append(tab(tab(tab(f"COMPONENT: {component.id}"))))
-                    components_list.append(tab(tab(tab(component))))
+                    components_list.append(tab(tab(tab(tab(f"CONNECTIONS:")))))
+                    for connection in self.connections:
+                        if component.id == connection.component_a.id:
+                            components_list.append(tab(tab(tab(tab(
+                                tab(f"{connection.component_a.library_component.id} :: {connection.connector_a.id} <<->> {connection.connector_b.id} :: {connection.component_b.id} ({connection.component_b.library_component.id})"))))))
+                        if component.id == connection.component_b.id:
+                            components_list.append(tab(tab(tab(tab(
+                                tab(f"{connection.component_b.library_component.id} :: {connection.connector_b.id} <<->> {connection.connector_a.id} :: {connection.component_a.id} ({connection.component_a.library_component.id})"))))))
+
+                    # components_list.append(tab(tab(tab(f"COMPONENT: {component}"))))
+                    # components_list.append(tab(tab(tab(component))))
             components_list.append(
                 "\n\t+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
             )

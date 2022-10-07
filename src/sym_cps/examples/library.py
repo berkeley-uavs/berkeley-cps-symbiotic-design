@@ -5,7 +5,7 @@ from sym_cps.representation.library import Library, CType, CConnector
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
 from sym_cps.representation.tools.parsers.parsing_library import all_parameters_upper_bounds, \
     all_parameters_lower_bounds
-from sym_cps.shared.paths import library_folder, designs_folder
+from sym_cps.shared.paths import library_folder, designs_folder, ExportType
 from sym_cps.tools.io import save_to_file
 from sym_cps.tools.persistance import dump, load
 from sym_cps.tools.strings import repr_dictionary
@@ -95,6 +95,12 @@ def export_library(library_txt_file: str = "library.txt",
         save_to_file(
             str(d_topology),
             file_name=f"DTopology",
+            absolute_folder_path=designs_folder / d_concrete.name,
+        )
+        d_topology.export(ExportType.DOT)
+        save_to_file(
+            str(d_concrete.generate_connections_json()),
+            file_name=f"connections.json",
             absolute_folder_path=designs_folder / d_concrete.name,
         )
 
