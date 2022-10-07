@@ -27,6 +27,10 @@ class ProblemBase(ABC):
         self._obj_dim = dim
 
     @property
+    def opt_array(self) -> npt.ArrayLike:
+        return self._opt_array
+
+    @property
     def con_dim(self):
         return self._con_dim
 

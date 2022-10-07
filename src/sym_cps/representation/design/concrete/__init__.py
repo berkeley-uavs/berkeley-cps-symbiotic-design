@@ -40,6 +40,7 @@ class DConcrete:
     def __post_init__(self):
         self._graph = Graph()
 
+
     @property
     def graph(self) -> Graph:
         return self._graph

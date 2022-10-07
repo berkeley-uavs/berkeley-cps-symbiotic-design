@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import math
 
 import numpy as np
 import numpy.typing as npt
@@ -29,8 +30,8 @@ class BayesianOptimizer(OptimizerBase):
         self._rng = np.random.RandomState(1234)
         self._iteration: int = 1000
         self._num_warn_up_samples: int = 10
-        self._explore_num_warn_up: int = 20000
-        self._explore_num_samples: int = 50
+        self._explore_num_warm_up: int = 200
+        self._explore_num_samples: int = 25
         self._consider_constraint: bool = True
         self._plot_debug: bool = False
         self._plot_freq: int = 10
@@ -44,7 +45,15 @@ class BayesianOptimizer(OptimizerBase):
             print("Setting Kernel...")
             self._kernel = kwarg["kernel"]
         if "acquisition_function" in kwarg.keys():
-            self._acq_function = kwarg["acquisition_function"]
+            if kwarg["acquisition_function"] == "GP-UCB":
+                print("Use GP-UCB as acquisition function")
+                self._acq_function = self.upper_confidence_bound
+            elif kwarg["acquisition_function"] == "EI":
+                print("Use EI as acquisition function")
+                self._acq_function = self.expected_improvement
+            else:
+                s = kwarg["acquisition_function"]
+                print(f"Unknown Acquisition function type {s}")
         if "surrogate_model_obj" in kwarg.keys():
             self._surrogate_model_obj = kwarg["surrogate_model_obj"]
         if "surrogate_model_con" in kwarg.keys():
@@ -54,11 +63,14 @@ class BayesianOptimizer(OptimizerBase):
         if "iteration" in kwarg.keys():
             self._iteration = kwarg["iteration"]  
         if "num_warn_up_samples" in kwarg.keys():
+            print(f"Set numbers of warm up samples as {self._num_warn_up_samples}")
             self._num_warn_up_samples = kwarg["num_warn_up_samples"]  
-        if "explore_num_warn_up" in kwarg.keys():
-            self._explore_num_warn_up = kwarg["explore_num_warn_up"] 
+        if "explore_num_warm_up" in kwarg.keys():
+            self._explore_num_warm_up = kwarg["explore_num_warm_up"] 
+            print(f"Set numbers of exploration warm up samples as {self._explore_num_warm_up}")
         if "explore_num_samples" in kwarg.keys():
             self._explore_num_samples = kwarg["explore_num_samples"] 
+            print(f"Set numbers of exploration samples as {self._explore_num_samples}")
         if "consider_constraint" in kwarg.keys():
             self._consider_constraint = kwarg["consider_constraint"] 
         if "plot_debug" in kwarg.keys():
@@ -73,7 +85,7 @@ class BayesianOptimizer(OptimizerBase):
 
         return self._rng.uniform(low=lbound, 
                                  high=ubound, 
-                                 size=(self._num_warn_up_samples, self._problem.dim))
+                                 size=(n_samples, self._problem.dim))
 
     def optimize(self, **kwarg):
         """This function performs maximization!!"""
@@ -89,10 +101,10 @@ class BayesianOptimizer(OptimizerBase):
         y_max_valid = np.full(self._problem.obj_dim, -float('inf')) #record the best obj value of valid design
     
         # seed init
-        x_init = np.array(self._problem.init_param_val_array)
+        x_init = np.array(self._problem.opt_array)
         #warnup with random samples
         x_sample = self._get_samples(n_samples=self._num_warn_up_samples)
-        print(x_init, x_sample)
+        #print(x_init, x_sample)
         x_sample = np.concatenate((x_init.reshape(1, -1), x_sample))
         # evaluate the random samples
         for x in x_sample:
@@ -163,21 +175,29 @@ class BayesianOptimizer(OptimizerBase):
         x_min = None
         y_min = float("inf")
 
-        def func(x): return -self._acq_function(obj_model=obj_model, con_model=con_model, x=x, y_best=y_best)
+        def func(x): return -self._acq_function(obj_model=obj_model, con_model=con_model, x=x, y_best=y_best, index=index)
         #func2 = lambda x: -self._acquisition_function_backup(gpr, classifier, x, y_best, xi)
         # generate starting points for global exploration
-        warn_samples = self._get_samples(n_samples=self._explore_num_warn_up)
+        warn_samples = self._get_samples(n_samples=self._explore_num_warm_up)
+        #print(warn_samples.shape, self._explore_num_warm_up)
+        res_array = []
         # warn up
         for x0 in warn_samples:
             test_res = func(x0)
+            res_array.append(test_res.item(0))
             if test_res < y_min:
                 x_min = x0
                 y_min = test_res
 
-        exploring_samples = self._get_samples(n_samples=self._explore_num_samples)
+        idx_array = np.argsort(res_array).flatten()
+
+        exploring_samples = warn_samples[idx_array[:self._explore_num_samples], :]
+        #print(idx_array[:self._explore_num_samples].shape, idx_array.shape, self._explore_num_samples)
+        #exploring_samples = self._get_samples(n_samples=self._explore_num_samples)
         #exploring_samples = np.concatenate(warn_samples, exploring_samples)
 
         for x0 in exploring_samples:
+            #print("run", exploring_samples.shape)
             #print("inner", x0, -func(x0), gpr.predict(x0.reshape(1, -1), return_std = True), classifier.predict_proba(x0.reshape(1, -1)))
             res = minimize(func, x0=x0, bounds=self._problem.bounds, method='L-BFGS-B')
             #print("inner", res.success, res.x, res.fun)
@@ -198,7 +218,8 @@ class BayesianOptimizer(OptimizerBase):
         #print(x_min, classifier.predict_proba(x_min.reshape(1, -1)))
         return x_min
 
-    def expected_improvement(self, obj_model, con_model, x, y_best):
+    def expected_improvement(self, obj_model, con_model, x, y_best, index):
+        #print("EI")
         x = x.reshape(1, -1)
         mean, std = obj_model.predict(x)
         #print(mean, std)
@@ -223,3 +244,29 @@ class BayesianOptimizer(OptimizerBase):
                 return 0
         else:
             return ei
+
+    def upper_confidence_bound(self, obj_model, con_model, x, y_best, index):
+        #print("UCB")
+        x = x.reshape(1, -1)
+        mean, std = obj_model.predict(x)
+        #print(mean, std)
+        if std == 0.0:
+            return 0
+        if self._consider_constraint:
+            proba = con_model.predict(x)
+            # print(proba)
+            #proba = classifier.predict_proba(x)
+
+        # compute the expected improvement
+        beta = 2*math.log((index+1)**2)
+        ucb = mean + math.sqrt(beta) * std
+        #print(proba, classifier.classes_)
+        #print("EI:", ei)
+        # Consider the probability of invalid inputs
+        if self._consider_constraint:
+            if proba > 0.2:
+                return ucb * proba
+            else:
+                return 0
+        else:
+            return ucb

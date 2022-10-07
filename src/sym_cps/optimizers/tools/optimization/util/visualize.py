@@ -122,10 +122,12 @@ class ContinuousProblemVisualizer(object):
     def plot_optimizer_hist_params_1d(self, optimizer: OptimizerBase):
         """Plot the searched point of 1d"""
         hist = optimizer.hist
-        p_hist = hist.hist_params
+        p_hist = hist.hist_params_for_objective
         f_hist = hist.hist_func
+        p_hist_v = hist.hist_params_for_valid
         
         plt.scatter(p_hist, f_hist, color=cm.Greys(np.linspace(0, 1, hist.length)), marker='x')
+        plt.scatter(p_hist_v, np.zeros(p_hist_v.shape[0]), marker='x', color = "red")
         plt.legend()
 
     def plot_optimizer_hist_params_2d(self, optimizer: OptimizerBase):
@@ -147,12 +149,14 @@ class ContinuousProblemVisualizer(object):
 
 
     def plot_optimizer_convergence(self, optimizer: OptimizerBase):
-        f_hist = optimizer.hist.hist_func
-        v_hist = optimizer.hist.hist_valid
+        f_hist = optimizer.hist.hist_combined_obj
+        v_hist = optimizer.hist.hist_combined_con
 
         f_best = float("inf")
         f_best_hist = np.zeros(f_hist.shape)
         for i, f in enumerate(f_hist):
+            if f is None:
+                continue
             if f < f_best and v_hist[i]:
                 f_best = f
             f_best_hist[i] = f_best

@@ -41,7 +41,7 @@ class BayesianOptimizationVisualizer(ContinuousProblemVisualizer):
 
 
     def plot_classification(self, con_model: SurrogateInterface, hist: History, x_next=None):
-        x_explored = hist.hist_params
+        x_explored = hist.hist_param_for_valid
         x_explored_valid = hist.hist_valid
         if self._problem.dim == 1:
             X = self._x
@@ -106,7 +106,7 @@ class BayesianOptimizationVisualizer(ContinuousProblemVisualizer):
             plt.show()
 
     def plot_prediction(self, obj_model:SurrogateInterface, hist: History, x_next=None):
-        x_explored = hist.hist_params
+        x_explored = hist.hist_params_for_objective
         y_explored = hist.hist_func
         if self._problem.dim == 1:
             X = self._x

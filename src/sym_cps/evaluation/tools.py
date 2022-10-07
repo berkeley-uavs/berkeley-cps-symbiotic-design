@@ -11,7 +11,7 @@ from pathlib import Path
 import dramatiq
 from typing import Optional, Union
 
-from sym_cps.shared.paths import aws_folder
+from sym_cps.shared.paths import aws_folder, fdm_extract_folder
 
 
 def load_design(design_file: Path) -> object:
@@ -229,16 +229,27 @@ def extract_results(result_archive_path: Path):
         if len(folders) != 4:
             print(f"Not 4 folders in fdm results, meaning that the design is problematic or pipeline had problem.")
             return None
+
+        extract_folder = fdm_extract_folder / "tmp"
+        #print(extract_folder)
         for fdm_test in folders:
-            fdm_input = fdm_test / "fdmTB"/ "flightDynFast.inp"
-            fdm_output = fdm_test / "fdmTB"/"flightDynFastOut.out"
-            
+            fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
+            fdm_output = fdm_test / "fdmTB" / "flightDynFastOut.out"
+            fdm_input_member = Path("Results", fdm_test.name, "fdmTB", "flightDynFast.inp")
+            fdm_output_member = Path("Results", fdm_test.name, "fdmTB", "flightDynFastOut.out")
+
             if fdm_input.is_file():
-                with fdm_input.open("r") as fdm_input_file:
+                info = result_zip_file.getinfo(str(fdm_input_member))
+                info.filename = f"flightDynFast.inp"
+                result_zip_file.extract(member = info, path = str(extract_folder))
+                with fdm_input.open("r") as fdm_input_file:      
                     #TODO: read the fdm input files
                     pass
 
             if fdm_output.is_file():
+                info = result_zip_file.getinfo(str(fdm_output_member))
+                info.filename = f"flightDynFastOut.out"
+                result_zip_file.extract(member = info, path = str(extract_folder))
                 with fdm_output.open("r") as fdm_output_file:
                     #TODO: read the fdm output files
                     pass

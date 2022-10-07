@@ -40,7 +40,7 @@ class LogisticClassifier(SurrogateInterface):
             preprocessor = PolynomialFeatures(3, include_bias=True)
 
         self._preprocessor = preprocessor
-        self._classifier = LogisticRegression(max_iter=1000, warm_start=True)
+        self._classifier = LogisticRegression(max_iter=10000, warm_start=True)
     
     def fit(self, X, Y):
         self._classifier.fit(self._preprocessor.fit_transform(X), Y.reshape(-1,))

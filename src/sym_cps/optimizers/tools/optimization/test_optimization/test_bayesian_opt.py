@@ -52,6 +52,7 @@ def test_bayes_opt():
     kwarg["plot_debug"] = True
     kwarg["plot_freq"] = 100
     kwarg["consider_constraint"] = False
+    kwarg["acquisition_function"] = "GP-UCB"
 
     optimizer = BayesianOptimizer(problem=problem, **kwarg)
     x_max_valid, y_max_valid = optimizer.optimize()

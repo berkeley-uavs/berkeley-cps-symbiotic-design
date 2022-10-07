@@ -33,16 +33,11 @@ class ParameterOptimizationProblem(ProblemBase):
         self._init_params = None
 
         # get bounds, parameters
-        self._params, self._init_params_val_array = self._vectorize_d_concrete(d_concrete=self._d_concrete)
+        self._params, self._opt_array = self._vectorize_d_concrete(d_concrete=self._d_concrete)
         # set the attribute from the ProblemBase
         self._bounds = self._get_bounds(self._params)
-        self._opt_array = np.array(self._init_params_val_array)
         self.set_obj_dim(1) # 4 objective : four tests supported
         self.set_con_dim(1) # 1 constraint: the design is valid (can have FDM output) or not 
-
-    @property
-    def init_param_val_array(self) -> npt.ArrayLike:
-        return self._init_params_val_array
 
     def set_parameters(self, parameters: npt.ArrayLike) -> None:
         """Set the d concrete using the param_val as the value for each design parameter"""
@@ -102,17 +97,33 @@ class ParameterOptimizationProblem(ProblemBase):
             max_val = None
             for param in d_param.parameters:
                 try: 
-                    if min_val is None:
-                        min_val = param.min
-                    if max_val is None:
-                        max_val = param.max
+                    param_min = param.min
+                except:
+                    param_min = None
 
-                    if min_val > param.min:
-                        min_val = param.min
-                    if max_val < param.max:
-                        max_val = param.max
-                except: # not specified value in corpus
-                    min_val = -10000
-                    max_val = 10000
+                try: 
+                    param_max = param.max
+                except:
+                    param_max = None
+
+                if min_val is None:
+                    min_val = param_min
+                elif param_min is None:
+                    pass
+                elif min_val > param_min:
+                    min_val = param.min
+
+                if max_val is None:
+                    max_val = param_max
+                elif param_max is None:
+                    pass
+                elif max_val < param_max:
+                    max_val = param_max
+
+            if min_val is None:
+                min_val = -10000
+            if max_val is None:
+                max_val = 10000
+
             bounds.append((min_val, max_val))
         return bounds

@@ -37,5 +37,6 @@ def evaluate_design(design_json_path: Path,
     # Obtain information from the result foleder
     if not info_only:
         return extract_results(result_path)
+        #return extract_results("/Users/shengjungyu/shengjungyu/Research/UC_Berkeley/Research/LOGiCS/workspace/berkeley-cps-symbiotic-design/output/aws/results/process_design-2022-10-07-fhudp1f5qz.zip")
     else:
         return None
