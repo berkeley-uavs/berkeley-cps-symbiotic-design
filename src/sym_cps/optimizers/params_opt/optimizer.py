@@ -1,5 +1,6 @@
 from sym_cps.optimizers import Optimizer
 from sym_cps.optimizers.tools.optimization.bayesian_optimizer import BayesianOptimizer
+from sym_cps.optimizers.tools.optimization.nm_optimizer import NMOptimizer
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
@@ -66,26 +67,28 @@ class ParametersOptimizer(Optimizer):
         strategy: ParametersStrategy,
         constraints: ParametersConstraint
     ) -> DConcrete:
+        d_concrete.name += "_opt"
         problem = ParameterOptimizationProblem(d_concrete=d_concrete, strategy=strategy, constraint=constraints)
 
         #debug 
-        for param, val in zip(problem._params, problem._init_params_val_array):
+        for param, val in zip(problem._params, problem._opt_array):
             print(param.id, val)
         print(problem._bounds)
         if strategy == ParametersStrategy.bayesian_strategy:
             print("Optimizing Parameters using Bayesian Optimization!")
 
-            length_scale = [ub -lb for (lb, ub) in problem.bounds]
+            length_scale = [(ub - lb)/2 for (lb, ub) in problem.bounds]
             kernel = Matern(nu=2.5, length_scale=length_scale, length_scale_bounds = "fixed")
             kwarg = {}
             kwarg["plot_debug"] = False
             kwarg["plot_freq"] = 100
-            kwarg["plot_freq"] = 100
-            kwarg["plot_freq"] = 100
             kwarg["consider_constraint"] = False
-            kwarg["explore_num_samples"] = 1000
+            kwarg["explore_num_samples"] = 50
+            kwarg["explore_num_warm_up"] = 200000
             kwarg["kernel"] = kernel
+            kwarg["acquisition_function"] = "GP-UCB"
 
-            optimizer = BayesianOptimizer(problem=problem, **kwarg)
-            x_max_valid, y_max_valid = optimizer.optimize()
+            #optimizer = BayesianOptimizer(problem=problem, **kwarg)
+            # optimizer = NMOptimizer(problem=problem, **kwarg)
+            # x_max_valid, y_max_valid = optimizer.optimize()
             

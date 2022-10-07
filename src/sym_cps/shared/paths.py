@@ -20,6 +20,7 @@ output_folder: Path = root / "output"
 aws_folder: Path = output_folder / "aws"
 designs_folder: Path = output_folder / "designs"
 library_folder: Path = output_folder / "library"
+fdm_extract_folder: Path = root / "fdm"
 
 component_library_root_path_default: Path = (
         data_folder / "ComponentLibrary" / "results_json"
