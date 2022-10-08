@@ -12,33 +12,36 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 ### System Requirements
 
 1. [pdm](https://github.com/pdm-project/pdm)
-2. [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
-3. Access to the `INPUT` folder on Google Drive.
+2. Access to the `INPUT` folder on Google Drive.
    1. Copy `data` and `output` directories in the root of the repo
+   2. Keep data and output updated if there are changes on the Google Drive
 
-### Dependencies
+### Installation
 
-To install the dependencies and environment, simply run:
-
+For Mac M1 users, change the architecture first by running:
 ```bash
-make setup
+env /usr/bin/arch -x86_64 /bin/zsh --login
 ```
 
-Make sure that the script does:
-* Pull the submodules 
-* Install dependencies via pdm 
-* Create a new conda environment and install the conda dependencies
+Then:
 
-Make sure that `eval_pipeline` folder is not empty. 
-If the submodule was not pulled correctly you can simply clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content inside `eval_pipeline`.
-
-### Activate conda
-
-Once script terminates successfully you can activate the environment:
+1. Update the submodules
+    ```bash
+    git submodule init
+    git submodule update --
+    ```
+    Make sure that `eval_pipeline` folder is not empty. 
+    If the submodule was not pulled correctly you can simply clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content inside `eval_pipeline`.
+2. Install
+    ```bash
+    pdm install
+    ```
+When running a python script from command line, insert `pdm run` before. For example:
 
 ```bash
-conda activate ./.venv
+pdm run pdm python src/sym_cps/examples/library.py
 ```
+
 
 ### Configure AWS
 
@@ -62,17 +65,17 @@ Check the example folder and look at the code of the python files to get familia
 
 Populate the library of components from the `data` folder
 ```bash
-python src/sym_cps/examples/library.py
+pdm python src/sym_cps/examples/library.py
 ```
 
 Extracts the _seed designs_
 ```bash
-python src/sym_cps/examples/designs.py
+pdm python src/sym_cps/examples/designs.py
 ```
 
 Create a new design from scratch. First choosing and topology and then concretize it.
 ```bash
-python src/sym_cps/examples/topology.py
+pdm python src/sym_cps/examples/topology.py
 ```
 
 
@@ -89,7 +92,7 @@ pdm run suam-client direct2cad.process-design --design=./output/designs/TestQuad
 
 Evaluate designs from python
 ```bash
-python src/sym_cps/examples/evaluation.py
+pdm python src/sym_cps/examples/evaluation.py
 ```
 
 
@@ -124,7 +127,7 @@ If you have problems with the environment you can clean up the files and folders
 make uninstall
 ```
 
-Then try `make setup` again.
+Then try installation process again.
 
 
 
@@ -144,12 +147,6 @@ Then try `make setup` again.
 > Now you can try running `make setup` again.
 
 
-> NOTE:
-> Problems installing dependencies
->
-> Look at the setup script located in `scripts/setup.sh` and launch the commands individually. 
->
-> You can make a clean installation by first running `make uninstall` and then `make setup` again.
 
 > NOTE: Apple Silicon
 > Make sure that you are running a x86 terminal.
@@ -158,22 +155,7 @@ Then try `make setup` again.
 > ```bash
 > arch -x86_64 /bin/bash
 > ```
-
-> NOTE: Conda for Mac with Apple Silicon
->
-> Some of the packages in conda do not support arm64 architecture. To install all the dependencies correctly on a Mac with Apple Silicon, make sure that you are running conda for x86_64 architecture.
->
-> You can install miniconda for MacOSX x86_64 by running the following commands
->
-> ```bash
-> curl -L https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh > Miniconda3-latest-MacOSX-x86_64.sh
-> ```
->
-> ```bash
-> sh Miniconda3-latest-MacOSX-x86_64.sh
-> ```
-
-
+> 
 
 > NOTE: Working with PEP 582
 > With PEP 582, dependencies will be installed into __pypackages__ directory under the project root. With PEP 582 enabled globally, you can also use the project interpreter to run scripts directly.
