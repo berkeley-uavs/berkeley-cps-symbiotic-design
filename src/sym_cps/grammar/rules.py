@@ -14,8 +14,8 @@ class Direction(Enum):
 
 
 
-def connect(lib_component_a: str,
-            lib_component_b: str,
+def connect(component_a: CType,
+            component_b: CType,
             direction: Direction) -> [(str, str)]:
     if lib_component_a == "capsule_fuselage" and \
             lib_component_b == "main_hub" and \
