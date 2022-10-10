@@ -20,15 +20,15 @@ class Direction(Enum):
 
 connections_folder = data_folder / "reverse_engineering"
 
+c_library, designs = parse_library_and_seed_designs()
 
 def merge_connection_rules(folder: Path, library: Library):
     file_name_list = os.listdir(folder)
 
     abstract_connection_dict = {}
-    concrete_connection_dict = {}
 
-    empty_ = {}
     concrete_connection_dict = {}
+    default_connections = {}
 
     for name in file_name_list:
         if "connections.json" in name:
@@ -41,6 +41,9 @@ def merge_connection_rules(folder: Path, library: Library):
                             comp_a_conn, comp_b_conn, direction = tuple(connection)
                             type_a = library.components[comp_a].comp_type.id
                             type_b = library.components[comp_b].comp_type.id
+                            if type_a not in default_connections.keys():
+                                default_connections[type_a] = set()
+                            default_connections[type_a].add(comp_a)
                             if comp_a not in concrete_connection_dict.keys():
                                 concrete_connection_dict[comp_a] = {}
                             if comp_b not in concrete_connection_dict[comp_a].keys():
@@ -70,6 +73,16 @@ def merge_connection_rules(folder: Path, library: Library):
                                 else:
                                     concrete_connection_dict[comp_a][comp_b][direction] = (comp_a_conn, comp_b_conn)
                                     abstract_connection_dict[type_a][type_b][direction] = (comp_a_conn, comp_b_conn)
+
+
+    for key, values in default_connections.items():
+        default_connections[key] = list(values)
+    default_connections_json = json.dumps(default_connections, indent=4)
+    save_to_file(
+        str(default_connections_json),
+        file_name=f"default_connections_json.json",
+        absolute_folder_path=connections_folder,
+    )
 
     return concrete_connection_dict, abstract_connection_dict
 
@@ -112,7 +125,6 @@ def export_connection_rules(connection_dict: dict):
 
 
 def main():
-    c_library, designs = parse_library_and_seed_designs()
 
     concrete_connection_dict, abstract_connection_dict = merge_connection_rules(connections_folder, c_library)
     connection_concrete_json = json.dumps(concrete_connection_dict, indent=4)
@@ -136,4 +148,5 @@ def main():
 
 
 if __name__ == '__main__':
-    generalize_connection_rules(connections_folder)
+    merge_connection_rules(connections_folder, c_library)
+    # generalize_connection_rules(connections_folder)

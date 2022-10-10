@@ -19,6 +19,7 @@ para_opt = ParametersOptimizer(library=c_library)
 def random_topology(design_name: str = "Trowel", designs_dat_file: str = "designs.dat"):
 
 
+
     d_concrete = DConcrete(name="test")
 
     fuselage = c_library.components["capsule_fuselage"]
