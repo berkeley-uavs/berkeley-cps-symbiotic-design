@@ -2,19 +2,16 @@ from __future__ import annotations
 
 from enum import Enum, auto
 
-from sym_cps.representation.library import CConnector
+from sym_cps.representation.library import CType
 
 
 class Direction(Enum):
     TOP = auto()
     BOTTOM = auto()
-    LEFT = auto()
     INSIDE = auto()
 
 
-
-
-def connect(lib_component_a: str,
+def connect(component_type_a: str, component_b: str,
             lib_component_b: str,
             direction: Direction) -> [(str, str)]:
     if lib_component_a == "capsule_fuselage" and \
