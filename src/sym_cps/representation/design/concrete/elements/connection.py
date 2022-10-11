@@ -17,6 +17,7 @@ class Connection:
     connector_a: CConnector
     component_b: Component
     connector_b: CConnector
+    #brendan: make api to output connector_a and connect_b given component_a and component_b
 
     def __post_init__(self):
         """TODO: is connection legal?"""
@@ -69,3 +70,4 @@ class Connection:
 
     def __hash__(self):
         return abs(hash(self.key))
+
