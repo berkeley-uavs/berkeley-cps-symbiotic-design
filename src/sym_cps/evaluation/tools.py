@@ -12,7 +12,7 @@ import dramatiq
 from typing import Optional, Union
 
 from sym_cps.shared.paths import aws_folder, fdm_extract_folder
-
+from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
 
 def load_design(design_file: Path) -> object:
     """
@@ -207,7 +207,7 @@ def polling_results(msg, timeout: int = 800):
     print(f"Command completed. Results can be found at:{result_archive}")
     return result_archive
 
-def extract_results(result_archive_path: Path):
+def extract_results(result_archive_path: Path, control_opt: bool) -> tuple[list[float] | None, list[bool] | None, dict | None]:
 
     print("Extracting results from result zip file...")
     with zipfile.ZipFile(result_archive_path) as result_zip_file:
@@ -228,9 +228,9 @@ def extract_results(result_archive_path: Path):
         folders = [fdm_test for fdm_test in fdm_folder.iterdir()]
         if len(folders) != 4:
             print(f"Not 4 folders in fdm results, meaning that the design is problematic or pipeline had problem.")
-            return None
+            return None, [False], None # return failure
 
-        extract_folder = fdm_extract_folder / "tmp"
+        extract_folder = fdm_extract_folder
         #print(extract_folder)
         for fdm_test in folders:
             fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
@@ -246,13 +246,21 @@ def extract_results(result_archive_path: Path):
                     #TODO: read the fdm input files
                     pass
 
-            if fdm_output.is_file():
-                info = result_zip_file.getinfo(str(fdm_output_member))
-                info.filename = f"flightDynFastOut.out"
-                result_zip_file.extract(member = info, path = str(extract_folder))
-                with fdm_output.open("r") as fdm_output_file:
-                    #TODO: read the fdm output files
-                    pass
-
+            # if fdm_output.is_file():
+            #     info = result_zip_file.getinfo(str(fdm_output_member))
+            #     info.filename = f"flightDynFastOut.out"
+            #     result_zip_file.extract(member = info, path = str(extract_folder))
+            #     with fdm_output.open("r") as fdm_output_file:
+            #         #TODO: read the fdm output files
+            #         pass
+    if control_opt:
+        cont_opt = ControlOptimizer(library=None)
+        ret = cont_opt.optimize(d_concrete = None)
+        best_args = None
+        for path_ret in ret["result"]:
+            if path_ret["Path"] == 9:
+                best_args = path_ret["best_args"]
+        return [ret["total_score"]], [True],  best_args# return failure
+        
     #TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
-    return None
+    return None, [False], None # return failure
