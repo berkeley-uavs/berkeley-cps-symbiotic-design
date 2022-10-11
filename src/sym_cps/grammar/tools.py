@@ -6,7 +6,6 @@ from enum import Enum, auto
 from pathlib import Path
 
 from sym_cps.representation.library import Library
-from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
 from sym_cps.shared.paths import data_folder
 from sym_cps.tools.io import save_to_file
 
@@ -20,15 +19,31 @@ class Direction(Enum):
 
 connections_folder = data_folder / "reverse_engineering"
 
+connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
+
+def get_direction_from_components_and_connections(comp_type_a, comp_type_b, connector_id_a, connector_id_b) -> str:
+    f = open(connectors_components_path)
+    connection_map = json.load(f)
+    try:
+        connections = connection_map[comp_type_a][comp_type_b]
+    except:
+        return "UNKNOWN"
+    for direction, (conn_a, conn_b) in connections.items():
+        if "Hub__Side_Connector" in conn_a:
+            conn_a = "Hub__Side_Connector_1-6"
+        if "Hub__Side_Connector" in conn_b:
+            conn_b = "Hub__Side_Connector_1-6"
+        if conn_a == connector_id_a and conn_b == connector_id_b:
+            print(direction)
+            return direction
 
 def merge_connection_rules(folder: Path, library: Library):
     file_name_list = os.listdir(folder)
 
     abstract_connection_dict = {}
-    concrete_connection_dict = {}
 
-    empty_ = {}
     concrete_connection_dict = {}
+    default_connections = {}
 
     for name in file_name_list:
         if "connections.json" in name:
@@ -41,6 +56,9 @@ def merge_connection_rules(folder: Path, library: Library):
                             comp_a_conn, comp_b_conn, direction = tuple(connection)
                             type_a = library.components[comp_a].comp_type.id
                             type_b = library.components[comp_b].comp_type.id
+                            if type_a not in default_connections.keys():
+                                default_connections[type_a] = set()
+                            default_connections[type_a].add(comp_a)
                             if comp_a not in concrete_connection_dict.keys():
                                 concrete_connection_dict[comp_a] = {}
                             if comp_b not in concrete_connection_dict[comp_a].keys():
@@ -52,7 +70,7 @@ def merge_connection_rules(folder: Path, library: Library):
                             if direction != "":
                                 if direction in concrete_connection_dict[comp_a][comp_b].keys():
                                     if (comp_a_conn, comp_b_conn) != concrete_connection_dict[comp_a][comp_b][direction]:
-                                        if "Hub" in comp_b_conn:
+                                        if "Hub" in f"{comp_a_conn}{comp_b_conn}":
                                             continue
                                         raise Exception(f"Contradicting Rules\n"
                                                         f"{comp_a} -> {comp_b} ({direction})\n"
@@ -71,7 +89,45 @@ def merge_connection_rules(folder: Path, library: Library):
                                     concrete_connection_dict[comp_a][comp_b][direction] = (comp_a_conn, comp_b_conn)
                                     abstract_connection_dict[type_a][type_b][direction] = (comp_a_conn, comp_b_conn)
 
+
+    for key, values in default_connections.items():
+        default_connections[key] = list(values)
+    default_connections_json = json.dumps(default_connections, indent=4)
+    save_to_file(
+        str(default_connections_json),
+        file_name=f"default_connections_json.json",
+        absolute_folder_path=connections_folder,
+    )
+
     return concrete_connection_dict, abstract_connection_dict
+
+
+def generalize_connection_rules(folder: Path):
+    file_name_list = os.listdir(folder)
+
+    for name in file_name_list:
+        if name == "geometry_rules_abstract_mod.json":
+            file_path = folder / name
+            with open(file_path) as json_file:
+                data = json.load(json_file)
+                for comp_a, components in data.items():
+                    for comp_b, connections in components.items():
+                        for side, connectors in connections.items():
+                            if side == "NONE":
+                                if "NONE" in data[comp_b][comp_a].keys():
+                                    if data[comp_b][comp_a]["NONE"][0] != connectors[1]:
+                                        raise Exception("Conflict")
+                                    if data[comp_b][comp_a]["NONE"][1] != connectors[0]:
+                                        raise Exception("Conflict")
+                                else:
+                                    data[comp_b][comp_a]["NONE"] = [connectors[1], connectors[0]]
+
+    connection_json = json.dumps(data, indent=4)
+    save_to_file(
+        str(connection_json),
+        file_name=f"data_aug.json",
+        absolute_folder_path=connections_folder,
+    )
 
 
 def export_connection_rules(connection_dict: dict):
@@ -83,8 +139,7 @@ def export_connection_rules(connection_dict: dict):
     )
 
 
-if __name__ == '__main__':
-    c_library, designs = parse_library_and_seed_designs()
+def main():
 
     concrete_connection_dict, abstract_connection_dict = merge_connection_rules(connections_folder, c_library)
     connection_concrete_json = json.dumps(concrete_connection_dict, indent=4)
@@ -105,3 +160,9 @@ if __name__ == '__main__':
         for comp_b, conn in connections.items():
             if conn == {}:
                 print(f"{comp_a} - {comp_b}")
+
+
+if __name__ == '__main__':
+    c_library, designs = parse_library_and_seed_designs()
+    merge_connection_rules(connections_folder, c_library)
+    # generalize_connection_rules(connections_folder)

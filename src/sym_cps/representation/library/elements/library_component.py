@@ -25,6 +25,10 @@ class LibraryComponent:
     properties: dict[str, CProperty] = field(init=False, default_factory=dict)
 
     @property
+    def id_with_type(self) -> str:
+        return f"{self.id} [{self.comp_type.id}]"
+
+    @property
     def parameters(self) -> dict[str, CParameter]:
         return self.comp_type.parameters
 

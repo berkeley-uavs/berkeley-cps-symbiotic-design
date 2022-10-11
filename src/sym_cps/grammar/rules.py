@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from __future__ import annotations
 
 from enum import Enum, auto
@@ -21,3 +22,5 @@ def connect(component_a: CType,
             lib_component_b == "main_hub" and \
             direction == Direction.BOTTOM:
         return "capsule_fuselage__BottomConnector"
+=======
+>>>>>>> 6a176295def9efdc970a71c7dec2cae1f95a2bc6

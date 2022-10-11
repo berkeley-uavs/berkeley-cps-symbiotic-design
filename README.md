@@ -16,7 +16,7 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
    1. Copy `data` and `output` directories in the root of the repo
    2. Keep data and output updated if there are changes on the Google Drive
 
-### Installation
+### Dependencies
 
 For Mac M1 users, change the architecture first by running:
 ```bash
@@ -31,17 +31,11 @@ Then:
     git submodule update --
     ```
     Make sure that `eval_pipeline` folder is not empty. 
-    If the submodule was not pulled correctly you can simply clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content inside `eval_pipeline`.
+    If the submodule was not pulled correctly you can simply clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content inside `eval_pipeline` folder.
 2. Install
     ```bash
     pdm install
     ```
-When running a python script from command line, insert `pdm run` before. For example:
-
-```bash
-pdm run pdm python src/sym_cps/examples/library.py
-```
-
 
 ### Configure AWS
 
@@ -58,6 +52,37 @@ pdm run pdm python src/sym_cps/examples/library.py
 sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
 ```
 
+### Run
+
+#### Launch Python scripts from command line
+
+When running a python script from command line, insert `pdm run` before. For example:
+
+```bash
+pdm run pdm run python src/sym_cps/examples/library.py
+```
+
+
+#### Working with IDEs
+
+With PEP 582, dependencies will be installed into __pypackages__ directory under the project root. With PEP 582 enabled globally, you can also use the project interpreter to run scripts directly.
+Check [pdm documentation](https://pdm.fming.dev/latest/usage/pep582/) on PEP 582.
+
+
+**PYCHARM**
+Add `__pypackages__/3.10/lib` and `src` folders to your PYTHONPATH. With PyCharm you can simple right click on the folders and select `Mark Directory as` - `Source folder`.
+
+**VSCODE**
+
+To configure VSCode to support PEP 582, open `.vscode/settings.json` (create one if it does not exist) and add the following entries:
+```json
+{
+  "python.autoComplete.extraPaths": ["__pypackages__/3.10/lib"],
+  "python.analysis.extraPaths": ["__pypackages__/3.10/lib"]
+}
+```
+
+
 
 ## Examples
 
@@ -65,17 +90,17 @@ Check the example folder and look at the code of the python files to get familia
 
 Populate the library of components from the `data` folder
 ```bash
-pdm python src/sym_cps/examples/library.py
+pdm run python src/sym_cps/examples/library.py
 ```
 
 Extracts the _seed designs_
 ```bash
-pdm python src/sym_cps/examples/designs.py
+pdm run python src/sym_cps/examples/designs.py
 ```
 
 Create a new design from scratch. First choosing and topology and then concretize it.
 ```bash
-pdm python src/sym_cps/examples/topology.py
+pdm run python src/sym_cps/examples/topology.py
 ```
 
 
@@ -92,7 +117,7 @@ pdm run suam-client direct2cad.process-design --design=./output/designs/TestQuad
 
 Evaluate designs from python
 ```bash
-pdm python src/sym_cps/examples/evaluation.py
+pdm run python src/sym_cps/examples/evaluation.py
 ```
 
 
@@ -131,7 +156,6 @@ Then try installation process again.
 
 
 
-
 > NOTE:
 > Install 
 > [PDM](https://github.com/pdm-project/pdm)
@@ -157,16 +181,6 @@ Then try installation process again.
 > ```
 > 
 
-> NOTE: Working with PEP 582
-> With PEP 582, dependencies will be installed into __pypackages__ directory under the project root. With PEP 582 enabled globally, you can also use the project interpreter to run scripts directly.
-> Check [pdm documentation](https://pdm.fming.dev/latest/usage/pep582/) on PEP 582.
-> To configure VSCode to support PEP 582, open `.vscode/settings.json` (create one if it does not exist) and add the following entries:
-> ```json
-> {
->   "python.autoComplete.extraPaths": ["__pypackages__/3.10/lib"],
->   "python.analysis.extraPaths": ["__pypackages__/3.10/lib"]
-> }
-> ```
 
 > NOTE: VSCode and Apple Silicon
 > To run a x86 terminal by default in VSCode. Add the following to your `settings.json`

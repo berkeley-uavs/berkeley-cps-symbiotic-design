@@ -43,6 +43,14 @@ class Library:
             else:
                 self.connectors.update(comp_type.connectors)
 
+    def get_default_component(self, component_type: str, hub_size: int = 0) -> LibraryComponent:
+        """TODO"""
+        return
+
+    def get_connectors(self, component_type_a: CType, component_type_b: CType, direction: str) -> (CConnector, CConnector):
+        """TODO"""
+        return
+
     def update_information(
         self,
         connectable_connectors: dict[str, set[str]] | None,
