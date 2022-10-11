@@ -52,7 +52,7 @@ def merge_connection_rules(folder: Path, library: Library):
                             if direction != "":
                                 if direction in concrete_connection_dict[comp_a][comp_b].keys():
                                     if (comp_a_conn, comp_b_conn) != concrete_connection_dict[comp_a][comp_b][direction]:
-                                        if "Hub" in comp_b_conn:
+                                        if "Hub" in f"{comp_a_conn}{comp_b_conn}":
                                             continue
                                         raise Exception(f"Contradicting Rules\n"
                                                         f"{comp_a} -> {comp_b} ({direction})\n"
@@ -74,6 +74,34 @@ def merge_connection_rules(folder: Path, library: Library):
     return concrete_connection_dict, abstract_connection_dict
 
 
+def generalize_connection_rules(folder: Path):
+    file_name_list = os.listdir(folder)
+
+    for name in file_name_list:
+        if name == "geometry_rules_abstract_mod.json":
+            file_path = folder / name
+            with open(file_path) as json_file:
+                data = json.load(json_file)
+                for comp_a, components in data.items():
+                    for comp_b, connections in components.items():
+                        for side, connectors in connections.items():
+                            if side == "NONE":
+                                if "NONE" in data[comp_b][comp_a].keys():
+                                    if data[comp_b][comp_a]["NONE"][0] != connectors[1]:
+                                        raise Exception("Conflict")
+                                    if data[comp_b][comp_a]["NONE"][1] != connectors[0]:
+                                        raise Exception("Conflict")
+                                else:
+                                    data[comp_b][comp_a]["NONE"] = [connectors[1], connectors[0]]
+
+    connection_json = json.dumps(data, indent=4)
+    save_to_file(
+        str(connection_json),
+        file_name=f"data_aug.json",
+        absolute_folder_path=connections_folder,
+    )
+
+
 def export_connection_rules(connection_dict: dict):
     connection_json = json.dumps(connection_dict, indent=4)
     save_to_file(
@@ -83,7 +111,7 @@ def export_connection_rules(connection_dict: dict):
     )
 
 
-if __name__ == '__main__':
+def main():
     c_library, designs = parse_library_and_seed_designs()
 
     concrete_connection_dict, abstract_connection_dict = merge_connection_rules(connections_folder, c_library)
@@ -105,3 +133,7 @@ if __name__ == '__main__':
         for comp_b, conn in connections.items():
             if conn == {}:
                 print(f"{comp_a} - {comp_b}")
+
+
+if __name__ == '__main__':
+    generalize_connection_rules(connections_folder)
