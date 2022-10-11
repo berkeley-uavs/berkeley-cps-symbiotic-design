@@ -22,7 +22,8 @@ dependencies = [
     "flask-socketio>=5.3.1",
     "eventlet>=0.33.1",
     "scikit-learn>=1.1.2",
-#     "pygraphviz>=1.10",
+    #     "pygraphviz>=1.10",
+    "bayesian-optimization @ git+https://github.com/fmfn/BayesianOptimization",
 ]
 requires-python = ">=3.10,<3.11"
 
