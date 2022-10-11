@@ -10,12 +10,13 @@ from dataclasses import dataclass, field
 import igraph
 from igraph import Graph, plot
 from matplotlib import pyplot as plt
+from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
-from sym_cps.shared.paths import output_folder, ExportType, designs_folder
+from sym_cps.shared.paths import output_folder, ExportType, designs_folder, data_folder
 from sym_cps.tools.io import save_to_file
 from sym_cps.tools.strings import tab
 
@@ -291,6 +292,7 @@ class DConcrete:
 
         return not self.__eq__(other)
 
+
     def generate_connections_json(self):
 
         connection_dict = {}
@@ -303,25 +305,29 @@ class DConcrete:
                 components = self.select(library_component=library_component)
                 for component in components:
                     for connection in self.connections:
+                        direction = get_direction_from_components_and_connections(connection.component_a.c_type.id,
+                                                                                  connection.component_b.c_type.id,
+                                                                                  connection.connector_a.id,
+                                                                                  connection.connector_b.id)
                         if component.id == connection.component_a.id:
                             if connection.component_b.library_component.id in connection_dict[
                                 library_component.id].keys():
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id].append(
-                                    (connection.connector_a.id, connection.connector_b.id, ""))
+                                    (connection.connector_a.id, connection.connector_b.id, direction))
                             else:
                                 connection_dict[library_component.id][connection.component_b.library_component.id] = [
-                                    (connection.connector_a.id, connection.connector_b.id, "")]
+                                    (connection.connector_a.id, connection.connector_b.id, direction)]
 
                         if component.id == connection.component_b.id:
                             if connection.component_a.library_component.id in connection_dict[
                                 library_component.id].keys():
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id].append(
-                                    (connection.connector_b.id, connection.connector_a.id, ""))
+                                    (connection.connector_b.id, connection.connector_a.id, direction))
                             else:
                                 connection_dict[library_component.id][connection.component_a.library_component.id] = [
-                                    (connection.connector_b.id, connection.connector_a.id, "")]
+                                    (connection.connector_b.id, connection.connector_a.id, direction)]
 
         connection_json = json.dumps(connection_dict, indent=4)
         return connection_json

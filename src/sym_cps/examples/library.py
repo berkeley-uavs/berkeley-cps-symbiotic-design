@@ -104,11 +104,6 @@ def export_library(library_txt_file: str = "library.txt",
             file_name=f"connections.json",
             absolute_folder_path=designs_folder / d_concrete.name,
         )
-        save_to_file(
-            str(d_concrete.generate_connections_json(abstract=True)),
-            file_name=f"connections_abstract.json",
-            absolute_folder_path=designs_folder / d_concrete.name,
-        )
 
 
 if __name__ == '__main__':
