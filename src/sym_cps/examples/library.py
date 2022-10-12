@@ -1,5 +1,6 @@
 # type: ignore
 from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.design.tools import generate_designs_info_files
 from sym_cps.representation.design.topology import DTopology
 from sym_cps.representation.library import Library, CType, CConnector
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
@@ -86,25 +87,9 @@ def export_library(library_txt_file: str = "library.txt",
 
     designs: dict[str, tuple[DConcrete, DTopology]] = load(designs_dat_file)  # type: ignore
 
-    for d_concrete, d_topology in designs.values():
-        d_concrete.export(ExportType.JSON)
-        save_to_file(
-            str(d_concrete),
-            file_name=f"DConcrete",
-            absolute_folder_path=designs_folder / d_concrete.name,
-        )
-        save_to_file(
-            str(d_topology),
-            file_name=f"DTopology",
-            absolute_folder_path=designs_folder / d_concrete.name,
-        )
-        d_topology.export(ExportType.DOT)
-        save_to_file(
-            str(d_concrete.generate_connections_json()),
-            file_name=f"connections.json",
-            absolute_folder_path=designs_folder / d_concrete.name,
-        )
-        print("terminated")
+    for d_name in designs.keys():
+        generate_designs_info_files(designs, "TestQuad")
+
 
 
 if __name__ == '__main__':

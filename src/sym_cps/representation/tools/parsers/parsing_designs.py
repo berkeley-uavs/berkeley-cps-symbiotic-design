@@ -189,6 +189,7 @@ def parse_designs_from_folder(
                                     )
                 new_design.add_node(new_component)
 
+            connections_set = []
             for instance_s, connections in instance_connection.items():
                 for (instance_t, connector_s, connector_t) in connections:
                     # print(f"{instance_s}, {connector_s}, {instance_t}, {connector_t}")
@@ -198,11 +199,13 @@ def parse_designs_from_folder(
                         component_b=new_design.get_instance(instance_t),
                         connector_b=all_connectors[connector_t],
                     )
-                    # TODO: Bugfix: new_design.get_istance(instance_s) sometimes is None
-                    try:
-                        new_design.connect(connection)
-                    except:
-                        pass
+                    connections_set.append(connection)
+            # TODO: Bugfix: new_design.get_istance(instance_s) sometimes is None
+            try:
+                for connection in connections_set:
+                    new_design.connect(connection)
+            except:
+                raise Exception("ERROR")
 
             d_concrete = new_design
             d_topology = DTopology.from_concrete(new_design)

@@ -6,7 +6,7 @@ from enum import Enum, auto
 from pathlib import Path
 
 from sym_cps.representation.library import Library
-from sym_cps.shared.paths import data_folder
+from sym_cps.shared.paths import data_folder, connectors_components_path
 from sym_cps.tools.io import save_to_file
 
 
@@ -15,11 +15,6 @@ class Direction(Enum):
     BOTTOM = auto()
     LEFT = auto()
     INSIDE = auto()
-
-
-connections_folder = data_folder / "reverse_engineering"
-
-connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
 
 def get_direction_from_components_and_connections(comp_type_a, comp_type_b, connector_id_a, connector_id_b) -> str:
     f = open(connectors_components_path)
@@ -31,10 +26,11 @@ def get_direction_from_components_and_connections(comp_type_a, comp_type_b, conn
     for direction, (conn_a, conn_b) in connections.items():
         if "Hub__Side_Connector" in conn_a:
             conn_a = "Hub__Side_Connector_1-6"
+            connector_id_a = "Hub__Side_Connector_1-6"
         if "Hub__Side_Connector" in conn_b:
             conn_b = "Hub__Side_Connector_1-6"
+            connector_id_b = "Hub__Side_Connector_1-6"
         if conn_a == connector_id_a and conn_b == connector_id_b:
-            print(direction)
             return direction
 
 def merge_connection_rules(folder: Path, library: Library):

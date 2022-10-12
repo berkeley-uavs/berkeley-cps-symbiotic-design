@@ -50,19 +50,15 @@ class Library:
         default_comp_path = data_folder / "reverse_engineering" / "default_connections_json.json"
         f = open(default_comp_path)
         default = json.load(f)
-        component = None
-        
         if component_type == "Hub":
-            comp_name = default[component_type]
-
-            if hub_size == 3:
-                component = self.components[comp_name][1]
-            elif hub_size == 4:
-                component = self.components[comp_name][0]
-
+            if hub_size == 4:
+                component = self.components["0394od_para_hub_4"]
+            elif hub_size == 3:
+                component = self.components["0394od_para_hub_4"]
+            else:
+                raise Exception(f"No hub of size {hub_size}")
         else:
-            comp_name = default[component_type][0]
-            component = self.components[comp_name]
+            component = self.components[default[component_type][0]]
         
         return component
 

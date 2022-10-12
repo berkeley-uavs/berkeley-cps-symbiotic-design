@@ -11,6 +11,8 @@ import igraph
 import matplotlib
 from igraph import Graph, plot
 from sym_cps.evaluation import evaluate_design
+from sym_cps.representation.tools.dictionaries import number_of_instances_in_dict
+from sym_cps.shared import c_library
 
 matplotlib.use('TkAgg')
 from matplotlib import pyplot as plt
@@ -41,9 +43,10 @@ class DConcrete:
     """
     name: str
     design_parameters: dict[str, DesignParameter] = field(default_factory=dict)
+    comp_id_to_node: dict[str, igraph.Vertex] = field(default_factory=dict)
 
     def __post_init__(self):
-        self._graph = Graph()
+        self._graph = Graph(directed=True)
 
 
     @property
@@ -68,6 +71,22 @@ class DConcrete:
     @property
     def n_edges(self) -> int:
         return len(self.graph.es)
+
+    def add_abstract_node(self, abstract_component_id: str, topology: dict) -> igraph.Vertex:
+        if abstract_component_id in self.comp_id_to_node.keys():
+            return self.comp_id_to_node[abstract_component_id]
+        node_id_a = abstract_component_id.split('|')[0]
+        node_type_a = abstract_component_id.split('|')[1]
+        if "Hub" == node_type_a:
+            if number_of_instances_in_dict(topology, abstract_component_id) > 4:
+                lib_comp_a = c_library.get_default_component(node_type_a, 4)
+            else:
+                lib_comp_a = c_library.get_default_component(node_type_a, 3)
+        else:
+            lib_comp_a = c_library.get_default_component(node_type_a)
+        instance_a = Component(id=abstract_component_id, library_component=lib_comp_a)
+        self.comp_id_to_node[abstract_component_id] = self.add_node(instance_a)
+        return self.comp_id_to_node[abstract_component_id]
 
     def add_node(self, component: Component) -> igraph.Vertex:
         return self.graph.add_vertex(
@@ -261,6 +280,43 @@ class DConcrete:
                 file_name=f"DTopology",
                 absolute_folder_path=absolute_folder,
             )
+        elif file_type == ExportType.TOPOLOGY:
+            topology_summary: dict = {
+                "NAME": self.name,
+                "DESCRIPTION": ""
+            }
+            connections_map: dict = {}
+            connections_abstract: dict = {}
+            for node in self.nodes:
+                node_id = f"{node.index}|{node['c_type']}"
+                connections_map[node_id] = {}
+                for edge in self.get_edges_from(node):
+                    t_node = self._graph.vs[edge.target]
+                    dir = edge["connection"].direction_b_respect_to_a()
+                    t_node_id = f"{t_node.index}|{t_node['c_type']}"
+                    connections_map[node_id][dir] = t_node_id
+                    add = True
+                    if t_node_id in connections_map.keys():
+                        for t_dir, s_node_id in connections_map[t_node_id].items():
+                            if node_id == s_node_id:
+                                add = False
+                    if add:
+                        if node_id not in connections_abstract.keys():
+                            connections_abstract[node_id] = {}
+                        connections_abstract[node_id][dir] = t_node_id
+
+            topology_summary["TOPOLOGY"] = connections_abstract
+            file_path = absolute_folder / "topology.json"
+            save_to_file(
+                str(json.dumps(connections_map)),
+                file_name=f"topology.json",
+                absolute_folder_path=absolute_folder,
+            )
+            save_to_file(
+                str(json.dumps(topology_summary)),
+                file_name=f"topology_summary.json",
+                absolute_folder_path=absolute_folder,
+            )
         elif file_type == ExportType.JSON:
             file_path = absolute_folder / "design_swri.json"
             save_to_file(
@@ -353,6 +409,12 @@ class DConcrete:
     def get_edges_from(self, node: igraph.Vertex) -> igraph.EdgeSeq:
         return self._graph.es.select(_source=node.index)
 
+    # def get_edges_of(self, node: igraph.Vertex) -> set(igraph.Edge):
+    #     edges = set()
+    #     edges |= set(self._graph.es.select(_source=[node.index]))
+    #     edges |= set(self._graph.es.select(_target=[node.index]))
+    #     return edges
+
     def __str__(self):
 
         ret = "TOPOLOGY SUMMARY\n\n"
@@ -361,18 +423,20 @@ class DConcrete:
         for node in self.nodes:
             node_id = f"{node.index} - {node['instance']}::{node['label']}::{node['c_type']}"
             connections_map[node_id] = []
-            target_nodes = self.get_neighbours_of(node)
-            outgoing_edges = self.get_edges_from(node)
-            for t_node in target_nodes:
-                t_edge = outgoing_edges.select(_target=t_node.index)
-                dir = t_edge[0]["connection"].direction_b_respect_to_a()
-                conn_a = t_edge[0]["connection"].connector_a.id
-                conn_b = t_edge[0]["connection"].connector_b.id
+            print(f"SOURCE NODE:\t{node['instance']}")
+            for edge in self.get_edges_from(node):
+                print(edge["connection"])
+                t_node = self._graph.vs[edge.target]
+                dir = edge["connection"].direction_b_respect_to_a()
+                c_a = edge["connection"].component_a.id
+                c_b = edge["connection"].component_b.id
+                conn_a = edge["connection"].connector_a.id
+                conn_b = edge["connection"].connector_b.id
                 t_node_id = f"{dir} -- {t_node.index} - {t_node['instance']}::{t_node['label']}::{t_node['c_type']}\n" \
-                            f"\t\t{conn_a} -> {conn_b}"
+                            f"\t\t{c_a}:{conn_a} -> {c_b}:{conn_b}"
                 connections_map[node_id].append(t_node_id)
+            print("\n\n")
         ret += repr_dictionary(connections_map)
-
         ret += "\n\n"
         ret += str(self._graph)
 

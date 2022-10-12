@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
+from sym_cps.shared import c_library
+from sym_cps.shared.paths import connectors_components_path
 
 if TYPE_CHECKING:
     from sym_cps.representation.design.concrete.elements.component import Component
@@ -21,8 +24,22 @@ class Connection:
     connector_b: CConnector
     #brendan: make api to output connector_a and connect_b given component_a and component_b
 
-    def __post_init__(self):
-        """TODO: is connection legal?"""
+    @classmethod
+    def from_direction(cls,
+                       component_a: Component,
+                       component_b: Component,
+                       direction: str):
+
+        f = open(connectors_components_path)
+        connection_map = json.load(f)
+        connector_a = connection_map[component_a.c_type.id][component_b.c_type.id][direction][0]
+        connector_b = connection_map[component_a.c_type.id][component_b.c_type.id][direction][1]
+        return cls(
+            component_a,
+            c_library.connectors[connector_a],
+            component_b,
+            c_library.connectors[connector_b],
+        )
 
     @property
     def components_and_connectors(self) -> set[tuple[Component, CConnector]]:
@@ -55,7 +72,6 @@ class Connection:
                                                              self.component_b.c_type.id,
                                                              self.connector_a.id,
                                                              self.connector_b.id)
-
     def __eq__(self, other: object):
         if not isinstance(other, Connection):
             return NotImplementedError

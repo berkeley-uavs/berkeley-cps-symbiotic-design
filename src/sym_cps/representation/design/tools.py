@@ -11,6 +11,9 @@ def generate_designs_info_files(designs: dict[str, tuple[DConcrete, DTopology]],
     d_concrete.export(ExportType.JSON)
     d_concrete.export(ExportType.PDF)
     d_concrete.export(ExportType.DOT)
+    d_topology.export(ExportType.DOT)
+    d_topology.export(ExportType.PDF)
+    d_concrete.export(ExportType.TOPOLOGY)
     save_to_file(
         str(d_concrete),
         file_name=f"DConcrete",
@@ -21,8 +24,6 @@ def generate_designs_info_files(designs: dict[str, tuple[DConcrete, DTopology]],
         file_name=f"DTopology",
         absolute_folder_path=designs_folder / d_concrete.name,
     )
-    d_topology.export(ExportType.DOT)
-    d_topology.export(ExportType.PDF)
     save_to_file(
         str(d_concrete.generate_connections_json()),
         file_name=f"connections.json",
