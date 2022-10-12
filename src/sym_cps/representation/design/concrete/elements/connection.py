@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from sym_cps.grammar.tools import get_direction_from_components_and_connections
+
 if TYPE_CHECKING:
     from sym_cps.representation.design.concrete.elements.component import Component
     from sym_cps.representation.library.elements.c_connector import CConnector
@@ -47,6 +49,12 @@ class Connection:
         if (a1 + a2) >= (b1 + b2):
             return f"{a1}-{a2}-{b1}-{b2}"
         return f"{b1}-{b2}-{a1}-{a2}"
+
+    def direction_b_respect_to_a(self):
+        return get_direction_from_components_and_connections(self.component_a.c_type.id,
+                                                             self.component_b.c_type.id,
+                                                             self.connector_a.id,
+                                                             self.connector_b.id)
 
     def __eq__(self, other: object):
         if not isinstance(other, Connection):

@@ -5,11 +5,10 @@ import platform
 from sym_cps.optimizers import Optimizer
 from sym_cps.optimizers.control_opt.control_opt_bayes import ControlBayesOptimizer
 from sym_cps.shared.paths import fdm_extract_folder, fdm_bin_folder, fdm_root_folder, fdm_tmp_folder
-from sym_cps.representation.design.concrete import DConcrete
 
 class ControlOptimizer(Optimizer):
 
-    def optimize(self, 
+    def optimize(self,
         d_concrete: DConcrete,
         file_path: str = None
     ) -> DConcrete:

@@ -1,25 +1,29 @@
-from sym_cps.optimizers.concrete_opt import ConcreteOptimizer, ConcreteStrategy
-from sym_cps.optimizers.params_opt import ParametersOptimizer
-from sym_cps.optimizers.topo_opt import TopologyOptimizer, TopologyStrategy
+from sym_cps.examples.library import parse_library, export_library
 from sym_cps.representation.design.concrete import DConcrete, Component, Connection
+from sym_cps.representation.design.tools import generate_designs_info_files
 from sym_cps.representation.design.topology import DTopology
+from sym_cps.representation.library import Library
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
-from sym_cps.representation.tools.parsers.parsing_designs import parse_design_from_design_swri
-from sym_cps.shared.paths import output_folder, ExportType
+from sym_cps.tools.persistance import load
 
 """Loading Library and Seed Designs"""
-c_library, designs = parse_library_and_seed_designs()
 
-"""Loading optimizers at different abstraction layers"""
-topo_opt = TopologyOptimizer(library=c_library)
-concr_opt = ConcreteOptimizer(library=c_library)
-para_opt = ParametersOptimizer(library=c_library)
+# To update the .dat files and the exports run:
+# parse_library()
+# export_library()
+
+designs: dict[str, tuple[DConcrete, DTopology]] = load("designs.dat")
+c_library: Library = load("library.dat")
+
+generate_designs_info_files(designs, "TestQuad")
+
+# test_quad_design = designs["TestQuad"][0]
+#
+# ret = test_quad_design.evaluate()
+# print(ret)
 
 
-def random_topology(design_name: str = "Trowel", designs_dat_file: str = "designs.dat"):
-
-
-
+def design_test_quad():
     d_concrete = DConcrete(name="test")
 
     fuselage = c_library.components["capsule_fuselage"]
@@ -43,6 +47,3 @@ def random_topology(design_name: str = "Trowel", designs_dat_file: str = "design
 
     d_concrete.connect(connection)
 
-
-if __name__ == '__main__':
-    random_topology()

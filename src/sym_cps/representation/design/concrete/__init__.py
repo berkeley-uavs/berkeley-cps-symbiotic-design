@@ -8,7 +8,11 @@ import json
 from dataclasses import dataclass, field
 
 import igraph
+import matplotlib
 from igraph import Graph, plot
+from sym_cps.evaluation import evaluate_design
+
+matplotlib.use('TkAgg')
 from matplotlib import pyplot as plt
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.design.concrete.elements.component import Component
@@ -16,9 +20,9 @@ from sym_cps.representation.design.concrete.elements.connection import Connectio
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
-from sym_cps.shared.paths import output_folder, ExportType, designs_folder, data_folder
+from sym_cps.shared.paths import ExportType, designs_folder
 from sym_cps.tools.io import save_to_file
-from sym_cps.tools.strings import tab
+from sym_cps.tools.strings import tab, repr_dictionary
 
 
 @dataclass
@@ -71,6 +75,7 @@ class DConcrete:
             library_component=component.library_component,
             c_type=component.c_type,
             component=component,
+            label=f"{component.library_component.id}"
         )
 
     def remove_node(self):
@@ -80,10 +85,12 @@ class DConcrete:
     def add_edge(self, node_id_a: int, node_id_b: int, connection: Connection):
         self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection)
 
+
     def connect(self, connection: Connection):
         a = self.get_node_by_instance(connection.component_a.id).index
         b = self.get_node_by_instance(connection.component_b.id).index
         self.add_edge(a, b, connection)
+        print(f"Edge: {a}: {connection.component_a.id} -> {b}: {connection.component_b.id}")
 
     def remove_edge(self):
         """TODO. Tip: self.graph.delete_edges"""
@@ -166,7 +173,10 @@ class DConcrete:
 
     def evaluate(self):
         """Sends the Design for evaluation"""
-        raise NotImplementedError
+        json_path = self.export(ExportType.JSON)
+        evaluate_design(design_json_path=json_path,
+                        metadata={"extra_info": "full evaluation example"},
+                        timeout=800)
 
     def evaluation(self, evaluation_results_json: str):
         """Parse and update the evaluation of the Design"""
@@ -245,42 +255,42 @@ class DConcrete:
         absolute_folder = designs_folder / self.name
 
         if file_type == ExportType.TXT:
+            file_path = absolute_folder / "DTopology.txt"
             save_to_file(
                 str(self),
                 file_name=f"DTopology",
                 absolute_folder_path=absolute_folder,
             )
         elif file_type == ExportType.JSON:
+            file_path = absolute_folder / "design_swri.json"
             save_to_file(
                 str(json.dumps(self.to_design_swri)),
                 file_name=f"design_swri.json",
                 absolute_folder_path=absolute_folder,
             )
         elif file_type == ExportType.DOT:
-            self.graph.write_dot(f=str(absolute_folder / "concrete_graph.dot"))
+            file_path = absolute_folder / "concrete_graph.dot"
+            self.graph.write_dot(f=str(file_path))
 
         elif file_type == ExportType.PDF:
+            file_path = absolute_folder / "concrete_graph.pdf"
             if self.n_nodes > 0:
                 layout = self.graph.layout("kk")
                 """Adding labels to nodes"""
-                self.graph.vs["label"] = self.graph.vs["c_type"]
+                # self.graph.vs["label"] = self.graph.vs["component"]
                 fig, ax = plt.subplots()
-                plot(self.graph, layout=layout, target=ax)
-                plt.savefig(absolute_folder / "concrete_graph.pdf")
-
+                plot(self.graph,
+                     scale=50,
+                     vertex_size=0.2,
+                     edge_width=[1, 1],
+                     layout=layout, target=ax)
+                plt.savefig(file_path)
         else:
             raise Exception("File type not supported")
 
         print(f"{file_type} file saved in {absolute_folder}")
+        return file_path
 
-
-    def draw(self, name):
-        if self.n_nodes > 0:
-            layout = self.graph.layout("kk")
-            fig, ax = plt.subplots()
-            plot(self.graph, layout=layout, target=ax)
-            file_name_path = output_folder / "graphs" / name
-            plt.savefig(f"{file_name_path}.pdf")
 
     def __eq__(self, other: object):
         pass
@@ -332,7 +342,39 @@ class DConcrete:
         connection_json = json.dumps(connection_dict, indent=4)
         return connection_json
 
+    def get_neighbours_of(self, node: igraph.Vertex) -> list[igraph.Vertex]:
+        neighbors = self._graph.neighbors(node.index)
+        neighbors = set(neighbors)
+        neighbors_vertices = []
+        for n in neighbors:
+            neighbors_vertices.append(self._graph.vs.select(n)[0])
+        return neighbors_vertices
+
+    def get_edges_from(self, node: igraph.Vertex) -> igraph.EdgeSeq:
+        return self._graph.es.select(_source=node.index)
+
     def __str__(self):
+
+        ret = "TOPOLOGY SUMMARY\n\n"
+        connections_map: dict = {}
+        ret += "<VERTEX_ID> - <COMPONENT_INSTANCE>::<LIBRARY_COMPONENT>::<COMPONENT_TYPE>\n\n"
+        for node in self.nodes:
+            node_id = f"{node.index} - {node['instance']}::{node['label']}::{node['c_type']}"
+            connections_map[node_id] = []
+            target_nodes = self.get_neighbours_of(node)
+            outgoing_edges = self.get_edges_from(node)
+            for t_node in target_nodes:
+                t_edge = outgoing_edges.select(_target=t_node.index)
+                dir = t_edge[0]["connection"].direction_b_respect_to_a()
+                conn_a = t_edge[0]["connection"].connector_a.id
+                conn_b = t_edge[0]["connection"].connector_b.id
+                t_node_id = f"{dir} -- {t_node.index} - {t_node['instance']}::{t_node['label']}::{t_node['c_type']}\n" \
+                            f"\t\t{conn_a} -> {conn_b}"
+                connections_map[node_id].append(t_node_id)
+        ret += repr_dictionary(connections_map)
+
+        ret += "\n\n"
+        ret += str(self._graph)
 
         n_library_component_by_class = []
         for k, v in self.all_library_components_in_type.items():
@@ -377,7 +419,7 @@ class DConcrete:
         connection_str = "\n".join(connection_list)
 
         s1 = (
-            f"name: {self.name}\n"
+            f"\n\nname: {self.name}\n"
             f"#_components: {len(self.components)}\n"
             f"#_connections: {len(self.connections)}\n"
             f"#_component_classes:\n{n_library_component_by_class_str}\n"
@@ -385,4 +427,4 @@ class DConcrete:
             f"\n\ncomponents:\n{components_str}\n"
         )
 
-        return s1
+        return ret + s1

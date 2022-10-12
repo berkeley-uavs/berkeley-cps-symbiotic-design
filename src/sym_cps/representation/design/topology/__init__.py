@@ -6,10 +6,15 @@ from random import choice
 from typing import TYPE_CHECKING
 
 import igraph
-from igraph import Graph
+from igraph import Graph, plot
+
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib import pyplot as plt
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.shared.paths import ExportType, designs_folder
 from sym_cps.tools.io import save_to_file
+from sym_cps.tools.strings import repr_dictionary
 
 if TYPE_CHECKING:
     from sym_cps.representation.design.concrete import DConcrete
@@ -75,15 +80,16 @@ class DTopology:
             return set(self.graph.vs()["c_type"])
         return set()
 
-    @property
-    def edges(self) -> list[igraph.Edge]:
-        return list(self.graph.es)
-
     def draw_random_node(self) -> igraph.Vertex | None:
         if self.n_nodes == 0:
             return None
         return choice(self.nodes)
 
+    def get_nodes_connected_to(self, node: igraph.Vertex):
+        nodes = set()
+        for edge in self._graph.es.select(_source=node):
+            nodes.add(edge.target)
+        return nodes
 
     def export(self, file_type: ExportType):
         absolute_folder = designs_folder / self.name
@@ -99,15 +105,36 @@ class DTopology:
         elif file_type == ExportType.DOT:
             self.graph.write_dot(f=str(absolute_folder / "topo_graph.dot"))
 
+        elif file_type == ExportType.PDF:
+            if self.n_nodes > 0:
+                layout = self.graph.layout("kk")
+                """Adding labels to nodes"""
+                # self.graph.vs["label"] = self.graph.vs["component"]
+                fig, ax = plt.subplots()
+                plot(self.graph,
+                     scale=50,
+                     vertex_size=0.2,
+                     edge_width=[1, 1],
+                     layout=layout, target=ax)
+                plt.savefig(absolute_folder / "topology_graph.pdf")
+
         else:
             raise Exception("File type not supported")
 
         print(f"{file_type} file saved in {absolute_folder}")
 
 
-
     def __str__(self):
-        ret = str(self.graph)
+        ret = "TOPOLOGY SUMMARY\n\n"
+        connections_map: dict = {}
+        for node in self.nodes:
+            connections_map[f"{node.index} ({node['c_type']})"] = []
+            target_nodes = self.get_nodes_connected_to(node)
+            for t_node in target_nodes:
+                connections_map[f"{node.index} ({node['c_type']})"].append(self._graph.vs["c_type"][t_node])
+        ret += repr_dictionary(connections_map)
+        ret += "\n\nGRAPH"
+        ret += str(self.graph)
         ret += "\n"
         for node in self.nodes:
             ret += f"{node.index}: {node['c_type']}\n"

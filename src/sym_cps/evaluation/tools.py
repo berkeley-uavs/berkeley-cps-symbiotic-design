@@ -12,7 +12,7 @@ import dramatiq
 from typing import Optional, Union
 
 from sym_cps.shared.paths import aws_folder, fdm_extract_folder
-from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
+
 
 def load_design(design_file: Path) -> object:
     """
@@ -254,6 +254,7 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> tuple[list[
             #         #TODO: read the fdm output files
             #         pass
     if control_opt:
+        from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
         cont_opt = ControlOptimizer(library=None)
         ret = cont_opt.optimize(d_concrete = None)
         best_args = None

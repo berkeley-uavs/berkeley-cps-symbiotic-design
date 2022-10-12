@@ -104,6 +104,7 @@ def export_library(library_txt_file: str = "library.txt",
             file_name=f"connections.json",
             absolute_folder_path=designs_folder / d_concrete.name,
         )
+        print("terminated")
 
 
 if __name__ == '__main__':
