@@ -15,6 +15,17 @@ def generate_topology(design_name: str):
 
 """Generate design from topology.json"""
 
+def analysis():
+    quad = designs["TestQuad"][0]
+    axe = designs["NewAxe"][0]
+
+    print("TestQuad DP")
+    for dp in quad.design_parameters.values():
+        print(dp)
+
+    print("NewAxe DP")
+    for dp in axe.design_parameters.values():
+        print(dp)
 
 def modified_design():
     test_quad_original = designs["TestQuad"][0]
@@ -63,4 +74,5 @@ if __name__ == "__main__":
     # generate_topology("TestQuad")
     # topo_file = data_folder / "custom_designs" / "modified_test_quad.json"
     # generate_design(topo_file)
-    modified_design()
+    # modified_design()
+    analysis()
