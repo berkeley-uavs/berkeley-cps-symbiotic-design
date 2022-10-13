@@ -6,11 +6,11 @@ from sym_cps.representation.tools.parsers.parsing_library import (
     all_parameters_lower_bounds,
     all_parameters_upper_bounds,
 )
-from sym_cps.shared.library import update_dat_files
 from sym_cps.shared.paths import library_folder
 from sym_cps.tools.io import save_to_file
 from sym_cps.tools.persistance import load
 from sym_cps.tools.strings import repr_dictionary
+from sym_cps.tools.update_library import update_dat_files_and_export
 
 
 def export_library(
@@ -77,5 +77,5 @@ def export_library(
 
 
 if __name__ == "__main__":
-    update_dat_files()
+    update_dat_files_and_export()
     export_library()
