@@ -13,7 +13,7 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 
 1. [pdm](https://github.com/pdm-project/pdm)
 2. Access to the `INPUT` folder on Google Drive.
-   1. Copy `data` and `output` directories in the root of the repo
+   1. Copy `data`, `fdm`, and `output` directories in the root of the repo
    2. Keep data and output updated if there are changes on the Google Drive
 
 ### Dependencies
