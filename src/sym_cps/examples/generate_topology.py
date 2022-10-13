@@ -14,9 +14,9 @@ topo = json.load(f)
 d_concrete = DConcrete(name=topo["NAME"])
 components_to_nodes: dict = {}
 for component_a, connections in topo["TOPOLOGY"].items():
-    node_a_vertex = d_concrete.add_abstract_node(component_a, topo)
+    node_a_vertex = d_concrete.add_default_node(component_a, topo)
     for direction, component_b in connections.items():
-        node_b_vertex = d_concrete.add_abstract_node(component_b, topo)
+        node_b_vertex = d_concrete.add_default_node(component_b, topo)
         connection = Connection.from_direction(
             component_a=node_a_vertex["component"], component_b=node_b_vertex["component"], direction=direction
         )

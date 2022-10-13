@@ -1,5 +1,6 @@
 import json
 
+from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.tools import generate_designs_info_files
 from sym_cps.shared.library import designs
@@ -47,8 +48,17 @@ def modified_design():
         absolute_folder_path=topology_json_path.parent,
     )
 
+    # Loading AbstractTopology form file
+    abstract_topology = AbstractTopology.from_json(topology_json_path)
+    abstract_topology.name += "Modified"
+    new_file_path = save_to_file(
+        abstract_topology.to_json(),
+        file_name=f"topology_summary_modified.json",
+        absolute_folder_path=topology_json_path.parent,
+    )
+
     # Loading it ito a new design
-    test_quad_from_topology = DConcrete.from_topology_summary(new_file_path)
+    test_quad_from_topology = DConcrete.from_abstract_topology(abstract_topology)
 
     test_quad_from_topology.export(ExportType.JSON)
     test_quad_from_topology.export(ExportType.PDF)
@@ -74,5 +84,5 @@ if __name__ == "__main__":
     # generate_topology("TestQuad")
     # topo_file = data_folder / "custom_designs" / "modified_test_quad.json"
     # generate_design(topo_file)
-    # modified_design()
-    analysis()
+    modified_design()
+    # analysis()

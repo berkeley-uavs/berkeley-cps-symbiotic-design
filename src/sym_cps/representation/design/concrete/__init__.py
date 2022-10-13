@@ -5,6 +5,7 @@ Test Documentation
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -12,9 +13,9 @@ import igraph
 import matplotlib
 from igraph import Graph, plot
 from sym_cps.evaluation import evaluate_design
+from sym_cps.grammar.topology import AbstractTopology, AbstractionLevel
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.tools.dictionaries import number_of_instances_in_dict
-import os
 
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
@@ -46,34 +47,32 @@ class DConcrete:
     """
 
     name: str
+    description: str = ""
     design_parameters: dict[str, DesignParameter] = field(default_factory=dict)
     comp_id_to_node: dict[str, igraph.Vertex] = field(default_factory=dict)
 
     def __post_init__(self):
         self._graph = Graph(directed=True)
+        self.description = "empty_description"
 
     @classmethod
-    def from_topology_summary(cls, topology_json_path: Path):
+    def from_abstract_topology(cls, topo: AbstractTopology):
 
-        f = open(topology_json_path)
-        topo = json.load(f)
-
-        # Let us instantiate a DConcrete object
-        d_concrete = cls(name=topo["NAME"])
-        for component_a, categories in topo["TOPOLOGY"].items():
-            node_a_vertex = d_concrete.add_abstract_node(component_a, topo)
-            for category, infos in categories.items():
-                if category == "CONNECTIONS":
-                    for direction, component_b in infos.items():
-                        node_b_vertex = d_concrete.add_abstract_node(component_b, topo)
-                        connection = Connection.from_direction(
-                            component_a=node_a_vertex["component"],
-                            component_b=node_b_vertex["component"],
-                            direction=direction,
-                        )
-                        d_concrete.connect(connection)
-                if category == "PARAMETERS":
-                    node_a_vertex["component"].update_parameters(infos)
+        d_concrete = cls(name=topo.name)
+        for component_a, connections in topo.connections.items():
+            node_a_vertex = d_concrete.add_default_node(component_a)
+            """Parameters"""
+            if component_a in topo.parameters.keys():
+                node_a_vertex["component"].update_parameters(topo.parameters[component_a])
+            """Connections"""
+            for component_b, direction in connections.items():
+                node_b_vertex = d_concrete.add_default_node(component_b)
+                connection = Connection.from_direction(
+                    component_a=node_a_vertex["component"],
+                    component_b=node_b_vertex["component"],
+                    direction=direction,
+                )
+                d_concrete.connect(connection)
 
         return d_concrete
 
@@ -103,7 +102,7 @@ class DConcrete:
     def export_parameters(self) -> dict[str, dict[str, Parameter]]:
         pass
 
-    def add_abstract_node(self, abstract_component_id: str, topology: dict) -> igraph.Vertex:
+    def add_default_node(self, abstract_component_id: str) -> igraph.Vertex:
         if abstract_component_id in self.comp_id_to_node.keys():
             return self.comp_id_to_node[abstract_component_id]
         id_split = abstract_component_id.split("_")
@@ -117,13 +116,7 @@ class DConcrete:
 
         from sym_cps.shared.library import c_library
 
-        if "Hub" == node_type_a:
-            if number_of_instances_in_dict(topology, abstract_component_id) > 4:
-                lib_comp_a = c_library.get_default_component(node_type_a, 4)
-            else:
-                lib_comp_a = c_library.get_default_component(node_type_a, 3)
-        else:
-            lib_comp_a = c_library.get_default_component(node_type_a)
+        lib_comp_a = c_library.get_default_component(node_type_a)
         instance_a = Component(id=abstract_component_id, library_component=lib_comp_a)
         self.comp_id_to_node[abstract_component_id] = self.add_node(instance_a)
         return self.comp_id_to_node[abstract_component_id]
@@ -145,10 +138,6 @@ class DConcrete:
         self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection)
 
     def connect(self, connection: Connection):
-        print("WHAT")
-        print(connection.component_a)
-        print(connection.component_b)
-        print("WHAT")
         a = self.get_node_by_instance(connection.component_a.id).index
         b = self.get_node_by_instance(connection.component_b.id).index
         self.add_edge(a, b, connection)
@@ -312,6 +301,35 @@ class DConcrete:
 
         return design_swri_data
 
+    def to_abstract_topology(self) -> AbstractTopology:
+        name = self.name
+        description = self.description
+        connections: dict[str, dict[str, str]] = {}
+        parameters: dict[str, dict[str, float]] = {}
+
+        """Connections"""
+        for edge in self.edges:
+            node_id_s = self._graph.vs[edge.source]['instance']
+            node_id_t = self._graph.vs[edge.target]['instance']
+            direction = edge["connection"].direction_b_respect_to_a()
+            if node_id_s not in connections:
+                connections[node_id_s] = {}
+            connections[node_id_s][node_id_t] = direction
+
+        """Parameters"""
+        for node in self.nodes:
+            node_id = node["instance"]
+            if node_id not in connections.keys():
+                """Adding nodes with no connections"""
+                connections[node_id] = {}
+            if node_id not in parameters.keys():
+                """Adding nodes with no connections"""
+                parameters[node_id] = {}
+            for parameter_id, parameter in node["component"].parameters.items():
+                parameters[node_id][parameter_id] = float(parameter.value)
+
+        return AbstractTopology(name, description, connections, parameters)
+
     def export(self, file_type: ExportType) -> Path:
         absolute_folder = designs_folder / self.name
 
@@ -322,46 +340,9 @@ class DConcrete:
                 absolute_folder_path=absolute_folder,
             )
         elif file_type == ExportType.TOPOLOGY:
-            topology_summary: dict = {"NAME": self.name, "DESCRIPTION": "", "TOPOLOGY": {}}
-            """Nodes"""
-            for node in self.nodes:
-                node_id = node["instance"]
-                topology_summary["TOPOLOGY"][node_id] = {}
-                """Parameters"""
-                for parameter_id, parameter in node["component"].parameters.items():
-                    if "PARAMETERS" not in topology_summary["TOPOLOGY"][node_id]:
-                        topology_summary["TOPOLOGY"][node_id]["PARAMETERS"] = {}
-                    topology_summary["TOPOLOGY"][node_id]["PARAMETERS"][parameter_id] = parameter.value
-            """Edges"""
-            for edge in self.edges:
-                node_id_s = self._graph.vs[edge.source]['instance']
-                node_id_t = self._graph.vs[edge.target]['instance']
-                if "CONNECTIONS" not in topology_summary["TOPOLOGY"][node_id_s]:
-                    topology_summary["TOPOLOGY"][node_id_s]["CONNECTIONS"] = {}
-                direction = edge["connection"].direction_b_respect_to_a()
-                topology_summary["TOPOLOGY"][node_id_s]["CONNECTIONS"][direction] = node_id_t
-                # """Connections"""
-                # for edge in self.get_edges_from(node):
-                #     if "CONNECTIONS" not in topo_summary[node_id]:
-                #         topo_summary[node_id]["CONNECTIONS"] = {}
-                #     t_node = self._graph.vs[edge.target]
-                #     dir = edge["connection"].direction_b_respect_to_a()
-                #     t_node_id = f"{t_node['c_type']}_{t_node.index}"
-                #     topo_summary[node_id]["CONNECTIONS"][dir] = t_node_id
-                #     add = True
-                #     if t_node_id in topo_summary.keys():
-                #         for t_dir, s_node_id in topo_summary[t_node_id].items():
-                #             if node_id == s_node_id:
-                #                 add = False
-                #     if add:
-                #         if node_id not in topo_summary_abstract.keys():
-                #             topo_summary_abstract[node_id] = {}
-                #         if "CONNECTIONS" not in topo_summary_abstract[node_id]:
-                #             topo_summary_abstract[node_id]["CONNECTIONS"] = {}
-                #         topo_summary_abstract[node_id]["CONNECTIONS"][dir] = t_node_id
-
+            ab_topo = self.to_abstract_topology()
             return save_to_file(
-                str(json.dumps(topology_summary)),
+                ab_topo.to_json(AbstractionLevel.LOW),
                 file_name=f"topology_summary.json",
                 absolute_folder_path=absolute_folder,
             )
@@ -383,7 +364,6 @@ class DConcrete:
             if self.n_nodes > 0:
                 layout = self.graph.layout("kk")
                 """Adding labels to nodes"""
-                # self.graph.vs["label"] = self.graph.vs["component"]
                 fig, ax = plt.subplots()
                 plot(self.graph, scale=50, vertex_size=0.2, edge_width=[1, 1], layout=layout, target=ax)
                 plt.savefig(file_path)
