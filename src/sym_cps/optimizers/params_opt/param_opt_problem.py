@@ -59,9 +59,12 @@ class ParameterOptimizationProblem(ProblemBase):
         # call the pipeline for evaluation
         design_json_path = designs_folder / self._d_concrete.name / "design_swri.json"
 
-        obj_vals, con_vals = evaluate_design(
-            design_json_path=design_json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
-        )
+        # obj_vals, con_vals = evaluate_design(
+        #     design_json_path=design_json_path, 
+        #     metadata={"extra_info": "full evaluation example"}, 
+        #     timeout=800,
+        #     control_opt=True
+        # )
 
         obj_vals = np.array([-np.sum(parameters**2)])
         con_vals = np.array([parameters[0] > parameters[1] and parameters[1] ** 2 - parameters[2] > 1])

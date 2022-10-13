@@ -1,5 +1,5 @@
 from sym_cps.optimizers.concrete_opt import ConcreteOptimizer
-from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
+from sym_cps.optimizers.control_opt import ControlOptimizer
 from sym_cps.optimizers.params_opt import ParametersOptimizer
 from sym_cps.optimizers.topo_opt import TopologyOptimizer
 from sym_cps.representation.design.concrete import DConcrete

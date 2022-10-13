@@ -18,7 +18,7 @@ class BayesianOptimizer(OptimizerBase):
     Input: problem: A ProblemBase object
     """
 
-    def __init__(self, problem: ProblemBase, **kwarg):
+    def __init__(self, problem: ProblemBase, debug_level = 1, **kwarg):
         super().__init__(problem=problem)
         self._visualizer = BayesianOptimizationVisualizer()
         self._kernel = Matern(nu=2.5, length_scale=0.05, length_scale_bounds="fixed")
@@ -107,7 +107,6 @@ class BayesianOptimizer(OptimizerBase):
         # evaluate the random samples
         for x in x_sample:
             y, v = self._evaluate(parameters=x)
-            print(y, v)
             valid = np.all(v)
             if valid or not self._consider_constraint:
                 y_max_ind_valid = np.maximum(y, y_max_ind_valid)
@@ -115,7 +114,6 @@ class BayesianOptimizer(OptimizerBase):
                     # TODO: handle multi-objective parato front
                     y_max_valid = y
                     x_max_valid = x
-
         # print(self._hist.hist_params)
         # print(self._hist.hist_func)
         # print(self._hist.hist_valid)
@@ -194,7 +192,7 @@ class BayesianOptimizer(OptimizerBase):
         # print(idx_array[:self._explore_num_samples].shape, idx_array.shape, self._explore_num_samples)
         # exploring_samples = self._get_samples(n_samples=self._explore_num_samples)
         # exploring_samples = np.concatenate(warn_samples, exploring_samples)
-
+        self.debug_print(1, "Finding exploration points...")
         for x0 in exploring_samples:
             # print("run", exploring_samples.shape)
             # print("inner", x0, -func(x0), gpr.predict(x0.reshape(1, -1), return_std = True), classifier.predict_proba(x0.reshape(1, -1)))
