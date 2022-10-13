@@ -14,6 +14,7 @@ from igraph import Graph, plot
 from sym_cps.evaluation import evaluate_design
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.tools.dictionaries import number_of_instances_in_dict
+import os
 
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
@@ -372,6 +373,8 @@ class DConcrete:
                 absolute_folder_path=absolute_folder,
             )
         elif file_type == ExportType.DOT:
+            if not os.path.exists(absolute_folder):
+                os.makedirs(absolute_folder)
             file_path = absolute_folder / "concrete_graph.dot"
             self.graph.write_dot(f=str(file_path))
 
