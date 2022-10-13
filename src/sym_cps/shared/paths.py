@@ -27,17 +27,11 @@ fdm_bin_folder: Path = root / "fdm" / "bin" / "bin" / "bin"
 fdm_tmp_folder: Path = root / "fdm" / "tmp"
 fdm_extract_folder: Path = root / "fdm" / "extract"
 
-component_library_root_path_default: Path = (
-        data_folder / "ComponentLibrary" / "results_json"
-)
+component_library_root_path_default: Path = data_folder / "ComponentLibrary" / "results_json"
 
 # Used to set the bounds to parameters that don't have it. Filled by domain expert (looking at the CAD models)
-lower_bound_file = (
-        component_library_root_path_default.parent / "lower_bounds_chosen.txt"
-)
-upper_bound_file = (
-        component_library_root_path_default.parent / "upper_bounds_chosen.txt"
-)
+lower_bound_file = component_library_root_path_default.parent / "lower_bounds_chosen.txt"
+upper_bound_file = component_library_root_path_default.parent / "upper_bounds_chosen.txt"
 
 design_library_root_path_default: Path = data_folder / "DesignLibrary"
 

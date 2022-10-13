@@ -15,6 +15,7 @@ pdm.lock
 __pypackages__/
 .venv/
 .vscode/
+src/frontend/node_modules/
 
 data/
 output/

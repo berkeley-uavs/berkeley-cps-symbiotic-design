@@ -1,27 +1,22 @@
+import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-import json
 
-from sym_cps.shared.paths import data_folder
 from sym_cps.representation.library.elements.c_connector import CConnector
 from sym_cps.representation.library.elements.c_parameter import CParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
-from sym_cps.shared.paths import component_library_root_path_default
-from sym_cps.representation.tools.parsers.parsing_library import (
-    fill_parameters_connectors,
-    parse_components_and_types,
-)
+from sym_cps.representation.tools.parsers.parsing_library import fill_parameters_connectors, parse_components_and_types
+from sym_cps.shared.paths import component_library_root_path_default, data_folder
+
 
 @dataclass
 class Library:
     components: dict[str, LibraryComponent] = field(default_factory=dict)
 
     component_types: dict[str, CType] = field(init=False, default_factory=dict)
-    components_in_type: dict[str, set[LibraryComponent]] = field(
-        init=False, default_factory=dict
-    )
+    components_in_type: dict[str, set[LibraryComponent]] = field(init=False, default_factory=dict)
     parameters: dict[str, CParameter] = field(init=False, default_factory=dict)
     connectors: dict[str, CConnector] = field(init=False, default_factory=dict)
 
@@ -59,10 +54,12 @@ class Library:
                 raise Exception(f"No hub of size {hub_size}")
         else:
             component = self.components[default[component_type][0]]
-        
+
         return component
 
-    def get_connectors(self, component_type_a: CType, component_type_b: CType, direction: str) -> (CConnector, CConnector):
+    def get_connectors(
+        self, component_type_a: CType, component_type_b: CType, direction: str
+    ) -> (CConnector, CConnector):
         """TODO"""
         connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
         f = open(connectors_components_path)
@@ -76,7 +73,7 @@ class Library:
         if name_b in available_components_a:
             if direction == "":
                 direction = "NONE"
-            
+
             if direction in list(connections[name_a][name_b].keys()):
                 connector_names = connections[name_a][name_b][direction]
                 a_connector_name = connector_names[0]
@@ -89,7 +86,7 @@ class Library:
 
             else:
                 print("illegal direction")
-        
+
         else:
             print("illegal component")
 
@@ -106,9 +103,7 @@ class Library:
                 for output_connector in value:  # type: ignore
                     if output_connector.id in self.connectors.keys():
                         # print(f"{key} -> {output_connector}")
-                        self.connectors[key]._update_field(
-                            "compatible_with", {output_connector.id: output_connector}
-                        )
+                        self.connectors[key]._update_field("compatible_with", {output_connector.id: output_connector})
 
         if isinstance(connectable_components_types, dict):
             for key, value in connectable_components_types.items():
@@ -146,6 +141,4 @@ class Library:
         return Library(components)
 
     def __str__(self):
-        return "\n+++++++++++++++++++++++++++++++++\n".join(
-            str(c) for c in list(self.components.values())
-        )
+        return "\n+++++++++++++++++++++++++++++++++\n".join(str(c) for c in list(self.components.values()))

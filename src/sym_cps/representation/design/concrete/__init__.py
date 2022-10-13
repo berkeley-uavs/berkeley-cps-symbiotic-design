@@ -11,12 +11,14 @@ from pathlib import Path
 import igraph
 import matplotlib
 from igraph import Graph, plot
+
 from sym_cps.evaluation import evaluate_design
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.tools.dictionaries import number_of_instances_in_dict
 
-matplotlib.use('TkAgg')
+matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
+
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
@@ -25,7 +27,7 @@ from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.paths import ExportType, designs_folder
 from sym_cps.tools.io import save_to_file
-from sym_cps.tools.strings import tab, repr_dictionary
+from sym_cps.tools.strings import repr_dictionary, tab
 
 
 @dataclass
@@ -42,13 +44,13 @@ class DConcrete:
     design_parameters : dict[str, DesignParameter]
         design parameters
     """
+
     name: str
     design_parameters: dict[str, DesignParameter] = field(default_factory=dict)
     comp_id_to_node: dict[str, igraph.Vertex] = field(default_factory=dict)
 
     def __post_init__(self):
         self._graph = Graph(directed=True)
-
 
     @classmethod
     def from_topology_summary(cls, topology_json_path: Path):
@@ -67,7 +69,7 @@ class DConcrete:
                         connection = Connection.from_direction(
                             component_a=node_a_vertex["component"],
                             component_b=node_b_vertex["component"],
-                            direction=direction
+                            direction=direction,
                         )
                         d_concrete.connect(connection)
                 if category == "PARAMETERS":
@@ -101,17 +103,17 @@ class DConcrete:
     def export_parameters(self) -> dict[str, dict[str, Parameter]]:
         pass
 
-
     def add_abstract_node(self, abstract_component_id: str, topology: dict) -> igraph.Vertex:
         if abstract_component_id in self.comp_id_to_node.keys():
             return self.comp_id_to_node[abstract_component_id]
-        id_split = abstract_component_id.split('_')
+        id_split = abstract_component_id.split("_")
         node_type_a = "_".join(id_split[:-1])
         # for i, elem in enumerate(id_split):
         #     if i == len(id_split)-1:
         #         continue
         #     node_type_a = f"{node_type_a}_{elem}"
         from sym_cps.shared.library import c_library
+
         if "Hub" == node_type_a:
             if number_of_instances_in_dict(topology, abstract_component_id) > 4:
                 lib_comp_a = c_library.get_default_component(node_type_a, 4)
@@ -129,7 +131,7 @@ class DConcrete:
             library_component=component.library_component,
             c_type=component.c_type,
             component=component,
-            label=f"{component.library_component.id}"
+            label=f"{component.library_component.id}",
         )
 
     def remove_node(self):
@@ -138,7 +140,6 @@ class DConcrete:
 
     def add_edge(self, node_id_a: int, node_id_b: int, connection: Connection):
         self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection)
-
 
     def connect(self, connection: Connection):
         a = self.get_node_by_instance(connection.component_a.id).index
@@ -188,16 +189,14 @@ class DConcrete:
     ) -> set[Component]:
         components = set()
         if library_component is not None:
-            return set(
-                self.graph.vs.select(library_component=library_component)["component"]
-            )
+            return set(self.graph.vs.select(library_component=library_component)["component"])
         if component_type is not None:
             return set(self.graph.vs.select(component_type=component_type)["component"])
         return components
 
     @property
     def all_library_components_in_type(
-            self,
+        self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -228,9 +227,7 @@ class DConcrete:
     def evaluate(self):
         """Sends the Design for evaluation"""
         json_path = self.export(ExportType.JSON)
-        evaluate_design(design_json_path=json_path,
-                        metadata={"extra_info": "full evaluation example"},
-                        timeout=800)
+        evaluate_design(design_json_path=json_path, metadata={"extra_info": "full evaluation example"}, timeout=800)
 
     def evaluation(self, evaluation_results_json: str):
         """Parse and update the evaluation of the Design"""
@@ -315,11 +312,7 @@ class DConcrete:
                 absolute_folder_path=absolute_folder,
             )
         elif file_type == ExportType.TOPOLOGY:
-            topology_summary: dict = {
-                "NAME": self.name,
-                "DESCRIPTION": "",
-                "TOPOLOGY": {}
-            }
+            topology_summary: dict = {"NAME": self.name, "DESCRIPTION": "", "TOPOLOGY": {}}
             """Nodes"""
             for node in self.nodes:
                 node_id = f"{node['c_type']}_{node.index}"
@@ -380,11 +373,7 @@ class DConcrete:
                 """Adding labels to nodes"""
                 # self.graph.vs["label"] = self.graph.vs["component"]
                 fig, ax = plt.subplots()
-                plot(self.graph,
-                     scale=50,
-                     vertex_size=0.2,
-                     edge_width=[1, 1],
-                     layout=layout, target=ax)
+                plot(self.graph, scale=50, vertex_size=0.2, edge_width=[1, 1], layout=layout, target=ax)
                 plt.savefig(file_path)
         else:
             raise Exception("File type not supported")
@@ -409,42 +398,49 @@ class DConcrete:
 
         return not self.__eq__(other)
 
-
     def generate_connections_json(self):
 
         connection_dict = {}
         for (
-                components_class,
-                library_components,
+            components_class,
+            library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
                 components = self.select(library_component=library_component)
                 for component in components:
                     for connection in self.connections:
-                        direction = get_direction_from_components_and_connections(connection.component_a.c_type.id,
-                                                                                  connection.component_b.c_type.id,
-                                                                                  connection.connector_a.id,
-                                                                                  connection.connector_b.id)
+                        direction = get_direction_from_components_and_connections(
+                            connection.component_a.c_type.id,
+                            connection.component_b.c_type.id,
+                            connection.connector_a.id,
+                            connection.connector_b.id,
+                        )
                         if component.id == connection.component_a.id:
-                            if connection.component_b.library_component.id in connection_dict[
-                                library_component.id].keys():
+                            if (
+                                connection.component_b.library_component.id
+                                in connection_dict[library_component.id].keys()
+                            ):
                                 connection_dict[library_component.id][
-                                    connection.component_b.library_component.id].append(
-                                    (connection.connector_a.id, connection.connector_b.id, direction))
+                                    connection.component_b.library_component.id
+                                ].append((connection.connector_a.id, connection.connector_b.id, direction))
                             else:
                                 connection_dict[library_component.id][connection.component_b.library_component.id] = [
-                                    (connection.connector_a.id, connection.connector_b.id, direction)]
+                                    (connection.connector_a.id, connection.connector_b.id, direction)
+                                ]
 
                         if component.id == connection.component_b.id:
-                            if connection.component_a.library_component.id in connection_dict[
-                                library_component.id].keys():
+                            if (
+                                connection.component_a.library_component.id
+                                in connection_dict[library_component.id].keys()
+                            ):
                                 connection_dict[library_component.id][
-                                    connection.component_a.library_component.id].append(
-                                    (connection.connector_b.id, connection.connector_a.id, direction))
+                                    connection.component_a.library_component.id
+                                ].append((connection.connector_b.id, connection.connector_a.id, direction))
                             else:
                                 connection_dict[library_component.id][connection.component_a.library_component.id] = [
-                                    (connection.connector_b.id, connection.connector_a.id, direction)]
+                                    (connection.connector_b.id, connection.connector_a.id, direction)
+                                ]
 
         connection_json = json.dumps(connection_dict, indent=4)
         return connection_json
@@ -486,8 +482,10 @@ class DConcrete:
                 c_b = edge["connection"].component_b.id
                 conn_a = edge["connection"].connector_a.id
                 conn_b = edge["connection"].connector_b.id
-                t_node_id = f"{dir} -- {t_node.index} - {t_node['instance']}::{t_node['label']}::{t_node['c_type']}\n" \
-                            f"\t\t{c_a}:{conn_a} -> {c_b}:{conn_b}"
+                t_node_id = (
+                    f"{dir} -- {t_node.index} - {t_node['instance']}::{t_node['label']}::{t_node['c_type']}\n"
+                    f"\t\t{c_a}:{conn_a} -> {c_b}:{conn_b}"
+                )
                 connections_map[node_id].append(t_node_id)
             print("\n\n")
         ret += repr_dictionary(connections_map)
@@ -503,31 +501,49 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-                components_class,
-                library_components,
+            components_class,
+            library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:
-                components_list.append(
-                    tab(tab(f"LIBRARY COMPONENT: {library_component.id}"))
-                )
+                components_list.append(tab(tab(f"LIBRARY COMPONENT: {library_component.id}")))
                 components = self.select(library_component=library_component)
                 for component in components:
                     components_list.append(tab(tab(tab(f"COMPONENT: {component.id}"))))
                     components_list.append(tab(tab(tab(tab(f"CONNECTIONS:")))))
                     for connection in self.connections:
                         if component.id == connection.component_a.id:
-                            components_list.append(tab(tab(tab(tab(
-                                tab(f"{connection.component_a.library_component.id} :: {connection.connector_a.id} <<->> {connection.connector_b.id} :: {connection.component_b.id} ({connection.component_b.library_component.id})"))))))
+                            components_list.append(
+                                tab(
+                                    tab(
+                                        tab(
+                                            tab(
+                                                tab(
+                                                    f"{connection.component_a.library_component.id} :: {connection.connector_a.id} <<->> {connection.connector_b.id} :: {connection.component_b.id} ({connection.component_b.library_component.id})"
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
                         if component.id == connection.component_b.id:
-                            components_list.append(tab(tab(tab(tab(
-                                tab(f"{connection.component_b.library_component.id} :: {connection.connector_b.id} <<->> {connection.connector_a.id} :: {connection.component_a.id} ({connection.component_a.library_component.id})"))))))
+                            components_list.append(
+                                tab(
+                                    tab(
+                                        tab(
+                                            tab(
+                                                tab(
+                                                    f"{connection.component_b.library_component.id} :: {connection.connector_b.id} <<->> {connection.connector_a.id} :: {connection.component_a.id} ({connection.component_a.library_component.id})"
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
 
                     # components_list.append(tab(tab(tab(f"COMPONENT: {component}"))))
                     # components_list.append(tab(tab(tab(component))))
-            components_list.append(
-                "\n\t+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-            )
+            components_list.append("\n\t+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
         connection_list = []
         for connection in self.connections:

@@ -1,16 +1,16 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
 
-
+from dataclasses import dataclass
 from random import choice
 from typing import TYPE_CHECKING
 
 import igraph
+import matplotlib
 from igraph import Graph, plot
 
-import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
+
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.shared.paths import ExportType, designs_folder
 from sym_cps.tools.io import save_to_file
@@ -111,11 +111,7 @@ class DTopology:
                 """Adding labels to nodes"""
                 # self.graph.vs["label"] = self.graph.vs["component"]
                 fig, ax = plt.subplots()
-                plot(self.graph,
-                     scale=50,
-                     vertex_size=0.2,
-                     edge_width=[1, 1],
-                     layout=layout, target=ax)
+                plot(self.graph, scale=50, vertex_size=0.2, edge_width=[1, 1], layout=layout, target=ax)
                 plt.savefig(absolute_folder / "topology_graph.pdf")
 
         else:

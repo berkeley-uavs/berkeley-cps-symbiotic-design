@@ -1,12 +1,10 @@
-from pathlib import Path
+import json
 
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.tools import generate_designs_info_files
 from sym_cps.shared.library import designs
-from sym_cps.shared.paths import data_folder, ExportType
-import json
+from sym_cps.shared.paths import ExportType
 from sym_cps.tools.io import save_to_file
-
 
 """Generate topology.json from existing designs"""
 
@@ -70,7 +68,7 @@ def modified_design():
     d_concrete.evaluate()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # generate_topology("TestQuad")
     # topo_file = data_folder / "custom_designs" / "modified_test_quad.json"
     # generate_design(topo_file)

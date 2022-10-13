@@ -6,7 +6,7 @@ from enum import Enum, auto
 from pathlib import Path
 
 from sym_cps.representation.library import Library
-from sym_cps.shared.paths import data_folder, connectors_components_path
+from sym_cps.shared.paths import connectors_components_path
 from sym_cps.tools.io import save_to_file
 
 
@@ -15,6 +15,7 @@ class Direction(Enum):
     BOTTOM = auto()
     LEFT = auto()
     INSIDE = auto()
+
 
 def get_direction_from_components_and_connections(comp_type_a, comp_type_b, connector_id_a, connector_id_b) -> str:
     f = open(connectors_components_path)
@@ -27,6 +28,7 @@ def get_direction_from_components_and_connections(comp_type_a, comp_type_b, conn
         if conn_a == connector_id_a and conn_b == connector_id_b:
             return direction
     return "UNKNOWN"
+
 
 def merge_connection_rules(folder: Path, library: Library):
     file_name_list = os.listdir(folder)
@@ -60,26 +62,33 @@ def merge_connection_rules(folder: Path, library: Library):
                                 abstract_connection_dict[type_a][type_b] = {}
                             if direction != "":
                                 if direction in concrete_connection_dict[comp_a][comp_b].keys():
-                                    if (comp_a_conn, comp_b_conn) != concrete_connection_dict[comp_a][comp_b][direction]:
+                                    if (comp_a_conn, comp_b_conn) != concrete_connection_dict[comp_a][comp_b][
+                                        direction
+                                    ]:
                                         if "Hub" in f"{comp_a_conn}{comp_b_conn}":
                                             continue
-                                        raise Exception(f"Contradicting Rules\n"
-                                                        f"{comp_a} -> {comp_b} ({direction})\n"
-                                                        f"{(comp_a_conn, comp_b_conn)}\n"
-                                                        f"{concrete_connection_dict[comp_a][comp_b][direction]}")
+                                        raise Exception(
+                                            f"Contradicting Rules\n"
+                                            f"{comp_a} -> {comp_b} ({direction})\n"
+                                            f"{(comp_a_conn, comp_b_conn)}\n"
+                                            f"{concrete_connection_dict[comp_a][comp_b][direction]}"
+                                        )
                                 if direction in abstract_connection_dict[type_a][type_b].keys():
-                                    if (comp_a_conn, comp_b_conn) != abstract_connection_dict[type_a][type_b][direction]:
+                                    if (comp_a_conn, comp_b_conn) != abstract_connection_dict[type_a][type_b][
+                                        direction
+                                    ]:
                                         if "Hub" in comp_b_conn:
                                             continue
-                                        raise Exception(f"Contradicting Rules\n"
-                                                        f"{type_a} -> {type_b} ({direction})\n"
-                                                        f"{comp_a} -> {comp_b} ({direction})\n"
-                                                        f"{(comp_a_conn, comp_b_conn)}\n"
-                                                        f"{abstract_connection_dict[comp_a][comp_b][direction]}")
+                                        raise Exception(
+                                            f"Contradicting Rules\n"
+                                            f"{type_a} -> {type_b} ({direction})\n"
+                                            f"{comp_a} -> {comp_b} ({direction})\n"
+                                            f"{(comp_a_conn, comp_b_conn)}\n"
+                                            f"{abstract_connection_dict[comp_a][comp_b][direction]}"
+                                        )
                                 else:
                                     concrete_connection_dict[comp_a][comp_b][direction] = (comp_a_conn, comp_b_conn)
                                     abstract_connection_dict[type_a][type_b][direction] = (comp_a_conn, comp_b_conn)
-
 
     for key, values in default_connections.items():
         default_connections[key] = list(values)
@@ -153,7 +162,7 @@ def main():
                 print(f"{comp_a} - {comp_b}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     c_library, designs = parse_library_and_seed_designs()
     merge_connection_rules(connections_folder, c_library)
     # generalize_connection_rules(connections_folder)

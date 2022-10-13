@@ -1,37 +1,32 @@
 # type: ignore
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.representation.design.tools import generate_designs_info_files
 from sym_cps.representation.design.topology import DTopology
-from sym_cps.representation.library import Library, CType, CConnector
-from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
-from sym_cps.representation.tools.parsers.parsing_library import all_parameters_upper_bounds, \
-    all_parameters_lower_bounds
+from sym_cps.representation.library import CConnector, CType, Library
+from sym_cps.representation.tools.parsers.parsing_library import (
+    all_parameters_lower_bounds,
+    all_parameters_upper_bounds,
+)
 from sym_cps.shared.library import update_dat_files
-from sym_cps.shared.paths import library_folder, designs_folder, ExportType
+from sym_cps.shared.paths import library_folder
 from sym_cps.tools.io import save_to_file
-from sym_cps.tools.persistance import dump, load
+from sym_cps.tools.persistance import load
 from sym_cps.tools.strings import repr_dictionary
 
 
-
-def export_library(library_txt_file: str = "library.txt",
-                   library_dat_file: str = "library.dat",
-                   designs_dat_file: str = "designs.dat"):
+def export_library(
+    library_txt_file: str = "library.txt", library_dat_file: str = "library.dat", designs_dat_file: str = "designs.dat"
+):
     """Export library and seed designs to text files"""
 
     c_library: Library = load(library_dat_file)  # type: ignore
 
-    save_to_file(str(c_library),
-                 file_name=library_txt_file,
-                 absolute_folder_path=library_folder)
+    save_to_file(str(c_library), file_name=library_txt_file, absolute_folder_path=library_folder)
 
     """In the following we can see some of the 'temporary objects' that have been build 
         while building the components and designs libraries. We will save them to a text file in the output folder"""
 
     # Maps component type to all the LibraryComponent objects belonging to the type
-    save_to_file(
-        repr_dictionary(c_library.components_in_type), "all_components_in_type.txt", folder_name="library"
-    )
+    save_to_file(repr_dictionary(c_library.components_in_type), "all_components_in_type.txt", folder_name="library")
 
     # Maps each component type to a set of components type which it can be connected to"""
     connectable_components_types: dict[CType, set[CType]] = {}
@@ -39,8 +34,7 @@ def export_library(library_txt_file: str = "library.txt",
         connectable_components_types[ctype] = set(ctype.compatible_with.values())
 
     save_to_file(
-        repr_dictionary(connectable_components_types),
-        "connectable_components_types.txt", folder_name="library"
+        repr_dictionary(connectable_components_types), "connectable_components_types.txt", folder_name="library"
     )
 
     # Maps connector_id to its LibraryConnector object"""
@@ -54,15 +48,11 @@ def export_library(library_txt_file: str = "library.txt",
 
     # all_parameters_upper_bounds: dict[str, float] = {}
     # Maps parameter_id to its upper bounds"""
-    save_to_file(
-        repr_dictionary(all_parameters_upper_bounds), "all_parameters_upper_bounds.txt", folder_name="library"
-    )
+    save_to_file(repr_dictionary(all_parameters_upper_bounds), "all_parameters_upper_bounds.txt", folder_name="library")
 
     # all_parameters_lower_bounds: dict[str, float] = {}
     # Maps parameter_id to its lower bounds"""
-    save_to_file(
-        repr_dictionary(all_parameters_lower_bounds), "all_parameters_lower_bounds.txt", folder_name="library"
-    )
+    save_to_file(repr_dictionary(all_parameters_lower_bounds), "all_parameters_lower_bounds.txt", folder_name="library")
 
     # all_parameters: dict[str, CParameterType] = {}
     # Maps parameter_id to CParameterType object"""
@@ -86,6 +76,6 @@ def export_library(library_txt_file: str = "library.txt",
         d_topology.export_all()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     update_dat_files()
     export_library()

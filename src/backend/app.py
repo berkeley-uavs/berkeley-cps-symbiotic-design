@@ -1,21 +1,19 @@
 import argparse
 import threading
 import time
-
-from operations.rating import Rating
 from os import walk
 from time import strftime
+from typing import Any, Dict
+
+from flask import Flask, Response, request
+from flask_socketio import SocketIO, emit
+from operations.rating import Rating
+from shared.paths import build_path, storage_path
 
 from sym_cps.optimizers.concrete_opt import ConcreteOptimizer
 from sym_cps.optimizers.params_opt import ParametersOptimizer
 from sym_cps.optimizers.topo_opt import TopologyOptimizer
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
-from typing import Any, Dict
-
-from flask import Flask, Response, request
-from flask_socketio import SocketIO, emit
-
-from shared.paths import build_path, storage_path
 
 parser = argparse.ArgumentParser(description="Launching Flask Backend")
 parser.add_argument("--serve", default=False, type=bool, help="indicate if serving the pages")

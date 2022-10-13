@@ -15,9 +15,7 @@ class DesignParameter:
     def __post_init__(self):
         values = set([p.value for p in self.parameters])
         if len(values) > 1:
-            raise AttributeError(
-                "All parameters in DesignParameter must have the same value"
-            )
+            raise AttributeError("All parameters in DesignParameter must have the same value")
         self._value = next(iter(values))
 
     @property

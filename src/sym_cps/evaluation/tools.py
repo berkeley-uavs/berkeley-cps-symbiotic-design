@@ -7,9 +7,9 @@ import json
 import time
 import zipfile
 from pathlib import Path
+from typing import Optional, Union
 
 import dramatiq
-from typing import Optional, Union
 
 from sym_cps.shared.paths import aws_folder, fdm_extract_folder
 
@@ -21,7 +21,7 @@ def load_design(design_file: Path) -> object:
     Arguments:
       design_file: Path to the design file
     """
-    with Path(design_file).open('r') as fp:
+    with Path(design_file).open("r") as fp:
         return json.load(fp)
 
 
@@ -40,17 +40,14 @@ def load_metadata(metadata_file: Union[Path, str, None]) -> dict:
         return dict()
     if isinstance(metadata_file, dict):
         return metadata_file
-    with Path(metadata_file).open('r') as fp:
+    with Path(metadata_file).open("r") as fp:
         meta = json.load(fp)
         if not isinstance(meta, dict):
             raise RuntimeError("Metadata must be JSON serializable dictionary.")
         return meta
 
 
-def wait_on_result(
-        msg: dramatiq.Message,
-        interval: int = 10,
-        timeout: int = 600) -> object:
+def wait_on_result(msg: dramatiq.Message, interval: int = 10, timeout: int = 600) -> object:
     """
     Uses the dramatiq backend mechanism to wait on a result from a worker.
 
@@ -87,9 +84,7 @@ def wait_on_result(
     return result
 
 
-def get_result_archive_path(
-        result: object,
-        results_dir: Path) -> Path:
+def get_result_archive_path(result: object, results_dir: Path) -> Path:
     """
     Get the name of the specific result archive from the backend produced
     result.
@@ -99,13 +94,12 @@ def get_result_archive_path(
       results_dir: The directory in which all the results will appear.
     """
 
-    raw_path = Path(result['result_archive'])
+    raw_path = Path(result["result_archive"])
 
     return results_dir / raw_path.name
 
 
-def get_zip_metadata(
-        zip_file: Path) -> Optional[object]:
+def get_zip_metadata(zip_file: Path) -> Optional[object]:
     """
     Returns the contents of the zip's metadata.json, if it has one.
 
@@ -115,7 +109,7 @@ def get_zip_metadata(
 
     # Open Zip file
     with zipfile.ZipFile(zip_file) as zip:
-        meta_file = zipfile.Path(zip) / 'metadata.json'
+        meta_file = zipfile.Path(zip) / "metadata.json"
 
         # Check if `metadata.json` exists
         if not meta_file.exists() and meta_file.is_file():
@@ -123,13 +117,11 @@ def get_zip_metadata(
             return None
 
         # If yes, decode its contents
-        with meta_file.open('r') as meta:
+        with meta_file.open("r") as meta:
             return json.load(meta)
 
 
-def match_msg_to_zip(
-        msg: dramatiq.Message,
-        zip_file: Path) -> bool:
+def match_msg_to_zip(msg: dramatiq.Message, zip_file: Path) -> bool:
     """
     Checks whether the given message produced the given zip archive.
 
@@ -142,14 +134,10 @@ def match_msg_to_zip(
 
     metadata = get_zip_metadata(zip_file)
 
-    return metadata and ('message_info' in metadata) and msg_id == metadata['message_info']['message_id']
+    return metadata and ("message_info" in metadata) and msg_id == metadata["message_info"]["message_id"]
 
 
-def watch_results_dir(
-        msg: dramatiq.Message,
-        results_dir: Path,
-        interval: int = 10,
-        timeout: int = 600) -> Path:
+def watch_results_dir(msg: dramatiq.Message, results_dir: Path, interval: int = 10, timeout: int = 600) -> Path:
     """
     Checks directory every interval to see if any of the zip files match the
     provided message.
@@ -173,7 +161,7 @@ def watch_results_dir(
 
             # Check if file is a valid zip
             valid_zip = zip_file.is_file()
-            valid_zip = valid_zip and '.zip' == zip_file.suffix
+            valid_zip = valid_zip and ".zip" == zip_file.suffix
             valid_zip = valid_zip and zip_file not in seen
 
             # Skip further checks if not zip
@@ -196,42 +184,41 @@ def watch_results_dir(
 
 def polling_results(msg, timeout: int = 800):
     print("Waiting for the results to appear...")
-    result_archive = watch_results_dir(
-        msg,
-        results_dir=aws_folder / "results",
-        timeout=timeout
-    )
+    result_archive = watch_results_dir(msg, results_dir=aws_folder / "results", timeout=timeout)
     result = get_zip_metadata(result_archive)
     print("Result archive found in results dir w/ metadata:")
     print(json.dumps(result, indent="  "))
     print(f"Command completed. Results can be found at:{result_archive}")
     return result_archive
 
-def extract_results(result_archive_path: Path, control_opt: bool) -> tuple[list[float] | None, list[bool] | None, dict | None]:
+
+def extract_results(
+    result_archive_path: Path, control_opt: bool
+) -> tuple[list[float] | None, list[bool] | None, dict | None]:
 
     print("Extracting results from result zip file...")
     with zipfile.ZipFile(result_archive_path) as result_zip_file:
-        # checking the fdm 
-        fdm_folder = zipfile.Path(result_zip_file) / 'Results'
+        # checking the fdm
+        fdm_folder = zipfile.Path(result_zip_file) / "Results"
 
         # Check if `Results` exists
         if not fdm_folder.exists() or not fdm_folder.is_dir():
             print(f"FDM Results folder (Results/) does not exist in the result archive!")
             return None
         # Extracting score from control optimization
-        design_score_path = fdm_folder /"control_opt_result.out"
+        design_score_path = fdm_folder / "control_opt_result.out"
         if design_score_path.exists() and design_score_path.is_file():
             with design_score_path.open("r") as fdm_input_file:
-                #TODO: Read the files to get the scores and their corresponding control parameters
+                # TODO: Read the files to get the scores and their corresponding control parameters
                 pass
         # Check the Results folder
         folders = [fdm_test for fdm_test in fdm_folder.iterdir()]
         if len(folders) != 4:
             print(f"Not 4 folders in fdm results, meaning that the design is problematic or pipeline had problem.")
-            return None, [False], None # return failure
+            return None, [False], None  # return failure
 
         extract_folder = fdm_extract_folder
-        #print(extract_folder)
+        # print(extract_folder)
         for fdm_test in folders:
             fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
             fdm_output = fdm_test / "fdmTB" / "flightDynFastOut.out"
@@ -241,9 +228,9 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> tuple[list[
             if fdm_input.is_file():
                 info = result_zip_file.getinfo(str(fdm_input_member))
                 info.filename = f"flightDynFast.inp"
-                result_zip_file.extract(member = info, path = str(extract_folder))
-                with fdm_input.open("r") as fdm_input_file:      
-                    #TODO: read the fdm input files
+                result_zip_file.extract(member=info, path=str(extract_folder))
+                with fdm_input.open("r") as fdm_input_file:
+                    # TODO: read the fdm input files
                     pass
 
             # if fdm_output.is_file():
@@ -255,13 +242,14 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> tuple[list[
             #         pass
     if control_opt:
         from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
+
         cont_opt = ControlOptimizer(library=None)
-        ret = cont_opt.optimize(d_concrete = None)
+        ret = cont_opt.optimize(d_concrete=None)
         best_args = None
         for path_ret in ret["result"]:
             if path_ret["Path"] == 9:
                 best_args = path_ret["best_args"]
-        return [ret["total_score"]], [True],  best_args# return failure
-        
-    #TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
-    return None, [False], None # return failure
+        return [ret["total_score"]], [True], best_args  # return failure
+
+    # TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
+    return None, [False], None  # return failure

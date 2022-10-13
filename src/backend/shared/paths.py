@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import Callable
 from pathlib import Path
+
 from sym_cps.shared.paths import output_folder
 
 build_path: Path = Path(os.path.dirname(__file__)).parent.parent / "frontend" / "build"

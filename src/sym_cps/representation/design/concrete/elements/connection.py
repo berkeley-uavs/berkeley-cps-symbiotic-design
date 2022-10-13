@@ -21,19 +21,17 @@ class Connection:
     connector_a: CConnector
     component_b: Component
     connector_b: CConnector
-    #brendan: make api to output connector_a and connect_b given component_a and component_b
+    # brendan: make api to output connector_a and connect_b given component_a and component_b
 
     @classmethod
-    def from_direction(cls,
-                       component_a: Component,
-                       component_b: Component,
-                       direction: str):
+    def from_direction(cls, component_a: Component, component_b: Component, direction: str):
 
         f = open(connectors_components_path)
         connection_map = json.load(f)
         connector_a = connection_map[component_a.c_type.id][component_b.c_type.id][direction][0]
         connector_b = connection_map[component_a.c_type.id][component_b.c_type.id][direction][1]
         from sym_cps.shared.library import c_library
+
         return cls(
             component_a,
             c_library.connectors[connector_a],
@@ -81,10 +79,10 @@ class Connection:
         # return f"{b1}-{b2}-{a1}-{a2}"
 
     def direction_b_respect_to_a(self):
-        return get_direction_from_components_and_connections(self.component_a.c_type.id,
-                                                             self.component_b.c_type.id,
-                                                             self.connector_a.id,
-                                                             self.connector_b.id)
+        return get_direction_from_components_and_connections(
+            self.component_a.c_type.id, self.component_b.c_type.id, self.connector_a.id, self.connector_b.id
+        )
+
     def __eq__(self, other: object):
         if not isinstance(other, Connection):
             return NotImplementedError
@@ -102,12 +100,15 @@ class Connection:
 
     def __str__(self):
 
-        s1 = f"FROM\n\tCOMPONENT\t{self.component_a.c_type.id} ({self.component_a.id})" \
-             f"\n\tCONNECTOR\t{self.connector_a.name}\n"
-        s2 = f"TO\n\tCOMPONENT\t{self.component_b.c_type.id} ({self.component_b.id})" \
-             f"\n\tCONNECTOR\t{self.connector_b.name}\n"
+        s1 = (
+            f"FROM\n\tCOMPONENT\t{self.component_a.c_type.id} ({self.component_a.id})"
+            f"\n\tCONNECTOR\t{self.connector_a.name}\n"
+        )
+        s2 = (
+            f"TO\n\tCOMPONENT\t{self.component_b.c_type.id} ({self.component_b.id})"
+            f"\n\tCONNECTOR\t{self.connector_b.name}\n"
+        )
         return f"{s1}{s2}"
 
     def __hash__(self):
         return abs(hash(self.key))
-

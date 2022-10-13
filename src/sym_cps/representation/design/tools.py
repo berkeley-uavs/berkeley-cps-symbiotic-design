@@ -1,9 +1,6 @@
-import igraph
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.topology import DTopology
-from sym_cps.shared.paths import ExportType, designs_folder
-from sym_cps.tools.io import save_to_file
-
+from sym_cps.shared.paths import ExportType
 
 
 def generate_designs_info_files(designs: dict[str, tuple[DConcrete, DTopology]], design_name: str):

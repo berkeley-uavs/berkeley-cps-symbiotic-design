@@ -47,10 +47,10 @@ def different_connectors(library: Library) -> dict[CType, set[str]]:
         print(f"{c_type.id}: {str(properties)}")
     return missing_properties_from_c_types
 
+
 def unknown_componnet_types(library: Library):
     for component in library.component_types["Unknown"].belongs_to.values():
         print(component.id)
-
 
 
 if __name__ == "__main__":
@@ -59,4 +59,3 @@ if __name__ == "__main__":
     # unknown_componnet_types(c_library)
     # different_properties(c_library)
     different_connectors(c_library)
-

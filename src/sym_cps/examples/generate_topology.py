@@ -1,7 +1,7 @@
 import json
 
-from sym_cps.representation.design.concrete import DConcrete, Connection
-from sym_cps.shared.paths import data_folder, ExportType
+from sym_cps.representation.design.concrete import Connection, DConcrete
+from sym_cps.shared.paths import ExportType, data_folder
 
 """Loading Library and Seed Designs"""
 
@@ -18,9 +18,7 @@ for component_a, connections in topo["TOPOLOGY"].items():
     for direction, component_b in connections.items():
         node_b_vertex = d_concrete.add_abstract_node(component_b, topo)
         connection = Connection.from_direction(
-            component_a=node_a_vertex["component"],
-            component_b=node_b_vertex["component"],
-            direction=direction
+            component_a=node_a_vertex["component"], component_b=node_b_vertex["component"], direction=direction
         )
         d_concrete.connect(connection)
 

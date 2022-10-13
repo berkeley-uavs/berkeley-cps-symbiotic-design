@@ -1,6 +1,7 @@
 # type: ignore
 import os
 import pickle
+
 from sym_cps.shared.paths import persistence_path
 
 
@@ -22,4 +23,3 @@ def load(file: str) -> object | None:
         obj = pickle.load(f)
     print(f"Object loaded from: {str(file_path)}")
     return obj
-

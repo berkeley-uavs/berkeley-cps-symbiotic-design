@@ -17,6 +17,7 @@ class ConcreteStrategy(Enum):
     """
     Test Class
     """
+
     random_strategy = auto()
 
 
@@ -34,27 +35,21 @@ class ConcreteOptimizer(Optimizer):
                 """vertex index DTopology are the same in the DConcrete"""
                 vertex = d_topology.get_vertex_by_id(i)
                 c_type = vertex["c_type"]
-                library_component = random.choice(
-                    list(self.library.components_in_type[c_type.id])
-                )
+                library_component = random.choice(list(self.library.components_in_type[c_type.id]))
                 component = Component(id=str(i), library_component=library_component)
                 d_concrete.add_node(component=component)
             print(d_concrete.graph)
             print(d_topology.graph)
             for edge in d_topology.edges:
-                component_a: Component = d_concrete.get_vertex_by_id(edge.source)[
-                    "component"
-                ]
-                component_b: Component = d_concrete.get_vertex_by_id(edge.target)[
-                    "component"
-                ]
+                component_a: Component = d_concrete.get_vertex_by_id(edge.source)["component"]
+                component_b: Component = d_concrete.get_vertex_by_id(edge.target)["component"]
 
                 connectors_a = component_a.c_type.connectors.values()
                 connectors_b = component_b.c_type.connectors.values()
 
-                compatible_a_b_connectors: list[
-                    tuple[CConnector, CConnector]
-                ] = compatible_connectors(connectors_a, connectors_b)
+                compatible_a_b_connectors: list[tuple[CConnector, CConnector]] = compatible_connectors(
+                    connectors_a, connectors_b
+                )
 
                 connector_a, connector_b = random.choice(compatible_a_b_connectors)
 
@@ -65,9 +60,7 @@ class ConcreteOptimizer(Optimizer):
                     connector_b=connector_b,
                 )
 
-                d_concrete.add_edge(
-                    node_id_a=edge.source, node_id_b=edge.target, connection=connection
-                )
+                d_concrete.add_edge(node_id_a=edge.source, node_id_b=edge.target, connection=connection)
         else:
             raise NotImplementedError
         return d_concrete
