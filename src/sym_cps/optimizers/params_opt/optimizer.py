@@ -1,5 +1,7 @@
 from sklearn.gaussian_process.kernels import Matern
 
+from sym_cps.optimizers.tools.optimization.bayesian_optimizer import BayesianOptimizer
+from sym_cps.optimizers.tools.optimization.nm_optimizer import NMOptimizer
 from sym_cps.optimizers import Optimizer
 from sym_cps.optimizers.params_opt.param_opt_problem import (
     ParameterOptimizationProblem,
@@ -78,10 +80,10 @@ class ParametersOptimizer(Optimizer):
             kwarg["plot_freq"] = 100
             kwarg["consider_constraint"] = False
             kwarg["explore_num_samples"] = 50
-            kwarg["explore_num_warm_up"] = 200000
+            kwarg["explore_num_warm_up"] = 2000
             kwarg["kernel"] = kernel
             kwarg["acquisition_function"] = "GP-UCB"
 
-            # optimizer = BayesianOptimizer(problem=problem, **kwarg)
-            # optimizer = NMOptimizer(problem=problem, **kwarg)
-            # x_max_valid, y_max_valid = optimizer.optimize()
+            optimizer = BayesianOptimizer(problem=problem, debug_level=2, **kwarg)
+            #optimizer = NMOptimizer(problem=problem, **kwarg)
+            x_max_valid, y_max_valid = optimizer.optimize()
