@@ -158,6 +158,14 @@ class DConcrete:
         return set()
 
     @property
+    def parameters(self) -> set[Parameter | None]:
+        parameters = set()
+        for component in self.components:
+            for para_id, parameter in component.parameters.items():
+                parameters.add(parameter)
+        return parameters
+
+    @property
     def connections(self) -> set[Connection | None]:
         if self.n_nodes > 0:
             if self.n_edges > 0:

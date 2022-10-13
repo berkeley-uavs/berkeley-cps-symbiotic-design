@@ -23,6 +23,10 @@ class Parameter:
     def max(self) -> float:
         return self.c_parameter.values["max_val"]
 
+    @property
+    def default(self) -> float:
+        return self.c_parameter.default
+
     def __str__(self):
         if self.component is not None:
             return f"{self.component.id}_{self.c_parameter.id}: {self.value}"

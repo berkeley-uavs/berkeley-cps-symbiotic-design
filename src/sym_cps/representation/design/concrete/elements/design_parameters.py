@@ -38,7 +38,6 @@ class DesignParameter:
         ret = f"{self.id} = {list(self.parameters)[0].value}:\n"
         for param in self.parameters:
             ret += f"\t{param.id}\n"
-        ret += "\n"
         return ret
 
     def __hash__(self):
