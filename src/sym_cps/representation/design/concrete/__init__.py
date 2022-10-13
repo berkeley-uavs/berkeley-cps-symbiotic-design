@@ -6,13 +6,14 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import igraph
 import matplotlib
 from igraph import Graph, plot
 from sym_cps.evaluation import evaluate_design
+from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.tools.dictionaries import number_of_instances_in_dict
-from sym_cps.shared import c_library
 
 matplotlib.use('TkAgg')
 from matplotlib import pyplot as plt
@@ -49,6 +50,31 @@ class DConcrete:
         self._graph = Graph(directed=True)
 
 
+    @classmethod
+    def from_topology_summary(cls, topology_json_path: Path):
+
+        f = open(topology_json_path)
+        topo = json.load(f)
+
+        # Let us instantiate a DConcrete object
+        d_concrete = cls(name=topo["NAME"])
+        for component_a, categories in topo["TOPOLOGY"].items():
+            node_a_vertex = d_concrete.add_abstract_node(component_a, topo)
+            for category, infos in categories.items():
+                if category == "CONNECTIONS":
+                    for direction, component_b in infos.items():
+                        node_b_vertex = d_concrete.add_abstract_node(component_b, topo)
+                        connection = Connection.from_direction(
+                            component_a=node_a_vertex["component"],
+                            component_b=node_b_vertex["component"],
+                            direction=direction
+                        )
+                        d_concrete.connect(connection)
+                if category == "PARAMETERS":
+                    node_a_vertex["component"].update_parameters(infos)
+
+        return d_concrete
+
     @property
     def graph(self) -> Graph:
         return self._graph
@@ -72,11 +98,20 @@ class DConcrete:
     def n_edges(self) -> int:
         return len(self.graph.es)
 
+    def export_parameters(self) -> dict[str, dict[str, Parameter]]:
+        pass
+
+
     def add_abstract_node(self, abstract_component_id: str, topology: dict) -> igraph.Vertex:
         if abstract_component_id in self.comp_id_to_node.keys():
             return self.comp_id_to_node[abstract_component_id]
-        node_id_a = abstract_component_id.split('|')[0]
-        node_type_a = abstract_component_id.split('|')[1]
+        id_split = abstract_component_id.split('_')
+        node_type_a = "_".join(id_split[:-1])
+        # for i, elem in enumerate(id_split):
+        #     if i == len(id_split)-1:
+        #         continue
+        #     node_type_a = f"{node_type_a}_{elem}"
+        from sym_cps.shared.library import c_library
         if "Hub" == node_type_a:
             if number_of_instances_in_dict(topology, abstract_component_id) > 4:
                 lib_comp_a = c_library.get_default_component(node_type_a, 4)
@@ -270,56 +305,66 @@ class DConcrete:
 
         return design_swri_data
 
-    def export(self, file_type: ExportType):
+    def export(self, file_type: ExportType) -> Path:
         absolute_folder = designs_folder / self.name
 
         if file_type == ExportType.TXT:
-            file_path = absolute_folder / "DTopology.txt"
-            save_to_file(
+            return save_to_file(
                 str(self),
-                file_name=f"DTopology",
+                file_name=f"DConcrete",
                 absolute_folder_path=absolute_folder,
             )
         elif file_type == ExportType.TOPOLOGY:
             topology_summary: dict = {
                 "NAME": self.name,
-                "DESCRIPTION": ""
+                "DESCRIPTION": "",
+                "TOPOLOGY": {}
             }
-            connections_map: dict = {}
-            connections_abstract: dict = {}
+            """Nodes"""
             for node in self.nodes:
-                node_id = f"{node.index}|{node['c_type']}"
-                connections_map[node_id] = {}
-                for edge in self.get_edges_from(node):
-                    t_node = self._graph.vs[edge.target]
-                    dir = edge["connection"].direction_b_respect_to_a()
-                    t_node_id = f"{t_node.index}|{t_node['c_type']}"
-                    connections_map[node_id][dir] = t_node_id
-                    add = True
-                    if t_node_id in connections_map.keys():
-                        for t_dir, s_node_id in connections_map[t_node_id].items():
-                            if node_id == s_node_id:
-                                add = False
-                    if add:
-                        if node_id not in connections_abstract.keys():
-                            connections_abstract[node_id] = {}
-                        connections_abstract[node_id][dir] = t_node_id
+                node_id = f"{node['c_type']}_{node.index}"
+                topology_summary["TOPOLOGY"][node_id] = {}
+                """Parameters"""
+                for parameter_id, parameter in node["component"].parameters.items():
+                    if "PARAMETERS" not in topology_summary["TOPOLOGY"][node_id]:
+                        topology_summary["TOPOLOGY"][node_id]["PARAMETERS"] = {}
+                    topology_summary["TOPOLOGY"][node_id]["PARAMETERS"][parameter_id] = parameter.value
+            """Edges"""
+            for edge in self.edges:
+                node_id_s = f"{self._graph.vs[edge.source]['c_type']}_{edge.source}"
+                node_id_t = f"{self._graph.vs[edge.target]['c_type']}_{edge.target}"
+                if "CONNECTIONS" not in topology_summary["TOPOLOGY"][node_id_s]:
+                    topology_summary["TOPOLOGY"][node_id_s]["CONNECTIONS"] = {}
+                direction = edge["connection"].direction_b_respect_to_a()
+                topology_summary["TOPOLOGY"][node_id_s]["CONNECTIONS"][direction] = node_id_t
+                # """Connections"""
+                # for edge in self.get_edges_from(node):
+                #     if "CONNECTIONS" not in topo_summary[node_id]:
+                #         topo_summary[node_id]["CONNECTIONS"] = {}
+                #     t_node = self._graph.vs[edge.target]
+                #     dir = edge["connection"].direction_b_respect_to_a()
+                #     t_node_id = f"{t_node['c_type']}_{t_node.index}"
+                #     topo_summary[node_id]["CONNECTIONS"][dir] = t_node_id
+                #     add = True
+                #     if t_node_id in topo_summary.keys():
+                #         for t_dir, s_node_id in topo_summary[t_node_id].items():
+                #             if node_id == s_node_id:
+                #                 add = False
+                #     if add:
+                #         if node_id not in topo_summary_abstract.keys():
+                #             topo_summary_abstract[node_id] = {}
+                #         if "CONNECTIONS" not in topo_summary_abstract[node_id]:
+                #             topo_summary_abstract[node_id]["CONNECTIONS"] = {}
+                #         topo_summary_abstract[node_id]["CONNECTIONS"][dir] = t_node_id
 
-            topology_summary["TOPOLOGY"] = connections_abstract
-            file_path = absolute_folder / "topology.json"
-            save_to_file(
-                str(json.dumps(connections_map)),
-                file_name=f"topology.json",
-                absolute_folder_path=absolute_folder,
-            )
-            save_to_file(
+            return save_to_file(
                 str(json.dumps(topology_summary)),
                 file_name=f"topology_summary.json",
                 absolute_folder_path=absolute_folder,
             )
+
         elif file_type == ExportType.JSON:
-            file_path = absolute_folder / "design_swri.json"
-            save_to_file(
+            return save_to_file(
                 str(json.dumps(self.to_design_swri)),
                 file_name=f"design_swri.json",
                 absolute_folder_path=absolute_folder,
@@ -347,6 +392,12 @@ class DConcrete:
         print(f"{file_type} file saved in {absolute_folder}")
         return file_path
 
+    def export_all(self):
+        self.export(ExportType.DOT)
+        self.export(ExportType.PDF)
+        self.export(ExportType.TXT)
+        self.export(ExportType.TOPOLOGY)
+        self.export(ExportType.JSON)
 
     def __eq__(self, other: object):
         pass
@@ -408,6 +459,9 @@ class DConcrete:
 
     def get_edges_from(self, node: igraph.Vertex) -> igraph.EdgeSeq:
         return self._graph.es.select(_source=node.index)
+
+    def get_edges_to(self, node: igraph.Vertex) -> igraph.EdgeSeq:
+        return self._graph.es.select(_target=node.index)
 
     # def get_edges_of(self, node: igraph.Vertex) -> set(igraph.Edge):
     #     edges = set()

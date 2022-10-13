@@ -22,16 +22,11 @@ def get_direction_from_components_and_connections(comp_type_a, comp_type_b, conn
     try:
         connections = connection_map[comp_type_a][comp_type_b]
     except:
-        return "UNKNOWN"
+        return "COMPONENT_ABSENT"
     for direction, (conn_a, conn_b) in connections.items():
-        if "Hub__Side_Connector" in conn_a:
-            conn_a = "Hub__Side_Connector_1-6"
-            connector_id_a = "Hub__Side_Connector_1-6"
-        if "Hub__Side_Connector" in conn_b:
-            conn_b = "Hub__Side_Connector_1-6"
-            connector_id_b = "Hub__Side_Connector_1-6"
         if conn_a == connector_id_a and conn_b == connector_id_b:
             return direction
+    return "UNKNOWN"
 
 def merge_connection_rules(folder: Path, library: Library):
     file_name_list = os.listdir(folder)
@@ -88,10 +83,10 @@ def merge_connection_rules(folder: Path, library: Library):
 
     for key, values in default_connections.items():
         default_connections[key] = list(values)
-    default_connections_json = json.dumps(default_connections, indent=4)
+    default_components = json.dumps(default_connections, indent=4)
     save_to_file(
-        str(default_connections_json),
-        file_name=f"default_connections_json.json",
+        str(default_components),
+        file_name=f"default_components.json",
         absolute_folder_path=connections_folder,
     )
 

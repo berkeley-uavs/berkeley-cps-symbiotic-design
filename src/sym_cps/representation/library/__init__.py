@@ -46,8 +46,8 @@ class Library:
 
     def get_default_component(self, component_type: str, hub_size: int = 0) -> LibraryComponent:
         if component_type not in self.component_types.keys():
-            raise Exception("Component Type not present in the library")
-        default_comp_path = data_folder / "reverse_engineering" / "default_connections_json.json"
+            raise Exception(f"{component_type}\nComponent Type not present in the library")
+        default_comp_path = data_folder / "reverse_engineering" / "default_components.json"
         f = open(default_comp_path)
         default = json.load(f)
         if component_type == "Hub":

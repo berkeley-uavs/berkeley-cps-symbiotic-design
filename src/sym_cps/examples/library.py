@@ -6,18 +6,12 @@ from sym_cps.representation.library import Library, CType, CConnector
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
 from sym_cps.representation.tools.parsers.parsing_library import all_parameters_upper_bounds, \
     all_parameters_lower_bounds
+from sym_cps.shared.library import update_dat_files
 from sym_cps.shared.paths import library_folder, designs_folder, ExportType
 from sym_cps.tools.io import save_to_file
 from sym_cps.tools.persistance import dump, load
 from sym_cps.tools.strings import repr_dictionary
 
-
-def parse_library(library_dat_file: str = "library.dat", designs_dat_file: str = "designs.dat"):
-    """Loads library of components and seed designs and store them"""
-
-    c_library, designs = parse_library_and_seed_designs()
-    dump(c_library, library_dat_file)
-    dump(designs, designs_dat_file)
 
 
 def export_library(library_txt_file: str = "library.txt",
@@ -87,11 +81,11 @@ def export_library(library_txt_file: str = "library.txt",
 
     designs: dict[str, tuple[DConcrete, DTopology]] = load(designs_dat_file)  # type: ignore
 
-    for d_name in designs.keys():
-        generate_designs_info_files(designs, "TestQuad")
-
+    for (d_concrete, d_topology) in designs.values():
+        d_concrete.export_all()
+        d_topology.export_all()
 
 
 if __name__ == '__main__':
-    parse_library()
+    update_dat_files()
     export_library()

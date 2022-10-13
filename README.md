@@ -59,7 +59,7 @@ sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
 When running a python script from command line, insert `pdm run` before. For example:
 
 ```bash
-pdm run pdm run python src/sym_cps/examples/library.py
+pdm run python src/sym_cps/examples/library.py
 ```
 
 

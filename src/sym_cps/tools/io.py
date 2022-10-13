@@ -10,7 +10,7 @@ def save_to_file(
     file_name: str,
     folder_name: str | None = None,
     absolute_folder_path: Path | None = None,
-) -> str:
+) -> Path:
     if Path(file_name).suffix == "":
         file_name += ".txt"
 
@@ -40,4 +40,4 @@ def save_to_file(
     f.close()
 
     print(f"File saved in {str(file_path)}")
-    return str(file_path)
+    return file_path

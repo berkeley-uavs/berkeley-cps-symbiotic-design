@@ -123,6 +123,10 @@ class DTopology:
 
         print(f"{file_type} file saved in {absolute_folder}")
 
+    def export_all(self):
+        self.export(ExportType.DOT)
+        self.export(ExportType.PDF)
+        self.export(ExportType.TXT)
 
     def __str__(self):
         ret = "TOPOLOGY SUMMARY\n\n"

@@ -75,6 +75,10 @@ class Component:
 
         return params_props_values
 
+    def update_parameters(self, parameters: dict[str, float]):
+        for param_id, value in parameters.items():
+            self.parameters[param_id].value = value
+
     def _edit_field(self, name, value):
         object.__setattr__(self, name, value)
 

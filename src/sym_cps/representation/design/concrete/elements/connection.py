@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
-from sym_cps.shared import c_library
 from sym_cps.shared.paths import connectors_components_path
 
 if TYPE_CHECKING:
@@ -34,6 +33,7 @@ class Connection:
         connection_map = json.load(f)
         connector_a = connection_map[component_a.c_type.id][component_b.c_type.id][direction][0]
         connector_b = connection_map[component_a.c_type.id][component_b.c_type.id][direction][1]
+        from sym_cps.shared.library import c_library
         return cls(
             component_a,
             c_library.connectors[connector_a],
@@ -67,6 +67,19 @@ class Connection:
             return f"{a1}-{a2}-{b1}-{b2}"
         return f"{b1}-{b2}-{a1}-{a2}"
 
+    @property
+    def lib_key(self) -> str:
+        a1 = self.component_a.library_component.id
+        a2 = self.connector_a.id
+        b1 = self.component_b.library_component.id
+        b2 = self.connector_b.id
+
+        return f"{a1}-{a2}-{b1}-{b2}"
+
+        # if (a1 + a2) >= (b1 + b2):
+        #     return f"{a1}-{a2}-{b1}-{b2}"
+        # return f"{b1}-{b2}-{a1}-{a2}"
+
     def direction_b_respect_to_a(self):
         return get_direction_from_components_and_connections(self.component_a.c_type.id,
                                                              self.component_b.c_type.id,
@@ -77,6 +90,9 @@ class Connection:
             return NotImplementedError
 
         return self.key == other.key
+
+    def is_similar(self, other: Connection):
+        return self.lib_key == other.lib_key
 
     def __ne__(self, other: object):
         if not isinstance(other, Connection):
