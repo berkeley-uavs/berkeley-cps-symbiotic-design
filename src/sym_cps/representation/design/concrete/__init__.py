@@ -11,7 +11,6 @@ from pathlib import Path
 import igraph
 import matplotlib
 from igraph import Graph, plot
-
 from sym_cps.evaluation import evaluate_design
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.tools.dictionaries import number_of_instances_in_dict
@@ -107,11 +106,14 @@ class DConcrete:
         if abstract_component_id in self.comp_id_to_node.keys():
             return self.comp_id_to_node[abstract_component_id]
         id_split = abstract_component_id.split("_")
-        node_type_a = "_".join(id_split[:-1])
-        # for i, elem in enumerate(id_split):
-        #     if i == len(id_split)-1:
-        #         continue
-        #     node_type_a = f"{node_type_a}_{elem}"
+        try:
+            if id_split[-2] == "instance":
+                node_type_a = "_".join(id_split[:-2])
+            else:
+                node_type_a = abstract_component_id
+        except:
+            node_type_a = abstract_component_id
+
         from sym_cps.shared.library import c_library
 
         if "Hub" == node_type_a:
@@ -142,10 +144,14 @@ class DConcrete:
         self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection)
 
     def connect(self, connection: Connection):
+        print("WHAT")
+        print(connection.component_a)
+        print(connection.component_b)
+        print("WHAT")
         a = self.get_node_by_instance(connection.component_a.id).index
         b = self.get_node_by_instance(connection.component_b.id).index
         self.add_edge(a, b, connection)
-        print(f"Edge: {a}: {connection.component_a.id} -> {b}: {connection.component_b.id}")
+        # print(f"Edge: {a}: {connection.component_a.id} -> {b}: {connection.component_b.id}")
 
     def remove_edge(self):
         """TODO. Tip: self.graph.delete_edges"""
@@ -180,7 +186,10 @@ class DConcrete:
             nodes = self.graph.vs.select(instance=instance)
             if len(nodes) == 1:
                 return nodes["component"][0]
-        return None
+        print(f"{instance} NOT FOUND")
+        for v in self.graph.vs:
+            print(v["instance"])
+        raise Exception
 
     def select(
         self,
@@ -315,7 +324,7 @@ class DConcrete:
             topology_summary: dict = {"NAME": self.name, "DESCRIPTION": "", "TOPOLOGY": {}}
             """Nodes"""
             for node in self.nodes:
-                node_id = f"{node['c_type']}_{node.index}"
+                node_id = node["instance"]
                 topology_summary["TOPOLOGY"][node_id] = {}
                 """Parameters"""
                 for parameter_id, parameter in node["component"].parameters.items():
@@ -324,8 +333,8 @@ class DConcrete:
                     topology_summary["TOPOLOGY"][node_id]["PARAMETERS"][parameter_id] = parameter.value
             """Edges"""
             for edge in self.edges:
-                node_id_s = f"{self._graph.vs[edge.source]['c_type']}_{edge.source}"
-                node_id_t = f"{self._graph.vs[edge.target]['c_type']}_{edge.target}"
+                node_id_s = self._graph.vs[edge.source]['instance']
+                node_id_t = self._graph.vs[edge.target]['instance']
                 if "CONNECTIONS" not in topology_summary["TOPOLOGY"][node_id_s]:
                     topology_summary["TOPOLOGY"][node_id_s]["CONNECTIONS"] = {}
                 direction = edge["connection"].direction_b_respect_to_a()

@@ -17,13 +17,14 @@ def generate_topology(design_name: str):
 
 
 def modified_design():
-    d_concrete_default = designs["TestQuad"][0]
+    test_quad_original = designs["TestQuad"][0]
 
-    d_concrete_default.export(ExportType.JSON)
-    d_concrete_default.export(ExportType.PDF)
-    d_concrete_default.export(ExportType.DOT)
-    topology_json_path = d_concrete_default.export(ExportType.TOPOLOGY)
-    d_concrete_default.export(ExportType.TXT)
+    test_quad_original.export(ExportType.JSON)
+    test_quad_original.export(ExportType.PDF)
+    test_quad_original.export(ExportType.DOT)
+    topology_json_path = test_quad_original.export(ExportType.TOPOLOGY)
+    test_quad_original.export(ExportType.TXT)
+    # d_concrete_default.evaluate()
 
     # Changing Name
     f = open(topology_json_path)
@@ -36,36 +37,26 @@ def modified_design():
     )
 
     # Loading it ito a new design
-    d_concrete = DConcrete.from_topology_summary(new_file_path)
+    test_quad_from_topology = DConcrete.from_topology_summary(new_file_path)
 
-    d_concrete.export(ExportType.JSON)
-    d_concrete.export(ExportType.PDF)
-    d_concrete.export(ExportType.DOT)
-    d_concrete.export(ExportType.TOPOLOGY)
-    d_concrete.export(ExportType.TXT)
+    test_quad_from_topology.export(ExportType.JSON)
+    test_quad_from_topology.export(ExportType.PDF)
+    test_quad_from_topology.export(ExportType.DOT)
+    test_quad_from_topology.export(ExportType.TOPOLOGY)
+    test_quad_from_topology.export(ExportType.TXT)
 
-    print(len(d_concrete.nodes))
-    print(len(d_concrete_default.nodes))
-    print(len(d_concrete.edges))
-    print(len(d_concrete_default.edges))
+    print(len(test_quad_original.nodes))
+    print(len(test_quad_from_topology.nodes))
+    print(len(test_quad_original.edges))
+    print(len(test_quad_from_topology.edges))
 
-    connections_original = d_concrete_default.connections
+    connections_original = test_quad_original.connections
     print(f"{len(connections_original)} original connections")
-    connections_mods = d_concrete.connections
+
+    connections_mods = test_quad_from_topology.connections
     print(f"{len(connections_mods)} mod connections")
 
-    for orig_conn in connections_original:
-        found = False
-        for new_conn in connections_mods:
-            if new_conn.is_similar(orig_conn):
-                found = True
-        if found == False:
-            print("NOT FOUND")
-            print(orig_conn)
-
-    # print(f"{len(missing_connections)} missing connections")
-
-    d_concrete.evaluate()
+    test_quad_from_topology.evaluate()
 
 
 if __name__ == "__main__":

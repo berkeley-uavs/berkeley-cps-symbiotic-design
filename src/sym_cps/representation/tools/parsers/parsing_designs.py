@@ -18,6 +18,7 @@ from sym_cps.representation.tools.parsers.temp_objects import (
     connectable_connectors,
 )
 from sym_cps.shared.paths import design_library_root_path_default
+from sym_cps.tools.strings import repr_dictionary, rename_instance
 
 
 def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[DConcrete, DTopology]]:
@@ -119,13 +120,19 @@ def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[D
 
             """Create new DConcrete"""
             new_design = DConcrete(name=dirname)
+            instances_created: dict[str, int] = {}
+            instances_renaming: dict[str, str] = {}
             for instance, (
                 component,
                 parameters_floats,
             ) in instance_component.items():
                 parameters: dict[str, Parameter] = {}
+
+                c_type_id = library.components[component].comp_type.id
+                rename_instance(instance, c_type_id, instances_renaming, instances_created)
+
                 new_component = Component(
-                    id=instance,
+                    id=instances_renaming[instance],
                     library_component=library.components[component],
                     parameters=parameters,
                 )
@@ -167,9 +174,9 @@ def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[D
                 for (instance_t, connector_s, connector_t) in connections:
                     # print(f"{instance_s}, {connector_s}, {instance_t}, {connector_t}")
                     connection = Connection(
-                        component_a=new_design.get_instance(instance_s),
+                        component_a=new_design.get_instance(instances_renaming[instance_s]),
                         connector_a=all_connectors[connector_s],
-                        component_b=new_design.get_instance(instance_t),
+                        component_b=new_design.get_instance(instances_renaming[instance_t]),
                         connector_b=all_connectors[connector_t],
                     )
                     connections_set.append(connection)

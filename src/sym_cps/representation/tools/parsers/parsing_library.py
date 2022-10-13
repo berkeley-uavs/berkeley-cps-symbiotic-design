@@ -16,6 +16,8 @@ from sym_cps.representation.tools.parsers.temp_objects import (
 from sym_cps.shared.paths import lower_bound_file, upper_bound_file
 
 # Maps all parameter_ids to (min,max) bounds"""
+from sym_cps.tools.strings import rename_component_types
+
 all_parameters_upper_bounds: dict[str, float] = {}
 all_parameters_lower_bounds: dict[str, float] = {}
 
@@ -51,7 +53,7 @@ def parse_components_and_types(path: Path) -> dict[str, LibraryComponent]:
                 if "Passenger" == type_name:
                     pass
                 if type_name not in all_component_types.keys():
-                    all_component_types[type_name] = CType(id=type_name)
+                    all_component_types[type_name] = CType(id=rename_component_types(type_name))
 
                 c_type = all_component_types[type_name]
 
