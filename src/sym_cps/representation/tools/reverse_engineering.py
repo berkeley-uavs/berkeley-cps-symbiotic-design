@@ -41,7 +41,9 @@ def parameters():
         "shared_modified": {},
         "shared_modified_different": {},
         "axe_minimal": {},
-        "quad_minimal": {}
+        "quad_minimal": {},
+        "axe_minimal_parameters": {},
+        "quad_minimal_parameters": {}
     }
 
     for name_a, design_a in designs_chosen.items():
@@ -85,16 +87,32 @@ def parameters():
     data["quad_minimal"] = deepcopy(data["quad_all"])
 
     default_keys = set(data["shared_modified"].keys()) | set(data["shared_default"].keys())
-    for k in default_keys:
-        if k in data["axe_minimal"].keys():
-            del data["axe_minimal"][k]
-        if k in data["quad_minimal"].keys():
-            del data["quad_minimal"][k]
+    
+    for name in {"axe", "quad"}:
+        for k in default_keys:
+            if k in data[f"{name}_minimal"].keys():
+                del data[f"{name}_minimal"][k]
 
-
-    for name, info in data.items():
-        # info = sorted(info.items(), key=lambda x: x[0])
-        save_to_file(str(json.dumps(info)), f"{name}.json", folder_name="analysis")
+        pid_in_design_parameters = set()
+        for dp in axe.design_parameters.values():
+            data[f"{name}_minimal_parameters"][dp.id] = {"VALUE": dp.value, "PARAMETERS": []}
+            for parameter in dp.parameters:
+                lib_p = parameter.c_parameter.id
+                if lib_p in data[f"{name}_minimal"].keys():
+                    data[f"{name}_minimal_parameters"][dp.id]["PARAMETERS"].append(parameter.id)
+                    pid_in_design_parameters |= {parameter.id}
+                else:
+                    print(f"{dp.id} skipped")
+            data[f"{name}_minimal_minus_params"] = deepcopy(data[f"{name}_minimal"])
+            for k, v in data[f"{name}_minimal"].items():
+                for vk, v in v.items():
+                    if vk in pid_in_design_parameters:
+                        print(f"{vk} in {pid_in_design_parameters}")
+                        del data[f"{name}_minimal_minus_params"][k][vk]
+                    
+        for name, info in data.items():
+            # info = sorted(info.items(), key=lambda x: x[0])
+            save_to_file(str(json.dumps(info)), f"{name}.json", folder_name="analysis")
 
 
 if __name__ == "__main__":
