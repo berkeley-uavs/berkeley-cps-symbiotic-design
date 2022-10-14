@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from itertools import combinations
 
 from sym_cps.shared.library import designs
@@ -32,6 +33,7 @@ def parse_designs():
         p_modified = data[design.name]["PARAMETERS"]["MODIFIED"]
         p_component = data[design.name]["PARAMETERS"]["COMPONENT"]
         p_design = data[design.name]["DESIGN_PARAMETERS"]
+        p_assigned = data[design.name]["PARAMETERS_ASSIGNED"] = []
         for parameter in design.parameters:
             if parameter.value != parameter.default:
                 if parameter.c_parameter.id not in p_default.keys():
@@ -60,11 +62,12 @@ def parse_designs():
                 if lib_p not in p_design[dp.id]["PARAMETERS"].keys():
                     p_design[dp.id]["PARAMETERS"][lib_p] = []
                 p_design[dp.id]["PARAMETERS"][lib_p].append(parameter.id)
+                if lib_p not in p_assigned:
+                    p_assigned.append(lib_p)
     return data
 
 
-if __name__ == "__main__":
-    data = parse_designs()
+def extract_shared_parameters(data: dict):
     for design_name, info in data.items():
         save_to_file(str(json.dumps(info)), f"parameters.json", folder_name=f"analysis/{design_name}")
     shared_parameters = {}
@@ -75,4 +78,39 @@ if __name__ == "__main__":
         shared_keys_values = filter(lambda x: comp_b[x] == comp_a[x], shared_keys)
         for k in shared_keys_values:
             shared_parameters[k] = comp_a[k]
-    save_to_file(str(json.dumps(shared_parameters)), f"shared_parameters.json", folder_name=f"analysis")
+    return shared_parameters
+
+
+if __name__ == "__main__":
+    data = parse_designs()
+    for design_name, info in data.items():
+        save_to_file(str(json.dumps(info, sort_keys=True, indent=4)), f"parameters.json",
+                     folder_name=f"analysis/{design_name}")
+    shared_parameters = extract_shared_parameters(data)
+    save_to_file(str(json.dumps(shared_parameters, sort_keys=True, indent=4)), f"shared_parameters.json",
+                 folder_name=f"analysis")
+
+    parameters_assigned_union = set()
+    parameters_assigned_shared = set()
+    for design_name, infos in data.items():
+        parameters_assigned_union |= set(infos["PARAMETERS_ASSIGNED"])
+
+    parameters_assigned_shared = deepcopy(parameters_assigned_union)
+
+    for design_name, infos in data.items():
+        d_params = set(infos["PARAMETERS_ASSIGNED"])
+        diff = parameters_assigned_shared - d_params
+        parameters_assigned_shared = parameters_assigned_shared - diff
+
+    save_to_file("\n".join(parameters_assigned_union), f"parameters_assigned_union",
+                 folder_name=f"analysis")
+
+    save_to_file("\n".join(parameters_assigned_shared), f"parameters_assigned_shared",
+                 folder_name=f"analysis")
+
+    parameters_assigned_shared_different = deepcopy(parameters_assigned_shared)
+
+    parameters_assigned_shared_different -= set(shared_parameters.keys())
+
+    save_to_file("\n".join(parameters_assigned_shared_different), f"parameters_assigned_shared_different",
+                 folder_name=f"analysis")
