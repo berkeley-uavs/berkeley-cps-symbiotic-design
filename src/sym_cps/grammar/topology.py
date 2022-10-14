@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
-import json
+
 from aenum import Enum, auto
 
 
 class AbstractionLevel(Enum):
     LOW = auto()
+
 
 @dataclass
 class AbstractTopology:
@@ -41,10 +43,7 @@ class AbstractTopology:
 
     def to_json(self, abstraction: AbstractionLevel = AbstractionLevel.LOW) -> str:
         if abstraction == AbstractionLevel.LOW:
-            export: dict = {"NAME": self.name,
-                            "DESCRIPTION": "",
-                            "ABSTRACTION": "LOW",
-                            "TOPOLOGY": {}}
+            export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION": "LOW", "TOPOLOGY": {}}
             for component_a, connections in self.connections.items():
                 export["TOPOLOGY"][component_a] = {"CONNECTIONS": {}, "PARAMETERS": {}}
                 """Parameters"""

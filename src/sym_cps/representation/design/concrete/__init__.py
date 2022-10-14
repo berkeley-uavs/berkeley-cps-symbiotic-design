@@ -12,10 +12,10 @@ from pathlib import Path
 import igraph
 import matplotlib
 from igraph import Graph, plot
+
 from sym_cps.evaluation import evaluate_design
-from sym_cps.grammar.topology import AbstractTopology, AbstractionLevel
+from sym_cps.grammar.topology import AbstractionLevel, AbstractTopology
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
-from sym_cps.representation.tools.dictionaries import number_of_instances_in_dict
 
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
@@ -317,8 +317,8 @@ class DConcrete:
 
         """Connections"""
         for edge in self.edges:
-            node_id_s = self._graph.vs[edge.source]['instance']
-            node_id_t = self._graph.vs[edge.target]['instance']
+            node_id_s = self._graph.vs[edge.source]["instance"]
+            node_id_t = self._graph.vs[edge.target]["instance"]
             direction = edge["connection"].direction_b_respect_to_a()
             if node_id_s not in connections:
                 connections[node_id_s] = {}

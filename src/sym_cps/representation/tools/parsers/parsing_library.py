@@ -14,9 +14,9 @@ from sym_cps.representation.tools.parsers.temp_objects import (
     all_parameters,
 )
 from sym_cps.shared.paths import lower_bound_file, upper_bound_file
+from sym_cps.tools.strings import rename_component_types
 
 # Maps all parameter_ids to (min,max) bounds"""
-from sym_cps.tools.strings import rename_component_types
 
 all_parameters_upper_bounds: dict[str, float] = {}
 all_parameters_lower_bounds: dict[str, float] = {}
