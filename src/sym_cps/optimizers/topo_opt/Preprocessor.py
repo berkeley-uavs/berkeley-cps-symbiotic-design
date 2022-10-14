@@ -9,7 +9,7 @@ Two preprocessing:
 '''
 import numpy as np
 import quaternion
-from design_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals
+from topo_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals
 
 def np_quaternion(q):
     """Create a np.quaternion from a rd.Quaternion."""

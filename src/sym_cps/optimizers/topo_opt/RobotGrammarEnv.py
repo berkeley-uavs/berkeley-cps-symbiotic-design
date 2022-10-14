@@ -11,7 +11,7 @@ import numpy as np
 
 # import our own packages
 import pyrobotdesign as rd
-from design_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals, simulate, presimulate
+from topo_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals, simulate, presimulate
 from common import *
 from Net import Net
 import torch

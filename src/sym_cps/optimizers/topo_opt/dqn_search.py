@@ -20,7 +20,7 @@ import tasks
 import pyrobotdesign as rd
 from utils import solve_argv_conflict
 from common import *
-from design_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals
+from topo_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals
 from Preprocessor import Preprocessor
 
 Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward', 'done'))

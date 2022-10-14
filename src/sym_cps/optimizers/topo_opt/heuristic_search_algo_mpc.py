@@ -35,7 +35,7 @@ from torch_geometric.data.data import Data
 from arguments import get_parser
 from utils import solve_argv_conflict
 from common import *
-from design_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals
+from topo_search import make_initial_graph, build_normalized_robot, get_applicable_matches, has_nonterminals
 import tasks
 import pyrobotdesign as rd
 from RobotGrammarEnv import RobotGrammarEnv
