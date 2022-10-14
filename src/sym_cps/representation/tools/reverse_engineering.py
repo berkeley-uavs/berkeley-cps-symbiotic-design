@@ -26,6 +26,7 @@ def _all_same_value(dictionary: dict) -> bool:
             return False
     return True
 
+
 def parameters():
     designs_chosen = {"quad": quad, "axe": axe}
 
@@ -43,7 +44,7 @@ def parameters():
         "axe_minimal": {},
         "quad_minimal": {},
         "axe_minimal_parameters": {},
-        "quad_minimal_parameters": {}
+        "quad_minimal_parameters": {},
     }
 
     for name_a, design_a in designs_chosen.items():
@@ -87,7 +88,7 @@ def parameters():
     data["quad_minimal"] = deepcopy(data["quad_all"])
 
     default_keys = set(data["shared_modified"].keys()) | set(data["shared_default"].keys())
-    
+
     for name in {"axe", "quad"}:
         for k in default_keys:
             if k in data[f"{name}_minimal"].keys():
@@ -109,7 +110,7 @@ def parameters():
                     if vk in pid_in_design_parameters:
                         print(f"{vk} in {pid_in_design_parameters}")
                         del data[f"{name}_minimal_minus_params"][k][vk]
-                    
+
         for name, info in data.items():
             # info = sorted(info.items(), key=lambda x: x[0])
             save_to_file(str(json.dumps(info)), f"{name}.json", folder_name="analysis")

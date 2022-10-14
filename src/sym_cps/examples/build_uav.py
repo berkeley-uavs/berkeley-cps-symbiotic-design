@@ -7,6 +7,8 @@ from sym_cps.shared.paths import ExportType
 from sym_cps.tools.io import save_to_file
 
 """Generate design from topology.json"""
+
+
 def modified_design():
     test_quad_original = designs["TestQuad"][0]
 
