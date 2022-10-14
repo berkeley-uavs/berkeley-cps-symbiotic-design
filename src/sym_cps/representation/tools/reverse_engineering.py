@@ -108,7 +108,7 @@ def parameters():
             for k, v in data[f"{name}_minimal"].items():
                 for vk, v in v.items():
                     if vk in pid_in_design_parameters:
-                        print(f"{vk} in {pid_in_design_parameters}")
+                        # print(f"{vk} in {pid_in_design_parameters}")
                         del data[f"{name}_minimal_minus_params"][k][vk]
 
         for name, info in data.items():
