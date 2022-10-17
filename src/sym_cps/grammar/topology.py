@@ -9,6 +9,7 @@ from aenum import Enum, auto
 
 class AbstractionLevel(Enum):
     LOW = auto()
+    USE_DEFAULT = auto()
 
 
 @dataclass
@@ -39,6 +40,19 @@ class AbstractTopology:
                             parameters[component_a] = {}
                         for param, value in infos.items():
                             parameters[component_a][param] = float(value)
+        if topo["ABSTRACTION"] == "LOW":
+            for component_a, categories in topo["TOPOLOGY"].items():
+                for category, infos in categories.items():
+                    if category == "CONNECTIONS":
+                        if component_a not in connections:
+                            connections[component_a] = {}
+                        for component_b, direction in infos.items():
+                            connections[component_a][component_b] = direction
+                    if category == "PARAMETERS":
+                        if component_a not in parameters:
+                            parameters[component_a] = {}
+                        for param, value in infos.items():
+                            parameters[component_a][param] = float(value)
         return cls(name, description, connections, parameters)
 
     def to_json(self, abstraction: AbstractionLevel = AbstractionLevel.LOW) -> str:
@@ -56,8 +70,8 @@ class AbstractTopology:
                     export["TOPOLOGY"][component_a]["CONNECTIONS"][component_b] = direction
             return str(json.dumps(export))
 
-        if abstraction == AbstractionLevel.LOW:
-            export: dict = {"NAME": self.name, "DESCRIPTION": "", "TOPOLOGY": {}}
+        if abstraction == AbstractionLevel.USE_DEFAULT:
+            export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION": "LOW", "TOPOLOGY": {}}
             for component_a, connections in self.connections.items():
                 export["TOPOLOGY"][component_a] = {"CONNECTIONS": {}, "PARAMETERS": {}}
                 """Parameters"""

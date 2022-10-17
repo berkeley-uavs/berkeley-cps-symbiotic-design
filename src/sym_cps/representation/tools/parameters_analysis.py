@@ -67,6 +67,56 @@ def parse_designs():
     return data
 
 
+def learn_swri_parameters(data: dict):
+    swri_learned_parameters = {
+        "PARAMETERS":
+            {
+                "ALL": {"DESCRIPTION": "All parameter values across the seed designs",
+                        "VALUES": {}},
+                "SHARED": {"DESCRIPTION": "All parameters with same values across the seed designs",
+                           "VALUES": {}},
+                "DIFFERENT": {"DESCRIPTION": "All parameters with different values across the seed designs",
+                              "VALUES": {}}
+                ,
+                "DESIGN_PARAMS_ALL": {"DESCRIPTION": "All parameters controlled by DesignParameters in any design",
+                                      "VALUES": []},
+                "DESIGN_PARAMS_SHARED": {"DESCRIPTION": "All parameters controlled by DesignParameters in every design",
+                                         "VALUES": []}
+            }}
+
+    p_all = swri_learned_parameters["PARAMETERS"]["ALL"]["VALUES"]
+    for d in data.keys():
+        all_params = deepcopy(data[d]["PARAMETERS"]["DEFAULT"])
+        all_params.update(data[d]["PARAMETERS"]["MODIFIED"])
+        for comp_para, instance_params in all_params.items():
+            if comp_para not in p_all.keys():
+                p_all[comp_para] = []
+            for inst_value in instance_params.values():
+                if inst_value not in p_all[comp_para]:
+                    p_all[comp_para].append(inst_value)
+
+    p_shared = swri_learned_parameters["PARAMETERS"]["SHARED"]["VALUES"]
+    p_different = swri_learned_parameters["PARAMETERS"]["DIFFERENT"]["VALUES"]
+
+    for comp_para, values in p_all.items():
+        if len(values) == 1:
+            p_shared[comp_para] = values[0]
+        else:
+            if comp_para not in p_different.keys():
+                p_different[comp_para] = []
+            p_different[comp_para].extend(values)
+
+    all_dp: list[set] = []
+    for design_name, infos in data.items():
+        all_dp.append(set(infos["PARAMETERS_ASSIGNED"]))
+
+    union = set().union(*all_dp)
+    swri_learned_parameters["PARAMETERS"]["DESIGN_PARAMS_ALL"]["VALUES"] = list(union)
+    swri_learned_parameters["PARAMETERS"]["DESIGN_PARAMS_SHARED"]["VALUES"] = list(union.intersection(*all_dp))
+
+    return swri_learned_parameters
+
+
 def extract_shared_parameters(data: dict):
     for design_name, info in data.items():
         save_to_file(str(json.dumps(info)), f"parameters.json", folder_name=f"analysis/{design_name}")
@@ -86,31 +136,7 @@ if __name__ == "__main__":
     for design_name, info in data.items():
         save_to_file(str(json.dumps(info, sort_keys=True, indent=4)), f"parameters.json",
                      folder_name=f"analysis/{design_name}")
-    shared_parameters = extract_shared_parameters(data)
-    save_to_file(str(json.dumps(shared_parameters, sort_keys=True, indent=4)), f"shared_parameters.json",
-                 folder_name=f"analysis")
 
-    parameters_assigned_union = set()
-    parameters_assigned_shared = set()
-    for design_name, infos in data.items():
-        parameters_assigned_union |= set(infos["PARAMETERS_ASSIGNED"])
-
-    parameters_assigned_shared = deepcopy(parameters_assigned_union)
-
-    for design_name, infos in data.items():
-        d_params = set(infos["PARAMETERS_ASSIGNED"])
-        diff = parameters_assigned_shared - d_params
-        parameters_assigned_shared = parameters_assigned_shared - diff
-
-    save_to_file("\n".join(parameters_assigned_union), f"parameters_assigned_union",
-                 folder_name=f"analysis")
-
-    save_to_file("\n".join(parameters_assigned_shared), f"parameters_assigned_shared",
-                 folder_name=f"analysis")
-
-    parameters_assigned_shared_different = deepcopy(parameters_assigned_shared)
-
-    parameters_assigned_shared_different -= set(shared_parameters.keys())
-
-    save_to_file("\n".join(parameters_assigned_shared_different), f"parameters_assigned_shared_different",
+    learned_parameters = learn_swri_parameters(data)
+    save_to_file(str(json.dumps(learned_parameters, sort_keys=True, indent=4)), f"learned_parameters.json",
                  folder_name=f"analysis")
