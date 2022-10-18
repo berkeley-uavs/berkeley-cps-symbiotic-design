@@ -1,16 +1,14 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from random import choice
 from typing import TYPE_CHECKING
 
 import igraph
-import matplotlib
+import pydot
 from igraph import Graph, plot
-
-matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
-
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.shared.paths import ExportType, designs_folder
 from sym_cps.tools.io import save_to_file
@@ -61,6 +59,9 @@ class DTopology:
         return len(self.graph.vs)
 
     def add_node(self, c_type: CType) -> igraph.Vertex:
+        if not isinstance(c_type, CType):
+            print(c_type)
+            raise Exception("CType wrong")
         return self.graph.add_vertex(c_type=c_type, label=c_type.id)
 
     def remove_node(self):
@@ -91,6 +92,15 @@ class DTopology:
             nodes.add(edge.target)
         return nodes
 
+    @property
+    def pydot(self) -> pydot.Dot:
+        absolute_folder = designs_folder / self.name
+        dot_file_path = absolute_folder / "topology_graph.dot"
+        if not dot_file_path.exists():
+            self._graph.write_dot(f=str(dot_file_path))
+        graphs = pydot.graph_from_dot_file(dot_file_path)
+        return graphs[0]
+
     def export(self, file_type: ExportType):
         absolute_folder = designs_folder / self.name
         if file_type == ExportType.TXT:
@@ -101,18 +111,18 @@ class DTopology:
             )
         elif file_type == ExportType.JSON:
             raise Exception("Can't create JSON from DTopology. It must be from DConcrete.")
+        elif file_type == ExportType.DOT:
+            if not os.path.exists(absolute_folder):
+                os.makedirs(absolute_folder)
+            file_path = absolute_folder / "topology_graph.dot"
+            self._graph.write_dot(f=str(file_path))
+
+        elif file_type == ExportType.PDF:
+            file_path = absolute_folder / "topology_graph.pdf"
+            self.pydot.write_pdf(file_path)
 
         elif file_type == ExportType.DOT:
             self.graph.write_dot(f=str(absolute_folder / "topo_graph.dot"))
-
-        elif file_type == ExportType.PDF:
-            if self.n_nodes > 0:
-                layout = self.graph.layout("kk")
-                """Adding labels to nodes"""
-                # self.graph.vs["label"] = self.graph.vs["component"]
-                fig, ax = plt.subplots()
-                plot(self.graph, scale=50, vertex_size=0.2, edge_width=[1, 1], layout=layout, target=ax)
-                plt.savefig(absolute_folder / "topology_graph.pdf")
 
         else:
             raise Exception("File type not supported")

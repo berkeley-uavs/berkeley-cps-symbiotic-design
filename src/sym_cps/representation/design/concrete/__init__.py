@@ -9,16 +9,13 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import igraph
-import matplotlib
-from igraph import Graph, plot
+import pydot
+from igraph import Graph, Vertex, VertexSeq, EdgeSeq, Edge
 
 from sym_cps.evaluation import evaluate_design
 from sym_cps.grammar.topology import AbstractionLevel, AbstractTopology
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.design.concrete.elements.component import Component
@@ -49,7 +46,7 @@ class DConcrete:
     name: str
     description: str = ""
     design_parameters: dict[str, DesignParameter] = field(default_factory=dict)
-    comp_id_to_node: dict[str, igraph.Vertex] = field(default_factory=dict)
+    comp_id_to_node: dict[str, Vertex] = field(default_factory=dict)
 
     def __post_init__(self):
         self._graph = Graph(directed=True)
@@ -81,14 +78,14 @@ class DConcrete:
         return self._graph
 
     @property
-    def nodes(self) -> list[igraph.Vertex]:
+    def nodes(self) -> list[Vertex]:
         return list(self.graph.vs)
 
     @property
-    def edges(self) -> list[igraph.Edge]:
+    def edges(self) -> list[Edge]:
         return list(self.graph.es)
 
-    def get_vertex_by_id(self, vid: int) -> igraph.Vertex:
+    def get_vertex_by_id(self, vid: int) -> Vertex:
         return self.graph.vs[vid]
 
     @property
@@ -102,7 +99,7 @@ class DConcrete:
     def export_parameters(self) -> dict[str, dict[str, Parameter]]:
         pass
 
-    def add_default_node(self, abstract_component_id: str) -> igraph.Vertex:
+    def add_default_node(self, abstract_component_id: str) -> Vertex:
         if abstract_component_id in self.comp_id_to_node.keys():
             return self.comp_id_to_node[abstract_component_id]
         id_split = abstract_component_id.split("_")
@@ -121,7 +118,12 @@ class DConcrete:
         self.comp_id_to_node[abstract_component_id] = self.add_node(instance_a)
         return self.comp_id_to_node[abstract_component_id]
 
-    def add_node(self, component: Component) -> igraph.Vertex:
+    def add_node(self, component: Component) -> Vertex:
+        print(component.id)
+        print(component.library_component)
+        print(component.c_type)
+        print(component)
+        print(component.library_component.id)
         return self.graph.add_vertex(
             instance=component.id,
             library_component=component.library_component,
@@ -172,7 +174,7 @@ class DConcrete:
                 return set(self.graph.es()["connection"])
         return set()
 
-    def get_node_by_instance(self, instance: str) -> igraph.Vertex | None:
+    def get_node_by_instance(self, instance: str) -> Vertex | None:
         if self.n_nodes > 0:
             nodes = self.graph.vs.select(instance=instance)
             if len(nodes) == 1:
@@ -334,9 +336,19 @@ class DConcrete:
                 """Adding nodes with no connections"""
                 parameters[node_id] = {}
             for parameter_id, parameter in node["component"].parameters.items():
+                print(node["component"])
                 parameters[node_id][parameter_id] = float(parameter.value)
 
         return AbstractTopology(name, description, connections, parameters)
+
+    @property
+    def pydot(self) -> pydot.Dot:
+        absolute_folder = designs_folder / self.name
+        dot_file_path = absolute_folder / "concrete_graph.dot"
+        if not dot_file_path.exists():
+            self._graph.write_dot(f=str(dot_file_path))
+        graphs = pydot.graph_from_dot_file(dot_file_path)
+        return graphs[0]
 
     def export(self, file_type: ExportType) -> Path:
         absolute_folder = designs_folder / self.name
@@ -365,16 +377,12 @@ class DConcrete:
             if not os.path.exists(absolute_folder):
                 os.makedirs(absolute_folder)
             file_path = absolute_folder / "concrete_graph.dot"
-            self.graph.write_dot(f=str(file_path))
+            self._graph.write_dot(f=str(file_path))
 
         elif file_type == ExportType.PDF:
             file_path = absolute_folder / "concrete_graph.pdf"
-            if self.n_nodes > 0:
-                layout = self.graph.layout("kk")
-                """Adding labels to nodes"""
-                fig, ax = plt.subplots()
-                plot(self.graph, scale=50, vertex_size=0.2, edge_width=[1, 1], layout=layout, target=ax)
-                plt.savefig(file_path)
+            self.pydot.write_pdf(file_path)
+
         else:
             raise Exception("File type not supported")
 
@@ -445,7 +453,7 @@ class DConcrete:
         connection_json = json.dumps(connection_dict, indent=4)
         return connection_json
 
-    def get_neighbours_of(self, node: igraph.Vertex) -> list[igraph.Vertex]:
+    def get_neighbours_of(self, node: Vertex) -> list[Vertex]:
         neighbors = self._graph.neighbors(node.index)
         neighbors = set(neighbors)
         neighbors_vertices = []
@@ -453,13 +461,13 @@ class DConcrete:
             neighbors_vertices.append(self._graph.vs.select(n)[0])
         return neighbors_vertices
 
-    def get_edges_from(self, node: igraph.Vertex) -> igraph.EdgeSeq:
+    def get_edges_from(self, node: Vertex) -> EdgeSeq:
         return self._graph.es.select(_source=node.index)
 
-    def get_edges_to(self, node: igraph.Vertex) -> igraph.EdgeSeq:
+    def get_edges_to(self, node: Vertex) -> EdgeSeq:
         return self._graph.es.select(_target=node.index)
 
-    # def get_edges_of(self, node: igraph.Vertex) -> set(igraph.Edge):
+    # def get_edges_of(self, node: Vertex) -> set(Edge):
     #     edges = set()
     #     edges |= set(self._graph.es.select(_source=[node.index]))
     #     edges |= set(self._graph.es.select(_target=[node.index]))
