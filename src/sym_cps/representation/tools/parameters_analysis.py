@@ -5,10 +5,7 @@ from itertools import combinations
 from sym_cps.shared.library import designs
 from sym_cps.tools.io import save_to_file
 
-designs_to_analyze = [
-    designs["TestQuad"][0],
-    designs["NewAxe"][0]
-]
+designs_to_analyze = [designs["TestQuad"][0], designs["NewAxe"][0]]
 
 
 def _all_same_value(dictionary: dict) -> bool:
@@ -69,20 +66,20 @@ def parse_designs():
 
 def learn_swri_parameters(data: dict):
     swri_learned_parameters = {
-        "PARAMETERS":
-            {
-                "ALL": {"DESCRIPTION": "All parameter values across the seed designs",
-                        "VALUES": {}},
-                "SHARED": {"DESCRIPTION": "All parameters with same values across the seed designs",
-                           "VALUES": {}},
-                "DIFFERENT": {"DESCRIPTION": "All parameters with different values across the seed designs",
-                              "VALUES": {}}
-                ,
-                "DESIGN_PARAMS_ALL": {"DESCRIPTION": "All parameters controlled by DesignParameters in any design",
-                                      "VALUES": []},
-                "DESIGN_PARAMS_SHARED": {"DESCRIPTION": "All parameters controlled by DesignParameters in every design",
-                                         "VALUES": []}
-            }}
+        "PARAMETERS": {
+            "ALL": {"DESCRIPTION": "All parameter values across the seed designs", "VALUES": {}},
+            "SHARED": {"DESCRIPTION": "All parameters with same values across the seed designs", "VALUES": {}},
+            "DIFFERENT": {"DESCRIPTION": "All parameters with different values across the seed designs", "VALUES": {}},
+            "DESIGN_PARAMS_ALL": {
+                "DESCRIPTION": "All parameters controlled by DesignParameters in any design",
+                "VALUES": [],
+            },
+            "DESIGN_PARAMS_SHARED": {
+                "DESCRIPTION": "All parameters controlled by DesignParameters in every design",
+                "VALUES": [],
+            },
+        }
+    }
 
     p_all = swri_learned_parameters["PARAMETERS"]["ALL"]["VALUES"]
     for d in data.keys():
@@ -134,9 +131,13 @@ def extract_shared_parameters(data: dict):
 if __name__ == "__main__":
     data = parse_designs()
     for design_name, info in data.items():
-        save_to_file(str(json.dumps(info, sort_keys=True, indent=4)), f"parameters.json",
-                     folder_name=f"analysis/{design_name}")
+        save_to_file(
+            str(json.dumps(info, sort_keys=True, indent=4)), f"parameters.json", folder_name=f"analysis/{design_name}"
+        )
 
     learned_parameters = learn_swri_parameters(data)
-    save_to_file(str(json.dumps(learned_parameters, sort_keys=True, indent=4)), f"learned_parameters.json",
-                 folder_name=f"analysis")
+    save_to_file(
+        str(json.dumps(learned_parameters, sort_keys=True, indent=4)),
+        f"learned_parameters.json",
+        folder_name=f"analysis",
+    )

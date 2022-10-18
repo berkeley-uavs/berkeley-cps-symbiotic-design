@@ -10,17 +10,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import pydot
-from igraph import Graph, Vertex, VertexSeq, EdgeSeq, Edge
+from igraph import Edge, EdgeSeq, Graph, Vertex, VertexSeq
 
 from sym_cps.evaluation import evaluate_design
-from sym_cps.grammar.topology import AbstractionLevel, AbstractTopology
-from sym_cps.representation.design.concrete.elements.parameter import Parameter
-
-
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
+from sym_cps.grammar.topology import AbstractionLevel, AbstractTopology
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
+from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.paths import ExportType, designs_folder

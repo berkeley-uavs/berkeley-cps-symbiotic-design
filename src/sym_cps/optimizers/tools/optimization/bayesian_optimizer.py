@@ -18,7 +18,7 @@ class BayesianOptimizer(OptimizerBase):
     Input: problem: A ProblemBase object
     """
 
-    def __init__(self, problem: ProblemBase, debug_level = 1, **kwarg):
+    def __init__(self, problem: ProblemBase, debug_level=1, **kwarg):
         super().__init__(problem=problem)
         self._visualizer = BayesianOptimizationVisualizer()
         self._kernel = Matern(nu=2.5, length_scale=0.05, length_scale_bounds="fixed")

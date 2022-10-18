@@ -9,6 +9,7 @@ import igraph
 import pydot
 from igraph import Graph, plot
 from matplotlib import pyplot as plt
+
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.shared.paths import ExportType, designs_folder
 from sym_cps.tools.io import save_to_file
