@@ -7,12 +7,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 
-from sym_cps.optimizers.tools.optimization.optimizer_base import (
+from sym_cps.optimizers.tools.optimization.optimizer_base import (  # pylint: disable=import-error, no-name-in-module
     OptimizerBase,
-)  # pylint: disable=import-error, no-name-in-module
-from sym_cps.optimizers.tools.optimization.problem_base import (
+)
+from sym_cps.optimizers.tools.optimization.problem_base import (  # pylint: disable=import-error, no-name-in-module
     ProblemBase,
-)  # pylint: disable=import-error, no-name-in-module
+)
 
 
 class ContinuousProblemVisualizer(object):

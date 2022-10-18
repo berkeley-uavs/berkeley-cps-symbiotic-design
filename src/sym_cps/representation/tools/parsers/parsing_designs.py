@@ -18,7 +18,7 @@ from sym_cps.representation.tools.parsers.temp_objects import (
     connectable_connectors,
 )
 from sym_cps.shared.paths import design_library_root_path_default
-from sym_cps.tools.strings import repr_dictionary, rename_instance
+from sym_cps.tools.strings import rename_instance
 
 
 def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[DConcrete, DTopology]]:
@@ -117,6 +117,8 @@ def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[D
                     instance_connection[from_component_instance] = {
                         (to_component_instance, connector_id_from, connector_id_to)
                     }
+
+            print(instance_component)
 
             """Create new DConcrete"""
             new_design = DConcrete(name=dirname)

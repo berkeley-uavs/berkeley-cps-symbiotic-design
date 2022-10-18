@@ -15,6 +15,10 @@ class Parameter:
     c_parameter: CParameter
     component: Component | None = None
 
+    def __post_init__(self):
+        if "Hub4_instance_1_Battery__VOLUME_PERCENT" in self.id:
+            print("")
+
     @property
     def min(self) -> float:
         return self.c_parameter.values["min_val"]

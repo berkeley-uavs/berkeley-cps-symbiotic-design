@@ -3,7 +3,6 @@ from enum import Enum, auto
 import numpy as np
 import numpy.typing as npt
 
-from sym_cps.evaluation import evaluate_design
 from sym_cps.optimizers.tools.optimization.problem_base import ProblemBase
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
@@ -60,8 +59,8 @@ class ParameterOptimizationProblem(ProblemBase):
         design_json_path = designs_folder / self._d_concrete.name / "design_swri.json"
 
         # obj_vals, con_vals = evaluate_design(
-        #     design_json_path=design_json_path, 
-        #     metadata={"extra_info": "full evaluation example"}, 
+        #     design_json_path=design_json_path,
+        #     metadata={"extra_info": "full evaluation example"},
         #     timeout=800,
         #     control_opt=True
         # )

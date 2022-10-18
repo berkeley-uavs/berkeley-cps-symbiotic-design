@@ -7,12 +7,12 @@ from abc import ABC, abstractmethod
 import numpy.typing as npt
 
 from sym_cps.optimizers.tools.optimization.problem_base import ProblemBase
-from sym_cps.optimizers.tools.optimization.util.exceptions import (
+from sym_cps.optimizers.tools.optimization.util.exceptions import (  # pylint: disable=import-error, no-name-in-module
     InValidDesignException,
-)  # pylint: disable=import-error, no-name-in-module
-from sym_cps.optimizers.tools.optimization.util.history import (
+)
+from sym_cps.optimizers.tools.optimization.util.history import (  # pylint: disable=import-error, no-name-in-module
     History,
-)  # pylint: disable=import-error, no-name-in-module
+)
 
 
 class OptimizerBase(ABC):

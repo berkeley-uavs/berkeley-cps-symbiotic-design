@@ -2,8 +2,6 @@
 import os
 from pathlib import Path
 
-from sym_cps.shared.paths import output_folder
-
 
 def save_to_file(
     file_content: str,
@@ -16,6 +14,8 @@ def save_to_file(
 
     if folder_name is not None and absolute_folder_path is not None:
         raise AttributeError
+
+    from sym_cps.shared.paths import output_folder
 
     if folder_name is not None:
         file_folder = output_folder / folder_name

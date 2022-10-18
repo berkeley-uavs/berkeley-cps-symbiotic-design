@@ -40,7 +40,7 @@ class AbstractTopology:
                             parameters[component_a] = {}
                         for param, value in infos.items():
                             parameters[component_a][param] = float(value)
-        if topo["ABSTRACTION"] == "LOW":
+        if topo["ABSTRACTION"] == "USE_DEFAULT":
             for component_a, categories in topo["TOPOLOGY"].items():
                 for category, infos in categories.items():
                     if category == "CONNECTIONS":

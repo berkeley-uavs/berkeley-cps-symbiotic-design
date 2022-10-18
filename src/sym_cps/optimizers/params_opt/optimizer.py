@@ -1,13 +1,12 @@
 from sklearn.gaussian_process.kernels import Matern
 
-from sym_cps.optimizers.tools.optimization.bayesian_optimizer import BayesianOptimizer
-from sym_cps.optimizers.tools.optimization.nm_optimizer import NMOptimizer
 from sym_cps.optimizers import Optimizer
 from sym_cps.optimizers.params_opt.param_opt_problem import (
     ParameterOptimizationProblem,
     ParametersConstraint,
     ParametersStrategy,
 )
+from sym_cps.optimizers.tools.optimization.bayesian_optimizer import BayesianOptimizer
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
@@ -85,5 +84,5 @@ class ParametersOptimizer(Optimizer):
             kwarg["acquisition_function"] = "GP-UCB"
 
             optimizer = BayesianOptimizer(problem=problem, debug_level=2, **kwarg)
-            #optimizer = NMOptimizer(problem=problem, **kwarg)
+            # optimizer = NMOptimizer(problem=problem, **kwarg)
             x_max_valid, y_max_valid = optimizer.optimize()
