@@ -26,7 +26,7 @@ class DTopology:
     name: str
 
     def __post_init__(self):
-        self._graph = Graph()
+        self._graph = Graph(directed=True)
 
     @property
     def graph(self) -> Graph:
