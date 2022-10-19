@@ -3,9 +3,11 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from sym_cps.shared.paths import data_folder
+from sym_cps.representation.library import LibraryComponent
 
 from aenum import Enum, auto
-
+from sym_cps.shared.library import c_library
 
 class AbstractionLevel(Enum):
     LOW = auto()
@@ -40,7 +42,14 @@ class AbstractTopology:
                             parameters[component_a] = {}
                         for param, value in infos.items():
                             parameters[component_a][param] = float(value)
+
         if topo["ABSTRACTION"] == "USE_DEFAULT":
+            """Load learned parameters json"""
+            learned_param_path = data_folder / "reverse_engineering" / "analysis" / "learned_parameters.json"
+            f = open(learned_param_path)
+            default = json.load(f)
+            default = default['PARAMETERS']['ALL']['SHARED']['VALUES']
+            """CONNECTIONS are same as abstraction == "LOW" """
             for component_a, categories in topo["TOPOLOGY"].items():
                 for category, infos in categories.items():
                     if category == "CONNECTIONS":
@@ -51,8 +60,25 @@ class AbstractTopology:
                     if category == "PARAMETERS":
                         if component_a not in parameters:
                             parameters[component_a] = {}
+
+                        """Load parameters for particular component from c_library"""
+                        params_dict = c_library.components[component_a].parameters() 
+
+                        """all_params hold all the parameters for component_a"""
+                        all_params = list(params_dict.keys())
+
+                        """If parameter value is specified in topology json => remove it from list of all _params and assign value in parameters"""
                         for param, value in infos.items():
                             parameters[component_a][param] = float(value)
+                            all_params.remove(param)
+                        
+                        """For all parameters not specified in topology json assign value from default json"""
+                        for p in all_params:
+                            if p in default.keys():
+                                parameters[component_a][p] = float(default[p])
+
+                        
+
         return cls(name, description, connections, parameters)
 
     def to_json(self, abstraction: AbstractionLevel = AbstractionLevel.LOW) -> str:
