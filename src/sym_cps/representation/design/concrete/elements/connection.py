@@ -78,6 +78,7 @@ class Connection:
         #     return f"{a1}-{a2}-{b1}-{b2}"
         # return f"{b1}-{b2}-{a1}-{a2}"
 
+    @property
     def direction_b_respect_to_a(self):
         return get_direction_from_components_and_connections(
             self.component_a.c_type.id, self.component_b.c_type.id, self.connector_a.id, self.connector_b.id

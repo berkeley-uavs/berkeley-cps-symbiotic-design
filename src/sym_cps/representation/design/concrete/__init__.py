@@ -319,7 +319,7 @@ class DConcrete:
         for edge in self.edges:
             node_id_s = self._graph.vs[edge.source]["instance"]
             node_id_t = self._graph.vs[edge.target]["instance"]
-            direction = edge["connection"].direction_b_respect_to_a()
+            direction = edge["connection"].direction_b_respect_to_a
             if node_id_s not in connections:
                 connections[node_id_s] = {}
             connections[node_id_s][node_id_t] = direction
@@ -483,7 +483,7 @@ class DConcrete:
             for edge in self.get_edges_from(node):
                 print(edge["connection"])
                 t_node = self._graph.vs[edge.target]
-                dir = edge["connection"].direction_b_respect_to_a()
+                dir = edge["connection"].direction_b_respect_to_a
                 c_a = edge["connection"].component_a.id
                 c_b = edge["connection"].component_b.id
                 conn_a = edge["connection"].connector_a.id

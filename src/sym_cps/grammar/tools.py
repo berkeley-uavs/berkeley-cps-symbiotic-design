@@ -17,7 +17,11 @@ class Direction(Enum):
     INSIDE = auto()
 
 
-def get_direction_from_components_and_connections(comp_type_a, comp_type_b, connector_id_a, connector_id_b) -> str:
+def get_direction_from_components_and_connections(
+        comp_type_a: str,
+        comp_type_b: str,
+        connector_id_a: str,
+        connector_id_b: str) -> str:
     f = open(connectors_components_path)
     connection_map = json.load(f)
     try:

@@ -9,6 +9,7 @@ import igraph
 import pydot
 from igraph import Graph, plot
 from matplotlib import pyplot as plt
+from sym_cps.grammar.tools import get_direction_from_components_and_connections
 
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.shared.paths import ExportType, designs_folder
@@ -41,7 +42,7 @@ class DTopology:
             d_topology.add_node(c_type=component.library_component.comp_type)
             # print(f"{vertex.index} - {new_vertex.index}")
         for edge in d_concrete.edges:
-            d_topology.add_edge(edge.source, edge.target)
+            d_topology.add_edge(edge.source, edge.target, edge["connection"].direction_b_respect_to_a)
         return d_topology
 
     @property
@@ -69,8 +70,8 @@ class DTopology:
         """TODO"""
         raise NotImplementedError
 
-    def add_edge(self, node_id_a: int, node_id_b: int):
-        self.graph.add_edge(source=node_id_a, target=node_id_b)
+    def add_edge(self, node_id_a: int, node_id_b: int, direction: str = ""):
+        self.graph.add_edge(source=node_id_a, target=node_id_b, label=direction)
 
     def remove_edge(self):
         """TODO. Tip: self.graph.delete_edges"""
