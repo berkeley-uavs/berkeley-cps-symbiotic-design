@@ -100,9 +100,9 @@ class ControlOptimizer(object):
             fdm_args = path_ret["best_args"]
             print(fdm_args)
             fdm_output = self._fdm_interface.execute_from_data(self._fdm_data, fdm_args)
-            # score = fdm_output.get_metrics("Score")
-            score = 100
-            print("warning! FDM result file is not actually using yet")
+            score = fdm_output.get_metrics("Score")
+            #score = 100
+            #print("warning! FDM result file is not actually using yet")
             path_ret["raw_score"] = path_ret["best_score"]
             path_ret["best_score"] = score
             path_ret["best_args"] = fdm_args.args

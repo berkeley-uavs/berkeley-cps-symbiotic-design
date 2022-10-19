@@ -25,6 +25,9 @@ dependencies = [
     "graphviz>=0.20.1",
     "gprof2dot>=2022.7.29",
     "dynaconf>=3.1.11",
+    "parse>=1.19.0",
+    "astropy>=5.1",
+    "pandas>=1.5.0",
 ]
 requires-python = ">=3.10,<3.11"
 
