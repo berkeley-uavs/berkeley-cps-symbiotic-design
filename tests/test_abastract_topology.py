@@ -6,7 +6,7 @@ from sym_cps.shared.designs import designs
 from sym_cps.shared.objects import ExportType
 
 
-def asset_topology(topology_level: ExportType):
+def assert_topology_from_and_to_json(topology_level: ExportType):
     """Test of AbstractTopology at the level of abstraction 1 (lowest)"""
     # Loading DConcrete Object
     test_quad_original = designs["TestQuad"][0]
@@ -36,12 +36,12 @@ levels = [ExportType.TOPOLOGY_1, ExportType.TOPOLOGY_2, ExportType.TOPOLOGY_3]
 
 
 def test_topology_abstraction_1():
-    asset_topology(ExportType.TOPOLOGY_1)
+    assert_topology_from_and_to_json(ExportType.TOPOLOGY_1)
 
 
 def test_topology_abstraction_2():
-    asset_topology(ExportType.TOPOLOGY_2)
+    assert_topology_from_and_to_json(ExportType.TOPOLOGY_2)
 
 
 def test_topology_abstraction_3():
-    asset_topology(ExportType.TOPOLOGY_3)
+    assert_topology_from_and_to_json(ExportType.TOPOLOGY_3)
