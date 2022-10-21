@@ -7,8 +7,8 @@ from sym_cps.optimizers.tools.optimization.problem_base import ProblemBase
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
-from sym_cps.shared.paths import designs_folder
 from sym_cps.shared.objects import ExportType
+from sym_cps.shared.paths import designs_folder
 
 
 class ParametersStrategy(Enum):

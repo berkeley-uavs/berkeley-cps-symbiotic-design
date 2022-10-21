@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from aenum import Enum, auto
+
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters
-from sym_cps.shared.paths import learned_default_params_path
 from sym_cps.tools.strings import get_component_type_from_instance_name
 
 
@@ -20,8 +20,7 @@ abstraction_levels_features = {
     1: {},
     2: {AbstractionFeatures.USE_DEFAULT_PARAMETERS},
     3: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
-    4: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS,
-        AbstractionFeatures.USE_DEFAULT_PARAMETERS}
+    4: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS},
 }
 
 
@@ -60,8 +59,7 @@ class AbstractTopology:
         return cls(name, description, connections, parameters)
 
     def to_json(self, abstraction_level: int) -> str:
-        export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": abstraction_level,
-                        "TOPOLOGY": {}}
+        export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": abstraction_level, "TOPOLOGY": {}}
 
         for component_a, connections in self.connections.items():
             export["TOPOLOGY"][component_a] = {"CONNECTIONS": {}, "PARAMETERS": {}}

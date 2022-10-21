@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from enum import Enum, auto
 
-from sym_cps.shared.paths import learned_default_params_path, connectors_components_path
+from sym_cps.shared.paths import connectors_components_path, learned_default_params_path
 
 
 class ExportType(Enum):

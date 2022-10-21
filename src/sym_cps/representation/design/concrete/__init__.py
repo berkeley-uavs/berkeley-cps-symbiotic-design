@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pydot
 from igraph import Edge, EdgeSeq, Graph, Vertex
+
 from sym_cps.evaluation import evaluate_design
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.grammar.topology import AbstractionFeatures, AbstractTopology
@@ -391,7 +392,7 @@ class DConcrete:
 
     def __eq__(self, other: object):
         if isinstance(other, DConcrete):
-            return (self.components == other.components and self.connections == other.connections)
+            return self.components == other.components and self.connections == other.connections
         else:
             raise Exception("Different classes")
 

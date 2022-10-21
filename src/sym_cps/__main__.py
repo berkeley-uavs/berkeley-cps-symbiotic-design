@@ -1,7 +1,6 @@
 from sym_cps.examples.control import designs
 from sym_cps.shared.objects import ExportType
 
-
 # Loading DConcrete Object
 test_quad_original = designs["TestQuad"][0]
 

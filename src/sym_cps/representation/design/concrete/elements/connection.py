@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.objects import connections_map
-from sym_cps.shared.paths import connectors_components_path
 
 if TYPE_CHECKING:
     from sym_cps.representation.design.concrete.elements.component import Component

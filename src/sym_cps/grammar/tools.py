@@ -18,10 +18,8 @@ class Direction(Enum):
 
 
 def get_direction_from_components_and_connections(
-        comp_type_a: str,
-        comp_type_b: str,
-        connector_id_a: str,
-        connector_id_b: str) -> str:
+    comp_type_a: str, comp_type_b: str, connector_id_a: str, connector_id_b: str
+) -> str:
     try:
         connections = connections_map[comp_type_a][comp_type_b]
     except:

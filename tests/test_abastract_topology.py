@@ -27,5 +27,6 @@ levels = [ExportType.TOPOLOGY_1, ExportType.TOPOLOGY_2]
 def test_topology_abstraction_1():
     asset_topology(ExportType.TOPOLOGY_1)
 
+
 def test_topology_abstraction_2():
     asset_topology(ExportType.TOPOLOGY_2)
