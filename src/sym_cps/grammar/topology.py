@@ -15,15 +15,28 @@ from sym_cps.grammar.tools import get_direction_from_components_and_connections
 class AbstractionFeatures(Enum):
     AVOID_REDUNDANT_CONNECTIONS = auto()
     USE_DEFAULT_PARAMETERS = auto()
-
+    USE_STRUCTURES = auto()
 
 abstraction_levels_features = {
     1: {},
     2: {AbstractionFeatures.USE_DEFAULT_PARAMETERS},
     3: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
     4: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS},
+    5: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS, AbstractionFeatures.USE_STRUCTURES},
 }
 
+
+""" TODO: implement condition 'AVOID_REDUNDANT_CONNECTIONS'
+A connection is redundant, i.e. Tube - Wing - TOP  == Wing - Tube - Bottom
+ Check "connectors_compoennts_mapping.json" and avoid redundancies
+"""
+
+
+""" TODO: implement condition 'USE_STRUCTURES'
+ identify and define structure and build another abstraction layer.
+A structure is a cluster of nodes, for example a Propeller + Motor + Flange. 
+Since they always go together they can be grouped in a strucutre
+"""
 
 @dataclass
 class AbstractTopology:

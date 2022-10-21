@@ -18,13 +18,6 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 
 ### Dependencies
 
-For Mac M1 users, change the architecture first by running:
-```bash
-env /usr/bin/arch -x86_64 /bin/zsh --login
-```
-
-Then:
-
 1. Update the submodules
     ```bash
     git submodule init
@@ -82,6 +75,28 @@ To configure VSCode to support PEP 582, open `.vscode/settings.json` (create one
 }
 ```
 
+
+## Useful scripts
+
+*   Uninstall all dependencies and clean up the repository from temporary files
+    ```bash
+    make uninstall
+    ```
+
+*   Load library and seed designs and export them in the output folder
+    ```bash
+    pdm run initialize
+    ```
+
+*   Export all seed designs in the output folder
+    ```bash
+    pdm run export-designs
+    ```
+    
+*   Load and export custom design where "custom_design_file" is the file name of the `json` file in the `data/custom_designs` folder
+    ```bash
+    pdm run custom-design "custom_design_file"
+    ```
 
 
 ## Examples
@@ -144,7 +159,7 @@ npm run start
 
 ## Troubleshooting
 
-> NOTE:
+NOTE:
 
 If you have problems with the environment you can clean up the files and folders created by pdm and conda by running
 
@@ -171,18 +186,23 @@ Then try installation process again.
 > Now you can try running `make setup` again.
 
 
+For Mac M1 users, change the architecture first by running:
+```bash
+env /usr/bin/arch -x86_64 /bin/zsh --login
+```
+
 
 > NOTE: Apple Silicon
-> Make sure that you are running a x86 terminal.
-> You can run x86 terminal commands with Apple’s Rosetta 2 by launching:
+> Make sure that you are running python3 for Apple Silicon and not the Intel version otherwise pdm will pull the packages for the wrong architecture
+> You can uninstall python via brew by running and try install the repository again
+> ```bash
+> brew uninstall --ignore-dependencies python
+> ```
+> If you still have problems you can run a x86 terminal commands with Apple’s Rosetta 2 by launching:
 >
 > ```bash
 > arch -x86_64 /bin/bash
 > ```
-> 
-
-
-> NOTE: VSCode and Apple Silicon
 > To run a x86 terminal by default in VSCode. Add the following to your `settings.json`
 > ```json
 > "terminal.integrated.profiles.osx": {
@@ -193,11 +213,10 @@ Then try installation process again.
 >},
 >"terminal.integrated.defaultProfile.osx": "x86 bash"
 > ```
-
-> NOTE: PyCharm and Apple Silicon
+> 
 > Go to Preferences/Tools/Terminal and set the shell path to be:
->  ```bash
->  env /usr/bin/arch -x86_64 /bin/zsh --login
+> ```bash
+> env /usr/bin/arch -x86_64 /bin/zsh --login
 > ```
 
 

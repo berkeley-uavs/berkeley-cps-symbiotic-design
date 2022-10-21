@@ -50,7 +50,7 @@ lock:
 
 .PHONY: check
 check:
-	@bash scripts/multirun.sh duty check-quality check-types check-docs
+	pdm run duty check-quality check-types check-docs
 	@$(DUTY) check-dependencies
 
 .PHONY: uninstall
@@ -76,4 +76,4 @@ $(BASIC_DUTIES):
 
 .PHONY: $(QUALITY_DUTIES)
 $(QUALITY_DUTIES):
-	@bash scripts/multirun.sh duty $@ $(call args,$@)
+	pdm run duty $@ $(call args,$@)
