@@ -13,6 +13,7 @@ class ExportType(Enum):
     PDF = auto()
     TOPOLOGY_1 = auto()
     TOPOLOGY_2 = auto()
+    TOPOLOGY_3 = auto()
 
 
 def export_type_to_topology_level(export_type: ExportType) -> int:
