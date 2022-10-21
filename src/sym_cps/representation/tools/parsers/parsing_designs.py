@@ -21,6 +21,8 @@ from sym_cps.shared.paths import design_library_root_path_default
 from sym_cps.tools.strings import rename_instance
 
 
+broken_designs = {"NuSpade", "Rake", "Trowel"}
+
 def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[DConcrete, DTopology]]:
     print(f"Parsing designs from {path}")
 
@@ -34,6 +36,9 @@ def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[D
         if os.path.isdir(design_path):
 
             dirname = os.path.basename(design_path)
+
+            if dirname in broken_designs:
+                continue
 
             """Maps instance name to component name and to the parameters of the instance"""
             instance_component: dict[str, tuple[str, dict[str, tuple[float, str]]]] = {}
