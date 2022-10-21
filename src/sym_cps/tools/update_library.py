@@ -11,10 +11,13 @@ def update_dat_files_library():
 
 def update_dat_designs():
     from sym_cps.shared.designs import designs
+
     dump(designs, "designs.dat")
+
 
 def export_all_designs():
     from sym_cps.shared.designs import designs
+
     for (d_concrete, d_topology) in designs.values():
         d_concrete.export_all()
         d_topology.export_all()

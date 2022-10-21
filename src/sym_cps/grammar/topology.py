@@ -6,10 +6,10 @@ from pathlib import Path
 
 from aenum import Enum, auto
 
+from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters
 from sym_cps.tools.strings import get_component_type_from_instance_name
-from sym_cps.grammar.tools import get_direction_from_components_and_connections
 
 
 class AbstractionFeatures(Enum):
@@ -17,12 +17,17 @@ class AbstractionFeatures(Enum):
     USE_DEFAULT_PARAMETERS = auto()
     USE_STRUCTURES = auto()
 
+
 abstraction_levels_features = {
     1: {},
     2: {AbstractionFeatures.USE_DEFAULT_PARAMETERS},
     3: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
     4: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS},
-    5: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS, AbstractionFeatures.USE_STRUCTURES},
+    5: {
+        AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS,
+        AbstractionFeatures.USE_DEFAULT_PARAMETERS,
+        AbstractionFeatures.USE_STRUCTURES,
+    },
 }
 
 
@@ -37,6 +42,7 @@ A connection is redundant, i.e. Tube - Wing - TOP  == Wing - Tube - Bottom
 A structure is a cluster of nodes, for example a Propeller + Motor + Flange. 
 Since they always go together they can be grouped in a strucutre
 """
+
 
 @dataclass
 class AbstractTopology:
@@ -62,13 +68,18 @@ class AbstractTopology:
                     for component_b, direction in infos.items():
                         connections[component_a][component_b] = direction
 
-                        if AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]:
+                        if (
+                            AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS
+                            in abstraction_levels_features[abstraction_level]
+                        ):
                             ctype_a = get_component_type_from_instance_name(component_a)
                             ctype_b = get_component_type_from_instance_name(component_b)
                             connectors = c_library.get_connectors(ctype_a, ctype_b, direction)
                             connector_id_a = connectors[0].id()
                             connector_id_b = connectors[1].id()
-                            connections[component_b][component_a] = get_direction_from_components_and_connections(ctype_b, ctype_a, connector_id_b, connector_id_a)
+                            connections[component_b][component_a] = get_direction_from_components_and_connections(
+                                ctype_b, ctype_a, connector_id_b, connector_id_a
+                            )
 
                 if category == "PARAMETERS":
                     if component_a not in parameters:

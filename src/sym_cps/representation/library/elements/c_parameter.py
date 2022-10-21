@@ -43,7 +43,6 @@ class CParameter:
         """Filters out None component"""
         return {key: value for key, value in self._values.items() if value is not None}
 
-
     @property
     def min(self) -> float | None:
         if self._values["min_val"] is not None:

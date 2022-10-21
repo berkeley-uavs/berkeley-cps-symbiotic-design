@@ -15,7 +15,6 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 """
-import os
 import re
 from itertools import chain
 from pathlib import Path
@@ -26,9 +25,9 @@ from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
 
 try:
-    from importlib.metadata import metadata, PackageNotFoundError
+    from importlib.metadata import PackageNotFoundError, metadata
 except ImportError:
-    from importlib_metadata import metadata, PackageNotFoundError
+    from importlib_metadata import PackageNotFoundError, metadata
 
 
 project_dir = Path(".")
@@ -61,8 +60,13 @@ def get_deps(base_deps):
         parsed = regex.match(dep).groupdict()
         dep_name = parsed["dist"].lower()
         if dep_name == "eval-pipeline":
-            deps[dep_name] = {"license": get_license(dep_name), **parsed, "name": "eval-pipeline", "version": "unknown",
-                              "summary": "evaluation pipeline"}
+            deps[dep_name] = {
+                "license": get_license(dep_name),
+                **parsed,
+                "name": "eval-pipeline",
+                "version": "unknown",
+                "summary": "evaluation pipeline",
+            }
         else:
             deps[dep_name] = {"license": get_license(dep_name), **parsed, **lock_pkgs[dep_name]}
 

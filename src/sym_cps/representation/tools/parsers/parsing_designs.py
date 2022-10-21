@@ -20,8 +20,8 @@ from sym_cps.representation.tools.parsers.temp_objects import (
 from sym_cps.shared.paths import design_library_root_path_default
 from sym_cps.tools.strings import rename_instance
 
-
 broken_designs = {"NuSpade", "Rake", "Trowel"}
+
 
 def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[DConcrete, DTopology]]:
     print(f"Parsing designs from {path}")

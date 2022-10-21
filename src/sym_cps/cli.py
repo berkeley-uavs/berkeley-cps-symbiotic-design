@@ -5,9 +5,8 @@ from typing import List, Optional
 
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.representation.design.topology import DTopology
 from sym_cps.shared.paths import data_folder
-from sym_cps.tools.update_library import update_dat_files_and_export, export_all_designs, update_dat_designs
+from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
 
 
 def update_all() -> int:
@@ -21,7 +20,6 @@ def export_designs() -> int:
 
 
 def load_custom_design(args: Optional[List[str]] = None) -> int:
-    from sym_cps.shared.designs import designs
     parser = argparse.ArgumentParser(prog="sym-cps")
     parser.add_argument("design_file", type=str, help="Specify the design json to parse")
     opts = parser.parse_args(args=args)
