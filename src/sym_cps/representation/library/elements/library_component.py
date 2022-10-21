@@ -47,6 +47,13 @@ class LibraryComponent:
     def __hash__(self):
         return hash(str(self.id))
 
+    def __eq__(self, other: object):
+
+        if not isinstance(other, LibraryComponent):
+            raise Exception("Different classes")
+
+        return self.id == other.id
+
     def __str__(self) -> str:
         s1 = f"name: {self.id}\n" f"type: {str(self.comp_type)}\n"
 

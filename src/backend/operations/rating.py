@@ -1,6 +1,6 @@
 from sym_cps.optimizers.topo_opt import TopologyStrategy
 from sym_cps.representation.design.topology import DTopology
-from sym_cps.shared.paths import ExportType
+from sym_cps.shared.objects import ExportType
 
 
 class Rating:

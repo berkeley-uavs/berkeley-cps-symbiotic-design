@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
-from sym_cps.shared.paths import connectors_components_path
+from sym_cps.shared.objects import connections_map
 
 if TYPE_CHECKING:
     from sym_cps.representation.design.concrete.elements.component import Component
@@ -26,10 +25,8 @@ class Connection:
     @classmethod
     def from_direction(cls, component_a: Component, component_b: Component, direction: str):
 
-        f = open(connectors_components_path)
-        connection_map = json.load(f)
-        connector_a = connection_map[component_a.c_type.id][component_b.c_type.id][direction][0]
-        connector_b = connection_map[component_a.c_type.id][component_b.c_type.id][direction][1]
+        connector_a = connections_map[component_a.c_type.id][component_b.c_type.id][direction][0]
+        connector_b = connections_map[component_a.c_type.id][component_b.c_type.id][direction][1]
         from sym_cps.shared.library import c_library
 
         return cls(

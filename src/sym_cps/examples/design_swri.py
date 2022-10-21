@@ -2,7 +2,7 @@
 
 
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
-from sym_cps.shared.paths import ExportType
+from sym_cps.shared.objects import ExportType
 
 """Loading Library and Seed Designs"""
 c_library, designs = parse_library_and_seed_designs()

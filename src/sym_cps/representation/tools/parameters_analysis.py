@@ -2,7 +2,7 @@ import json
 from copy import deepcopy
 from itertools import combinations
 
-from sym_cps.shared.library import designs
+from sym_cps.shared.designs import designs
 from sym_cps.tools.io import save_to_file
 
 designs_to_analyze = [designs["TestQuad"][0], designs["NewAxe"][0]]

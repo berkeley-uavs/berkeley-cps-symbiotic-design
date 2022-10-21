@@ -10,18 +10,19 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import pydot
-from igraph import Edge, EdgeSeq, Graph, Vertex, VertexSeq
+from igraph import Edge, EdgeSeq, Graph, Vertex
 
 from sym_cps.evaluation import evaluate_design
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
-from sym_cps.grammar.topology import AbstractionLevel, AbstractTopology
+from sym_cps.grammar.topology import AbstractionFeatures, AbstractTopology
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
-from sym_cps.shared.paths import ExportType, designs_folder
+from sym_cps.shared.objects import ExportType, export_type_to_topology_level
+from sym_cps.shared.paths import designs_folder
 from sym_cps.tools.io import save_to_file
 from sym_cps.tools.strings import repr_dictionary, tab
 
@@ -117,11 +118,6 @@ class DConcrete:
         return self.comp_id_to_node[abstract_component_id]
 
     def add_node(self, component: Component) -> Vertex:
-        print(component.id)
-        print(component.library_component)
-        print(component.c_type)
-        print(component)
-        print(component.library_component.id)
         return self.graph.add_vertex(
             instance=component.id,
             library_component=component.library_component,
@@ -357,14 +353,14 @@ class DConcrete:
                 file_name=f"DConcrete",
                 absolute_folder_path=absolute_folder,
             )
-        elif file_type == ExportType.TOPOLOGY:
+        elif "TOPOLOGY" in file_type.name:
             ab_topo = self.to_abstract_topology()
+            ab_level = export_type_to_topology_level(file_type)
             return save_to_file(
-                ab_topo.to_json(AbstractionLevel.LOW),
-                file_name=f"topology_summary.json",
+                ab_topo.to_json(ab_level),
+                file_name=f"topology_summary_{ab_level}.json",
                 absolute_folder_path=absolute_folder,
             )
-
         elif file_type == ExportType.JSON:
             return save_to_file(
                 str(json.dumps(self.to_design_swri)),
@@ -391,11 +387,14 @@ class DConcrete:
         self.export(ExportType.DOT)
         self.export(ExportType.PDF)
         self.export(ExportType.TXT)
-        self.export(ExportType.TOPOLOGY)
         self.export(ExportType.JSON)
+        self.export(ExportType.TOPOLOGY_1)
 
     def __eq__(self, other: object):
-        pass
+        if isinstance(other, DConcrete):
+            return self.components == other.components and self.connections == other.connections
+        else:
+            raise Exception("Different classes")
 
     def __ne__(self, other: object):
 

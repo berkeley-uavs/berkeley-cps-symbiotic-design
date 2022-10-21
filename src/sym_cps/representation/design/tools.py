@@ -1,6 +1,6 @@
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.topology import DTopology
-from sym_cps.shared.paths import ExportType
+from sym_cps.shared.objects import ExportType
 
 
 def generate_designs_info_files(designs: dict[str, tuple[DConcrete, DTopology]], design_name: str):
@@ -10,4 +10,4 @@ def generate_designs_info_files(designs: dict[str, tuple[DConcrete, DTopology]],
     d_concrete.export(ExportType.DOT)
     d_topology.export(ExportType.DOT)
     d_topology.export(ExportType.PDF)
-    d_concrete.export(ExportType.TOPOLOGY)
+    d_concrete.export(ExportType.TOPOLOGY_1)
