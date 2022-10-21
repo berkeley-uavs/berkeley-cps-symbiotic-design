@@ -14,8 +14,6 @@ dependencies = [
     "editables>=0.3",
     "eval-pipeline @ file:///${PROJECT_ROOT}/eval_pipeline",
     "dill>=0.3.5.1",
-    "matplotlib>=3.5.3",
-    "scipy>=1.9.1",
     "flask>=2.2.2",
     "flask-socketio>=5.3.1",
     "eventlet>=0.33.1",
@@ -23,12 +21,15 @@ dependencies = [
     "bayesian-optimization @ git+https://github.com/fmfn/BayesianOptimization",
     "pydot>=1.4.2",
     "python-igraph>=0.10.2",
+    "matplotlib>=3.6.1",
+    "scipy>=1.9.3",
 ]
 requires-python = ">=3.10,<3.11"
 
 [project.scripts]
-update-all = "sym_cps.cli:update_all"
+initialize = "sym_cps.cli:update_all"
 export-designs = "sym_cps.cli:export_designs"
+custom-design = "sym_cps.cli:load_custom_design"
 
 [tool.pdm]
 version = {source = "scm"}
