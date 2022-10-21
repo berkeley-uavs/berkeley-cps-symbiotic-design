@@ -14,14 +14,20 @@ from sym_cps.tools.strings import get_component_type_from_instance_name
 class AbstractionFeatures(Enum):
     AVOID_REDUNDANT_CONNECTIONS = auto()
     USE_DEFAULT_PARAMETERS = auto()
-
+    USE_STRUCTURES = auto()
 
 abstraction_levels_features = {
     1: {},
     2: {AbstractionFeatures.USE_DEFAULT_PARAMETERS},
     3: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
     4: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS},
+    5: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS, AbstractionFeatures.USE_STRUCTURES},
 }
+
+
+#  TODO: identify and define structure and build another abstraction layer.
+# A structure is a cluster of nodes, for example a Propeller + Motor + Flange. Since they always go together they can be grouped in a strucutre
+
 
 
 @dataclass
