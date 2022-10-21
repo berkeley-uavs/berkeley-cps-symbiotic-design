@@ -214,8 +214,8 @@ env /usr/bin/arch -x86_64 /bin/zsh --login
 >"terminal.integrated.defaultProfile.osx": "x86 bash"
 > ```
 > Go to Preferences/Tools/Terminal and set the shell path to be:
->  ```bash
->  env /usr/bin/arch -x86_64 /bin/zsh --login
+> ```bash
+> env /usr/bin/arch -x86_64 /bin/zsh --login
 > ```
 
 
