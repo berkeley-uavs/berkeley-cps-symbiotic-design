@@ -3,10 +3,7 @@
 import argparse
 from typing import List, Optional
 
-from numpy.ctypeslib import load_library
-
-from sym_cps.examples.designs import export_design_json, load_design_json
-from sym_cps.examples.library import *
+from sym_cps.tools.update_library import update_dat_files_and_export, export_all_designs
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -19,32 +16,16 @@ def get_parser() -> argparse.ArgumentParser:
     return argparse.ArgumentParser(prog="sym-cps")
 
 
-def run_parse_library() -> int:
-    parse_library()
-    return 0
-
-
-def run_load_library() -> int:
-    load_library()
-    return 0
-
-
-def run_export_design(args: Optional[List[str]] = None) -> int:
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    export_design_json(opts[0])
-    return 0
-
-
-def run_load_design_json(args: Optional[List[str]] = None) -> int:
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    load_design_json(opts[0])
-    return 0
-
-
 def example_with_parameters(args: Optional[List[str]] = None) -> int:
     parser = get_parser()
     opts = parser.parse_args(args=args)
     print(f"args: {opts}")  # noqa: WPS421 (side-effect in main is fine)
     return 0
+
+
+def update_all() -> int:
+    update_dat_files_and_export()
+
+
+def export_designs() -> int:
+    export_all_designs()

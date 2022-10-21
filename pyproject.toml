@@ -27,10 +27,8 @@ dependencies = [
 requires-python = ">=3.10,<3.11"
 
 [project.scripts]
-parse-library = "sym_cps.cli:run_parse_library"
-load-library = "sym_cps.cli:run_load_library"
-export-design = "sym_cps.cli:run_export_design"
-load-design = "sym_cps.cli:run_load_design_json"
+update-all = "sym_cps.cli:update_all"
+export-designs = "sym_cps.cli:export_designs"
 
 [tool.pdm]
 version = {source = "scm"}

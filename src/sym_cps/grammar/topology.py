@@ -25,10 +25,17 @@ abstraction_levels_features = {
 }
 
 
-#  TODO: identify and define structure and build another abstraction layer.
-# A structure is a cluster of nodes, for example a Propeller + Motor + Flange. Since they always go together they can be grouped in a strucutre
+""" TODO: implement condition 'AVOID_REDUNDANT_CONNECTIONS'
+A connection is redundant, i.e. Tube - Wing - TOP  == Wing - Tube - Bottom
+ Check "connectors_compoennts_mapping.json" and avoid redundancies
+"""
 
 
+""" TODO: implement condition 'USE_STRUCTURES'
+ identify and define structure and build another abstraction layer.
+A structure is a cluster of nodes, for example a Propeller + Motor + Flange. 
+Since they always go together they can be grouped in a strucutre
+"""
 
 @dataclass
 class AbstractTopology:
