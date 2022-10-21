@@ -2,8 +2,8 @@ import json
 
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.shared.library import designs
-from sym_cps.shared.paths import ExportType
+from sym_cps.shared.designs import designs
+from sym_cps.shared.objects import ExportType
 from sym_cps.tools.io import save_to_file
 
 """Generate design from topology.json"""
@@ -15,7 +15,7 @@ def modified_design():
     test_quad_original.export(ExportType.JSON)
     test_quad_original.export(ExportType.PDF)
     test_quad_original.export(ExportType.DOT)
-    topology_json_path = test_quad_original.export(ExportType.TOPOLOGY)
+    topology_json_path = test_quad_original.export(ExportType.TOPOLOGY_1)
     test_quad_original.export(ExportType.TXT)
     # d_concrete_default.evaluate()
 
@@ -44,7 +44,7 @@ def modified_design():
     test_quad_from_topology.export(ExportType.JSON)
     test_quad_from_topology.export(ExportType.PDF)
     test_quad_from_topology.export(ExportType.DOT)
-    test_quad_from_topology.export(ExportType.TOPOLOGY)
+    test_quad_from_topology.export(ExportType.TOPOLOGY_1)
     test_quad_from_topology.export(ExportType.TXT)
 
     print(len(test_quad_original.nodes))

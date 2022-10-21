@@ -2,6 +2,8 @@
 import os
 from pathlib import Path
 
+from engineio import json
+
 
 def save_to_file(
     file_content: str,
@@ -34,8 +36,11 @@ def save_to_file(
     if not os.path.exists(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
 
-    with open(file_path, "w") as f:  # mypy crashes on this line, i don't know why
-        f.write(file_content)
+    with open(file_path, "w") as f:
+        if Path(file_name).suffix == ".json":
+            json.dump(json.loads(file_content), f, indent=4, sort_keys=True)
+        else:
+            f.write(file_content)
 
     f.close()
 

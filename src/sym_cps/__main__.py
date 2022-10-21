@@ -1,15 +1,9 @@
-"""
-Entry-point module, in case you use `python -m sym_cps`.
+from sym_cps.examples.control import designs
+from sym_cps.shared.objects import ExportType
 
-Why does this file exist, and why `__main__`? For more info, read:
 
-- https://www.python.org/dev/peps/pep-0338/
-- https://docs.python.org/3/using/cmdline.html#cmdoption-m
-"""
+# Loading DConcrete Object
+test_quad_original = designs["TestQuad"][0]
 
-import sys
-
-from sym_cps.cli import main
-
-if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+# Exporting AbstractTopology to file
+topology_json_path = test_quad_original.export(ExportType.TOPOLOGY_2)

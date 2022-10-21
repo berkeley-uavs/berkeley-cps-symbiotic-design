@@ -45,3 +45,9 @@ def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, ins
         instances_created[c_type_id] = instances_created[c_type_id] + 1
     new_name = f"{c_type_id}_instance_{instances_created[c_type_id]}"
     instances_renaming[instance] = new_name
+
+
+def get_component_type_from_instance_name(instance: str):
+    if "_instance_" in instance:
+        return instance.split("_instance_")[0]
+    return instance

@@ -1,20 +1,10 @@
 from __future__ import annotations
 
 import os
-from enum import Enum, auto
 from pathlib import Path
 
 this_file = Path(os.path.dirname(__file__))
 root: Path = this_file.parent.parent.parent
-
-
-class ExportType(Enum):
-    TXT = auto()
-    JSON = auto()
-    DOT = auto()
-    PDF = auto()
-    TOPOLOGY = auto()
-
 
 data_folder: Path = root / "data"
 configuration_files_path: Path = root / "configurations"
@@ -37,6 +27,8 @@ design_library_root_path_default: Path = data_folder / "DesignLibrary"
 
 persistence_path: Path = output_folder / "persistence"
 
-connections_folder = data_folder / "reverse_engineering"
+reverse_engineering_folder = data_folder / "reverse_engineering"
 
-connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
+connectors_components_path = reverse_engineering_folder / "connectors_components_mapping.json"
+
+learned_default_params_path = reverse_engineering_folder / "analysis" / "learned_parameters.json"
