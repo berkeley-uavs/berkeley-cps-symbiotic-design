@@ -21,9 +21,8 @@ class AbstractionFeatures(Enum):
 abstraction_levels_features = {
     1: {},
     2: {AbstractionFeatures.USE_DEFAULT_PARAMETERS},
-    3: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
-    4: {AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS, AbstractionFeatures.USE_DEFAULT_PARAMETERS},
-    5: {
+    3: {AbstractionFeatures.USE_DEFAULT_PARAMETERS, AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
+    4: {
         AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS,
         AbstractionFeatures.USE_DEFAULT_PARAMETERS,
         AbstractionFeatures.USE_STRUCTURES,

@@ -390,6 +390,7 @@ class DConcrete:
         self.export(ExportType.JSON)
         self.export(ExportType.TOPOLOGY_1)
         self.export(ExportType.TOPOLOGY_2)
+        self.export(ExportType.TOPOLOGY_3)
 
     def __eq__(self, other: object):
         if isinstance(other, DConcrete):
