@@ -72,9 +72,11 @@ class AbstractTopology:
                             AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS
                             in abstraction_levels_features[abstraction_level]
                         ):
-                            ctype_a = get_component_type_from_instance_name(component_a)
+                            ctype_a_str = get_component_type_from_instance_name(component_a)
                             ctype_b = get_component_type_from_instance_name(component_b)
+                            ctype_a = c_library.component_types[ctype_a_str]
                             connectors = c_library.get_connectors(ctype_a, ctype_b, direction)
+                            #  TODO FIX
                             connector_id_a = connectors[0].id()
                             connector_id_b = connectors[1].id()
                             connections[component_b][component_a] = get_direction_from_components_and_connections(
