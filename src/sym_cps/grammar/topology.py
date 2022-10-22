@@ -73,16 +73,19 @@ class AbstractTopology:
                             in abstraction_levels_features[abstraction_level]
                         ):
                             ctype_a_str = get_component_type_from_instance_name(component_a)
-                            ctype_b = get_component_type_from_instance_name(component_b)
                             ctype_a = c_library.component_types[ctype_a_str]
+                            ctype_b_str = get_component_type_from_instance_name(component_b)
+                            ctype_b = c_library.component_types[ctype_b_str]
                             connectors = c_library.get_connectors(ctype_a, ctype_b, direction)
-                            #  TODO FIX
-                            connector_id_a = connectors[0].id()
-                            connector_id_b = connectors[1].id()
-                            connections[component_b][component_a] = get_direction_from_components_and_connections(
-                                ctype_b, ctype_a, connector_id_b, connector_id_a
-                            )
+                            connector_id_a = connectors[0].id
+                            connector_id_b = connectors[1].id
 
+                            if component_b not in connections:
+                                connections[component_b] = {}
+
+                            connections[component_b][component_a] = get_direction_from_components_and_connections(
+                                ctype_b.id, ctype_a.id, connector_id_b, connector_id_a
+                            )
                 if category == "PARAMETERS":
                     if component_a not in parameters:
                         parameters[component_a] = {}
@@ -110,5 +113,8 @@ class AbstractTopology:
             """Connections"""
             for component_b, direction in connections.items():
                 print(export["TOPOLOGY"][component_a])
+                if (AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]):
+                    if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()):
+                        continue
                 export["TOPOLOGY"][component_a]["CONNECTIONS"][component_b] = direction
         return str(json.dumps(export))
