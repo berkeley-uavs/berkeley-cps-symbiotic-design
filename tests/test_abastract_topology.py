@@ -46,4 +46,3 @@ def test_topology_abstraction_2():
 
 def test_topology_abstraction_3():
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_3)
-

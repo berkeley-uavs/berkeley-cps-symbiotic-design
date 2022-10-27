@@ -1,6 +1,10 @@
+from asyncore import compact_traceback
 import json
 from copy import deepcopy
 from itertools import combinations
+
+from matplotlib import test
+from matplotlib.rcsetup import all_backends
 
 from sym_cps.shared.designs import designs
 from sym_cps.tools.io import save_to_file
@@ -127,7 +131,119 @@ def extract_shared_parameters(data: dict):
             shared_parameters[k] = comp_a[k]
     return shared_parameters
 
+def extract_clusters():
+    data: dict() = {}
+    res: dict() = {}
+    i = 0
+    while i < 2:
+        pairs: dict[str, list[list[str]]] = {}
+        res[designs_to_analyze[i].name] = {}
+        for vertex in designs_to_analyze[i].connections:
+            comp_a = vertex.component_a.c_type.id
+            comp_b = vertex.component_b.c_type.id
+            if not comp_a in pairs.keys():
+                pairs[comp_a] = []
+            if not [comp_a, comp_b] in pairs[comp_a]:
+                pairs[comp_a].append([comp_a, comp_b])
+        res[designs_to_analyze[i].name]["2"] = pairs
+        i += 1
+    
+    i = 0
+    while i < 2:
+        key = designs_to_analyze[i].name
+        triples = {}
+        pairs = res[key]["2"]
+        for lst in list(pairs.values()):
+            for comp_a, comp_b in lst:
+                if not comp_a in triples.keys():
+                    triples[comp_a] = []
+                if comp_b in pairs.keys():
+                    for b, c in pairs[comp_b]:
+                        curr = [comp_a, comp_b]
+                        if not c in curr:
+                            curr.append(c)
+                            triples[comp_a].append(curr)
+        res[designs_to_analyze[i].name]["3"] = triples
+        i += 1
 
+    i = 0
+    while i < 2:
+        key = designs_to_analyze[i].name
+        tuple_4 = {}
+        triples = res[key]["3"]
+        for lst in list(triples.values()):
+            for comp_a, comp_b, comp_c in lst:
+                if comp_c in triples.keys():
+                    for b, c, d in triples[comp_c]:
+                        curr = [comp_a, comp_b, comp_c]
+                        if not c in curr:
+                            if not comp_a in tuple_4.keys():
+                                tuple_4[comp_a] = []
+                            curr.append(c)
+                            if not curr in tuple_4[comp_a]:
+                                tuple_4[comp_a].append(curr)
+                        curr = [comp_a, comp_b, comp_c]
+                        if not d in curr:
+                            if not comp_a in tuple_4.keys():
+                                tuple_4[comp_a] = []
+                            curr.append(d)
+                            if not curr in tuple_4[comp_a]:
+                                tuple_4[comp_a].append(curr)
+        res[designs_to_analyze[i].name]["4"] = tuple_4
+        i += 1
+
+    i = 0
+    while i < 2:
+        key = designs_to_analyze[i].name
+        tuple_5 = {}
+        quad = res[key]["4"]
+        for lst in list(quad.values()):
+            for comp_a, comp_b, comp_c, comp_d in lst:
+                if comp_d in quad.keys():
+                    for b, c, d, e in quad[comp_d]:
+                        curr = [comp_a, comp_b, comp_c, comp_d]
+                        if not c in curr:
+                            if not comp_a in tuple_5.keys():
+                                tuple_5[comp_a] = []
+                            curr.append(c)
+                            if not curr in tuple_5[comp_a]:
+                                tuple_5[comp_a].append(curr)
+                        curr = [comp_a, comp_b, comp_c, comp_d]
+                        if not d in curr:
+                            if not comp_a in tuple_5.keys():
+                                tuple_5[comp_a] = []
+                            curr.append(d)
+                            if not curr in tuple_5[comp_a]:
+                                tuple_5[comp_a].append(curr)
+                        curr = [comp_a, comp_b, comp_c, comp_d]
+                        if not e in curr:
+                            if not comp_a in tuple_5.keys():
+                                tuple_5[comp_a] = []
+                            curr.append(e)
+                            if not curr in tuple_5[comp_a]:
+                                tuple_5[comp_a].append(curr)
+        res[designs_to_analyze[i].name]["5"] = tuple_5
+        i += 1
+
+    data["INDIVIDUAL"] = res
+    data["SHARED"] = {}
+
+    for key in list(res[designs_to_analyze[0].name].keys()):
+        test_quad = []
+        for comp_group in list(res[designs_to_analyze[0].name][key].values()):
+            for elem in comp_group:
+                test_quad.append(elem)
+
+        shared = []
+        for comp_group in list(res[designs_to_analyze[1].name][key].values()):
+            for elem in comp_group:
+                if elem in test_quad:
+                    shared.append(elem)
+
+        data["SHARED"][key] = shared
+
+    return data
+    
 if __name__ == "__main__":
     data = parse_designs()
     for design_name, info in data.items():
@@ -141,3 +257,11 @@ if __name__ == "__main__":
         f"learned_parameters.json",
         folder_name=f"analysis",
     )
+
+    learned_structures = extract_clusters()
+    save_to_file(
+        str(json.dumps(learned_structures, indent=4)),
+        f"learned_structures.json",
+        folder_name=f"analysis",
+    )
+    
