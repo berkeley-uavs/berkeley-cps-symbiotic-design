@@ -171,22 +171,16 @@ def extract_clusters():
         key = designs_to_analyze[i].name
         tuple_4 = {}
         triples = res[key]["3"]
+        pairs = res[key]["2"]
         for lst in list(triples.values()):
             for comp_a, comp_b, comp_c in lst:
-                if comp_c in triples.keys():
-                    for b, c, d in triples[comp_c]:
+                if comp_c in pairs.keys():
+                    for b, c in pairs[comp_c]:
                         curr = [comp_a, comp_b, comp_c]
                         if not c in curr:
                             if not comp_a in tuple_4.keys():
                                 tuple_4[comp_a] = []
                             curr.append(c)
-                            if not curr in tuple_4[comp_a]:
-                                tuple_4[comp_a].append(curr)
-                        curr = [comp_a, comp_b, comp_c]
-                        if not d in curr:
-                            if not comp_a in tuple_4.keys():
-                                tuple_4[comp_a] = []
-                            curr.append(d)
                             if not curr in tuple_4[comp_a]:
                                 tuple_4[comp_a].append(curr)
         res[designs_to_analyze[i].name]["4"] = tuple_4
@@ -197,29 +191,16 @@ def extract_clusters():
         key = designs_to_analyze[i].name
         tuple_5 = {}
         quad = res[key]["4"]
+        pairs = res[key]["2"]
         for lst in list(quad.values()):
             for comp_a, comp_b, comp_c, comp_d in lst:
-                if comp_d in quad.keys():
-                    for b, c, d, e in quad[comp_d]:
+                if comp_d in pairs.keys():
+                    for b, c in pairs[comp_d]:
                         curr = [comp_a, comp_b, comp_c, comp_d]
                         if not c in curr:
                             if not comp_a in tuple_5.keys():
                                 tuple_5[comp_a] = []
                             curr.append(c)
-                            if not curr in tuple_5[comp_a]:
-                                tuple_5[comp_a].append(curr)
-                        curr = [comp_a, comp_b, comp_c, comp_d]
-                        if not d in curr:
-                            if not comp_a in tuple_5.keys():
-                                tuple_5[comp_a] = []
-                            curr.append(d)
-                            if not curr in tuple_5[comp_a]:
-                                tuple_5[comp_a].append(curr)
-                        curr = [comp_a, comp_b, comp_c, comp_d]
-                        if not e in curr:
-                            if not comp_a in tuple_5.keys():
-                                tuple_5[comp_a] = []
-                            curr.append(e)
                             if not curr in tuple_5[comp_a]:
                                 tuple_5[comp_a].append(curr)
         res[designs_to_analyze[i].name]["5"] = tuple_5
@@ -232,12 +213,12 @@ def extract_clusters():
         test_quad = []
         for comp_group in list(res[designs_to_analyze[0].name][key].values()):
             for elem in comp_group:
-                test_quad.append(elem)
+                test_quad.append(sorted(elem))
 
         shared = []
         for comp_group in list(res[designs_to_analyze[1].name][key].values()):
             for elem in comp_group:
-                if elem in test_quad:
+                if sorted(elem) in test_quad:
                     shared.append(elem)
 
         data["SHARED"][key] = shared
@@ -264,4 +245,5 @@ if __name__ == "__main__":
         f"learned_structures.json",
         folder_name=f"analysis",
     )
+
     
