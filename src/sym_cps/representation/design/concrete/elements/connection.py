@@ -20,7 +20,6 @@ class Connection:
     connector_a: CConnector
     component_b: Component
     connector_b: CConnector
-    # brendan: make api to output connector_a and connect_b given component_a and component_b
 
     @classmethod
     def from_direction(cls, component_a: Component, component_b: Component, direction: str):

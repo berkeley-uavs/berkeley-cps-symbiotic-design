@@ -8,7 +8,7 @@ from aenum import Enum, auto
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
-from sym_cps.shared.objects import default_parameters
+from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import get_component_type_from_instance_name
 
 
@@ -66,6 +66,7 @@ class AbstractTopology:
 
                     for component_b, direction in infos.items():
                         connections[component_a][component_b] = direction
+                        
 
                         if (
                             AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS

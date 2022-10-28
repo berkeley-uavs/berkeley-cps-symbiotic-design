@@ -1,7 +1,9 @@
 from asyncore import compact_traceback
+from calendar import c
 import json
 from copy import deepcopy
 from itertools import combinations
+from re import L
 
 from matplotlib import test
 from matplotlib.rcsetup import all_backends
@@ -139,6 +141,20 @@ def extract_clusters():
         pairs: dict[str, list[list[str]]] = {}
         res[designs_to_analyze[i].name] = {}
         for vertex in designs_to_analyze[i].connections:
+            comp_a = vertex.c_type.id
+            comp_b = vertex.c_type.id
+            if not comp_a in pairs.keys():
+                pairs[comp_a] = []
+            if not [comp_a, comp_b] in pairs[comp_a]:
+                pairs[comp_a].append([comp_a, comp_b])
+        res[designs_to_analyze[i].name]["2"] = pairs
+        i += 1
+
+    i = 0
+    while i < 2:
+        pairs: dict[str, list[list[str]]] = {}
+        res[designs_to_analyze[i].name] = {}
+        for vertex in designs_to_analyze[i].connections:
             comp_a = vertex.component_a.c_type.id
             comp_b = vertex.component_b.c_type.id
             if not comp_a in pairs.keys():
@@ -224,6 +240,94 @@ def extract_clusters():
         data["SHARED"][key] = shared
 
     return data
+
+def extract_structures():
+    res: dict() = {}
+    i = 0
+    while i < 2:
+        pairs: dict[str, list[list[str]]] = {}
+        res[designs_to_analyze[i].name] = {}
+        for vertex in designs_to_analyze[i].connections:
+            comp_a = vertex.component_a.id
+            comp_b = vertex.component_b.id
+            if not comp_a in pairs.keys():
+                pairs[comp_a] = []
+            pairs[comp_a].append(comp_b)
+            if not comp_b in pairs.keys():
+                pairs[comp_b] = []
+            pairs[comp_b].append(comp_a)
+        res[designs_to_analyze[i].name] = pairs
+        i += 1
+
+    i = 0
+    res2 = {}
+    while i < 2:
+        d = res[designs_to_analyze[i].name]
+        res2[designs_to_analyze[i].name] = {}
+        for vertex in list(d.keys()):
+            group = []
+            for children in d[vertex]:
+                if children in d.keys():
+                    for next_children in d[children]:
+                        if next_children != vertex:
+                            curr = [children, next_children]
+                            group.append(curr)
+            res2[designs_to_analyze[i].name][vertex] = group
+        i += 1
+
+    combined = {}
+    i = 0
+    while i < 2:
+        d = res2[designs_to_analyze[i].name]
+        combined[designs_to_analyze[i].name] = {}
+        for instance in d.keys():
+            c_type = designs_to_analyze[i].get_instance(instance).c_type.id
+            if not c_type in combined.keys():
+                combined[designs_to_analyze[i].name][c_type] = []
+            for pair in d[instance]:
+                types = [designs_to_analyze[i].get_instance(pair[0]).c_type.id, designs_to_analyze[i].get_instance(pair[1]).c_type.id]
+                if not types in combined[designs_to_analyze[i].name][c_type]:
+                    combined[designs_to_analyze[i].name][c_type].append(types)
+        i += 1
+
+    final = {}
+    for key in combined[designs_to_analyze[0].name].keys():
+        test_quad = []
+        for comp_group in combined[designs_to_analyze[0].name][key]:
+            test_quad.append(sorted(comp_group))
+
+        if key in combined[designs_to_analyze[1].name].keys():
+            shared = []
+            for comp_group in combined[designs_to_analyze[1].name][key]:
+                if sorted(comp_group) in test_quad:
+                    shared.append(comp_group)
+            final[key] = shared
+
+    structure = {
+        "propeller_structure": [
+            [
+                "Motor",
+                "Flange"
+            ],
+            [
+                "Motor",
+                "BatteryController"
+            ]
+        ],
+        "wing_structure": [
+            [
+                "Tube",
+                "Flange"
+            ],
+            [
+                "Tube",
+                "Hub3"
+            ]
+        ]
+        }
+    return structure
+
+
     
 if __name__ == "__main__":
     data = parse_designs()
@@ -239,11 +343,9 @@ if __name__ == "__main__":
         folder_name=f"analysis",
     )
 
-    learned_structures = extract_clusters()
+    learned_structures = extract_structures()
     save_to_file(
         str(json.dumps(learned_structures, indent=4)),
         f"learned_structures.json",
         folder_name=f"analysis",
     )
-
-    
