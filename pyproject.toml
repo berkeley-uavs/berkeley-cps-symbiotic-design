@@ -22,6 +22,8 @@ dependencies = [
     "python-igraph>=0.10.2",
     "matplotlib>=3.6.1",
     "scipy>=1.9.3",
+    "graphviz>=0.20.1",
+    "gprof2dot>=2022.7.29",
 ]
 requires-python = ">=3.10,<3.11"
 
