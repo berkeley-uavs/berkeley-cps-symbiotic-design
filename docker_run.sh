@@ -1,11 +1,15 @@
 #!/bin/bash
 
 container=dev_env_base_310
-image=pmallozzi/devenvs:base-310
+image=pmallozzi/devenvs:base-310-symcps
 port_ssh=9922
 
 cleanup() {
+  echo "Checking if container already exists.."
   if [[ $(docker ps -a --filter="name=$container" --filter "status=exited" | grep -w "$container") ]]; then
+    docker rm $container || true
+    echo "Cleaning up..."
+  elif [[ $(docker ps -a --filter="name=$container" --filter "status=created" | grep -w "$container") ]]; then
     docker rm $container || true
     echo "Cleaning up..."
   elif [[ $(docker ps -a --filter="name=$container" --filter "status=running" | grep -w "$container") ]]; then
@@ -18,8 +22,8 @@ cleanup() {
 }
 
 main() {
-  pwd_dir="$(pwd)"
-  mount_local=" -v ${pwd_dir}:/home/headless/code"
+  repo_dir="$(pwd)"
+  mount_local=" -v ${repo_dir}:/home/headless/code"
   port_arg="-p $portssh:22"
 
   which docker 2>&1 >/dev/null

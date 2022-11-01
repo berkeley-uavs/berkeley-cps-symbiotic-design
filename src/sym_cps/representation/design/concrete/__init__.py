@@ -371,7 +371,7 @@ class DConcrete:
             if not os.path.exists(absolute_folder):
                 os.makedirs(absolute_folder)
             file_path = absolute_folder / "concrete_graph.dot"
-            self._graph.write_dot(f=str(file_path))
+            # self._graph.write_dot(f=str(file_path))
 
         elif file_type == ExportType.PDF:
             file_path = absolute_folder / "concrete_graph.pdf"
