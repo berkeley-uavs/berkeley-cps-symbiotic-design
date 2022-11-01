@@ -19,9 +19,11 @@ def dump(obj: object, file: str) -> str:
 
 def load(file: str) -> object | None:
     file_path = persistence_path / file
-    if file_path.is_file():
+    try:
         with open(file_path, "rb") as f:
             obj = pickle.load(f)
         print(f"Object loaded from: {str(file_path)}")
         return obj
-    return None
+    except Exception:
+        print(f"Exception while loading {file_path}")
+        return None
