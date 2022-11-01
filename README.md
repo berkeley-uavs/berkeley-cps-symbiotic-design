@@ -85,7 +85,7 @@ To configure VSCode to support PEP 582, open `.vscode/settings.json` (create one
 
 *   Load library and seed designs and export them in the output folder
     ```bash
-    pdm run initialize
+    pdm run init
     ```
 
 *   Export all seed designs in the output folder
