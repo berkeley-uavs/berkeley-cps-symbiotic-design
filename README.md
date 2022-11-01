@@ -12,7 +12,7 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 ### System Requirements
 
 1. [pdm](https://github.com/pdm-project/pdm)
-2. Access to the `INPUT` folder on Google Drive.
+2. Access to [this repo](https://github.com/uc-berkeley-data-discovery-2022/swri_data).
    1. Copy `data`, `fdm`, and `output` directories in the root of the repo
    2. Keep data and output updated if there are changes on the Google Drive
 
@@ -229,3 +229,6 @@ env /usr/bin/arch -x86_64 /bin/zsh --login
 
 - Fully typed with annotations and checked with mypy,
   [PEP561 compatible](https://www.python.org/dev/peps/pep-0o561/)
+  
+  
+  

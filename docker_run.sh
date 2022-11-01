@@ -1,20 +1,18 @@
 #!/bin/bash
 
+port_ssh=9922
+my_platform=linux/arm64
 container=dev_env_base_310
 image=pmallozzi/devenvs:base-310-symcps
-port_ssh=9922
 
 cleanup() {
   echo "Checking if container already exists.."
-  if [[ $(docker ps -a --filter="name=$container" --filter "status=exited" | grep -w "$container") ]]; then
-    docker rm $container || true
-    echo "Cleaning up..."
-  elif [[ $(docker ps -a --filter="name=$container" --filter "status=created" | grep -w "$container") ]]; then
-    docker rm $container || true
-    echo "Cleaning up..."
-  elif [[ $(docker ps -a --filter="name=$container" --filter "status=running" | grep -w "$container") ]]; then
+  if [[ $(docker ps -a --filter="name=$container" --filter "status=running" | grep -w "$container") ]]; then
     docker stop $container
     docker rm $container
+    echo "Cleaning up..."
+  elif [[ $(docker ps -a --filter="name=$container") ]]; then
+    docker rm $container || true
     echo "Cleaning up..."
   else
     echo "No existing container found"
@@ -23,8 +21,8 @@ cleanup() {
 
 main() {
   repo_dir="$(pwd)"
-  mount_local=" -v ${repo_dir}:/home/headless/code"
-  port_arg="-p $portssh:22"
+  mount_local=" -v ${repo_dir}:/home/headless/code -v /home/headless/code/__pypackages__"
+  port_arg="-p ${port_ssh}:22"
 
   which docker 2>&1 >/dev/null
   if [ $? -ne 0 ]; then
@@ -42,7 +40,7 @@ main() {
         --name $container \
         --privileged \
         --workdir /home/headless/code \
-        --platform linux/arm64 \
+        --platform ${my_platform} \
         ${mount_local} \
         $port_arg \
         $image bash
@@ -54,7 +52,7 @@ main() {
         --name $container \
         --privileged \
         --workdir /home/headless/code \
-        --platform linux/arm64 \
+        --platform ${my_platform} \
         ${mount_local} \
         $port_arg \
         $image
@@ -64,4 +62,5 @@ main() {
 
 }
 
-main $@
+main "$@"
+
