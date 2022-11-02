@@ -194,9 +194,13 @@ def polling_results(msg, timeout: int = 800):
 
 def extract_results(
     result_archive_path: Path, control_opt: bool
-) -> tuple[dict, list[float] | None, list[bool] | None, dict | None]:
+) -> dict:
+
 
     print("Extracting results from result zip file...")
+    fdm_extract_info = {} # the object for collecting the score and stl files 
+    fdm_extract_info["status"] = "FAIL"
+
     with zipfile.ZipFile(result_archive_path) as result_zip_file:
         # checking the fdm
         fdm_folder = zipfile.Path(result_zip_file) / "Results"
@@ -204,18 +208,18 @@ def extract_results(
         # Check if `Results` exists
         if not fdm_folder.exists() or not fdm_folder.is_dir():
             print(f"FDM Results folder (Results/) does not exist in the result archive!")
-            return None
-        # Extracting score from control optimization
-        design_score_path = fdm_folder / "control_opt_result.out"
-        if design_score_path.exists() and design_score_path.is_file():
-            with design_score_path.open("r") as fdm_input_file:
-                # TODO: Read the files to get the scores and their corresponding control parameters
-                pass
+            return fdm_extract_info
+        # # Extracting score from control optimization
+        # design_score_path = fdm_folder / "control_opt_result.out"
+        # if design_score_path.exists() and design_score_path.is_file():
+        #     with design_score_path.open("r") as fdm_input_file:
+        #         # TODO: Read the files to get the scores and their corresponding control parameters
+        #         pass
         # Check the Results folder
         folders = [fdm_test for fdm_test in fdm_folder.iterdir()]
         if len(folders) != 4:
             print(f"Not 4 folders in fdm results, meaning that the design is problematic or pipeline had problem.")
-            return None, [False], None  # return failure
+            return fdm_extract_info  # return failure
 
         extract_folder = fdm_extract_folder
         #extract stl file
@@ -228,7 +232,7 @@ def extract_results(
             info.filename = f"uav_gen.stl"
             result_zip_file.extract(member=info, path=str(extract_folder))
 
-        fdm_extract_info = {} # the object for collecting the score and stl files 
+        
         fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
         for fdm_test in folders:
             fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
@@ -256,6 +260,7 @@ def extract_results(
                 ret = FDMResult(file_path=fdm_ret_path) 
                 score = ret.metrics["Score"]
                 fdm_extract_info[fdm_test.name] = score
+        fdm_extract_info["status"] = "SUCCESS"
     if control_opt:
         from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
 
@@ -265,7 +270,9 @@ def extract_results(
         for path_ret in ret["result"]:
             if path_ret["Path"] == 9:
                 best_args = path_ret["best_args"]
-        return fdm_extract_info, [ret["total_score"]], [True], best_args  # return failure
+        fdm_extract_info["total_score"] = ret["total_score"]
+        fdm_extract_info["best_args"] = best_args
+        
 
     # TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
-    return fdm_extract_info, None, [False], None  # return failure
+    return fdm_extract_info
