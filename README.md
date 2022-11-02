@@ -77,11 +77,14 @@ sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
 ```bash
   docker_run.sh bash
 ```
-once inside the docker image you can run any command or script
+once inside the docker image you can run any command or script like:
+
 ```bash
   pdm run init
 ```
-or
+
+and
+
 ```bash
   pdm run custom-design "working/test_quad_abstraction_3"
 ```
