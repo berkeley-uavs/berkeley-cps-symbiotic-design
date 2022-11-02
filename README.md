@@ -83,7 +83,7 @@ cd berkeley-cps-symbiotic-design
 ```
 
 ```bash
-  docker_run.sh bash
+  ./docker_run.sh bash
 ```
 once inside the docker image you can run any command or script like:
 
@@ -107,7 +107,7 @@ The docker image contains an ssh server that you can connect from your IDE and r
 
 Launch:
 ```bash
-  docker_run.sh
+  ./docker_run.sh
 ```
 to launch the docker image as a new container running in background.
 
