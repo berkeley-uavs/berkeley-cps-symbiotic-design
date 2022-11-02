@@ -107,14 +107,14 @@ Then connect to the python interpreter via SSH on port 9922 of localhost as expl
 * Add new `SFTP`. 
 * Give a name, e.g. : `docker-sym-cps`.
 * Add a new SSH configuration:
-  * Host: localhost
-  * Port: 9922
-  * Username: root
-  * Password: password
-  * Root path: `/root`
+    * Host: localhost
+    * Port: 9922
+    * Username: root
+    * Password: password
+    * Root path: `/root`
 * Mappings: 
-  * Local path ‘<LOCAL_PATH>/berkeley-cps-symbiotic-design’
-  * Deployment path ‘/ide’
+    * Local path ‘<LOCAL_PATH>/berkeley-cps-symbiotic-design’
+    * Deployment path ‘/ide’
 
 
 Got to: `Preferences > Project… > Python Interpreter > Add Interpreter > On SSH` and select  Existing Connection the SSH connection previously created, then select the “System Interpreter” as Python runtime configuration, i.e. the interpreter at `/usr/bin/python3’.  “Sync folders”  insert `<Project root>→/root/ide`
