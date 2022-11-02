@@ -1,7 +1,7 @@
-echo "Updating repository from github..."
-git reset --hard
-git config pull.rebase true
-git pull
+#echo "Updating repository from github..."
+#git reset --hard
+#git config pull.rebase true
+#git pull
 
 # Connect to AWS VPN
 echo "Connecting to VPN..."
@@ -12,8 +12,11 @@ openvpn --config ../challenge_data/aws-cvpn-config.ovpn --daemon
 #mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
 
 # Config broker
-echo "Configuring broker..."
-pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+#echo "Configuring broker..."
+#pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+#mkdir /etc/xdg/SimpleUAM
+#mkdir /etc/xdg/SimpleUAM/config
+#cp ../challenge_data/data/broker.conf.yaml /etc/xdg/SimpleUAM/config
 
 if [ $# -eq 0 ]
   then
