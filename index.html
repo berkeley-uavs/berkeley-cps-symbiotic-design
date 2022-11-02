@@ -381,8 +381,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dependencies" class="md-nav__link">
-    Dependencies
+  <a href="#quick-start" class="md-nav__link">
+    Quick start
   </a>
   
 </li>
@@ -492,12 +492,32 @@
     Troubleshooting
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    License
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation-process" class="md-nav__link">
+    Installation process
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submodules" class="md-nav__link">
+    Submodules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apple-silicon" class="md-nav__link">
+    Apple Silicon
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2806,8 +2826,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dependencies" class="md-nav__link">
-    Dependencies
+  <a href="#quick-start" class="md-nav__link">
+    Quick start
   </a>
   
 </li>
@@ -2917,12 +2937,32 @@
     Troubleshooting
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    License
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation-process" class="md-nav__link">
+    Installation process
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submodules" class="md-nav__link">
+    Submodules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apple-silicon" class="md-nav__link">
+    Apple Silicon
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2963,22 +3003,20 @@
 <li><a href="https://github.com/pdm-project/pdm">pdm</a></li>
 <li>Access to <a href="https://github.com/uc-berkeley-data-discovery-2022/challenge_data">this repo</a>.</li>
 </ol>
-<h3 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h3>
+<h3 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Update the submodules
-    <div class="highlight"><pre><span></span><code>git submodule init
-git submodule update --
+<li>
+<p>Clone the two repos and their submodules in the same folder</p>
+<div class="highlight"><pre><span></span><code>git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git <span class="p">&amp;</span> <span class="se">\</span>
+git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
 </code></pre></div>
-   Make sure that <code>eval_pipeline</code> folder is not empty.
-   If the submodule was not pulled correctly you can simply
-   clone <a href="https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git">this</a> repo and copy its content
-   inside <code>eval_pipeline</code> folder.</li>
-<li>Clone <a href="https://github.com/uc-berkeley-data-discovery-2022/challenge_data">challenge_data repo</a> so that its content is
-   located in <code>../challenge_data/</code> from the root folder of this repo. Or specify the relative location
-   in <code>settings.toml</code>.</li>
-<li>Install
-    <div class="highlight"><pre><span></span><code>pdm install
-</code></pre></div></li>
+</li>
+<li>
+<p>Navigate to <code>berkeley-cps-symbiotic-design</code> folder and install dependencies</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> berkeley-cps-symbiotic-design <span class="p">&amp;</span> <span class="se">\</span>
+pdm install
+</code></pre></div>
+</li>
 </ol>
 <h3 id="configure-aws">Configure AWS<a class="headerlink" href="#configure-aws" title="Permanent link">&para;</a></h3>
 <ol>
@@ -3024,7 +3062,7 @@ git submodule update --
 <li>Launch <code>docker_run.sh</code> to pull and run the docker image in background. You can run <code>docker_run.sh bash</code> if you want to launch bash and interact from inside the docker container.</li>
 </ol>
 <h3 id="example-quick-start">Example Quick Start<a class="headerlink" href="#example-quick-start" title="Permanent link">&para;</a></h3>
-<p>Navigate to a local folder in your compter where you want to clone the repos</p>
+<p>Navigate to a local folder on your machine where you want to clone the repos</p>
 <div class="highlight"><pre><span></span><code>git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git <span class="p">&amp;</span> <span class="se">\</span>
 git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git <span class="p">&amp;</span> <span class="se">\</span>
 <span class="nb">cd</span> berkeley-cps-symbiotic-design
@@ -3145,58 +3183,40 @@ can launch.</p>
 <div class="highlight"><pre><span></span><code>npm run start
 </code></pre></div>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
-<p>NOTE:</p>
-<p>If you have problems with the environment you can clean up the files and folders created by pdm and conda by running</p>
+<h3 id="installation-process">Installation process<a class="headerlink" href="#installation-process" title="Permanent link">&para;</a></h3>
+<p>If you have problems with the environment you can clean up the files and folders created by pdm and conda by running
 <div class="highlight"><pre><span></span><code>make uninstall
 </code></pre></div>
-<p>Then try installation process again.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>
-Install
-<a href="https://github.com/pdm-project/pdm">PDM</a>
-manually.</p>
-<p>You can install it with:</p>
-<div class="highlight"><pre><span></span><code>python3 -m pip install --user pipx
-pipx install pdm
+Then try installation process again.
+<div class="highlight"><pre><span></span><code>pdm install
+</code></pre></div></p>
+<h3 id="submodules">Submodules<a class="headerlink" href="#submodules" title="Permanent link">&para;</a></h3>
+<p>Make sure the submodules are correctly imported and updated
+<div class="highlight"><pre><span></span><code>git submodule init
+git submodule update --
 </code></pre></div>
-<p>Now you can try running <code>make setup</code> again.</p>
-</div>
-<p>For Mac M1 users, change the architecture first by running:</p>
+Make sure that <code>eval_pipeline</code> folder is not empty.
+If the submodule was not pulled correctly you can simply
+clone <a href="https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git">this</a> repo and copy its content
+inside <code>eval_pipeline</code> folder.</p>
+<h3 id="apple-silicon">Apple Silicon<a class="headerlink" href="#apple-silicon" title="Permanent link">&para;</a></h3>
+<p>For Mac M1 users, if you have architecture problems (i.e. some packages are not available for arm), you can try simulating x86_64 architecture and install the dependencies again.
+<div class="highlight"><pre><span></span><code>env /usr/bin/arch -x86_64 /bin/zsh
+</code></pre></div>
+However, all the dependencies right now should support arm and you should not change architecture.</p>
+<p>To run a x86 terminal by default in VSCode, add the following to your <code>settings.json</code>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;terminal.integrated.profiles.osx&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="nt">&quot;x86 bash&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">       </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/usr/bin/arch&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">       </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;-arch&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;x86_64&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">]</span><span class="w"></span>
+<span class="w">   </span><span class="p">}},</span><span class="w"></span>
+<span class="nt">&quot;terminal.integrated.defaultProfile.osx&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;x86 bash&quot;</span><span class="w"></span>
+</code></pre></div></p>
+<p>To run a x86 terminal by default in PyCharm, go to Preferences/Tools/Terminal and set the shell path to be:</p>
 <div class="highlight"><pre><span></span><code>env /usr/bin/arch -x86_64 /bin/zsh --login
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Apple Silicon
-Make sure that you are running python3 for Apple Silicon and not the Intel version otherwise pdm will pull the
-packages for the wrong architecture
-You can uninstall python via brew by running and try install the repository again
-<div class="highlight"><pre><span></span><code>brew uninstall --ignore-dependencies python
-</code></pre></div>
-If you still have problems you can run a x86 terminal commands with Apple’s Rosetta 2 by launching:</p>
-<p><div class="highlight"><pre><span></span><code>arch -x86_64 /bin/bash
-</code></pre></div>
-To run a x86 terminal by default in VSCode. Add the following to your <code>settings.json</code>
-```json
-"terminal.integrated.profiles.osx": {
-   "x86 bash": {
-       "path": "/usr/bin/arch",
-       "args": ["-arch", "x86_64", "/bin/bash"]
-   }
-},
-"terminal.integrated.defaultProfile.osx": "x86 bash"
-<div class="highlight"><pre><span></span><code>Go to Preferences/Tools/Terminal and set the shell path to be:
-```bash
-env /usr/bin/arch -x86_64 /bin/zsh --login
-</code></pre></div></p>
-</div>
-<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
-<p><a href="https://github.com/piergiuseppe/sym-cps/blob/master/LICENSE">MIT</a></p>
 <h2 id="features-and-credits">Features and Credits<a class="headerlink" href="#features-and-credits" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Fully typed with annotations and checked with mypy,
-  <a href="https://www.python.org/dev/peps/pep-0o561/">PEP561 compatible</a></li>
-</ul>
+<p>Fully typed with annotations and checked with mypy, <a href="https://www.python.org/dev/peps/pep-0o561/">PEP561 compatible</a></p>
 
 
 
