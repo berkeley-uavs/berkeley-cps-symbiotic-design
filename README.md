@@ -72,7 +72,15 @@ sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
    located in `../challenge_data/` from the root folder of this repo.
 3. Launch `docker_run.sh` to pull and run the docker image in background. You can run `docker_run.sh bash` if you want to launch bash and interact from inside the docker container.
 
-### Example
+### Example Quick Start
+
+Navigate to a local folder in your compter where you want to clone the repos
+
+```bash
+git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git & \
+git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git & \
+cd berkeley-cps-symbiotic-design
+```
 
 ```bash
   docker_run.sh bash
@@ -89,6 +97,8 @@ and
   pdm run custom-design "working/test_quad_abstraction_3"
 ```
 
+
+The output file will automatically appear in the `challenge_data/output` folder. Also, any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
 
 
 ### Remote deployment from IDE
