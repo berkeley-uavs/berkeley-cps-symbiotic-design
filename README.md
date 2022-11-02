@@ -80,7 +80,20 @@ sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
     ./docker_run.sh bash
     ```
 
-The output file will automatically appear in the `challenge_data/output` folder. 
+You can now launch the scripts and the python files. For example:
+
+  ```bash
+  pdm run init
+  ```
+To initialize the library of components and seed design
+
+  ```bash
+  pdm run custom-design "working/test_quad_abstraction_3"
+  ```
+To generate a custom design from json file (this script does not send it to evaluation)
+
+
+The output files will automatically appear in the `challenge_data/output` folder. 
 Also, any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
 You can launch the docker container in the background with `./docker_run.sh`
 
