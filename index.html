@@ -408,8 +408,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example-quick-start" class="md-nav__link">
-    Example Quick Start
+  <a href="#system-requirements_1" class="md-nav__link">
+    System Requirements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-start_1" class="md-nav__link">
+    Quick start
   </a>
   
 </li>
@@ -2853,8 +2860,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example-quick-start" class="md-nav__link">
-    Example Quick Start
+  <a href="#system-requirements_1" class="md-nav__link">
+    System Requirements
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-start_1" class="md-nav__link">
+    Quick start
   </a>
   
 </li>
@@ -3048,34 +3062,29 @@ pdm install
 <div class="highlight"><pre><span></span><code>sudo pdm run suam-config install --no-symlink --input<span class="o">=</span>./data/broker.conf.yaml
 </code></pre></div>
 <h2 id="docker-installation">Docker Installation<a class="headerlink" href="#docker-installation" title="Permanent link">&para;</a></h2>
+<h3 id="system-requirements_1">System Requirements<a class="headerlink" href="#system-requirements_1" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Update the submodules
-    <div class="highlight"><pre><span></span><code>git submodule init
-git submodule update --
-</code></pre></div>
-   Make sure that <code>eval_pipeline</code> folder is not empty.
-   If the submodule was not pulled correctly you can simply
-   clone <a href="https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git">this</a> repo and copy its content
-   inside <code>eval_pipeline</code> folder.</li>
-<li>Clone <a href="https://github.com/uc-berkeley-data-discovery-2022/challenge_data">challenge_data repo</a> so that its content is
-   located in <code>../challenge_data/</code> from the root folder of this repo.</li>
-<li>Launch <code>docker_run.sh</code> to pull and run the docker image in background. You can run <code>docker_run.sh bash</code> if you want to launch bash and interact from inside the docker container.</li>
+<li><a href="https://docs.docker.com/engine/install/">Docker</a></li>
+<li>Access to <a href="https://github.com/uc-berkeley-data-discovery-2022/challenge_data">this repo</a>.</li>
 </ol>
-<h3 id="example-quick-start">Example Quick Start<a class="headerlink" href="#example-quick-start" title="Permanent link">&para;</a></h3>
-<p>Navigate to a local folder on your machine where you want to clone the repos</p>
+<h3 id="quick-start_1">Quick start<a class="headerlink" href="#quick-start_1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Clone the two repos and their submodules in the same folder</p>
 <div class="highlight"><pre><span></span><code>git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git <span class="p">&amp;</span> <span class="se">\</span>
-git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git <span class="p">&amp;</span> <span class="se">\</span>
-<span class="nb">cd</span> berkeley-cps-symbiotic-design
+git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
 </code></pre></div>
-<p><div class="highlight"><pre><span></span><code>  ./docker_run.sh bash
+</li>
+<li>
+<p>Navigate to <code>berkeley-cps-symbiotic-design</code> folder and launch docker script</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> berkeley-cps-symbiotic-design <span class="p">&amp;</span> <span class="se">\</span>
+./docker_run.sh bash
 </code></pre></div>
-once inside the docker image you can run any command or script like:</p>
-<div class="highlight"><pre><span></span><code>  pdm run init
-</code></pre></div>
-<p>and</p>
-<div class="highlight"><pre><span></span><code>  pdm run custom-design <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
-</code></pre></div>
-<p>The output file will automatically appear in the <code>challenge_data/output</code> folder. Also, any change you make to the files in <code>berkeley-cps-symbiotic-design</code> will be immediately available inside the docker container. </p>
+</li>
+</ol>
+<p>The output file will automatically appear in the <code>challenge_data/output</code> folder. 
+Also, any change you make to the files in <code>berkeley-cps-symbiotic-design</code> will be immediately available inside the docker container. 
+You can launch the docker container in the background with <code>./docker_run.sh</code></p>
 <h3 id="remote-deployment-from-ide">Remote deployment from IDE<a class="headerlink" href="#remote-deployment-from-ide" title="Permanent link">&para;</a></h3>
 <p>The docker image contains an ssh server that you can connect from your IDE and run your code/debug directly inside docker without the need of installing any dependencies.</p>
 <p>Launch:
