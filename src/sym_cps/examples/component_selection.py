@@ -2,7 +2,8 @@ import math
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
 from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
 from sym_cps.optimizers.component_selection.component_selection import ComponentSelectionContract
-from sym_cps.shared.paths import ExportType, designs_folder
+from sym_cps.shared.paths import designs_folder
+from sym_cps.shared.objects import ExportType
 from sym_cps.evaluation import evaluate_design
 
 
@@ -56,7 +57,7 @@ class Test_Selection():
 
 if __name__ == "__main__":
     tester = Test_Selection()
-    propeller, motor, battery = tester.test_component_selection()
+    #propeller, motor, battery = tester.test_component_selection()
     # propeller = c_library.components["62x6_2_3200_51_1390"]
     # motor = c_library.components["Rex30"]
     # battery = c_library.components["TurnigyGraphene6000mAh3S75C"]
@@ -95,6 +96,10 @@ if __name__ == "__main__":
     # Propeller: apc_propellers_19x10E
     # Motor: kde_direct_KDE3510XF_475
     # Battery: TurnigyGraphene6000mAh3S75C
+
+    propeller = tester.c_library.components["apc_propellers_14x12E"]
+    motor = tester.c_library.components["kde_direct_KDE2814XF_775"]
+    battery = tester.c_library.components["TurnigyGraphene6000mAh6S75C"]
     tester.check_combination(propeller=propeller, motor=motor, battery=battery)
-    tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
+    #tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     #build_contract_library()

@@ -25,7 +25,7 @@ library_folder: Path = output_folder / "library"
 fdm_bin_folder: Path = fdm_root_folder / "bin" / "bin" / "bin"
 fdm_tmp_folder: Path = fdm_root_folder / "tmp"
 fdm_extract_folder: Path = fdm_root_folder / "extract"
-prop_table_folder: Path = fdm_root_folder / "fdm" / "Tables"/ "PropData"
+prop_table_folder: Path = fdm_root_folder / "Tables"/ "PropData"
 
 
 component_library_root_path_default: Path = data_folder / "ComponentLibrary" / "results_json"
