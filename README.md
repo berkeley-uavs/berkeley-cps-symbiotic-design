@@ -37,17 +37,17 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
    for [Linux](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/linux.html)
    , [MacOS](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/macos.html)
    and [Windows](https://docs.aws.amazon.com/vpn/latest/clientvpn-user/windows.html).
-2. Create the folder `../challenge_data/output/aws` if it does not exist already.
+2. Create the folder `../challenge_data/aws` if it does not exist already.
     1. (Optional) notify your IDE to _exclude_ the `aws` folder from being indexed. For example in PyCharm
        do `Right Click on aws - Mark directory as - Excluded`
-3. Mount the shared folder in `../challenge_data/output/aws`.
+3. Mount the shared folder in `../challenge_data/aws`.
    Instructions [here](https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/mount-openzfs-volumes.html). Make sure you
    are connected via the VPN before mounting the shared drive.
     1. Suggestion: from the root folder of the repo, you can try one of the following commands, according to your OS and
        preferences
-        1. `sudo mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/output/aws`
-        2. `sudo mount_nfs -o resvport 10.0.137.113:/fsx/ ../challenge_data/output/aws`
-        3. `sudo mount -o resvport -t nfs 10.0.137.113:/fsx/ ../challenge_data/output/aws`
+        1. `sudo mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws`
+        2. `sudo mount_nfs -o resvport 10.0.137.113:/fsx/ ../challenge_data/aws`
+        3. `sudo mount -o resvport -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws`
 4. After have successfully installed the dependencies and activated the conda environment. Launch the following command
    from the root of the repo
 
@@ -204,13 +204,13 @@ pdm run python src/sym_cps/examples/topology.py
 Evaluate designs from command line specifying the path of the `design_swri,json` in `<design-file>`:
 
 ```bash
-sudo pdm run suam-client direct2cad.process-design --design=<design-file> --results=../challenge_data/output/aws/results
+sudo pdm run suam-client direct2cad.process-design --design=<design-file> --results=../challenge_data/aws/results
 ```
 
 For example:
 
 ```bash
-pdm run suam-client direct2cad.process-design --design=../challenge_data/output/designs/TestQuad/design_swri.json --results=../challenge_data/output/aws/results
+pdm run suam-client direct2cad.process-design --design=../challenge_data/output/designs/TestQuad/design_swri.json --results=../challenge_data/aws/results
 ```
 
 Evaluate designs from python
