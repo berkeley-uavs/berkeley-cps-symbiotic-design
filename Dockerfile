@@ -1,7 +1,10 @@
 FROM pmallozzi/devenvs:base-310
 
 RUN apt-get update && apt-get install -y \
-    graphviz
+    graphviz \
+    openvpn \
+    nfs-common
+
 
 WORKDIR /root
 
@@ -15,3 +18,4 @@ RUN pdm install
 
 ENV PYTHONPATH "/root/host/__pypackages__/3.10/lib:/root/host/src"
 
+ENTRYPOINT ["./entrypoint.sh"]

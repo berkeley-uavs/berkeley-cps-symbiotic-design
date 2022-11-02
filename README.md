@@ -51,9 +51,9 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 4. After have successfully installed the dependencies and activated the conda environment. Launch the following command
    from the root of the repo
 
-```bash
-sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
-```
+    ```bash
+    sudo pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+    ```
 
 
 ## Docker Installation
@@ -92,6 +92,9 @@ To initialize the library of components and seed design
   ```
 To generate a custom design from json file (this script does not send it to evaluation)
 
+  ```bash
+  pdm run evaluate-design "working/test_quad_abstraction_3"
+  ```
 
 The output files will automatically appear in the `challenge_data/output` folder. 
 Also, any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
