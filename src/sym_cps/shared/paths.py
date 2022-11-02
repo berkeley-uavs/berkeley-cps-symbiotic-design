@@ -18,7 +18,7 @@ data_folder: Path = challenge_data / "data"
 output_folder: Path = challenge_data / "output"
 fdm_root_folder: Path = challenge_data / "fdm"
 
-aws_folder: Path = output_folder / "aws"
+aws_folder: Path = challenge_data / "aws"
 designs_folder: Path = output_folder / "designs"
 library_folder: Path = output_folder / "library"
 
