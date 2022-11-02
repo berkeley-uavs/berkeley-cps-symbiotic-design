@@ -233,13 +233,13 @@ def extract_results(
                     # TODO: read the fdm input files
                     pass
 
-            # if fdm_output.is_file():
-            #     info = result_zip_file.getinfo(str(fdm_output_member))
-            #     info.filename = f"flightDynFastOut.out"
-            #     result_zip_file.extract(member = info, path = str(extract_folder))
-            #     with fdm_output.open("r") as fdm_output_file:
-            #         #TODO: read the fdm output files
-            #         pass
+            if fdm_output.is_file():
+                info = result_zip_file.getinfo(str(fdm_output_member))
+                info.filename = f"flightDynFastOut.out"
+                result_zip_file.extract(member = info, path = str(extract_folder))
+                with fdm_output.open("r") as fdm_output_file:
+                    #TODO: read the fdm output files
+                    pass
     if control_opt:
         from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
 

@@ -9,7 +9,7 @@ from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class Component:
     id: str
 
