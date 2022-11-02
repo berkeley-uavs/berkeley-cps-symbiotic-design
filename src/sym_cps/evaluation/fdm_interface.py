@@ -1,7 +1,7 @@
 import os
 
-from sym_cps.optimizers.control_opt.fdm_data import FDMData
-from sym_cps.optimizers.control_opt.fdm_ret import FDMResult
+from sym_cps.evaluation.fdm_data import FDMData
+from sym_cps.evaluation.fdm_ret import FDMResult
 from sym_cps.shared.paths import fdm_bin_folder, fdm_root_folder, fdm_tmp_folder
 
 

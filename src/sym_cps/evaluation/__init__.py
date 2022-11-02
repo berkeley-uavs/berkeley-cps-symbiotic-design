@@ -41,7 +41,7 @@ def evaluate_design(
     # Obtain information from the result foleder
     if not info_only:
         return extract_results(result_path, control_opt=control_opt)
-        # return extract_results("/Users/shengjungyu/shengjungyu/Research/UC_Berkeley/Research/LOGiCS/workspace/berkeley-cps-symbiotic-design/output/aws/results/process_design-2022-10-07-fhudp1f5qz.zip", control_opt = control_opt)
+        #return extract_results("/Users/shengjungyu/shengjungyu/Research/UC_Berkeley/Research/LOGiCS/workspace/challenge_data/aws/results/process_design-2022-11-02-kvrbcwlwpg.zip", control_opt = control_opt)
     else:
         return None
 
