@@ -28,7 +28,7 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
     cd berkeley-cps-symbiotic-design & \
     pdm install
     ```
-   
+
 
 ### Configure AWS
 
@@ -55,49 +55,34 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
 ```
 
+
 ## Docker Installation
 
-1. Update the submodules
+### System Requirements
+
+1. [Docker](https://docs.docker.com/engine/install/)
+2. Access to [this repo](https://github.com/uc-berkeley-data-discovery-2022/challenge_data).
+
+
+### Quick start
+
+1. Clone the two repos and their submodules in the same folder
+
     ```bash
-    git submodule init
-    git submodule update --
+    git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git & \
+    git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
     ```
-   Make sure that `eval_pipeline` folder is not empty.
-   If the submodule was not pulled correctly you can simply
-   clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content
-   inside `eval_pipeline` folder.
-2. Clone [challenge_data repo](https://github.com/uc-berkeley-data-discovery-2022/challenge_data) so that its content is
-   located in `../challenge_data/` from the root folder of this repo.
-3. Launch `docker_run.sh` to pull and run the docker image in background. You can run `docker_run.sh bash` if you want to launch bash and interact from inside the docker container.
+   
+2. Navigate to `berkeley-cps-symbiotic-design` folder and launch docker script
 
-### Example Quick Start
+    ```bash
+    cd berkeley-cps-symbiotic-design & \
+    ./docker_run.sh bash
+    ```
 
-Navigate to a local folder on your machine where you want to clone the repos
-
-```bash
-git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git & \
-git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git & \
-cd berkeley-cps-symbiotic-design
-```
-
-```bash
-  ./docker_run.sh bash
-```
-once inside the docker image you can run any command or script like:
-
-```bash
-  pdm run init
-```
-
-and
-
-```bash
-  pdm run custom-design "working/test_quad_abstraction_3"
-```
-
-
-The output file will automatically appear in the `challenge_data/output` folder. Also, any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
-
+The output file will automatically appear in the `challenge_data/output` folder. 
+Also, any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
+You can launch the docker container in the background with `./docker_run.sh`
 
 ### Remote deployment from IDE
 
