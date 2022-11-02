@@ -33,6 +33,7 @@ else
         bash)
           echo "Launching bash..."
           bash
+          echo "test..."
           break
           ;;
         *)
