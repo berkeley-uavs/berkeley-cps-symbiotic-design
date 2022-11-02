@@ -16,7 +16,7 @@ def evaluate_design(
     timeout: int = 800,
     info_only: bool = False,
     control_opt: bool = False,
-):
+) -> tuple[dict, list[float] | None, list[bool] | None, dict | None]:
     """Evaluate a design_swri.json provided at location 'design_json_path'
     Metadata to include with the operation, becomes part of metadata.json in the result.
     """
