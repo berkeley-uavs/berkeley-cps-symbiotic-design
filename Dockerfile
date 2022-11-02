@@ -3,10 +3,18 @@ FROM pmallozzi/devenvs:base-310
 
 RUN dpkg --configure -a
 
-RUN apt-get update && apt-get install -y \
-    graphviz \
-    openvpn \
-    nfs-common
+#RUN apt-get update && apt-get install -y \
+#    graphviz \
+#    openvpn \
+#    nfs-common
+
+RUN apt-get update
+
+RUN apt-get install -y graphviz
+
+RUN apt-get install -y openvpn
+
+RUN apt-get install -y nfs-common
 
 
 WORKDIR /root
