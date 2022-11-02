@@ -5,6 +5,7 @@ Test Documentation
 from __future__ import annotations
 
 import json
+import shutil
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -46,6 +47,7 @@ class DConcrete:
     description: str = ""
     design_parameters: dict[str, DesignParameter] = field(default_factory=dict)
     comp_id_to_node: dict[str, Vertex] = field(default_factory=dict)
+    evaluation_results: dict = field(default_factory=dict)
 
     def __post_init__(self):
         self._graph = Graph(directed=True)
@@ -230,7 +232,13 @@ class DConcrete:
     def evaluate(self):
         """Sends the Design for evaluation"""
         json_path = self.export(ExportType.JSON)
-        evaluate_design(design_json_path=json_path, metadata={"extra_info": "full evaluation example"}, timeout=800)
+        self.evaluation_results = evaluate_design(design_json_path=json_path,
+                                  metadata={"extra_info": "full evaluation example"},
+                                  timeout=800)
+        print(self.evaluation_results["status"])
+        self.export(ExportType.EVALUATION)
+        print("Evaluation Completed")
+
 
     def evaluation(self, evaluation_results_json: str):
         """Parse and update the evaluation of the Design"""
@@ -376,6 +384,15 @@ class DConcrete:
         elif file_type == ExportType.PDF:
             file_path = absolute_folder / "concrete_graph.pdf"
             self.pydot.write_pdf(file_path)
+
+        elif file_type == ExportType.EVALUATION:
+            save_to_file(
+                str(str(json.dumps(self.evaluation_results))),
+                file_name=f"evaluation_results.json",
+                absolute_folder_path=absolute_folder,
+            )
+            print(f"Copying {self.evaluation_results['stl_file_path']} to {absolute_folder}")
+            shutil.copy(self.evaluation_results["stl_file_path"], absolute_folder)
 
         else:
             raise Exception("File type not supported")
