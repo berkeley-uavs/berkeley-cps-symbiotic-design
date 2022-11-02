@@ -6,6 +6,7 @@ container=dev_env_base_310
 image=pmallozzi/devenvs:base-310-symcps
 challenge_data_relative_path=../challenge_data/
 
+docker pull ${image}
 
 
 resolve_relative_path() (
