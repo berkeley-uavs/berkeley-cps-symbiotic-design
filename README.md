@@ -171,9 +171,9 @@ following entries:
   ```
 
 * Load and export custom design where "custom_design_file" is the file name of the `json` file in
-  the `data/custom_designs` folder
+  the `data/custom_designs` folder, for example:
   ```bash
-  pdm run custom-design "custom_design_file"
+  pdm run custom-design "working/test_quad_abstraction_3"
   ```
 
 ## Examples

@@ -24,6 +24,7 @@ def load_custom_design(args: Optional[List[str]] = None) -> int:
     print(f"args: {opts}")
     print(opts.design_file)
     file = data_folder / "custom_designs" / opts.design_file
+    print(f"Parsing file {file}")
     if file.suffix == "":
         file_str = str(file)
         file_str += ".json"
