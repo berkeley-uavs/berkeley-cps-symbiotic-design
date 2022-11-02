@@ -10,7 +10,7 @@ case $(uname -m) in
     x86_64 | i686 | i386) my_platform="linux/amd64" ;;
     arm)    my_platform="linux/arm64" ;;
 esac
-
+echo ${my_platform}
 
 docker pull ${image}
 
