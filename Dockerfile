@@ -1,5 +1,8 @@
 FROM pmallozzi/devenvs:base-310
 
+
+RUN dpkg --configure -a
+
 RUN apt-get update && apt-get install -y \
     graphviz \
     openvpn \
