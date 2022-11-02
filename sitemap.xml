@@ -116,6 +116,26 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/fdm_data/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/fdm_interface/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/fdm_ret/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/fdm_to_json/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/evaluation/tools/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
@@ -247,26 +267,6 @@
     </url>
     <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/control_opt/control_opt_interface/</loc>
-         <lastmod>2022-11-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/control_opt/fdm_data/</loc>
-         <lastmod>2022-11-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/control_opt/fdm_interface/</loc>
-         <lastmod>2022-11-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/control_opt/fdm_ret/</loc>
-         <lastmod>2022-11-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/control_opt/fdm_to_json/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
     </url>

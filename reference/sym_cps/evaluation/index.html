@@ -850,6 +850,62 @@
   
   
     <li class="md-nav__item">
+      <a href="fdm_data/" class="md-nav__link">
+        fdm_data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fdm_interface/" class="md-nav__link">
+        fdm_interface
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fdm_ret/" class="md-nav__link">
+        fdm_ret
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fdm_to_json/" class="md-nav__link">
+        fdm_to_json
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="tools/" class="md-nav__link">
         tools
       </a>
@@ -1334,62 +1390,6 @@
     <li class="md-nav__item">
       <a href="../optimizers/control_opt/control_opt_interface/" class="md-nav__link">
         control_opt_interface
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../optimizers/control_opt/fdm_data/" class="md-nav__link">
-        fdm_data
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../optimizers/control_opt/fdm_interface/" class="md-nav__link">
-        fdm_interface
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../optimizers/control_opt/fdm_ret/" class="md-nav__link">
-        fdm_ret
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../optimizers/control_opt/fdm_to_json/" class="md-nav__link">
-        fdm_to_json
       </a>
     </li>
   
@@ -2904,7 +2904,7 @@ Metadata to include with the operation, becomes part of metadata.json in the res
     <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">800</span><span class="p">,</span>
     <span class="n">info_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">control_opt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Evaluate a design_swri.json provided at location &#39;design_json_path&#39;</span>
 <span class="sd">    Metadata to include with the operation, becomes part of metadata.json in the result.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2929,7 +2929,7 @@ Metadata to include with the operation, becomes part of metadata.json in the res
     <span class="c1"># Obtain information from the result foleder</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">info_only</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">extract_results</span><span class="p">(</span><span class="n">result_path</span><span class="p">,</span> <span class="n">control_opt</span><span class="o">=</span><span class="n">control_opt</span><span class="p">)</span>
-        <span class="c1"># return extract_results(&quot;/Users/shengjungyu/shengjungyu/Research/UC_Berkeley/Research/LOGiCS/workspace/berkeley-cps-symbiotic-design/output/aws/results/process_design-2022-10-07-fhudp1f5qz.zip&quot;, control_opt = control_opt)</span>
+        <span class="c1">#return extract_results(&quot;/Users/shengjungyu/shengjungyu/Research/UC_Berkeley/Research/LOGiCS/workspace/challenge_data/aws/results/process_design-2022-11-02-kvrbcwlwpg.zip&quot;, control_opt = control_opt)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>

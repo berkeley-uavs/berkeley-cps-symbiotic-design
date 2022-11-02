@@ -1050,6 +1050,62 @@
   
   
     <li class="md-nav__item">
+      <a href="reference/sym_cps/evaluation/fdm_data/" class="md-nav__link">
+        fdm_data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/sym_cps/evaluation/fdm_interface/" class="md-nav__link">
+        fdm_interface
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/sym_cps/evaluation/fdm_ret/" class="md-nav__link">
+        fdm_ret
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/sym_cps/evaluation/fdm_to_json/" class="md-nav__link">
+        fdm_to_json
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="reference/sym_cps/evaluation/tools/" class="md-nav__link">
         tools
       </a>
@@ -1534,62 +1590,6 @@
     <li class="md-nav__item">
       <a href="reference/sym_cps/optimizers/control_opt/control_opt_interface/" class="md-nav__link">
         control_opt_interface
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="reference/sym_cps/optimizers/control_opt/fdm_data/" class="md-nav__link">
-        fdm_data
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="reference/sym_cps/optimizers/control_opt/fdm_interface/" class="md-nav__link">
-        fdm_interface
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="reference/sym_cps/optimizers/control_opt/fdm_ret/" class="md-nav__link">
-        fdm_ret
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="reference/sym_cps/optimizers/control_opt/fdm_to_json/" class="md-nav__link">
-        fdm_to_json
       </a>
     </li>
   
@@ -3269,11 +3269,12 @@ To initialize the library of components and seed design</p>
 <p><div class="highlight"><pre><span></span><code>pdm run custom-design <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
 </code></pre></div>
 To generate a custom design from json file (this script does not send it to evaluation)</p>
-<div class="highlight"><pre><span></span><code>pdm run evaluate-design <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
+<p><div class="highlight"><pre><span></span><code>pdm run evaluate <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
 </code></pre></div>
-<p>The output files will automatically appear in the <code>challenge_data/output</code> folder. 
-Also, any change you make to the files in <code>berkeley-cps-symbiotic-design</code> will be immediately available inside the docker container. 
-You can launch the docker container in the background with <code>./docker_run.sh</code></p>
+To generate a custom design from json file, send it to evaluatio and retreive the results. 
+The results appear in the <code>challenge_data/output</code> automatically.</p>
+<p>Any change you make to the files in <code>berkeley-cps-symbiotic-design</code> will be immediately available inside the docker container. </p>
+<p>You can launch the docker container in the background with <code>./docker_run.sh</code></p>
 <h3 id="remote-deployment-from-ide">Remote deployment from IDE<a class="headerlink" href="#remote-deployment-from-ide" title="Permanent link">&para;</a></h3>
 <p>The docker image contains an ssh server that you can connect from your IDE and run your code/debug directly inside docker without the need of installing any dependencies.</p>
 <p>Launch:
