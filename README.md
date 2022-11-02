@@ -99,11 +99,13 @@ To initialize the library of components and seed design
 To generate a custom design from json file (this script does not send it to evaluation)
 
   ```bash
-  pdm run evaluate-design "working/test_quad_abstraction_3"
+  pdm run evaluate "working/test_quad_abstraction_3"
   ```
+To generate a custom design from json file, send it to evaluatio and retreive the results. 
+The results appear in the `challenge_data/output` automatically.
 
-The output files will automatically appear in the `challenge_data/output` folder. 
-Also, any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
+Any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
+
 You can launch the docker container in the background with `./docker_run.sh`
 
 ### Remote deployment from IDE
