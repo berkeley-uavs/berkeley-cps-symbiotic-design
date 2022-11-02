@@ -27,12 +27,16 @@ else
       -h|--help)
         echo "options:"
         echo "-h, --help                show brief help"
+        exit 0
         ;;
       bash)
         echo "Launching bash..."
         bash
+        exit 0
         ;;
       *)
         ;;
     esac
 fi
+
+exit 0

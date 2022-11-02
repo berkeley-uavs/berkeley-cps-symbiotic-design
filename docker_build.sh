@@ -1,5 +1,7 @@
 #!/bin/bash
 
+make uninstall
+
 base_image=pmallozzi/devenvs:base-310
 image_name=${base_image}-symcps
 
