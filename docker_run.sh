@@ -1,10 +1,16 @@
 #!/bin/bash
 
 port_ssh=9922
-my_platform=linux/arm64
 container=dev_env_base_310
 image=pmallozzi/devenvs:base-310-symcps
 challenge_data_relative_path=../challenge_data/
+
+my_platform=""
+case $(uname -m) in
+    x86_64 | i686 | i386) my_platform="linux/amd64" ;;
+    arm)    my_platform="linux/arm64" ;;
+esac
+
 
 docker pull ${image}
 
