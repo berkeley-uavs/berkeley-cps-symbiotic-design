@@ -13,24 +13,22 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 1. [pdm](https://github.com/pdm-project/pdm)
 2. Access to [this repo](https://github.com/uc-berkeley-data-discovery-2022/challenge_data).
 
-### Dependencies
+### Quick start
 
-1. Update the submodules
+1. Clone the two repos and their submodules in the same folder
+
     ```bash
-    git submodule init
-    git submodule update --
+    git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git & \
+    git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
     ```
-   Make sure that `eval_pipeline` folder is not empty.
-   If the submodule was not pulled correctly you can simply
-   clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content
-   inside `eval_pipeline` folder.
-2. Clone [challenge_data repo](https://github.com/uc-berkeley-data-discovery-2022/challenge_data) so that its content is
-   located in `../challenge_data/` from the root folder of this repo. Or specify the relative location
-   in `settings.toml`.
-2. Install
+   
+2. Navigate to `berkeley-cps-symbiotic-design` folder and install dependencies
+
     ```bash
+    cd berkeley-cps-symbiotic-design & \
     pdm install
     ```
+   
 
 ### Configure AWS
 
@@ -74,7 +72,7 @@ sudo pdm run suam-config install --no-symlink --input=./data/broker.conf.yaml
 
 ### Example Quick Start
 
-Navigate to a local folder in your compter where you want to clone the repos
+Navigate to a local folder on your machine where you want to clone the repos
 
 ```bash
 git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git & \
@@ -256,75 +254,56 @@ npm run start
 
 ## Troubleshooting
 
-NOTE:
+### Installation process
 
 If you have problems with the environment you can clean up the files and folders created by pdm and conda by running
-
 ```bash
 make uninstall
 ```
-
 Then try installation process again.
+```bash
+pdm install
+```
+
+### Submodules
+Make sure the submodules are correctly imported and updated
+```bash
+git submodule init
+git submodule update --
+```
+Make sure that `eval_pipeline` folder is not empty.
+If the submodule was not pulled correctly you can simply
+clone [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git) repo and copy its content
+inside `eval_pipeline` folder.
 
 
+### Apple Silicon
 
-> NOTE:
-> Install
-> [PDM](https://github.com/pdm-project/pdm)
-> manually.
->
-> You can install it with:
->
-> ```bash
-> python3 -m pip install --user pipx
-> pipx install pdm
-> ```
->
-> Now you can try running `make setup` again.
+For Mac M1 users, if you have architecture problems (i.e. some packages are not available for arm), you can try simulating x86_64 architecture and install the dependencies again.
+```bash
+env /usr/bin/arch -x86_64 /bin/zsh
+```
+However, all the dependencies right now should support arm and you should not change architecture.
 
+To run a x86 terminal by default in VSCode, add the following to your `settings.json`
+```json
+"terminal.integrated.profiles.osx": {
+   "x86 bash": {
+       "path": "/usr/bin/arch",
+       "args": ["-arch", "x86_64", "/bin/bash"]
+   }},
+"terminal.integrated.defaultProfile.osx": "x86 bash"
+```
 
-For Mac M1 users, change the architecture first by running:
+To run a x86 terminal by default in PyCharm, go to Preferences/Tools/Terminal and set the shell path to be:
 
 ```bash
 env /usr/bin/arch -x86_64 /bin/zsh --login
 ```
 
-> NOTE: Apple Silicon
-> Make sure that you are running python3 for Apple Silicon and not the Intel version otherwise pdm will pull the
-> packages for the wrong architecture
-> You can uninstall python via brew by running and try install the repository again
-> ```bash
-> brew uninstall --ignore-dependencies python
-> ```
-> If you still have problems you can run a x86 terminal commands with Apple’s Rosetta 2 by launching:
->
-> ```bash
-> arch -x86_64 /bin/bash
-> ```
-> To run a x86 terminal by default in VSCode. Add the following to your `settings.json`
-> ```json
-> "terminal.integrated.profiles.osx": {
->    "x86 bash": {
->        "path": "/usr/bin/arch",
->        "args": ["-arch", "x86_64", "/bin/bash"]
->    }
->},
->"terminal.integrated.defaultProfile.osx": "x86 bash"
-> ```
->
-> Go to Preferences/Tools/Terminal and set the shell path to be:
-> ```bash
-> env /usr/bin/arch -x86_64 /bin/zsh --login
-> ```
-
-## License
-
-[MIT](https://github.com/piergiuseppe/sym-cps/blob/master/LICENSE)
-
 ## Features and Credits
 
-- Fully typed with annotations and checked with mypy,
-  [PEP561 compatible](https://www.python.org/dev/peps/pep-0o561/)
+Fully typed with annotations and checked with mypy, [PEP561 compatible](https://www.python.org/dev/peps/pep-0o561/)
   
   
   
