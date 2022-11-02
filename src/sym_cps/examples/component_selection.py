@@ -101,5 +101,5 @@ if __name__ == "__main__":
     motor = tester.c_library.components["kde_direct_KDE2814XF_775"]
     battery = tester.c_library.components["TurnigyGraphene6000mAh6S75C"]
     tester.check_combination(propeller=propeller, motor=motor, battery=battery)
-    #tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
+    tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     #build_contract_library()

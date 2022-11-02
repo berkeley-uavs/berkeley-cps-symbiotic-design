@@ -8,7 +8,7 @@ import time
 import zipfile
 from pathlib import Path
 from typing import Optional, Union
-
+from sym_cps.evaluation.fdm_ret import FDMResult
 import dramatiq
 
 from sym_cps.shared.paths import aws_folder, fdm_extract_folder
@@ -194,7 +194,7 @@ def polling_results(msg, timeout: int = 800):
 
 def extract_results(
     result_archive_path: Path, control_opt: bool
-) -> tuple[list[float] | None, list[bool] | None, dict | None]:
+) -> tuple[dict, list[float] | None, list[bool] | None, dict | None]:
 
     print("Extracting results from result zip file...")
     with zipfile.ZipFile(result_archive_path) as result_zip_file:
@@ -218,7 +218,18 @@ def extract_results(
             return None, [False], None  # return failure
 
         extract_folder = fdm_extract_folder
-        # print(extract_folder)
+        #extract stl file
+        stl_folder = zipfile.Path(result_zip_file) / "workingdir"
+        stl_file = stl_folder / "uav_gen.stl"
+        stl_member = Path("workingdir", "uav_gen.stl")
+
+        if stl_file.is_file():
+            info = result_zip_file.getinfo(str(stl_member))
+            info.filename = f"uav_gen.stl"
+            result_zip_file.extract(member=info, path=str(extract_folder))
+
+        fdm_extract_info = {} # the object for collecting the score and stl files 
+        fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
         for fdm_test in folders:
             fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
             fdm_output = fdm_test / "fdmTB" / "flightDynFastOut.out"
@@ -227,19 +238,24 @@ def extract_results(
 
             if fdm_input.is_file():
                 info = result_zip_file.getinfo(str(fdm_input_member))
-                info.filename = f"flightDynFast.inp"
+                info.filename = f"{fdm_test.name}_flightDynFast.inp"
                 result_zip_file.extract(member=info, path=str(extract_folder))
                 with fdm_input.open("r") as fdm_input_file:
+                    
                     # TODO: read the fdm input files
                     pass
 
+
             if fdm_output.is_file():
                 info = result_zip_file.getinfo(str(fdm_output_member))
-                info.filename = f"flightDynFastOut.out"
+                info.filename = f"{fdm_test.name}_flightDynFastOut.out"
                 result_zip_file.extract(member = info, path = str(extract_folder))
-                with fdm_output.open("r") as fdm_output_file:
-                    #TODO: read the fdm output files
-                    pass
+
+                                # 
+                fdm_ret_path = extract_folder / info.filename
+                ret = FDMResult(file_path=fdm_ret_path) 
+                score = ret.metrics["Score"]
+                fdm_extract_info[fdm_test.name] = score
     if control_opt:
         from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer
 
@@ -249,7 +265,7 @@ def extract_results(
         for path_ret in ret["result"]:
             if path_ret["Path"] == 9:
                 best_args = path_ret["best_args"]
-        return [ret["total_score"]], [True], best_args  # return failure
+        return fdm_extract_info, [ret["total_score"]], [True], best_args  # return failure
 
     # TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
-    return None, [False], None  # return failure
+    return fdm_extract_info, None, [False], None  # return failure

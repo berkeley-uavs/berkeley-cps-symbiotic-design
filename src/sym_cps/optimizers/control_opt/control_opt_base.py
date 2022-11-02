@@ -1,6 +1,6 @@
 import math
 
-from sym_cps.optimizers.control_opt.fdm_interface import FDMArgs, FDMInterface
+from sym_cps.evaluation.fdm_interface import FDMArgs, FDMInterface
 
 
 class ControlOptimizer(object):
