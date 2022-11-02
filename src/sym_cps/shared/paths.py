@@ -2,20 +2,29 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from dynaconf import Dynaconf
+
+settings = Dynaconf(
+    envvar_prefix="DYNACONF",
+    settings_files=['../../../settings.toml'],
+)
 
 this_file = Path(os.path.dirname(__file__))
 root: Path = this_file.parent.parent.parent
 
-data_folder: Path = root / "data"
-configuration_files_path: Path = root / "configurations"
-output_folder: Path = root / "output"
+challenge_data = (root / settings.challenge_data_relative_path).resolve()
+
+data_folder: Path = challenge_data / "data"
+output_folder: Path = challenge_data / "output"
+fdm_root_folder: Path = challenge_data / "fdm"
+
 aws_folder: Path = output_folder / "aws"
 designs_folder: Path = output_folder / "designs"
 library_folder: Path = output_folder / "library"
-fdm_root_folder: Path = root / "fdm"
-fdm_bin_folder: Path = root / "fdm" / "bin" / "bin" / "bin"
-fdm_tmp_folder: Path = root / "fdm" / "tmp"
-fdm_extract_folder: Path = root / "fdm" / "extract"
+
+fdm_bin_folder: Path = fdm_root_folder / "bin" / "bin" / "bin"
+fdm_tmp_folder: Path = fdm_root_folder / "tmp"
+fdm_extract_folder: Path = fdm_root_folder / "extract"
 
 component_library_root_path_default: Path = data_folder / "ComponentLibrary" / "results_json"
 

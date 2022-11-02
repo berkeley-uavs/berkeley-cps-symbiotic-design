@@ -53,13 +53,6 @@ check:
 	pdm run duty check-quality check-types check-docs
 	@$(DUTY) check-dependencies
 
-.PHONY: update-data
-update-data:
-	cd ../swri_data
-	git pull
-	cd ../berkeley-cps-symbiotic-design
-	cp -r ../swri_data/data ./
-
 .PHONY: uninstall
 uninstall:
 	rm -rf .coverage*
