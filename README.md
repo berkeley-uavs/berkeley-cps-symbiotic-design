@@ -81,6 +81,12 @@ once inside the docker image you can run any command or script
 ```bash
   pdm run init
 ```
+or
+```bash
+  pdm run custom-design "working/test_quad_abstraction_3"
+```
+
+
 
 ### Remote deployment from IDE
 
