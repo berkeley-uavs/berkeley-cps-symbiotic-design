@@ -7,9 +7,9 @@ git pull
 echo "Connecting to VPN..."
 openvpn --config ../challenge_data/aws-cvpn-config.ovpn --daemon
 
-# Mount shared drive
-echo "Mounting shared drive..."
-mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
+## Mount shared drive
+#echo "Mounting shared drive..."
+#mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
 
 # Config broker
 echo "Configuring broker..."
