@@ -3028,6 +3028,9 @@ git submodule update --
 </code></pre></div>
 once inside the docker image you can run any command or script
 <div class="highlight"><pre><span></span><code>  pdm run init
+</code></pre></div>
+or
+<div class="highlight"><pre><span></span><code>  pdm run custom-design <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
 </code></pre></div></p>
 <h3 id="remote-deployment-from-ide">Remote deployment from IDE<a class="headerlink" href="#remote-deployment-from-ide" title="Permanent link">&para;</a></h3>
 <p>The docker image contains an ssh server that you can connect from your IDE and run your code/debug directly inside docker without the need of installing any dependencies.</p>
@@ -3096,8 +3099,8 @@ following entries:</p>
 </li>
 <li>
 <p>Load and export custom design where "custom_design_file" is the file name of the <code>json</code> file in
-  the <code>data/custom_designs</code> folder
-  <div class="highlight"><pre><span></span><code>pdm run custom-design <span class="s2">&quot;custom_design_file&quot;</span>
+  the <code>data/custom_designs</code> folder, for example:
+  <div class="highlight"><pre><span></span><code>pdm run custom-design <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
 </code></pre></div></p>
 </li>
 </ul>
