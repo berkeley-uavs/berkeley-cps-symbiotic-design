@@ -18,7 +18,10 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 1. Clone the two repos and their submodules in the same folder
 
     ```bash
-    git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git & \
+    git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git
+    ```
+   
+    ```bash
     git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
     ```
    
@@ -69,7 +72,10 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 1. Clone the two repos and their submodules in the same folder
 
     ```bash
-    git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git & \
+    git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git
+    ```
+   
+    ```bash
     git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
     ```
    
