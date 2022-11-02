@@ -3082,7 +3082,14 @@ git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
 </code></pre></div>
 </li>
 </ol>
-<p>The output file will automatically appear in the <code>challenge_data/output</code> folder. 
+<p>You can now launch the scripts and the python files. For example:</p>
+<p><div class="highlight"><pre><span></span><code>pdm run init
+</code></pre></div>
+To initialize the library of components and seed design</p>
+<p><div class="highlight"><pre><span></span><code>pdm run custom-design <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
+</code></pre></div>
+To generate a custom design from json file (this script does not send it to evaluation)</p>
+<p>The output files will automatically appear in the <code>challenge_data/output</code> folder. 
 Also, any change you make to the files in <code>berkeley-cps-symbiotic-design</code> will be immediately available inside the docker container. 
 You can launch the docker container in the background with <code>./docker_run.sh</code></p>
 <h3 id="remote-deployment-from-ide">Remote deployment from IDE<a class="headerlink" href="#remote-deployment-from-ide" title="Permanent link">&para;</a></h3>
