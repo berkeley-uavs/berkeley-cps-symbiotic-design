@@ -72,19 +72,7 @@ main() {
         $port_arg \
         $image bash
       ;;
-    mount )
-      echo "Entering docker environment..."
-      docker run \
-        -d \
-        --name $container \
-        --privileged \
-        --workdir /root/host \
-        --platform ${my_platform} \
-        ${mount_local} \
-        $port_arg \
-        $image
-      ;;
-    *)
+    * )
       echo "Launching docker environment in background..."
       docker run \
         -d \
@@ -92,6 +80,7 @@ main() {
         --privileged \
         --workdir /root/host \
         --platform ${my_platform} \
+        ${mount_local} \
         $port_arg \
         $image
       ;;
