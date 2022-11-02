@@ -6,4 +6,4 @@ image_name=${base_image}-symcps
 
 docker pull ${base_image}
 
-docker buildx build --push --platform linux/amd64,linux/arm64 -f ./Dockerfile -t ${image_name} .
+docker buildx build --push --platform linux/amd64,linux/arm64 -f ./Dockerfile -t ${image_name} . --pull
