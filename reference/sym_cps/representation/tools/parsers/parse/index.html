@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parse/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
     
     
       
@@ -876,6 +876,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../examples/custom_design/" class="md-nav__link">
+        custom_design
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../examples/design_swri/" class="md-nav__link">
         design_swri
       </a>
@@ -948,6 +962,20 @@
     <li class="md-nav__item">
       <a href="../../../../examples/topology/" class="md-nav__link">
         topology
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../examples/topology_3/" class="md-nav__link">
+        topology_3
       </a>
     </li>
   
@@ -2267,13 +2295,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#sym_cps.representation.tools.parsers.parse.parse_library_and_seed_designs" class="md-nav__link">
-    parse_library_and_seed_designs()
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -2642,13 +2663,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#sym_cps.representation.tools.parsers.parse.parse_library_and_seed_designs" class="md-nav__link">
-    parse_library_and_seed_designs()
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -2688,63 +2702,6 @@
 
 
 
-
-<div class="doc doc-object doc-function">
-
-
-
-<h2 id="sym_cps.representation.tools.parsers.parse.parse_library_and_seed_designs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">parse_library_and_seed_designs</span><span class="p">()</span></code>
-
-<a href="#sym_cps.representation.tools.parsers.parse.parse_library_and_seed_designs" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Generates a Components Library</p>
-
-      <details class="quote">
-        <summary>Source code in <code>sym_cps/representation/tools/parsers/parse.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_library_and_seed_designs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Library</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DConcrete</span><span class="p">,</span> <span class="n">DTopology</span><span class="p">]]]:</span>
-    <span class="sd">&quot;&quot;&quot;Generates a Components Library&quot;&quot;&quot;</span>
-    <span class="n">c_library</span><span class="p">:</span> <span class="n">Library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">component_library_root_path_default</span><span class="p">)</span>
-
-    <span class="sd">&quot;&quot;&quot;Learn information form existing designs&quot;&quot;&quot;</span>
-    <span class="p">(</span>
-        <span class="n">connectable_connectors</span><span class="p">,</span>
-        <span class="n">connectable_components_types</span><span class="p">,</span>
-        <span class="n">design_parameters</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">=</span> <span class="n">parse_connections_and_parameters_from_designs</span><span class="p">(</span><span class="n">design_library_root_path_default</span><span class="p">,</span> <span class="n">library</span><span class="o">=</span><span class="n">c_library</span><span class="p">)</span>
-
-    <span class="sd">&quot;&quot;&quot;Update information to the library&quot;&quot;&quot;</span>
-    <span class="n">c_library</span><span class="o">.</span><span class="n">update_information</span><span class="p">(</span><span class="n">connectable_connectors</span><span class="p">,</span> <span class="n">connectable_components_types</span><span class="p">,</span> <span class="n">design_parameters</span><span class="p">)</span>
-
-    <span class="sd">&quot;&quot;&quot;Load Seed Designs&quot;&quot;&quot;</span>
-    <span class="n">designs</span> <span class="o">=</span> <span class="n">parse_designs_from_folder</span><span class="p">(</span><span class="n">design_library_root_path_default</span><span class="p">,</span> <span class="n">library</span><span class="o">=</span><span class="n">c_library</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">c_library</span><span class="p">,</span> <span class="n">designs</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
 
 
 
@@ -2844,10 +2801,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../../../../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../../../../assets/javascripts/bundle.078830c0.min.js"></script>
+      <script src="../../../../../../assets/javascripts/bundle.8492ddcf.min.js"></script>
       
     
   </body>

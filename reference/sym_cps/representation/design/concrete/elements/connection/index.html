@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/design/concrete/elements/connection/">
       
       <link rel="icon" href="../../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
     
     
       
@@ -876,6 +876,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../../examples/custom_design/" class="md-nav__link">
+        custom_design
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../../examples/design_swri/" class="md-nav__link">
         design_swri
       </a>
@@ -948,6 +962,20 @@
     <li class="md-nav__item">
       <a href="../../../../../examples/topology/" class="md-nav__link">
         topology
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../examples/topology_3/" class="md-nav__link">
+        topology_3
       </a>
     </li>
   
@@ -2852,7 +2880,8 @@ Each Connection is symmetric, i.e. Connection(A,B) = Connection(B,A)</p>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
-<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="normal">112</span>
+<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Connection</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Models the connection between two &#39;Component&#39;.</span>
 <span class="sd">    Each Connection is symmetric, i.e. Connection(A,B) = Connection(B,A)&quot;&quot;&quot;</span>
@@ -2866,6 +2895,7 @@ Each Connection is symmetric, i.e. Connection(A,B) = Connection(B,A)</p>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_direction</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">component_a</span><span class="p">:</span> <span class="n">Component</span><span class="p">,</span> <span class="n">component_b</span><span class="p">:</span> <span class="n">Component</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;connecting </span><span class="si">{</span><span class="n">component_a</span><span class="o">.</span><span class="n">c_type</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">component_b</span><span class="o">.</span><span class="n">c_type</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, direction: </span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">connector_a</span> <span class="o">=</span> <span class="n">connections_map</span><span class="p">[</span><span class="n">component_a</span><span class="o">.</span><span class="n">c_type</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">component_b</span><span class="o">.</span><span class="n">c_type</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">direction</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">connector_b</span> <span class="o">=</span> <span class="n">connections_map</span><span class="p">[</span><span class="n">component_a</span><span class="o">.</span><span class="n">c_type</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">component_b</span><span class="o">.</span><span class="n">c_type</span><span class="o">.</span><span class="n">id</span><span class="p">][</span><span class="n">direction</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
         <span class="kn">from</span> <span class="nn">sym_cps.shared.library</span> <span class="kn">import</span> <span class="n">c_library</span>
@@ -2986,11 +3016,11 @@ Each Connection is symmetric, i.e. Connection(A,B) = Connection(B,A)</p>
 
       <details class="quote">
         <summary>Source code in <code>sym_cps/representation/design/concrete/elements/connection.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
-<span class="normal">49</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
-<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="normal">52</span>
+<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Component</span><span class="p">,</span> <span class="n">Component</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Returns the two components connected&quot;&quot;&quot;</span>
 
@@ -3021,14 +3051,14 @@ Each Connection is symmetric, i.e. Connection(A,B) = Connection(B,A)</p>
 
       <details class="quote">
         <summary>Source code in <code>sym_cps/representation/design/concrete/elements/connection.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">components_and_connectors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Component</span><span class="p">,</span> <span class="n">CConnector</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Returns a set of two tuples, where each tuple is formed by a Component and a CConnector&quot;&quot;&quot;</span>
 
@@ -3149,10 +3179,10 @@ Each Connection is symmetric, i.e. Connection(A,B) = Connection(B,A)</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../../../../../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../../../../../assets/javascripts/bundle.078830c0.min.js"></script>
+      <script src="../../../../../../../assets/javascripts/bundle.8492ddcf.min.js"></script>
       
     
   </body>
