@@ -8,11 +8,11 @@ challenge_data_relative_path=../challenge_data/
 my_platform=""
 case $(uname -m) in
     x86_64 | i686 | i386) my_platform="linux/amd64" ;;
-    arm)    my_platform="linux/arm64" ;;
+    arm64)    my_platform="linux/arm64" ;;
 esac
 echo ${my_platform}
 
-docker pull ${image}
+docker pull --platform=${my_platform} ${image}
 
 
 resolve_relative_path() (
