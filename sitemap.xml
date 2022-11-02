@@ -76,6 +76,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/contract/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/contract/contract/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/control/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
@@ -117,6 +127,16 @@
     </url>
     <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/build_uav/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/component_selection/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/examples/contract/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -191,6 +211,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/component_selection/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/component_selection/component_selection/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/concrete_opt/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
@@ -232,6 +262,11 @@
     </url>
     <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/control_opt/fdm_ret/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/control_opt/fdm_to_json/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -421,6 +456,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/library/elements/perf_table/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
@@ -482,6 +522,11 @@
     </url>
     <url>
          <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parsing_library/</loc>
+         <lastmod>2022-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/representation/tools/parsers/parsing_prop_table/</loc>
          <lastmod>2022-11-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
