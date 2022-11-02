@@ -6,10 +6,4 @@ image_name=${base_image}-symcps
 
 docker pull ${base_image}
 
-for arch in amd64 arm64 arm  ; do
-    docker buildx build \
-    --platform $arch \
-    --output type=docker \
-    --tag me/myimage:${image_name}
-    .
-done
+docker buildx build --platform linux/amd64,linux/arm64 --output type=docker -f ./Dockerfile -t ${image_name} .
