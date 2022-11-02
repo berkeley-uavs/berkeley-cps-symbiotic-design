@@ -12,7 +12,7 @@ case $(uname -m) in
 esac
 echo ${my_platform}
 
-docker pull --platform=${my_platform} ${image}
+docker pull ${image}
 
 
 resolve_relative_path() (
