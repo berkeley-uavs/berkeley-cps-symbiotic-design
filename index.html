@@ -408,8 +408,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#example-quick-start" class="md-nav__link">
+    Example Quick Start
   </a>
   
 </li>
@@ -2833,8 +2833,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#example-quick-start" class="md-nav__link">
+    Example Quick Start
   </a>
   
 </li>
@@ -3023,7 +3023,12 @@ git submodule update --
    located in <code>../challenge_data/</code> from the root folder of this repo.</li>
 <li>Launch <code>docker_run.sh</code> to pull and run the docker image in background. You can run <code>docker_run.sh bash</code> if you want to launch bash and interact from inside the docker container.</li>
 </ol>
-<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<h3 id="example-quick-start">Example Quick Start<a class="headerlink" href="#example-quick-start" title="Permanent link">&para;</a></h3>
+<p>Navigate to a local folder in your compter where you want to clone the repos</p>
+<div class="highlight"><pre><span></span><code>git clone --recurse-submodules https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git <span class="p">&amp;</span> <span class="se">\</span>
+git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git <span class="p">&amp;</span> <span class="se">\</span>
+<span class="nb">cd</span> berkeley-cps-symbiotic-design
+</code></pre></div>
 <p><div class="highlight"><pre><span></span><code>  docker_run.sh bash
 </code></pre></div>
 once inside the docker image you can run any command or script like:</p>
@@ -3032,6 +3037,7 @@ once inside the docker image you can run any command or script like:</p>
 <p>and</p>
 <div class="highlight"><pre><span></span><code>  pdm run custom-design <span class="s2">&quot;working/test_quad_abstraction_3&quot;</span>
 </code></pre></div>
+<p>The output file will automatically appear in the <code>challenge_data/output</code> folder. Also, any change you make to the files in <code>berkeley-cps-symbiotic-design</code> will be immediately available inside the docker container. </p>
 <h3 id="remote-deployment-from-ide">Remote deployment from IDE<a class="headerlink" href="#remote-deployment-from-ide" title="Permanent link">&para;</a></h3>
 <p>The docker image contains an ssh server that you can connect from your IDE and run your code/debug directly inside docker without the need of installing any dependencies.</p>
 <p>Launch:
