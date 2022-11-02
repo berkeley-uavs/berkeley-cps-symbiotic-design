@@ -26,4 +26,12 @@ def load(file: str) -> object | None:
         return obj
     except Exception:
         print(f"Exception while loading {file_path}")
+        print(file)
+        if "library" in file:
+            from sym_cps.representation.library import Library
+            print("returning empty library")
+            return Library()
+        if "designs" in file:
+            print("returning empty dict")
+            return dict()
         return None
