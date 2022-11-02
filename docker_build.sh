@@ -10,6 +10,6 @@ for arch in amd64 arm64 arm  ; do
     docker buildx build \
     --platform $arch \
     --output type=docker \
-    --tag me/myimage:${image_name}-${arch}
+    --tag me/myimage:${image_name}
     .
 done
