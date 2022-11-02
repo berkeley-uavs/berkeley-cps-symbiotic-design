@@ -3044,15 +3044,19 @@ to launch the docker image as a new container running in background.</p>
 <li>Go to:  <code>Preference &gt; Build, Execution… &gt; Deployment</code></li>
 <li>Add new <code>SFTP</code>. </li>
 <li>Give a name, e.g. : <code>docker-sym-cps</code>.</li>
-<li>Add a new SSH configuration:</li>
+<li>Add a new SSH configuration:<ul>
 <li>Host: localhost</li>
 <li>Port: 9922</li>
 <li>Username: root</li>
 <li>Password: password</li>
 <li>Root path: <code>/root</code></li>
-<li>Mappings: </li>
+</ul>
+</li>
+<li>Mappings: <ul>
 <li>Local path ‘<LOCAL_PATH>/berkeley-cps-symbiotic-design’</li>
 <li>Deployment path ‘/ide’</li>
+</ul>
+</li>
 </ul>
 <p>Got to: <code>Preferences &gt; Project… &gt; Python Interpreter &gt; Add Interpreter &gt; On SSH</code> and select  Existing Connection the SSH connection previously created, then select the “System Interpreter” as Python runtime configuration, i.e. the interpreter at <code>/usr/bin/python3’.  “Sync folders”  insert</code><Project root>→/root/ide`</p>
 <p>On <code>Python Interpreter</code>, click on <code>Show all</code> and select the Remote Python interpreter that you have just created. On the top right of the window clock on  <strong>Show Interpreter Paths</strong>, and add a new path <code>/root/host/__pypackages__/3.10/lib</code>.</p>
