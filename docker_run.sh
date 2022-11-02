@@ -70,7 +70,7 @@ main() {
         --platform ${my_platform} \
         ${mount_local} \
         $port_arg \
-        $image bash
+        $image ${1}
       ;;
     * )
       echo "Launching docker environment in background..."
