@@ -18,7 +18,7 @@ class ComponentSelectionContract():
         self._table_dict = parsing_prop_table(c_library)
 
 
-    def select_hackathon(self, design_topology:DTopology, design_concrete: DConcrete = None, max_iter = 10):
+    def select_hackathon(self, design_topology:DTopology, design_concrete: DConcrete = None, max_iter = 10, timeout_millisecond = 100000):
         print(" ")
         #TODO use the d concrete as a lower bound to find a better one
 
@@ -42,7 +42,7 @@ class ComponentSelectionContract():
                                 obj_lower_bound = obj)
         """Solver the OMT problem to optimize selection of components """
         start = time.time()
-        propeller, motor, battery = manager.solve_optimize(c_library=self._library, max_iter=max_iter)
+        propeller, motor, battery = manager.solve_optimize(c_library=self._library, max_iter=max_iter, timeout_millisecond = 100000)
         end = time.time()
         print("Solving Time:", end - start)
         return propeller, motor, battery

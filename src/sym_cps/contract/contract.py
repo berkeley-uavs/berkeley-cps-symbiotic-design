@@ -382,7 +382,7 @@ class ContractManager():
         print("    I_max_motor: ", model[self._vs_dict["motor"]["I_max_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_max_motor"]].denominator_as_long())  
         print("    Diameter: ", model[self._vs_dict["propeller"]["diameter"]].numerator_as_long()/model[self._vs_dict["propeller"]["diameter"]].denominator_as_long())  
         print("==================================================================")
-    def solve_optimize(self, c_library: Library, max_iter = 0):
+    def solve_optimize(self, c_library: Library, max_iter = 0, timeout_millisecond = 100000):
         num_iter = 0
         propeller = None
         motor = None 
@@ -390,17 +390,17 @@ class ContractManager():
         solver = z3.Solver()
         #solver = z3.Optimize()
         solver.add(self._all_clause)
+        solver.set("timeout", timeout_millisecond)
         ret = solver.check()
         while ret == z3.sat:
             model = solver.model()   
             self.print_metric(model=model)
             propeller, motor, battery = self.get_component_selection(model=model, c_library=c_library)
-            print("Found Component:")
+            print("Iteration: {num_iter}, Component Found:")
             print(f"    Propeller: {propeller.id}")
             print(f"    Motor: {motor.id}")
             print(f"    Battery: {battery.id}") 
             # count progress
-            print(num_iter)
             if num_iter >= max_iter:
                 break
             else: 

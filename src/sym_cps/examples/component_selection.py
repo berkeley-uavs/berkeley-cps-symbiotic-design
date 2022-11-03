@@ -23,8 +23,9 @@ class Test_Selection():
                                             design_concrete=design_concrete)
         """Selection"""
         propeller, motor, battery = self.component_selection.select_hackathon(  design_topology=design_topology, 
-                                                                                design_concrete=design_concrete, 
-                                                                                max_iter=5)
+                                                                                design_concrete=None, 
+                                                                                max_iter=10,
+                                                                                timeout_millisecond = 100000)
         """Verify the Selection"""
         print("Check Result")
         self.component_selection.check_selection(design_topology=design_topology, 
@@ -59,7 +60,7 @@ class Test_Selection():
 
 if __name__ == "__main__":
     tester = Test_Selection()
-    #propeller, motor, battery = tester.test_component_selection()
+    propeller, motor, battery = tester.test_component_selection()
     # propeller = c_library.components["62x6_2_3200_51_1390"]
     # motor = c_library.components["Rex30"]
     # battery = c_library.components["TurnigyGraphene6000mAh3S75C"]
@@ -129,9 +130,9 @@ if __name__ == "__main__":
     # Motor: Antigravity_MN8012_KV100
     # Battery: TurnigyGraphene5000mAh6S75C
 
-    propeller = tester.c_library.components["apc_propellers_9x3N"]
-    motor = tester.c_library.components["t_motor_AT2820KV1250"]
-    battery = tester.c_library.components["TurnigyGraphene6000mAh4S75C"]
+    #propeller = tester.c_library.components["apc_propellers_9x3N"]
+    #motor = tester.c_library.components["t_motor_AT2820KV1250"]
+    #battery = tester.c_library.components["TurnigyGraphene6000mAh4S75C"]
     tester.check_combination(propeller=propeller, motor=motor, battery=battery)
     tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     #build_contract_library()
