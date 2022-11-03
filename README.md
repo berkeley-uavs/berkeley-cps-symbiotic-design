@@ -79,7 +79,7 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
     git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
     ```
    
-2. Navigate to `berkeley-cps-symbiotic-design` folder and launch docker script
+2. Navigate to `berkeley-cps-symbiotic-design` folder and launch docker script. (ATTENTION: docker_run.sh script will also run `make uninstall`, you will have a clean local repo which will be mounted inside the docker image)
 
     ```bash
     cd berkeley-cps-symbiotic-design & \
@@ -101,12 +101,11 @@ To generate a custom design from json file (this script does not send it to eval
   ```bash
   pdm run evaluate "working/test_quad_abstraction_3"
   ```
-To generate a custom design from json file, send it to evaluatio and retreive the results. 
-The results appear in the `challenge_data/output` automatically.
+To generate a custom design from json file, send it to evaluation and retrieve the results. 
+The results appear in the `challenge_data/output/<DESIGN_NAME>` automatically (a json file with the evaluation results and an STL file with the 3D model).
 
 Any change you make to the files in `berkeley-cps-symbiotic-design` will be immediately available inside the docker container. 
 
-You can launch the docker container in the background with `./docker_run.sh`
 
 ### Remote deployment from IDE
 
