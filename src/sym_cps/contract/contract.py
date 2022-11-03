@@ -40,8 +40,8 @@ class ContractManager():
         shaft_prop: float = propeller.properties["SHAFT_DIAMETER"].value
         #print(table.get_value(rpm = 13000, v = 90, label="Cp"))
         table = table_dict[propeller]
-        C_p: float = table.get_value(rpm = 18000, v = 0, label="Cp")#0.0659 
-        C_t: float = table.get_value(rpm = 18000, v = 0, label="Ct")#0.1319
+        C_p: float = table.get_value(rpm = 10000, v = 0, label="Cp")#0.0659 
+        C_t: float = table.get_value(rpm = 10000, v = 0, label="Ct")#0.1319
 
         W_prop = propeller.properties["Weight"].value * num_motor
         return {"C_p": C_p,
@@ -225,7 +225,7 @@ class ContractManager():
         # can only select one propeller
         print("Generate Rules to Ensure Propeller Selection ")
         for n_p, prop in enumerate(prop_select_vs.values()):
-            print(n_p)
+            print(n_p, end="")
             if better_selection_encoding:
                 tmp_vs = [prop2 for prop2 in prop_select_vs.values() if prop.get_id() != prop2.get_id()]
                 self._all_clause.append(z3.Implies(prop, z3.And(*[z3.Not(prop2) for prop2 in tmp_vs])))      
@@ -332,9 +332,9 @@ class ContractManager():
             self.print_metric(model=model)
             propeller, motor, battery = self.get_component_selection(model=model, c_library=c_library)
             print("Found Component:")
-            print(f"Propeller: {propeller.id}")
-            print(f"Motor: {motor.id}")
-            print(f"Battery: {battery.id}") 
+            print(f"    Propeller: {propeller.id}")
+            print(f"    Motor: {motor.id}")
+            print(f"    Battery: {battery.id}") 
             thrust = model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long()
             weight = model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long()
             return thrust - weight
@@ -359,24 +359,29 @@ class ContractManager():
         return propeller, motor, battery
 
     def print_metric(self, model):
-        print("Thrust: ", model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long())    
-        print("Weight: ", model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long())  
-        print("Omega_prop: ", model[self._vs_dict["propeller"]["omega_prop"]])
-        print("Omega_motor: ", model[self._vs_dict["motor"]["omega_motor"]])
-        print("Torque: ", model[self._vs_dict["motor"]["torque_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())  
-        print("Torque: ", model[self._vs_dict["propeller"]["torque_prop"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())  
-        print("Current Battery: ", model[self._vs_dict["battery"]["I_batt"]].numerator_as_long()/model[self._vs_dict["battery"]["I_batt"]].denominator_as_long())  
-        print("Current Battery (Motor): ", model[self._vs_dict["motor"]["I_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_motor"]].denominator_as_long())  
-        print("Voltage (Motor): ", model[self._vs_dict["motor"]["V_motor"]])
-        print("Capacity: ", model[self._vs_dict["battery"]["capacity"]].numerator_as_long()/model[self._vs_dict["battery"]["capacity"]].denominator_as_long())  
-        print("C_t: ", model[self._vs_dict["propeller"]["C_t"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_t"]].denominator_as_long())  
-        print("C_p: ", model[self._vs_dict["propeller"]["C_p"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_p"]].denominator_as_long())  
-        print("K_t: ", model[self._vs_dict["motor"]["K_t"]].numerator_as_long()/model[self._vs_dict["motor"]["K_t"]].denominator_as_long())  
-        print("K_v: ", model[self._vs_dict["motor"]["K_v"]].numerator_as_long()/model[self._vs_dict["motor"]["K_v"]].denominator_as_long())  
-        print("R_w: ", model[self._vs_dict["motor"]["R_w"]].numerator_as_long()/model[self._vs_dict["motor"]["R_w"]].denominator_as_long())  
-        print("I_idle: ", model[self._vs_dict["motor"]["I_idle"]].numerator_as_long()/model[self._vs_dict["motor"]["I_idle"]].denominator_as_long())  
-        print("Diameter: ", model[self._vs_dict["propeller"]["diameter"]].numerator_as_long()/model[self._vs_dict["propeller"]["diameter"]].denominator_as_long())  
-
+        print("===================Component Selection Metric=====================")
+        print("    Thrust: ", model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long())    
+        print("    Weight: ", model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long())  
+        print("    Omega_prop: ", model[self._vs_dict["propeller"]["omega_prop"]])
+        print("    Omega_motor: ", model[self._vs_dict["motor"]["omega_motor"]])
+        print("    Torque: ", model[self._vs_dict["motor"]["torque_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())  
+        print("    Torque: ", model[self._vs_dict["propeller"]["torque_prop"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())  
+        print("    Current Battery: ", model[self._vs_dict["battery"]["I_batt"]].numerator_as_long()/model[self._vs_dict["battery"]["I_batt"]].denominator_as_long())  
+        print("    Current Battery (Motor): ", model[self._vs_dict["motor"]["I_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_motor"]].denominator_as_long())  
+        print("    Voltage (Motor): ", model[self._vs_dict["motor"]["V_motor"]])
+        print("    Capacity: ", model[self._vs_dict["battery"]["capacity"]].numerator_as_long()/model[self._vs_dict["battery"]["capacity"]].denominator_as_long())  
+        print("    I_max: ", model[self._vs_dict["battery"]["I_max"]].numerator_as_long()/model[self._vs_dict["battery"]["I_max"]].denominator_as_long())  
+        print("    V_battery: ", model[self._vs_dict["battery"]["V_battery"]].numerator_as_long()/model[self._vs_dict["battery"]["V_battery"]].denominator_as_long())  
+        print("    C_t: ", model[self._vs_dict["propeller"]["C_t"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_t"]].denominator_as_long())  
+        print("    C_p: ", model[self._vs_dict["propeller"]["C_p"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_p"]].denominator_as_long())  
+        print("    K_t: ", model[self._vs_dict["motor"]["K_t"]].numerator_as_long()/model[self._vs_dict["motor"]["K_t"]].denominator_as_long())  
+        print("    K_v: ", model[self._vs_dict["motor"]["K_v"]].numerator_as_long()/model[self._vs_dict["motor"]["K_v"]].denominator_as_long())  
+        print("    R_w: ", model[self._vs_dict["motor"]["R_w"]].numerator_as_long()/model[self._vs_dict["motor"]["R_w"]].denominator_as_long())  
+        print("    I_idle: ", model[self._vs_dict["motor"]["I_idle"]].numerator_as_long()/model[self._vs_dict["motor"]["I_idle"]].denominator_as_long())  
+        print("    P_max_motor: ", model[self._vs_dict["motor"]["P_max_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["P_max_motor"]].denominator_as_long())  
+        print("    I_max_motor: ", model[self._vs_dict["motor"]["I_max_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_max_motor"]].denominator_as_long())  
+        print("    Diameter: ", model[self._vs_dict["propeller"]["diameter"]].numerator_as_long()/model[self._vs_dict["propeller"]["diameter"]].denominator_as_long())  
+        print("==================================================================")
     def solve_optimize(self, c_library: Library, max_iter = 0):
         num_iter = 0
         propeller = None
@@ -391,9 +396,9 @@ class ContractManager():
             self.print_metric(model=model)
             propeller, motor, battery = self.get_component_selection(model=model, c_library=c_library)
             print("Found Component:")
-            print(f"Propeller: {propeller.id}")
-            print(f"Motor: {motor.id}")
-            print(f"Battery: {battery.id}") 
+            print(f"    Propeller: {propeller.id}")
+            print(f"    Motor: {motor.id}")
+            print(f"    Battery: {battery.id}") 
             # count progress
             print(num_iter)
             if num_iter >= max_iter:

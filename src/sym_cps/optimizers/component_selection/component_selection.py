@@ -38,7 +38,7 @@ class ComponentSelectionContract():
                                 num_motor=num_motors, 
                                 c_library=self._library, 
                                 table_dict=self._table_dict, 
-                                better_selection_encoding=False,
+                                better_selection_encoding=True,
                                 obj_lower_bound = obj)
         """Solver the OMT problem to optimize selection of components """
         start = time.time()
