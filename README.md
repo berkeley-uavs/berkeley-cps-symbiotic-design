@@ -79,7 +79,7 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
     git clone https://github.com/uc-berkeley-data-discovery-2022/challenge_data.git
     ```
    
-2. Navigate to `berkeley-cps-symbiotic-design` folder and launch docker script. (ATTENTION: docker_run.sh script will also run `make uninstall`, you will have a clean local repo which will be mounted inside the docker image)
+2. Navigate to `berkeley-cps-symbiotic-design` folder and launch docker script.
 
     ```bash
     cd berkeley-cps-symbiotic-design & \

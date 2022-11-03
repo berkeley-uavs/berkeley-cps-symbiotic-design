@@ -1,6 +1,6 @@
 #!/bin/bash
 
-make uninstall
+#make uninstall
 
 port_ssh=9922
 container=dev_env_base_310
