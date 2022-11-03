@@ -21,7 +21,7 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
     from sym_cps.grammar.topology import AbstractTopology
     from sym_cps.representation.design.concrete import DConcrete
     abstract_topology = AbstractTopology.from_json(file)
-    dconcrete = DConcrete.from_abstract_topology(abstract_topology)
+    return DConcrete.from_abstract_topology(abstract_topology)
 
 def update_all() -> int:
     update_dat_files_and_export()
