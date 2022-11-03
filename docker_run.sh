@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#make uninstall
-
 port_ssh=9922
 container=dev_env_base_310
 image=pmallozzi/devenvs:base-310-symcps
