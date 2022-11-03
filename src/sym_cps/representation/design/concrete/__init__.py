@@ -386,6 +386,7 @@ class DConcrete:
             self.pydot.write_pdf(file_path)
 
         elif file_type == ExportType.EVALUATION:
+            file_path = absolute_folder / "evaluation_results.json"
             save_to_file(
                 str(str(json.dumps(self.evaluation_results))),
                 file_name=f"evaluation_results.json",
