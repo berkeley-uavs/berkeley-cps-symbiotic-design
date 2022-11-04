@@ -3,15 +3,14 @@ import os
 from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
-import json
 
-from sym_cps.shared.paths import data_folder
 from sym_cps.representation.library.elements.c_connector import CConnector
 from sym_cps.representation.library.elements.c_parameter import CParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.representation.tools.parsers.parsing_library import fill_parameters_connectors, parse_components_and_types
 from sym_cps.shared.paths import component_library_root_path_default, data_folder
+
 
 @dataclass
 class Library:
@@ -42,29 +41,6 @@ class Library:
                 self.connectors.update(comp_type.connectors)
 
     def get_default_component(self, component_type: str, hub_size: int = 0) -> LibraryComponent:
-<<<<<<< HEAD
-        """TODO"""
-        default_comp_path = data_folder / "reverse_engineering" / "default_connections_json.json"
-        f = open(default_comp_path)
-        default = json.load(f)
-        component = None
-        
-        if component_type == "Hub":
-            comp_name = default[component_type]
-
-            if hub_size == 3:
-                component = self.components[comp_name][1]
-            elif hub_size == 4:
-                component = self.components[comp_name][0]
-
-        else:
-            comp_name = default[component_type][0]
-            component = self.components[comp_name]
-        
-        return component
-
-    def get_connectors(self, component_type_a: CType, component_type_b: CType, direction: str) -> (CConnector, CConnector):
-=======
         if component_type not in self.component_types.keys():
             raise Exception(f"{component_type}\nComponent Type not present in the library")
         default_comp_path = data_folder / "reverse_engineering" / "default_components.json"
@@ -85,7 +61,6 @@ class Library:
     def get_connectors(
         self, component_type_a: CType, component_type_b: CType, direction: str
     ) -> (CConnector, CConnector):
->>>>>>> main
         """TODO"""
         connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
         f = open(connectors_components_path)
@@ -97,13 +72,9 @@ class Library:
 
         available_components_a = list(connections[name_a].keys())
         if name_b in available_components_a:
-<<<<<<< HEAD
-            
-=======
             if direction == "":
                 direction = "NONE"
 
->>>>>>> main
             if direction in list(connections[name_a][name_b].keys()):
                 connector_names = connections[name_a][name_b][direction]
                 a_connector_name = connector_names[0]
@@ -116,11 +87,7 @@ class Library:
 
             else:
                 print("illegal direction")
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> main
         else:
             print("illegal component")
 
