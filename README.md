@@ -30,6 +30,12 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
     ```bash
     cd berkeley-cps-symbiotic-design
     ```
+   You don't have to create a virual environment with pdm, you can launch the command:
+    ```bash
+    pdm config python.use_venv false
+    ```
+   
+   and then
     ```bash
     pdm install
     ```
