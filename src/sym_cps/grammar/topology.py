@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from msilib.schema import Component
 from pathlib import Path
 
 from aenum import Enum, auto
@@ -10,7 +9,8 @@ from aenum import Enum, auto
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters, structures
-from sym_cps.tools.strings import get_component_type_from_instance_name
+from sym_cps.tools.strings import get_component_type_from_instance_name, \
+    get_component_and_instance_type_from_instance_name
 
 
 class AbstractionFeatures(Enum):
@@ -30,12 +30,10 @@ abstraction_levels_features = {
     },
 }
 
-
 """ TODO: implement condition 'AVOID_REDUNDANT_CONNECTIONS'
 A connection is redundant, i.e. Tube - Wing - TOP  == Wing - Tube - Bottom
  Check "connectors_compoennts_mapping.json" and avoid redundancies
 """
-
 
 """ TODO: implement condition 'USE_STRUCTURES'
  identify and define structure and build another abstraction layer.
@@ -61,40 +59,52 @@ class AbstractTopology:
         parameters: dict[str, dict[str, str]] = {}
 
         # unravel structure prior to looping through topology then proceed as normal
+        to_delete = set()
+        to_add_topo = {"TOPOLOGY": {}}
         if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
             for component_a, categories in topo["TOPOLOGY"].items():
                 # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
-                split_str = component_a.split('_')
-                struct = split_str[0] + '_' + split_str[1] + '_' + split_str[2]
+                struct, instance_n = get_component_and_instance_type_from_instance_name(component_a)
                 if struct in structures.keys():
                     topo_instance = {}
-                    instance = '_' + split_str[3] + '_' + split_str[4]
                     component_interface = structures[struct]["InterfaceComponent"]
                     for struct_component in structures[struct]["Components"]:
-                        #instantiate set of components and connect to one another
+                        # instantiate set of components and connect to one another
                         # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1" and comp_a == "Motor"
                         # component => "Motor_instance_1"
                         for comp_a in struct_component.keys():
-                            topo_instance[comp_a + instance] = {
+                            topo_instance[comp_a + "_" + str(instance_n)] = {
                                 "CONNECTIONS": {},
                                 "PARAMETERS": {}
                             }
                             # if comp_a == "Flange" then attach tube connections to flange
                             if comp_a == component_interface:
-                                topo_instance[comp_a + instance]["CONNECTIONS"] = topo["TOPOLOGY"]["CONNECTIONS"]
-                            for struct_category in struct_component[comp_a].key():
+                                topo_instance[comp_a + "_" + str(instance_n)]["CONNECTIONS"] = \
+                                    topo["TOPOLOGY"][component_a]["CONNECTIONS"]
+                            for struct_category in struct_component[comp_a].keys():
                                 if struct_category == "CONNECTIONS":
                                     # append instance to each of the connections as well
                                     for comp_b in struct_component[comp_a][struct_category].keys():
-                                        topo_instance[comp_a + instance]["CONNECTIONS"][comp_b + instance] = struct_component[comp_a][struct_category][comp_b]
+                                        topo_instance[comp_a + "_" + str(instance_n)]["CONNECTIONS"][
+                                            comp_b + "_" + str(instance_n)] = struct_component[comp_a][struct_category][
+                                            comp_b]
+                                elif struct_category == "PARAMETERS":
+                                    topo_instance[comp_a + "_" + str(instance_n)]["PARAMETERS"] = \
+                                        struct_component[comp_a][struct_category]
                                 else:
-                                    topo_instance[struct_component + instance]["PARAMETERS"] = structures[struct][struct_component][struct_category]
-                            topo[comp_a + instance] = topo_instance[struct_component + instance]
+                                    raise Exception("Unknown category")
+                            to_add_topo["TOPOLOGY"][comp_a + "_" + str(instance_n)] = topo_instance[
+                                comp_a + "_" + str(instance_n)]
                             # remove structure key from topo
-                        del topo[component_a]
+                    to_delete.add(component_a)
                 else:
                     continue
 
+        for elem in to_delete:
+            del topo["TOPOLOGY"][elem]
+
+        for key, elem in to_add_topo.items():
+            topo["TOPOLOGY"][key] = elem
 
         for component_a, categories in topo["TOPOLOGY"].items():
             for category, infos in categories.items():
@@ -106,8 +116,8 @@ class AbstractTopology:
                         connections[component_a][component_b] = direction
 
                         if (
-                            AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS
-                            in abstraction_levels_features[abstraction_level]
+                                AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS
+                                in abstraction_levels_features[abstraction_level]
                         ):
                             ctype_a_str = get_component_type_from_instance_name(component_a)
                             ctype_a = c_library.component_types[ctype_a_str]
@@ -151,7 +161,8 @@ class AbstractTopology:
             for component_b, direction in connections.items():
                 print(export["TOPOLOGY"][component_a])
                 if (AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]):
-                    if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()):
+                    if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(
+                            export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()):
                         continue
                 export["TOPOLOGY"][component_a]["CONNECTIONS"][component_b] = direction
         return str(json.dumps(export))
