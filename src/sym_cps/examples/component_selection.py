@@ -43,13 +43,13 @@ class Test_Selection():
         """Set the component for selection"""
         self.component_selection.replace_with_component(design_concrete=design_concrete, propeller=propeller, motor=motor, battery=battery)
         design_concrete.name += "_comp_opt"
-        design_concrete.export(ExportType.JSON)
-        # call the pipeline for evaluation
-        design_json_path = designs_folder / design_concrete.name / "design_swri.json"
-        ret = evaluate_design(
-            design_json_path=design_json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
-        )
-        print(ret)
+        design_concrete.evaluate()
+        # # call the pipeline for evaluation
+        # design_json_path = designs_folder / design_concrete.name / "design_swri.json"
+        # ret = evaluate_design(
+        #     design_json_path=design_json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
+        # )
+        print(design_concrete.evaluation_results)
 
     def check_combination(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
@@ -60,7 +60,7 @@ class Test_Selection():
 
 if __name__ == "__main__":
     tester = Test_Selection()
-    propeller, motor, battery = tester.test_component_selection()
+    #propeller, motor, battery = tester.test_component_selection()
     # propeller = c_library.components["62x6_2_3200_51_1390"]
     # motor = c_library.components["Rex30"]
     # battery = c_library.components["TurnigyGraphene6000mAh3S75C"]
@@ -130,9 +130,9 @@ if __name__ == "__main__":
     # Motor: Antigravity_MN8012_KV100
     # Battery: TurnigyGraphene5000mAh6S75C
 
-    #propeller = tester.c_library.components["apc_propellers_9x3N"]
-    #motor = tester.c_library.components["t_motor_AT2820KV1250"]
-    #battery = tester.c_library.components["TurnigyGraphene6000mAh4S75C"]
+    propeller = tester.c_library.components["apc_propellers_9x3N"]
+    motor = tester.c_library.components["t_motor_AT2820KV1250"]
+    battery = tester.c_library.components["TurnigyGraphene6000mAh4S75C"]
     tester.check_combination(propeller=propeller, motor=motor, battery=battery)
     tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     #build_contract_library()
