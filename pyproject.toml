@@ -19,16 +19,25 @@ dependencies = [
     "scikit-learn>=1.1.2",
     "bayesian-optimization @ git+https://github.com/fmfn/BayesianOptimization",
     "pydot>=1.4.2",
-    "python-igraph>=0.10.2",
     "matplotlib>=3.6.1",
     "scipy>=1.9.3",
+    "graphviz>=0.20.1",
+    "gprof2dot>=2022.7.29",
+    "dynaconf>=3.1.11",
+    "parse>=1.19.0",
+    "astropy>=5.1",
+    "pandas>=1.5.0",
+    "z3-solver>=4.11.2.0",
+    "igraph>=0.10.2",
+    "numpy>=1.23.4",
 ]
 requires-python = ">=3.10,<3.11"
 
 [project.scripts]
-initialize = "sym_cps.cli:update_all"
+init = "sym_cps.cli:update_all"
 export-designs = "sym_cps.cli:export_designs"
 custom-design = "sym_cps.cli:load_custom_design"
+evaluate = "sym_cps.cli:evaluate_abstract_design"
 
 [tool.pdm]
 version = {source = "scm"}

@@ -1,5 +1,6 @@
 import json
 import os
+from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -31,11 +32,11 @@ class Library:
             self.components_in_type[component.comp_type.id].add(component)
         for comp_type in self.component_types.values():
             if len(self.parameters) == 0:
-                self.parameters = comp_type.parameters
+                self.parameters = deepcopy(comp_type.parameters)
             else:
                 self.parameters.update(comp_type.parameters)
             if len(self.connectors) == 0:
-                self.connectors = comp_type.connectors
+                self.connectors = deepcopy(comp_type.connectors)
             else:
                 self.connectors.update(comp_type.connectors)
 

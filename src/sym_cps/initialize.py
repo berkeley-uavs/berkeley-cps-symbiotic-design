@@ -2,8 +2,6 @@
 import argparse
 from pathlib import Path
 from typing import List, Optional
-
-from sym_cps.examples.library import export_library
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.paths import data_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
@@ -23,11 +21,10 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
     from sym_cps.grammar.topology import AbstractTopology
     from sym_cps.representation.design.concrete import DConcrete
     abstract_topology = AbstractTopology.from_json(file)
-    return DConcrete.from_abstract_topology(abstract_topology)
+    dconcrete = DConcrete.from_abstract_topology(abstract_topology)
 
 def update_all() -> int:
     update_dat_files_and_export()
-    export_library()
     return 0
 
 

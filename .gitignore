@@ -236,3 +236,5 @@ fabric.properties
 
 # pyenv
 .python-version
+# Ignore dynaconf secret files
+.secrets.*

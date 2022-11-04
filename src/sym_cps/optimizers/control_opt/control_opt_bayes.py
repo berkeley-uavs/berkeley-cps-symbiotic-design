@@ -5,7 +5,7 @@ import numpy as np
 from bayes_opt import BayesianOptimization
 
 from sym_cps.optimizers.control_opt.control_opt_base import ControlOptimizer
-from sym_cps.optimizers.control_opt.fdm_interface import FDMArgs
+from sym_cps.evaluation.fdm_interface import FDMArgs
 
 
 class ControlBayesOptimizer(ControlOptimizer):
@@ -173,11 +173,11 @@ class ControlBayesOptimizer(ControlOptimizer):
                 f"path = {path}, vs = {vspeed}, ls = {lspeed}, Q_postion = {Q_position}, Q_velocity = {Q_velocity}, Q_angular_velocity = {Q_angular_velocity}, Q_angles = {Q_angles}, R = {R}"
             )
             fdm_output = self._fdm_interface.execute_from_data(self._fdm_data, fdm_args)
-            # score = fdm_output.get_metrics("Score")
-            score = 100
-            # raw_score = self.raw_score(path, fdm_output)
-            raw_score = 100
-            print("warning! FDM result file is not actually using yet")
+            score = fdm_output.get_metrics("Score")
+            #score = 100
+            raw_score = self.raw_score(path, fdm_output)
+            #raw_score = 100
+            #print("warning! FDM result file is not actually using yet")
             print(f"score = {score}, raw_score = {raw_score}")
             # if score == 0 and raw_score > 0:
             #    raise Exception("Zero!!")

@@ -11,6 +11,7 @@ class ExportType(Enum):
     JSON = auto()
     DOT = auto()
     PDF = auto()
+    EVALUATION = auto()
     TOPOLOGY_1 = auto()
     TOPOLOGY_2 = auto()
     TOPOLOGY_3 = auto()

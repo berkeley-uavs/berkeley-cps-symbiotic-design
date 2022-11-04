@@ -25,6 +25,7 @@ class Connection:
     @classmethod
     def from_direction(cls, component_a: Component, component_b: Component, direction: str):
 
+        print(f"connecting {component_a.c_type.id} to {component_b.c_type.id}, direction: {direction}")
         connector_a = connections_map[component_a.c_type.id][component_b.c_type.id][direction][0]
         connector_b = connections_map[component_a.c_type.id][component_b.c_type.id][direction][1]
         from sym_cps.shared.library import c_library
