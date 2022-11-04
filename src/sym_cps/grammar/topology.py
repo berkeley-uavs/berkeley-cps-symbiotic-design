@@ -103,11 +103,11 @@ class AbstractTopology:
                     for connected in topo["TOPOLOGY"][component_a]["CONNECTIONS"].keys():
                         # ex.connected == "Propeller_str_top_instance_1"
                         struct, instance_n = get_component_and_instance_type_from_instance_name(connected)
-                        component_interface = structures[struct]["InterfaceComponent"]
                         if struct in structures.keys():
                             # ex. {"Tube_instance_1": {
                             #   "Flange_instance_n": "BOTTOM-BOTTOM"
                             # }}
+                            component_interface = structures[connected]["InterfaceComponent"]
                             edit_connections[component_a] = []
                             edit_connections[component_a].append({component_interface + '_' + str(instance_n): topo["TOPOLOGY"][component_a]["CONNECTIONS"][connected]})
 
