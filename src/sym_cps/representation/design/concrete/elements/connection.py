@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from sym_cps.grammar.tools import get_direction_from_components_and_connections
+from sym_cps.shared.objects import connections_map
+
 if TYPE_CHECKING:
     from sym_cps.representation.design.concrete.elements.component import Component
     from sym_cps.representation.library.elements.c_connector import CConnector
@@ -17,50 +20,22 @@ class Connection:
     connector_a: CConnector
     component_b: Component
     connector_b: CConnector
-    #brendan: make api to output connector_a and connect_b given component_a and component_b
+    # brendan: make api to output connector_a and connect_b given component_a and component_b
 
-    def __post_init__(self):
-        """TODO: is connection legal?"""
-        # call rules from src_cps.grammar
+    @classmethod
+    def from_direction(cls, component_a: Component, component_b: Component, direction: str):
 
+        print(f"connecting {component_a.c_type.id} to {component_b.c_type.id}, direction: {direction}")
+        connector_a = connections_map[component_a.c_type.id][component_b.c_type.id][direction][0]
+        connector_b = connections_map[component_a.c_type.id][component_b.c_type.id][direction][1]
+        from sym_cps.shared.library import c_library
 
-        legal_components = self.get_legal_components()
-        type_a = self.component_a.c_type
-        type_b = self.component_b.c_type
-
-        if not (type_b in legal_components[type_a]["components"] or type_a in legal_components[type_b]["components"]):
-            #do something it's broken
-            return
-
-        connector_name_a = self.connector_a.name
-        connector_name_b = self.connector_b.name
-
-        if not (connector_name_a in legal_components[type_a]["edge"] and connector_name_b in legal_components[type_b]["edge"]):
-            #also broken
-            return
-        
-        # legal_connectors = {
-        #     "Prop_Connector": ["MOTOR_CONNECTOR_CS_IN"],
-        #     "MOTOR_CONNECTOR_CS_IN": ["Prop_Connector"],
-        #     "Base_Connector": ["TopConnector"],
-        #     "MotorPower": ["MotorPower"],
-        #     "TopConnector": ["Base_Connector"],
-        #     "SideConnector": ["BaseConnection", "OffsetConnection1", "OffsetConnection2", "EndConnection"],
-        #     "BottomConnector": ["BaseConnection", "EndConnection", "TopConnector", "BottomConnector"],
-        #     "BaseConnection": ["SideConnector1-6", "CenterConnector", "SideConnector", "BottomConnector", "Wing_Tube_Connector"],
-        #     "EndConnection": ["SideConnector1-6", "CenterConnector", "SideConnector", "BottomConnector", "Wing_Tube_Connector"],
-        #     "OffsetConnection1": ["CenterConnector", "TopConnector", "BottomConnector", "SideConnector", "Wing_Tube_Connector"],
-        #     "OffsetConnection2": ["CenterConnector", "TopConnector", "BottomConnector", "SideConnector", "Wing_Tube_Connector"],
-        #     "Wing_Tube_Connector": ["BaseConnection", "OffsetConnection1", "OffsetConnection2", "EndConnection"],
-        #     "PowerBus": ["BatteryPower"],
-        #     "Sensor_Connector": ["FloorConnector1", "FloorConnector2", "FloorConnector3", "FloorConnector4", "FloorConnector5", "FloorConnector6", "FloorConnector7", "FloorConnector8"],
-        #     "Case2HubConnector": ["BottomConnector", "TopConnector"],
-        #     "CargoConnector": ["CargoConnector"],
-        #     "CargoCase": ["CargoConnector"],
-
-        # }
-        
-
+        return cls(
+            component_a,
+            c_library.connectors[connector_a],
+            component_b,
+            c_library.connectors[connector_b],
+        )
 
     @property
     def components_and_connectors(self) -> set[tuple[Component, CConnector]]:
@@ -88,11 +63,33 @@ class Connection:
             return f"{a1}-{a2}-{b1}-{b2}"
         return f"{b1}-{b2}-{a1}-{a2}"
 
+    @property
+    def lib_key(self) -> str:
+        a1 = self.component_a.library_component.id
+        a2 = self.connector_a.id
+        b1 = self.component_b.library_component.id
+        b2 = self.connector_b.id
+
+        return f"{a1}-{a2}-{b1}-{b2}"
+
+        # if (a1 + a2) >= (b1 + b2):
+        #     return f"{a1}-{a2}-{b1}-{b2}"
+        # return f"{b1}-{b2}-{a1}-{a2}"
+
+    @property
+    def direction_b_respect_to_a(self):
+        return get_direction_from_components_and_connections(
+            self.component_a.c_type.id, self.component_b.c_type.id, self.connector_a.id, self.connector_b.id
+        )
+
     def __eq__(self, other: object):
         if not isinstance(other, Connection):
             return NotImplementedError
 
         return self.key == other.key
+
+    def is_similar(self, other: Connection):
+        return self.lib_key == other.lib_key
 
     def __ne__(self, other: object):
         if not isinstance(other, Connection):
@@ -102,67 +99,15 @@ class Connection:
 
     def __str__(self):
 
-        s1 = f"FROM\n\tCOMPONENT\t{self.component_a.c_type.id} ({self.component_a.id})" \
-             f"\n\tCONNECTOR\t{self.connector_a.name}\n"
-        s2 = f"TO\n\tCOMPONENT\t{self.component_b.c_type.id} ({self.component_b.id})" \
-             f"\n\tCONNECTOR\t{self.connector_b.name}\n"
+        s1 = (
+            f"FROM\n\tCOMPONENT\t{self.component_a.c_type.id} ({self.component_a.id})"
+            f"\n\tCONNECTOR\t{self.connector_a.name}\n"
+        )
+        s2 = (
+            f"TO\n\tCOMPONENT\t{self.component_b.c_type.id} ({self.component_b.id})"
+            f"\n\tCONNECTOR\t{self.connector_b.name}\n"
+        )
         return f"{s1}{s2}"
 
     def __hash__(self):
         return abs(hash(self.key))
-    
-    def get_legal_components(self):
-        """Returns legal connector and components for each component. """
-
-        legal_components = {
-            "Propeller": {
-                "components": ["Motor"],
-                "edge": ["MOTOR_CONNECTOR_CS_IN"]
-                },
-            "Motor": {
-                "compenents": ["Proppeller", "Flange", "BatteryController"],
-                "edge": ["Prop_Connector", "Base_Connector", "MotorPower"]          
-                },
-            "Flange": {
-                "components": ["Motor", "Tube"],
-                "edge": ["TopConnector", "SideConnector", "BottomConnector"]
-                },
-            "Tube": {
-                "components": ["Hub", "Flange", "Wing_vert_hole", "Wing_horiz_hole", "Wing"],
-                "edge": ["BaseConnection", "OffsetConnection1", "OffsetConnection2", "EndConnection"]
-                },
-            "Wing": {
-                "components": ["Tube"],
-                "edge": ["Wing_Tube_Connector"]
-                },
-            "CapsuleFuselage": {
-                "components": ["Hub", "Battery", "Sensors"],
-                "edge": ["BottomConnector", "FloorConnector1", "FloorConnector2", "FloorConnector3", "FloorConnector4", "FloorConnector5", "FloorConnector6", "FloorConnector7", "FloorConnector8"]
-                },
-            "Battery": {
-                "components": ["CapsuleFuselage", "BatteryController"],
-                "edge": ["Bottom_Connector", "PowerBus"]
-                },
-            "Sensors": {
-                "components": ["CapsuleFuselage"],
-                "edge": ["Sensor_Connector"]
-                },
-            "CargoCase": {
-                "components": ["Hub", "Cargo"],
-                "edge": ["Case2HubConnector", "CargoConnector"]
-                },
-            "Cargo": {
-                "components": ["CargoCase"],
-                "edge": ["CargoCase"]
-                },
-            "Hub": {
-                "components": ["Tube", "CapsuleFuselage", "CargoCase", "Orient"],
-                "edge": ["TopConnection", "BottomConnection", "CenterConnection", "OrientConnection", "SideConnector1", "SideConnector2", "SideConnector3", "SideConnector4", "SideConnector5", "SideConnector6"]
-                },
-            "Orient": {
-                "components": ["Hub"],
-                "edge": ["ORIENTCONN"]
-                }
-        }
-
-        return legal_components

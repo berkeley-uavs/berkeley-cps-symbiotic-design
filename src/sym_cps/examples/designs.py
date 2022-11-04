@@ -1,6 +1,7 @@
 # type: ignore
 import json
 from copy import deepcopy
+
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.topology import DTopology
 from sym_cps.representation.tools.parsers.parsing_designs import parse_design_from_design_swri
@@ -81,9 +82,7 @@ def modify_parameters_to_design(design_name: str = "Trowel", designs_dat_file: s
     print(f"A new design {modified_design.name} has been generated from {design_name} and modifying its parameters")
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     export_design_json()
     load_design_json()
     modify_parameters_to_design()

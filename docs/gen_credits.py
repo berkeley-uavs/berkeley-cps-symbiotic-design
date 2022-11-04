@@ -1,3 +1,20 @@
+"""
+ISC License
+
+Copyright (c) 2019, Timothée Mazzucotelli
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+"""
 import re
 from itertools import chain
 from pathlib import Path
@@ -8,9 +25,10 @@ from jinja2 import StrictUndefined
 from jinja2.sandbox import SandboxedEnvironment
 
 try:
-    from importlib.metadata import metadata, PackageNotFoundError
+    from importlib.metadata import PackageNotFoundError, metadata
 except ImportError:
-    from importlib_metadata import metadata, PackageNotFoundError
+    from importlib_metadata import PackageNotFoundError, metadata
+
 
 project_dir = Path(".")
 pyproject = toml.load(project_dir / "pyproject.toml")
@@ -20,6 +38,7 @@ lock_data = toml.load(project_dir / "pdm.lock")
 lock_pkgs = {pkg["name"].lower(): pkg for pkg in lock_data["package"]}
 project_name = project["name"]
 regex = re.compile(r"(?P<dist>[\w.-]+)(?P<spec>.*)$")
+
 
 def get_license(pkg_name):
     try:
@@ -34,12 +53,22 @@ def get_license(pkg_name):
                 license = value.rsplit("::", 1)[1].strip()
     return license or "?"
 
+
 def get_deps(base_deps):
     deps = {}
     for dep in base_deps:
         parsed = regex.match(dep).groupdict()
         dep_name = parsed["dist"].lower()
-        deps[dep_name] = {"license": get_license(dep_name), **parsed, **lock_pkgs[dep_name]}
+        if dep_name == "eval-pipeline":
+            deps[dep_name] = {
+                "license": get_license(dep_name),
+                **parsed,
+                "name": "eval-pipeline",
+                "version": "unknown",
+                "summary": "evaluation pipeline",
+            }
+        else:
+            deps[dep_name] = {"license": get_license(dep_name), **parsed, **lock_pkgs[dep_name]}
 
     again = True
     while again:
@@ -52,10 +81,12 @@ def get_deps(base_deps):
                     if dep_name not in deps:
                         deps[dep_name] = {"license": get_license(dep_name), **parsed, **lock_pkgs[dep_name]}
                         again = True
-        
+
     return deps
 
-dev_dependencies = get_deps(chain(*pdm.get("dev-dependencies", {}).values()))
+
+dependencies = chain(*pdm.get("dev-dependencies", {}).values())
+dev_dependencies = get_deps(dependencies)
 prod_dependencies = get_deps(
     chain(
         project.get("dependencies", []),

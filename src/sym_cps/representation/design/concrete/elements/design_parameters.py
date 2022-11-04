@@ -15,9 +15,7 @@ class DesignParameter:
     def __post_init__(self):
         values = set([p.value for p in self.parameters])
         if len(values) > 1:
-            raise AttributeError(
-                "All parameters in DesignParameter must have the same value"
-            )
+            raise AttributeError("All parameters in DesignParameter must have the same value")
         self._value = next(iter(values))
 
     @property
@@ -35,6 +33,12 @@ class DesignParameter:
 
     def remove(self, parameter: Parameter):
         self.parameters.remove(parameter)
+
+    def __str__(self):
+        ret = f"{self.id} = {list(self.parameters)[0].value}:\n"
+        for param in self.parameters:
+            ret += f"\t{param.id}\n"
+        return ret
 
     def __hash__(self):
         return hash(self.id)

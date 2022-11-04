@@ -1,6 +1,7 @@
 # type: ignore
 import os
 import pickle
+
 from sym_cps.shared.paths import persistence_path
 
 
@@ -18,8 +19,19 @@ def dump(obj: object, file: str) -> str:
 
 def load(file: str) -> object | None:
     file_path = persistence_path / file
-    with open(file_path, "rb") as f:
-        obj = pickle.load(f)
-    print(f"Object loaded from: {str(file_path)}")
-    return obj
-
+    try:
+        with open(file_path, "rb") as f:
+            obj = pickle.load(f)
+        print(f"Object loaded from: {str(file_path)}")
+        return obj
+    except Exception:
+        print(f"Exception while loading {file_path}")
+        print(file)
+        if "library" in file:
+            from sym_cps.representation.library import Library
+            print("returning empty library")
+            return Library()
+        if "designs" in file:
+            print("returning empty dict")
+            return dict()
+        return None

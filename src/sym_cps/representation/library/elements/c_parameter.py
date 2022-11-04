@@ -43,6 +43,26 @@ class CParameter:
         """Filters out None component"""
         return {key: value for key, value in self._values.items() if value is not None}
 
+    @property
+    def min(self) -> float | None:
+        if self._values["min_val"] is not None:
+            return float(self._values["min_val"])
+        return None
+
+    @property
+    def max(self) -> float | None:
+        if self._values["max_val"] is not None:
+            return float(self._values["max_val"])
+        return None
+
+    @property
+    def default(self) -> float:
+        if self._values["default_val"] is not None:
+            return float(self._values["default_val"])
+        if self._values["assigned_val"] is not None:
+            return float(self._values["assigned_val"])
+        raise Exception("No default value")
+
     def _edit_values(self, values: dict):
         for key in values.keys():
             if key in self._values.keys():

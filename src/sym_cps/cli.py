@@ -1,49 +1,49 @@
 """Module that contains the command line application."""
-
 import argparse
-from numpy.ctypeslib import load_library
-from sym_cps.examples.designs import export_design_json, load_design_json
+from pathlib import Path
 from typing import List, Optional
-from sym_cps.examples.library import *
 
+from sym_cps.examples.library import export_library
+from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.shared.paths import data_folder
+from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
 
-def get_parser() -> argparse.ArgumentParser:
-    """
-    Return the CLI argument parser.
-
-    Returns:
-        An argparse parser.
-    """
-    return argparse.ArgumentParser(prog="sym-cps")
-
-
-def run_parse_library() -> int:
-    parse_library()
-    return 0
-
-
-def run_load_library() -> int:
-    load_library()
-    return 0
-
-
-def run_export_design(args: Optional[List[str]] = None) -> int:
-    parser = get_parser()
+def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
+    parser = argparse.ArgumentParser(prog="sym-cps")
+    parser.add_argument("design_file", type=str, help="Specify the design json to parse")
     opts = parser.parse_args(args=args)
-    export_design_json(opts[0])
+    print(f"args: {opts}")
+    print(opts.design_file)
+    file = data_folder / "custom_designs" / opts.design_file
+    print(f"Parsing file {file}")
+    if file.suffix == "":
+        file_str = str(file)
+        file_str += ".json"
+        file = Path(file_str)
+    from sym_cps.grammar.topology import AbstractTopology
+    from sym_cps.representation.design.concrete import DConcrete
+    abstract_topology = AbstractTopology.from_json(file)
+    return DConcrete.from_abstract_topology(abstract_topology)
+
+def update_all() -> int:
+    update_dat_files_and_export()
+    export_library()
     return 0
 
-def run_load_design_json(args: Optional[List[str]] = None) -> int:
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    load_design_json(opts[0])
+
+def export_designs() -> int:
+    export_all_designs()
     return 0
 
 
-def example_with_parameters(args: Optional[List[str]] = None) -> int:
-    parser = get_parser()
-    opts = parser.parse_args(args=args)
-    print(f"args: {opts}")  # noqa: WPS421 (side-effect in main is fine)
+def load_custom_design(args: Optional[List[str]] = None) -> int:
+    dconcrete = _parse_design(args)
+    dconcrete.export_all()
     return 0
 
 
+def evaluate_abstract_design(args: Optional[List[str]] = None) -> int:
+    dconcrete = _parse_design(args)
+    dconcrete.export_all()
+    dconcrete.evaluate()
+    return 0

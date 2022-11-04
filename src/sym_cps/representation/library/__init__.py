@@ -1,4 +1,6 @@
+import json
 import os
+from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 import json
@@ -8,20 +10,15 @@ from sym_cps.representation.library.elements.c_connector import CConnector
 from sym_cps.representation.library.elements.c_parameter import CParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
-from sym_cps.shared.paths import component_library_root_path_default
-from sym_cps.representation.tools.parsers.parsing_library import (
-    fill_parameters_connectors,
-    parse_components_and_types,
-)
+from sym_cps.representation.tools.parsers.parsing_library import fill_parameters_connectors, parse_components_and_types
+from sym_cps.shared.paths import component_library_root_path_default, data_folder
 
 @dataclass
 class Library:
     components: dict[str, LibraryComponent] = field(default_factory=dict)
 
     component_types: dict[str, CType] = field(init=False, default_factory=dict)
-    components_in_type: dict[str, set[LibraryComponent]] = field(
-        init=False, default_factory=dict
-    )
+    components_in_type: dict[str, set[LibraryComponent]] = field(init=False, default_factory=dict)
     parameters: dict[str, CParameter] = field(init=False, default_factory=dict)
     connectors: dict[str, CConnector] = field(init=False, default_factory=dict)
 
@@ -36,15 +33,16 @@ class Library:
             self.components_in_type[component.comp_type.id].add(component)
         for comp_type in self.component_types.values():
             if len(self.parameters) == 0:
-                self.parameters = comp_type.parameters
+                self.parameters = deepcopy(comp_type.parameters)
             else:
                 self.parameters.update(comp_type.parameters)
             if len(self.connectors) == 0:
-                self.connectors = comp_type.connectors
+                self.connectors = deepcopy(comp_type.connectors)
             else:
                 self.connectors.update(comp_type.connectors)
 
     def get_default_component(self, component_type: str, hub_size: int = 0) -> LibraryComponent:
+<<<<<<< HEAD
         """TODO"""
         default_comp_path = data_folder / "reverse_engineering" / "default_connections_json.json"
         f = open(default_comp_path)
@@ -66,6 +64,28 @@ class Library:
         return component
 
     def get_connectors(self, component_type_a: CType, component_type_b: CType, direction: str) -> (CConnector, CConnector):
+=======
+        if component_type not in self.component_types.keys():
+            raise Exception(f"{component_type}\nComponent Type not present in the library")
+        default_comp_path = data_folder / "reverse_engineering" / "default_components.json"
+        f = open(default_comp_path)
+        default = json.load(f)
+        if component_type == "Hub":
+            if hub_size == 4:
+                component = self.components["0394od_para_hub_4"]
+            elif hub_size == 3:
+                component = self.components["0394od_para_hub_4"]
+            else:
+                raise Exception(f"No hub of size {hub_size}")
+        else:
+            component = self.components[default[component_type][0]]
+
+        return component
+
+    def get_connectors(
+        self, component_type_a: CType, component_type_b: CType, direction: str
+    ) -> (CConnector, CConnector):
+>>>>>>> main
         """TODO"""
         connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
         f = open(connectors_components_path)
@@ -77,7 +97,13 @@ class Library:
 
         available_components_a = list(connections[name_a].keys())
         if name_b in available_components_a:
+<<<<<<< HEAD
             
+=======
+            if direction == "":
+                direction = "NONE"
+
+>>>>>>> main
             if direction in list(connections[name_a][name_b].keys()):
                 connector_names = connections[name_a][name_b][direction]
                 a_connector_name = connector_names[0]
@@ -90,7 +116,11 @@ class Library:
 
             else:
                 print("illegal direction")
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> main
         else:
             print("illegal component")
 
@@ -107,9 +137,7 @@ class Library:
                 for output_connector in value:  # type: ignore
                     if output_connector.id in self.connectors.keys():
                         # print(f"{key} -> {output_connector}")
-                        self.connectors[key]._update_field(
-                            "compatible_with", {output_connector.id: output_connector}
-                        )
+                        self.connectors[key]._update_field("compatible_with", {output_connector.id: output_connector})
 
         if isinstance(connectable_components_types, dict):
             for key, value in connectable_components_types.items():
@@ -147,6 +175,4 @@ class Library:
         return Library(components)
 
     def __str__(self):
-        return "\n+++++++++++++++++++++++++++++++++\n".join(
-            str(c) for c in list(self.components.values())
-        )
+        return "\n+++++++++++++++++++++++++++++++++\n".join(str(c) for c in list(self.components.values()))

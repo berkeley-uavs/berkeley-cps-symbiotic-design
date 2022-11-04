@@ -1,36 +1,43 @@
 [build-system]
-requires = ["pdm-pep517"]
+requires = ["pdm-pep517>=0.12.0"]
 build-backend = "pdm.pep517.api"
 
 [project]
 name = "sym-cps"
 description = "Develop AI-based approaches to enable correct-by-construction design of Cyber Physical Systems"
 authors = [{name = "LOGiCS Team UC Berkeley", email = "mallozzi@berkeley.edu"}]
-license-expression = "MIT"
 readme = "README.md"
 keywords = []
 dynamic = ["version"]
 dependencies = [
     "editables>=0.3",
     "eval-pipeline @ file:///${PROJECT_ROOT}/eval_pipeline",
-    "networkx>=2.8.6",
     "dill>=0.3.5.1",
-    "python-igraph>=0.10.0",
-    "matplotlib>=3.5.3",
-    "scipy>=1.9.1",
     "flask>=2.2.2",
     "flask-socketio>=5.3.1",
     "eventlet>=0.33.1",
     "scikit-learn>=1.1.2",
-#     "pygraphviz>=1.10",
+    "bayesian-optimization @ git+https://github.com/fmfn/BayesianOptimization",
+    "pydot>=1.4.2",
+    "matplotlib>=3.6.1",
+    "scipy>=1.9.3",
+    "graphviz>=0.20.1",
+    "gprof2dot>=2022.7.29",
+    "dynaconf>=3.1.11",
+    "parse>=1.19.0",
+    "astropy>=5.1",
+    "pandas>=1.5.0",
+    "z3-solver>=4.11.2.0",
+    "igraph>=0.10.2",
+    "numpy>=1.23.4",
 ]
 requires-python = ">=3.10,<3.11"
 
 [project.scripts]
-parse-library = "sym_cps.cli:run_parse_library"
-load-library = "sym_cps.cli:run_load_library"
-export-design = "sym_cps.cli:run_export_design"
-load-design = "sym_cps.cli:run_load_design_json"
+init = "sym_cps.cli:update_all"
+export-designs = "sym_cps.cli:export_designs"
+custom-design = "sym_cps.cli:load_custom_design"
+evaluate = "sym_cps.cli:evaluate_abstract_design"
 
 [tool.pdm]
 version = {source = "scm"}

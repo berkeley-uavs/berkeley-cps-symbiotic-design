@@ -1,5 +1,7 @@
-from abc import ABC, abstractmethod 
+from abc import ABC, abstractmethod
+
 import numpy.typing as npt
+
 
 class ProblemBase(ABC):
     """The base class for the Optimization Problem
@@ -8,9 +10,10 @@ class ProblemBase(ABC):
     For example, [(1,5), (2,4)] can be used to represent the box constraints $1 < x < 5, 2 < y < 4$.
     _opt_array: the numpy array that are used as initial value.
     """
+
     def __init__(self):
         self._bounds: list[tuple[float, float]] = None
-        self._opt_array: npt.ArrayLike = None 
+        self._opt_array: npt.ArrayLike = None
         self._obj_dim = 0
         self._con_dim = 0
 
@@ -46,13 +49,10 @@ class ProblemBase(ABC):
         """The bounds of the optimization problem"""
         return self._bounds
 
-
     @abstractmethod
     def evaluate(self, parameters: npt.ArrayLike) -> tuple[list[float], list[bool]]:
         """return the objective function or invalid parameters"""
-        pass
 
     @abstractmethod
     def set_parameters(self, parameters: npt.ArrayLike) -> None:
         pass
-    

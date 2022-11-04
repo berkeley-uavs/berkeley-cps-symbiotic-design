@@ -1,6 +1,6 @@
 from sym_cps.optimizers.topo_opt import TopologyStrategy
 from sym_cps.representation.design.topology import DTopology
-from sym_cps.shared.paths import ExportType
+from sym_cps.shared.objects import ExportType
 
 
 class Rating:
@@ -20,9 +20,9 @@ class Rating:
         full_name = data["name"]
         if data["strategy"] == "strategy_random":
             from backend.app import topo_opt
+
             d_topology: DTopology = topo_opt.generate_topology(
-                name=full_name,
-                strategy=TopologyStrategy.random_strategy
+                name=full_name, strategy=TopologyStrategy.random_strategy
             )
             print("****D_TOPOLOGY****")
             print(d_topology)

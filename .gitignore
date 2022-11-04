@@ -15,11 +15,13 @@ pdm.lock
 __pypackages__/
 .venv/
 .vscode/
+src/frontend/node_modules/
 
 data/
 output/
 fdm/
 
+eval_pipeline/
 
 
 
@@ -234,3 +236,5 @@ fabric.properties
 
 # pyenv
 .python-version
+# Ignore dynaconf secret files
+.secrets.*

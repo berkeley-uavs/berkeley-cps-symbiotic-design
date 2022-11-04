@@ -1,16 +1,17 @@
 import numpy as np
 
-class History():
+
+class History:
     def __init__(self):
-        self._hist_p = None # params
-        self._hist_c_f = None # combined obj
-        self._hist_c_v = None # combined obj
+        self._hist_p = None  # params
+        self._hist_c_f = None  # combined obj
+        self._hist_c_v = None  # combined obj
 
-        self._hist_p_f = None # params
-        self._hist_f = None # func values
+        self._hist_p_f = None  # params
+        self._hist_f = None  # func values
 
-        self._hist_p_v = None # params_valid
-        self._hist_v = None # valid
+        self._hist_p_v = None  # params_valid
+        self._hist_v = None  # valid
 
     def reset_history(self, p_dim, num_obj, num_con):
         """Clear all history"""
@@ -36,11 +37,11 @@ class History():
             self._hist_p_v = np.concatenate((self._hist_p_v, params.reshape(1, -1)))
             self._hist_v = np.concatenate((self._hist_v, valid.reshape(1, -1)))
 
-    @property 
+    @property
     def length_obj(self):
         return len(self._hist_p)
 
-    @property 
+    @property
     def length_obj(self):
         return len(self._hist_p_v)
 
@@ -72,4 +73,12 @@ class History():
 
     @property
     def hist(self):
-        return self.hist_params, self.hist_combined_obj, self.hist_combined_con,self.hist_params_for_objective, self.hist_func, self.hist_param_for_valid, self.hist_valid
+        return (
+            self.hist_params,
+            self.hist_combined_obj,
+            self.hist_combined_con,
+            self.hist_params_for_objective,
+            self.hist_func,
+            self.hist_param_for_valid,
+            self.hist_valid,
+        )

@@ -1,7 +1,6 @@
 import json
 import os
 from pathlib import Path
-from traceback import print_tb
 
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.elements.component import Component
@@ -11,7 +10,6 @@ from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.design.topology import DTopology
 from sym_cps.representation.library import Library
 from sym_cps.representation.library.elements.c_connector import CConnector
-from sym_cps.shared.paths import design_library_root_path_default
 from sym_cps.representation.tools.ids import connector_id, parameter_id
 from sym_cps.representation.tools.parsers.temp_objects import (
     all_connectors,
@@ -19,11 +17,13 @@ from sym_cps.representation.tools.parsers.temp_objects import (
     connectable_components_types,
     connectable_connectors,
 )
+from sym_cps.shared.paths import design_library_root_path_default
+from sym_cps.tools.strings import rename_instance
+
+broken_designs = {"NuSpade", "Rake", "Trowel"}
 
 
-def parse_designs_from_folder(
-    path: Path, library: Library
-) -> dict[str, tuple[DConcrete, DTopology]]:
+def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[DConcrete, DTopology]]:
     print(f"Parsing designs from {path}")
 
     dir_list = os.listdir(path=path)
@@ -37,15 +37,16 @@ def parse_designs_from_folder(
 
             dirname = os.path.basename(design_path)
 
+            if dirname in broken_designs:
+                continue
+
             """Maps instance name to component name and to the parameters of the instance"""
             instance_component: dict[str, tuple[str, dict[str, tuple[float, str]]]] = {}
 
             """Maps instance name to the set of instance names connected to, for each connection we save the connectors names (from and to)"""
             instance_connection: dict[str, set[tuple[str, str, str]]] = {}
 
-            with open(
-                os.path.join(design_path, "info_componentMap3.json"), "r"
-            ) as file:
+            with open(os.path.join(design_path, "info_componentMap3.json"), "r") as file:
                 for elem in json.load(file):
                     instance_component[elem["FROM_COMP"]] = (
                         elem["LIB_COMPONENT"],
@@ -55,18 +56,17 @@ def parse_designs_from_folder(
             with open(os.path.join(design_path, "info_paramMap1.json"), "r") as file:
 
                 for elem in json.load(file):
-                    instance_component[elem["COMPONENT_NAME"]][1][
-                        elem["COMPONENT_PARAM"]
-                    ] = (float(elem["DESIGN_PARAM_VAL"]), elem["DESIGN_PARAM"])
+                    instance_component[elem["COMPONENT_NAME"]][1][elem["COMPONENT_PARAM"]] = (
+                        float(elem["DESIGN_PARAM_VAL"]),
+                        elem["DESIGN_PARAM"],
+                    )
                     component_name = instance_component[elem["COMPONENT_NAME"]][0]
                     component_type = library.components[component_name].comp_type
                     # all_parameters[
                     #     parameter_id(elem["COMPONENT_PARAM"], str(component_type))
                     # ]._edit_field("design_parameter", elem["DESIGN_PARAM"])
 
-            with open(
-                os.path.join(design_path, "info_connectionMap2.json"), "r"
-            ) as file:
+            with open(os.path.join(design_path, "info_connectionMap2.json"), "r") as file:
                 """Maps (instances, connectors) names to other (instances, connectors) names"""
                 instance_connectors: list[dict[str, str]] = json.load(file)
 
@@ -74,23 +74,15 @@ def parse_designs_from_folder(
 
                 try:
                     from_component_instance = entry["FROM_COMP"]
-                    from_component_class = library.components[
-                        instance_component[entry["FROM_COMP"]][0]
-                    ]
+                    from_component_class = library.components[instance_component[entry["FROM_COMP"]][0]]
                 except KeyError:
-                    raise Exception(
-                        f"There is no component with named{instance_component[entry['FROM_COMP']]}"
-                    )
+                    raise Exception(f"There is no component with named{instance_component[entry['FROM_COMP']]}")
 
                 try:
                     to_component_instance = entry["TO_COMP"]
-                    to_component_class = library.components[
-                        instance_component[entry["TO_COMP"]][0]
-                    ]
+                    to_component_class = library.components[instance_component[entry["TO_COMP"]][0]]
                 except KeyError:
-                    raise Exception(
-                        f"There is no component with named{instance_component[entry['TO_COMP']]}"
-                    )
+                    raise Exception(f"There is no component with named{instance_component[entry['TO_COMP']]}")
 
                 connector_id_from = connector_id(
                     name=entry["FROM_CONN"],
@@ -99,9 +91,7 @@ def parse_designs_from_folder(
 
                 if connector_id_from not in all_connectors.keys():
                     # print(f"New connector found: {connector_id_from}")
-                    all_connectors[connector_id_from] = CConnector(
-                        entry["FROM_CONN"], from_component_class.comp_type
-                    )
+                    all_connectors[connector_id_from] = CConnector(entry["FROM_CONN"], from_component_class.comp_type)
 
                 connector_id_to = connector_id(
                     name=entry["TO_CONN"],
@@ -109,17 +99,10 @@ def parse_designs_from_folder(
                 )
 
                 """Update component compatibility"""
-                if (
-                    from_component_class.comp_type
-                    in connectable_components_types.keys()
-                ):
-                    connectable_components_types[from_component_class.comp_type].add(
-                        to_component_class.comp_type
-                    )
+                if from_component_class.comp_type in connectable_components_types.keys():
+                    connectable_components_types[from_component_class.comp_type].add(to_component_class.comp_type)
                 else:
-                    connectable_components_types[from_component_class.comp_type] = {
-                        to_component_class.comp_type
-                    }
+                    connectable_components_types[from_component_class.comp_type] = {to_component_class.comp_type}
 
                 """Update connectors compatibility"""
                 if connector_id_from in connectable_connectors.keys():
@@ -129,9 +112,7 @@ def parse_designs_from_folder(
 
                 if connector_id_to not in all_connectors.keys():
                     # print(f"New connector found: {connector_id_to}")
-                    all_connectors[connector_id_to] = CConnector(
-                        entry["TO_CONN"], to_component_class.comp_type
-                    )
+                    all_connectors[connector_id_to] = CConnector(entry["TO_CONN"], to_component_class.comp_type)
 
                 if from_component_instance in instance_connection.keys():
                     instance_connection[from_component_instance].add(
@@ -142,22 +123,28 @@ def parse_designs_from_folder(
                         (to_component_instance, connector_id_from, connector_id_to)
                     }
 
+            print(instance_component)
+
             """Create new DConcrete"""
             new_design = DConcrete(name=dirname)
+            instances_created: dict[str, int] = {}
+            instances_renaming: dict[str, str] = {}
             for instance, (
                 component,
                 parameters_floats,
             ) in instance_component.items():
                 parameters: dict[str, Parameter] = {}
+
+                c_type_id = library.components[component].comp_type.id
+                rename_instance(instance, c_type_id, instances_renaming, instances_created)
+
                 new_component = Component(
-                    id=instance,
+                    id=instances_renaming[instance],
                     library_component=library.components[component],
                     parameters=parameters,
                 )
                 for name, (value, design_parameter) in parameters_floats.items():
-                    param_id = parameter_id(
-                        name, str(library.components[component].comp_type)
-                    )
+                    param_id = parameter_id(name, str(library.components[component].comp_type))
                     param_type = all_parameters[param_id]
                     print(f"value: {value}")
                     print(f"component: {new_component}")
@@ -169,9 +156,9 @@ def parse_designs_from_folder(
                     if design_parameter in new_design.design_parameters.keys():
                         new_design.design_parameters[design_parameter].add(parameter)
                     else:
-                        new_design.design_parameters[
-                            design_parameter
-                        ] = DesignParameter(id=design_parameter, parameters={parameter})
+                        new_design.design_parameters[design_parameter] = DesignParameter(
+                            id=design_parameter, parameters={parameter}
+                        )
                         # if id(parameter) in [id(p) for p in  new_design.design_parameters[design_parameter].parameters]:
                         #     print(f"{id(parameter)}")
                 new_component._edit_field("parameters", parameters)
@@ -189,20 +176,23 @@ def parse_designs_from_folder(
                                     )
                 new_design.add_node(new_component)
 
+            connections_set = []
             for instance_s, connections in instance_connection.items():
                 for (instance_t, connector_s, connector_t) in connections:
                     # print(f"{instance_s}, {connector_s}, {instance_t}, {connector_t}")
                     connection = Connection(
-                        component_a=new_design.get_instance(instance_s),
+                        component_a=new_design.get_instance(instances_renaming[instance_s]),
                         connector_a=all_connectors[connector_s],
-                        component_b=new_design.get_instance(instance_t),
+                        component_b=new_design.get_instance(instances_renaming[instance_t]),
                         connector_b=all_connectors[connector_t],
                     )
-                    # TODO: Bugfix: new_design.get_istance(instance_s) sometimes is None
-                    try:
-                        new_design.connect(connection)
-                    except:
-                        pass
+                    connections_set.append(connection)
+            # TODO: Bugfix: new_design.get_istance(instance_s) sometimes is None
+            try:
+                for connection in connections_set:
+                    new_design.connect(connection)
+            except:
+                raise Exception("ERROR")
 
             d_concrete = new_design
             d_topology = DTopology.from_concrete(new_design)
@@ -244,9 +234,7 @@ def parse_design_from_design_swri(path: Path, library: Library) -> DConcrete:
             component_name = prop["component_name"]
             component_property = prop["component_property"]
             library_component_str = component_map[component_name][0]
-            param_id = parameter_id(
-                component_property, library.components[library_component_str].comp_type.id
-            )
+            param_id = parameter_id(component_property, library.components[library_component_str].comp_type.id)
 
             for p, para in library.parameters.items():
                 print(p)

@@ -25,6 +25,10 @@ class LibraryComponent:
     properties: dict[str, CProperty] = field(init=False, default_factory=dict)
 
     @property
+    def id_with_type(self) -> str:
+        return f"{self.id} [{self.comp_type.id}]"
+
+    @property
     def parameters(self) -> dict[str, CParameter]:
         return self.comp_type.parameters
 
@@ -42,6 +46,13 @@ class LibraryComponent:
 
     def __hash__(self):
         return hash(str(self.id))
+
+    def __eq__(self, other: object):
+
+        if not isinstance(other, LibraryComponent):
+            raise Exception("Different classes")
+
+        return self.id == other.id
 
     def __str__(self) -> str:
         s1 = f"name: {self.id}\n" f"type: {str(self.comp_type)}\n"

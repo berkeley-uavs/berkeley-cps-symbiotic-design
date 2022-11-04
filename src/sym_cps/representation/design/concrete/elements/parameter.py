@@ -15,6 +15,10 @@ class Parameter:
     c_parameter: CParameter
     component: Component | None = None
 
+    def __post_init__(self):
+        if "Hub4_instance_1_Battery__VOLUME_PERCENT" in self.id:
+            print("")
+
     @property
     def min(self) -> float:
         return self.c_parameter.values["min_val"]
@@ -23,6 +27,10 @@ class Parameter:
     def max(self) -> float:
         return self.c_parameter.values["max_val"]
 
+    @property
+    def default(self) -> float:
+        return self.c_parameter.default
+
     def __str__(self):
         if self.component is not None:
             return f"{self.component.id}_{self.c_parameter.id}: {self.value}"
@@ -30,7 +38,7 @@ class Parameter:
 
     def __hash__(self):
         return hash(self.__str__())
-    
+
     @property
     def id(self) -> str:
         return f"{self.component.id}_{self.c_parameter.id}"

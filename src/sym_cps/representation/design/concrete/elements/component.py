@@ -9,7 +9,7 @@ from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class Component:
     id: str
 
@@ -74,6 +74,10 @@ class Component:
             params_props_values[property_id] = property.value
 
         return params_props_values
+
+    def update_parameters(self, parameters: dict[str, float]):
+        for param_id, value in parameters.items():
+            self.parameters[param_id].value = value
 
     def _edit_field(self, name, value):
         object.__setattr__(self, name, value)

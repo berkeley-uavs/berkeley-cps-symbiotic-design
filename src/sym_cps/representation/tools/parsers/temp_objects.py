@@ -6,10 +6,7 @@ if TYPE_CHECKING:
     from sym_cps.representation.design.concrete import DConcrete
     from sym_cps.representation.library.elements.c_connector import CConnector
     from sym_cps.representation.library.elements.c_parameter import CParameter
-    from sym_cps.representation.library.elements.library_component import (
-        CType,
-        LibraryComponent,
-    )
+    from sym_cps.representation.library.elements.library_component import CType, LibraryComponent
 
 
 # Maps components name to LibraryComponent objects

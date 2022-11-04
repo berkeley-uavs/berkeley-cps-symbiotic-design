@@ -24,3 +24,30 @@ def _str_value(value) -> str:
         else:
             raise AttributeError
     return value
+
+
+def rename_component_types(component_type: str) -> str:
+    return component_type
+    if component_type == "Battery_UAV":
+        return "Battery"
+    if component_type == "capsule_fuselage":
+        return "Fuselage"
+    return component_type
+
+
+def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, instances_created: dict):
+    instances_renaming[instance] = instance
+    if "Orient" in c_type_id:
+        return
+    if c_type_id not in instances_created.keys():
+        instances_created[c_type_id] = 1
+    else:
+        instances_created[c_type_id] = instances_created[c_type_id] + 1
+    new_name = f"{c_type_id}_instance_{instances_created[c_type_id]}"
+    instances_renaming[instance] = new_name
+
+
+def get_component_type_from_instance_name(instance: str):
+    if "_instance_" in instance:
+        return instance.split("_instance_")[0]
+    return instance

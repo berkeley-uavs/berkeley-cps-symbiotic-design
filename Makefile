@@ -48,18 +48,27 @@ help:
 lock:
 	@pdm lock
 
-.PHONY: setup
-setup:
-	@bash scripts/setup.sh
+.PHONY: check
+check:
+	pdm run duty check-quality check-types check-docs
+	@$(DUTY) check-dependencies
 
 .PHONY: uninstall
 uninstall:
-	@bash scripts/uninstall.sh
-
-.PHONY: check
-check:
-	@bash scripts/multirun.sh duty check-quality check-types check-docs
-	@$(DUTY) check-dependencies
+	rm -rf .coverage*
+	rm -rf .mypy_cache
+	rm -rf .pytest_cache
+	rm -rf tests/.pytest_cache
+	rm -rf build
+	rm -rf dist
+	rm -rf htmlcov
+	rm -rf pip-wheel-metadata
+	rm -rf site
+	find . -type d -name __pycache__ | xargs rm -rf
+	find . -type d -name __pypackages__ | xargs rm -rf
+	find . -name '*.rej' -delete
+	find . -name pdm.lock -delete
+	find . -name .pdm.toml -delete
 
 .PHONY: $(BASIC_DUTIES)
 $(BASIC_DUTIES):
@@ -67,4 +76,4 @@ $(BASIC_DUTIES):
 
 .PHONY: $(QUALITY_DUTIES)
 $(QUALITY_DUTIES):
-	@bash scripts/multirun.sh duty $@ $(call args,$@)
+	pdm run duty $@ $(call args,$@)
