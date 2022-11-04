@@ -8,7 +8,7 @@ from aenum import Enum, auto
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
-from sym_cps.shared.objects import default_parameters
+from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import get_component_type_from_instance_name
 
 
@@ -63,6 +63,14 @@ class AbstractTopology:
                 if category == "CONNECTIONS":
                     if component_a not in connections:
                         connections[component_a] = {}
+
+                    if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
+                        # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
+                        split_str = component_a.split('_')
+                        struct = split_str[0] + '_' + split_str[1] + '_' + split_str[2]
+                        if struct in structures.keys():
+                            #instantiate set of components and connect to one another
+                            for c in structures[struct]
 
                     for component_b, direction in infos.items():
                         connections[component_a][component_b] = direction
