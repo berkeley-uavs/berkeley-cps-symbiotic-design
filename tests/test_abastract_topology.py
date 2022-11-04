@@ -6,6 +6,8 @@ from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
 from sym_cps.shared.objects import ExportType
 
+from sym_cps.shared.paths import reverse_engineering_folder
+
 
 def assert_topology_from_and_to_json(topology_level: ExportType):
     """Test of AbstractTopology at the level of abstraction 1 (lowest)"""
@@ -46,3 +48,7 @@ def test_topology_abstraction_2():
 
 def test_topology_abstraction_3():
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_3)
+
+topology_json_path_1 = reverse_engineering_folder / "analysis" / "abstract_4.json"
+ab = AbstractTopology.from_json(topology_json_path_1)
+print(DConcrete.from_abstract_topology(ab))
