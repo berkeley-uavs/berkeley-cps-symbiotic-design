@@ -140,10 +140,6 @@ def export_connection_rules(connection_dict: dict):
 
 
 def main():
-<<<<<<< HEAD
-    c_library, designs = parse_library_and_seed_designs()
-=======
->>>>>>> main
 
     concrete_connection_dict, abstract_connection_dict = merge_connection_rules(connections_folder, c_library)
     connection_concrete_json = json.dumps(concrete_connection_dict, indent=4)
