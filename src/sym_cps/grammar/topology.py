@@ -61,6 +61,7 @@ class AbstractTopology:
         # unravel structure prior to looping through topology then proceed as normal
         to_delete = set()
         to_add_topo = {"TOPOLOGY": {}}
+        edit_connections = {}
         if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
             for component_a, categories in topo["TOPOLOGY"].items():
                 # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
@@ -98,13 +99,33 @@ class AbstractTopology:
                             # remove structure key from topo
                     to_delete.add(component_a)
                 else:
-                    continue
+                    # if "Propeller_str_top" is in connections, we'll want to change the connection name to Flange
+                    for connected in topo["TOPOLOGY"][component_a]["CONNECTIONS"].keys():
+                        # ex.connected == "Propeller_str_top_instance_1"
+                        struct, instance_n = get_component_and_instance_type_from_instance_name(connected)
+                        component_interface = structures[struct]["InterfaceComponent"]
+                        if struct in structures.keys():
+                            # ex. {"Tube_instance_1": {
+                            #   "Flange_instance_n": "BOTTOM-BOTTOM"
+                            # }}
+                            edit_connections[component_a] = []
+                            edit_connections[component_a].append({component_interface + '_' + str(instance_n): topo["TOPOLOGY"][component_a]["CONNECTIONS"][connected]})
+
 
         for elem in to_delete:
             del topo["TOPOLOGY"][elem]
 
         for key, elem in to_add_topo.items():
             topo["TOPOLOGY"][key] = elem
+
+        for key in edit_connections.keys():
+            elem_lst = edit_connections[key] # lst of dictionaries w/ connections that need to be edited
+            for comp in elem_lst:
+                for instance, direction in comp.items():
+                    topo["TOPOLOGY"][key]["CONNECTIONS"][instance] = direction
+            for connected in topo["TOPOLOGY"][key]["CONNECTIONS"].keys():
+                if connected in to_delete:
+                    del topo["TOPOLOGY"][key]["CONNECTIONS"][connected]
 
         for component_a, categories in topo["TOPOLOGY"].items():
             for category, infos in categories.items():
