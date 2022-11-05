@@ -5,8 +5,9 @@ from typing import List, Optional
 
 from sym_cps.examples.library import export_library
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.shared.paths import data_folder
+from sym_cps.shared.paths import data_folder, output_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
+from sym_cps.evaluation import evaluate_design
 
 def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
     parser = argparse.ArgumentParser(prog="sym-cps")
@@ -47,3 +48,17 @@ def evaluate_abstract_design(args: Optional[List[str]] = None) -> int:
     dconcrete.export_all()
     dconcrete.evaluate()
     return 0
+
+def evaluate_design_swri(args: Optional[List[str]] = None) -> int:
+    parser = argparse.ArgumentParser(prog="sym-cps")
+    parser.add_argument("design_name", type=str, help="Specify the design name to evaluate the existing design_swri.json")
+    opts = parser.parse_args(args=args)
+    print(f"args: {opts}")
+    print(opts.design_name)
+    design_json_path = output_folder / "designs"/ opts.design_name/ "design_swri.json"
+    ret = evaluate_design(
+        design_json_path=design_json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
+    )
+    print(ret)
+    return 0
+

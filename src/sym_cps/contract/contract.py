@@ -396,7 +396,7 @@ class ContractManager():
             model = solver.model()   
             self.print_metric(model=model)
             propeller, motor, battery = self.get_component_selection(model=model, c_library=c_library)
-            print("Iteration: {num_iter}, Component Found:")
+            print(f"Iteration: {num_iter}, Component Found:")
             print(f"    Propeller: {propeller.id}")
             print(f"    Motor: {motor.id}")
             print(f"    Battery: {battery.id}") 

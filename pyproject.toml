@@ -38,6 +38,7 @@ init = "sym_cps.cli:update_all"
 export-designs = "sym_cps.cli:export_designs"
 custom-design = "sym_cps.cli:load_custom_design"
 evaluate = "sym_cps.cli:evaluate_abstract_design"
+evaluate_design_swri = "sym_cps.cli:evaluate_design_swri"
 
 [tool.pdm]
 version = {source = "scm"}
