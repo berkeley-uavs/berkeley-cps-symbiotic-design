@@ -94,7 +94,7 @@ class AbstractTopology:
                                         struct_component[comp_a][struct_category]
                                 else:
                                     raise Exception("Unknown category")
-                            to_add_topo["TOPOLOGY"][comp_a + "_" + str(instance_n)] = topo_instance[
+                            to_add_topo["TOPOLOGY"][comp_a + "_instance_" + str(instance_n)] = topo_instance[
                                 comp_a + "_" + str(instance_n)]
                             # remove structure key from topo
                     to_delete.add(component_a)
@@ -107,9 +107,9 @@ class AbstractTopology:
                             # ex. {"Tube_instance_1": {
                             #   "Flange_instance_n": "BOTTOM-BOTTOM"
                             # }}
-                            component_interface = structures[connected]["InterfaceComponent"]
+                            component_interface = structures[struct]["InterfaceComponent"]
                             edit_connections[component_a] = []
-                            edit_connections[component_a].append({component_interface + '_' + str(instance_n): topo["TOPOLOGY"][component_a]["CONNECTIONS"][connected]})
+                            edit_connections[component_a].append({component_interface + '_instance_' + str(instance_n): topo["TOPOLOGY"][component_a]["CONNECTIONS"][connected]})
 
 
         for elem in to_delete:
@@ -123,9 +123,9 @@ class AbstractTopology:
             for comp in elem_lst:
                 for instance, direction in comp.items():
                     topo["TOPOLOGY"][key]["CONNECTIONS"][instance] = direction
-            for connected in topo["TOPOLOGY"][key]["CONNECTIONS"].keys():
-                if connected in to_delete:
-                    del topo["TOPOLOGY"][key]["CONNECTIONS"][connected]
+            for connection in to_delete:
+                if connection in topo["TOPOLOGY"][key]["CONNECTIONS"].keys():
+                    del topo["TOPOLOGY"][key]["CONNECTIONS"][connection]
 
         for component_a, categories in topo["TOPOLOGY"].items():
             for category, infos in categories.items():
