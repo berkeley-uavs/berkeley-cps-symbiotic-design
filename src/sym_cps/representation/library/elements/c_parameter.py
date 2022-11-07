@@ -63,6 +63,19 @@ class CParameter:
             return float(self._values["assigned_val"])
         raise Exception("No default value")
 
+    @property
+    def summary(self) -> str:
+        v_min = "-"
+        v_max = "-"
+        v_default = "-"
+        if self.min is not None:
+            v_min = str(self.min)
+        if self.min is not None:
+            v_max = str(self.max)
+        if self.default is not None:
+            v_default = str(self.default)
+        return f"{v_min} | {v_max} | {v_default}"
+
     def _edit_values(self, values: dict):
         for key in values.keys():
             if key in self._values.keys():

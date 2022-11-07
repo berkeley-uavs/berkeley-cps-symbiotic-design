@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 from typing import List, Optional
 
-from sym_cps.examples.library import export_library
+from sym_cps.examples.library import export_library, generate_tables, analysis
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.paths import data_folder, output_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
@@ -29,6 +29,8 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
 def update_all() -> int:
     update_dat_files_and_export()
     export_library()
+    # generate_tables()
+    # analysis()
     return 0
 
 
