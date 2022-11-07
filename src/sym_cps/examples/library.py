@@ -1,4 +1,6 @@
 # type: ignore
+import json
+
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.topology import DTopology
 from sym_cps.representation.library import CConnector, CType, Library
@@ -11,10 +13,12 @@ from sym_cps.tools.io import save_to_file
 from sym_cps.tools.persistance import load
 from sym_cps.tools.strings import repr_dictionary
 from sym_cps.tools.update_library import update_dat_files_and_export
+from tabulate import tabulate
 
 
 def export_library(
-    library_txt_file: str = "library.txt", library_dat_file: str = "library.dat", designs_dat_file: str = "designs.dat"
+        library_txt_file: str = "library.txt", library_dat_file: str = "library.dat",
+        designs_dat_file: str = "designs.dat"
 ):
     """Export library and seed designs to text files"""
 
@@ -74,6 +78,63 @@ def export_library(
     for (d_concrete, d_topology) in designs.values():
         d_concrete.export_all()
         d_topology.export_all()
+
+
+def analysis(library_dat_file: str = "library.dat", designs_dat_file: str = "designs.dat"):
+    c_library: Library = load(library_dat_file)  # type: ignore
+
+    all_types_in_library = set(c_library.component_types.keys())
+    component_types_in_seed_designs = set()
+
+    designs: dict[str, tuple[DConcrete, DTopology]] = load(designs_dat_file)  # type: ignore
+    for design_id, (dconcrete, dtopology) in designs.items():
+        for component in dconcrete.components:
+            component_types_in_seed_designs.add(component.c_type.id)
+
+    unused_types = all_types_in_library - component_types_in_seed_designs
+
+    save_to_file("\n".join(list(component_types_in_seed_designs)),
+                 "component_types_in_seed_designs.txt",
+                 folder_name="library"
+                 )
+
+    save_to_file("\n".join(list(unused_types)),
+                 "unused_types.txt",
+                 folder_name="library"
+                 )
+
+    types_in_use = {}
+    for comp_type in component_types_in_seed_designs:
+        types_in_use[comp_type] = comp_type
+
+    types_in_use_json = json.dumps(types_in_use, indent=4)
+
+    save_to_file(types_in_use_json,
+                 "types_renaming.json",
+                 folder_name="library"
+                 )
+
+
+
+def generate_tables(library_dat_file: str = "library.dat"):
+    c_library: Library = load(library_dat_file)  # type: ignore
+
+    all_types_tables = []
+    for component_type in c_library.component_types.values():
+        c_type_table = []
+        c_table_header = [component_type.id]
+        for parameter in component_type.parameters.values():
+            c_table_header.append(parameter.id)
+        c_type_table.append(c_table_header)
+        for component in c_library.components_in_type[component_type.id]:
+            entry = [component.id]
+            for parameter_id in c_table_header[1:]:
+                entry.append(component.parameters[parameter_id].summary)
+            c_type_table.append(entry)
+        all_types_tables.append(c_type_table)
+
+    for table in all_types_tables:
+        print(table[0])
 
 
 if __name__ == "__main__":

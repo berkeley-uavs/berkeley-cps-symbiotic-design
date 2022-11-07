@@ -28,7 +28,15 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 2. Navigate to `berkeley-cps-symbiotic-design` folder and install dependencies
 
     ```bash
-    cd berkeley-cps-symbiotic-design & \
+    cd berkeley-cps-symbiotic-design
+    ```
+   You don't have to create a virual environment with pdm, you can launch the command:
+    ```bash
+    pdm config python.use_venv false
+    ```
+   
+   and then
+    ```bash
     pdm install
     ```
 
