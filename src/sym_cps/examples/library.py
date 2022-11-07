@@ -88,11 +88,13 @@ def analysis(library_dat_file: str = "library.dat", designs_dat_file: str = "des
     shared_component_types_in_designs = set()
 
     components_types_in_design = {}
+    components_types_and_model_in_design = {}
     component_used_in_designs = {}
 
     designs: dict[str, tuple[DConcrete, DTopology]] = load(designs_dat_file)  # type: ignore
     for design_id, (dconcrete, dtopology) in designs.items():
         component_types = set()
+        components_types_and_model_in_design[design_id] = dconcrete.get_components_summary
         for component in dconcrete.components:
             component_types.add(component.c_type.id)
             if component.c_type.id not in component_used_in_designs.keys():
@@ -140,6 +142,12 @@ def analysis(library_dat_file: str = "library.dat", designs_dat_file: str = "des
                  "component_used_in_designs.json",
                  folder_name="library"
                  )
+
+    # components_types_and_model_in_design_json = json.dumps(components_types_and_model_in_design, indent=4)
+    # save_to_file(components_types_and_model_in_design_json,
+    #              "components_types_and_model_in_design.json",
+    #              folder_name="library"
+    #              )
 
 
 def generate_tables(library_dat_file: str = "library.dat"):

@@ -9,7 +9,7 @@ from sym_cps.representation.library.elements.c_parameter import CParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.representation.tools.parsers.parsing_library import fill_parameters_connectors, parse_components_and_types
-from sym_cps.shared.paths import component_library_root_path_default, data_folder
+from sym_cps.shared.paths import component_library_root_path_default, data_folder, component_selection_path
 
 
 @dataclass
@@ -43,8 +43,7 @@ class Library:
     def get_default_component(self, component_type: str, hub_size: int = 0) -> LibraryComponent:
         if component_type not in self.component_types.keys():
             raise Exception(f"{component_type}\nComponent Type not present in the library")
-        default_comp_path = data_folder / "reverse_engineering" / "default_components.json"
-        f = open(default_comp_path)
+        f = open(component_selection_path)
         default = json.load(f)
         if component_type == "Hub":
             if hub_size == 4:
