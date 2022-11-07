@@ -16,7 +16,6 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
 
     # Exporting AbstractTopology to file
     topology_json_path_1 = test_quad_original.export(topology_level)
-    json_1 = json.load(open(topology_json_path_1))
 
     # Loading AbstractTopology from file
     abstract_topology = AbstractTopology.from_json(topology_json_path_1)
@@ -24,16 +23,24 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
     # Creating DConcrete Object
     test_quad_loaded = DConcrete.from_abstract_topology(abstract_topology)
 
-    # doesn't work for abstraction level 4
     assert test_quad_original == test_quad_loaded
 
     # Exporting AbstractTopology to file
     topology_json_path_2 = test_quad_loaded.export(topology_level)
 
-    # Comparing jsons
-    json_2 = json.load(open(topology_json_path_2))
+    # From exported -> AbstractTopology
+    abstract_topology_2 = AbstractTopology.from_json(topology_json_path_2)
+    test_quad_loaded_2 = DConcrete.from_abstract_topology(abstract_topology_2)
 
-    # doesn't work for abstraction level 4
+    assert test_quad_loaded_2 == test_quad_loaded
+
+    # Export AbstractTopology from second version
+    topology_json_path_3 = test_quad_loaded_2.export(topology_level)
+
+    # Comparing jsons
+    json_1 = json.load(open(topology_json_path_2))
+    json_2 = json.load(open(topology_json_path_3))
+
     assert sorted(json_1.items()) == sorted(json_2.items())
 
 
@@ -55,7 +62,7 @@ def test_topology_abstraction_3():
 def test_topology_abstraction_4():
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_4)
 
-# test_topology_abstraction_1()
-# test_topology_abstraction_2()
-# test_topology_abstraction_3()
+test_topology_abstraction_1()
+test_topology_abstraction_2()
+test_topology_abstraction_3()
 test_topology_abstraction_4()
