@@ -30,7 +30,7 @@ def update_all() -> int:
     update_dat_files_and_export()
     export_library()
     # generate_tables()
-    # analysis()
+    analysis()
     return 0
 
 

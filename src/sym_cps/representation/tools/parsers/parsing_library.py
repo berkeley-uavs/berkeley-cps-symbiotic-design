@@ -45,10 +45,6 @@ def parse_components_and_types(path: Path) -> dict[str, LibraryComponent]:
             components[component_name] = library_component
             if "class" in entry.keys():
                 type_name = entry["class"]
-                component_id = entry["comp"]
-                if "para_hub" in component_id:
-                    n = component_id[-1]
-                    type_name = f"{type_name}{n}"
 
                 if "Passenger" == type_name:
                     pass
@@ -80,7 +76,6 @@ def parse_components_and_types(path: Path) -> dict[str, LibraryComponent]:
 
 
 def fill_parameters_connectors(path: Path, components: dict[str, LibraryComponent]) -> dict[str, LibraryComponent]:
-
     with open(path, "r") as file:
         info_dict = json.load(file)
         for entry in info_dict:
