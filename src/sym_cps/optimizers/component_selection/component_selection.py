@@ -51,7 +51,7 @@ class ComponentSelectionContract():
         for component in design_concrete.components:
             if component.c_type.id == "Propeller":
                 component.library_component = propeller
-            if component.c_type.id == "Battery_UAV":
+            if component.c_type.id == "Battery":
                 component.library_component = battery
             if component.c_type.id == "Motor":
                 component.library_component = motor
@@ -69,7 +69,7 @@ class ComponentSelectionContract():
                 for component in design_concrete.components:
                     if component.c_type.id == "Propeller":
                         propeller = component.library_component
-                    if component.c_type.id == "Battery_UAV":
+                    if component.c_type.id == "Battery":
                         battery = component.library_component
                     if component.c_type.id == "Motor":
                         motor = component.library_component
@@ -113,7 +113,7 @@ class ComponentSelectionContract():
             c_type = node["c_type"]
             if c_type.id == "Propeller":
                 num_propellers += 1
-            elif c_type.id == "Battery_UAV":
+            elif c_type.id == "Battery":
                 num_batteries += 1
             elif c_type.id == "Motor":
                 num_motors += 1
