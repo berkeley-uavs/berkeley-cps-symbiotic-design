@@ -173,3 +173,4 @@ def fix_connectors_mapping():
 
 if __name__ == '__main__':
     fix_connectors_mapping()
+    # delete_hubs()

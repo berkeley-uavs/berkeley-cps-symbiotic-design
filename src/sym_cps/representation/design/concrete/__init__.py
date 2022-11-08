@@ -411,7 +411,11 @@ class DConcrete:
 
     def __eq__(self, other: object):
         if isinstance(other, DConcrete):
-            return self.components == other.components and self.connections == other.connections
+            if not self._graph.get_isomorphisms_vf2(other.graph):
+                return False
+            if not self.components == other.components:
+                return False
+            return True
         else:
             raise Exception("Different classes")
 

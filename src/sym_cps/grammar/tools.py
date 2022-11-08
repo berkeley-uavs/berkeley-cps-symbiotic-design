@@ -23,11 +23,12 @@ def get_direction_from_components_and_connections(
     try:
         connections = connections_map[comp_type_a][comp_type_b]
     except:
+        raise Exception(f"Component Connection Missing:\n{comp_type_a}-{comp_type_b}")
         return "COMPONENT_ABSENT"
     for direction, (conn_a, conn_b) in connections.items():
         if conn_a == connector_id_a and conn_b == connector_id_b:
             return direction
-    return "UNKNOWN"
+    raise Exception(f"Unknown Direction:\n{comp_type_a}-{comp_type_b}-{connector_id_a}-{connector_id_b}")
 
 
 def merge_connection_rules(folder: Path, library: Library):
