@@ -95,7 +95,7 @@ class Component:
         if self.library_component != other.library_component:
             return False
 
-        if self.params_props_values != self.params_props_values:
+        if self.params_props_values != other.params_props_values:
             return False
 
         return True
@@ -110,7 +110,8 @@ class Component:
         _parameters_hash = ""
         for para in self.parameters.values():
             _parameters_hash += str(para.value)
-        return hash(self.library_component.id + _parameters_hash)
+        # return hash(self.library_component.id + _parameters_hash)
+        return hash(self.id + self.library_component.id + _parameters_hash)
 
     def __str__(self):
         s1 = f"name: {self.model}\n" f"type: {self.c_type}\n"

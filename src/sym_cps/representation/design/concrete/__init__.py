@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import shutil
 import os
+from copy import copy, deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -15,11 +16,12 @@ from igraph import Edge, EdgeSeq, Graph, Vertex
 
 from sym_cps.evaluation import evaluate_design
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
-from sym_cps.grammar.topology import AbstractionFeatures, AbstractTopology
+from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
+from sym_cps.representation.design.concrete.tools import node_comparison, edge_comparison
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level
@@ -128,9 +130,10 @@ class DConcrete:
             label=f"{component.library_component.id}",
         )
 
-    def remove_node(self):
-        """TODO"""
-        raise NotImplementedError
+    def remove_node(self, vertex_id: int):
+        print(self._graph)
+        self._graph.delete_vertices([vertex_id])
+        print(self._graph)
 
     def add_edge(self, node_id_a: int, node_id_b: int, connection: Connection):
         self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection)
@@ -411,21 +414,37 @@ class DConcrete:
 
     def __eq__(self, other: object):
         if isinstance(other, DConcrete):
-            if not self._graph.get_isomorphisms_vf2(other.graph):
-                return False
-            return True
-            # set1 = self.components
-            # set2 = other.components
-            # if set1 != set2:
-            #     print("not equal")
-            #     for c1 in set1:
-            #         for c2 in set2:
-            #             if c1 == c2:
-            #                 print(f"{c1.id} matched with {c2.id}")
-            #     return False
-            # return True
-        else:
-            raise Exception("Different classes")
+            print(self.graph)
+            print(other.graph)
+            mapping = self._graph.get_isomorphisms_vf2(other.graph,
+                                                       node_compat_fn=node_comparison,
+                                                       edge_compat_fn=edge_comparison)
+            print(mapping)
+        #     set1 = self.components
+        #     set2 = other.components
+        #     if set1 != set2:
+        #         print("not equal")
+        #         unmatched_c1 = deepcopy(set1)
+        #         unmatched_c2 = deepcopy(set2)
+        #         for c1 in set1:
+        #             if c1 in unmatched_c1:
+        #                 for c2 in set2:
+        #                     if c2 in unmatched_c2:
+        #                         if c1 == c2:
+        #                             unmatched_c2.remove(c2)
+        #                             try:
+        #                                 unmatched_c1.remove(c1)
+        #                             except:
+        #                                 print("")
+        #         for unmatched in unmatched_c1:
+        #             print(f"{unmatched.id} unmatched\n{unmatched}")
+        #         for unmatched in unmatched_c2:
+        #             print(f"{unmatched.id} unmatched\n{unmatched}")
+        #         return False
+        #     print("equal")
+        #     return True
+        # else:
+        #     raise Exception("Different classes")
 
     def __ne__(self, other: object):
 
