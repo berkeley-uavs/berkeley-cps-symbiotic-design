@@ -20,20 +20,19 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
 
     # Creating DConcrete Object
     test_quad_loaded = DConcrete.from_abstract_topology(abstract_topology)
-    print("done")
 
     assert test_quad_original == test_quad_loaded
-
-    print(("done2"))
 
     # Exporting AbstractTopology to file
     topology_json_path_2 = test_quad_loaded.export(topology_level)
 
-    # Comparing jsons
-    json_1 = json.load(open(topology_json_path_1))
-    json_2 = json.load(open(topology_json_path_2))
+    # Loading again from file
+    abstract_topology_2 = AbstractTopology.from_json(topology_json_path_2)
 
-    assert sorted(json_1.items()) == sorted(json_2.items())
+    # Creating DConcrete Object
+    test_quad_loaded_2 = DConcrete.from_abstract_topology(abstract_topology)
+
+    assert test_quad_original == test_quad_loaded_2
 
 
 levels = [ExportType.TOPOLOGY_1, ExportType.TOPOLOGY_2, ExportType.TOPOLOGY_3]

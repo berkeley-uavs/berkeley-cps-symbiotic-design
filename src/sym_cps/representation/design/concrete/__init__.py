@@ -413,9 +413,17 @@ class DConcrete:
         if isinstance(other, DConcrete):
             if not self._graph.get_isomorphisms_vf2(other.graph):
                 return False
-            if not self.components == other.components:
-                return False
             return True
+            # set1 = self.components
+            # set2 = other.components
+            # if set1 != set2:
+            #     print("not equal")
+            #     for c1 in set1:
+            #         for c2 in set2:
+            #             if c1 == c2:
+            #                 print(f"{c1.id} matched with {c2.id}")
+            #     return False
+            # return True
         else:
             raise Exception("Different classes")
 

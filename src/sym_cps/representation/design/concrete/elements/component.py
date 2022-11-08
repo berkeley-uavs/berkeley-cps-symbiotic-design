@@ -107,7 +107,10 @@ class Component:
         return not self.__eq__(other)
 
     def __hash__(self):
-        return abs(hash(self.id))
+        _parameters_hash = ""
+        for para in self.parameters.values():
+            _parameters_hash += str(para.value)
+        return hash(self.library_component.id + _parameters_hash)
 
     def __str__(self):
         s1 = f"name: {self.model}\n" f"type: {self.c_type}\n"
