@@ -358,7 +358,7 @@ class DConcrete:
             return save_to_file(
                 str(self),
                 file_name=f"DConcrete",
-                absolute_folder_path=absolute_folder,
+                absolute_path=absolute_folder,
             )
         elif "TOPOLOGY" in file_type.name:
             ab_topo = self.to_abstract_topology()
@@ -366,13 +366,13 @@ class DConcrete:
             return save_to_file(
                 ab_topo.to_json(ab_level),
                 file_name=f"topology_summary_{ab_level}.json",
-                absolute_folder_path=absolute_folder,
+                absolute_path=absolute_folder,
             )
         elif file_type == ExportType.JSON:
             return save_to_file(
                 str(json.dumps(self.to_design_swri)),
                 file_name=f"design_swri.json",
-                absolute_folder_path=absolute_folder,
+                absolute_path=absolute_folder,
             )
         elif file_type == ExportType.DOT:
             if not os.path.exists(absolute_folder):
@@ -389,7 +389,7 @@ class DConcrete:
             save_to_file(
                 str(str(json.dumps(self.evaluation_results))),
                 file_name=f"evaluation_results.json",
-                absolute_folder_path=absolute_folder,
+                absolute_path=absolute_folder,
             )
             print(f"Copying {self.evaluation_results['stl_file_path']} to {absolute_folder}")
             shutil.copy(self.evaluation_results["stl_file_path"], absolute_folder)

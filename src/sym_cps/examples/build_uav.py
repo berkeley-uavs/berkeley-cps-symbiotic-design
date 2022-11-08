@@ -26,7 +26,7 @@ def modified_design():
     save_to_file(
         str(json.dumps(topology_json)),
         file_name=f"topology_summary_mod.json",
-        absolute_folder_path=topology_json_path.parent,
+        absolute_path=topology_json_path.parent,
     )
 
     # Loading AbstractTopology form file
@@ -35,7 +35,7 @@ def modified_design():
     save_to_file(
         abstract_topology.to_json(),
         file_name=f"topology_summary_modified.json",
-        absolute_folder_path=topology_json_path.parent,
+        absolute_path=topology_json_path.parent,
     )
 
     # Loading it ito a new design

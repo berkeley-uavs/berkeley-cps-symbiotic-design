@@ -96,7 +96,7 @@ def merge_connection_rules(folder: Path, library: Library):
     save_to_file(
         str(default_components),
         file_name=f"default_components.json",
-        absolute_folder_path=connections_folder,
+        absolute_path=connections_folder,
     )
 
     return concrete_connection_dict, abstract_connection_dict
@@ -126,7 +126,7 @@ def generalize_connection_rules(folder: Path):
     save_to_file(
         str(connection_json),
         file_name=f"data_aug.json",
-        absolute_folder_path=connections_folder,
+        absolute_path=connections_folder,
     )
 
 
@@ -135,7 +135,7 @@ def export_connection_rules(connection_dict: dict):
     save_to_file(
         str(connection_json),
         file_name=f"geometry_rules.json",
-        absolute_folder_path=connections_folder,
+        absolute_path=connections_folder,
     )
 
 
@@ -146,13 +146,13 @@ def main():
     save_to_file(
         str(connection_concrete_json),
         file_name=f"geometry_rules_concrete.json",
-        absolute_folder_path=connections_folder,
+        absolute_path=connections_folder,
     )
     connection_abstract_json = json.dumps(abstract_connection_dict, indent=4)
     save_to_file(
         str(connection_abstract_json),
         file_name=f"geometry_rules_abstract.json",
-        absolute_folder_path=connections_folder,
+        absolute_path=connections_folder,
     )
 
     print("\n\nMISSING CONNECTIONS")

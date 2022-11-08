@@ -19,7 +19,7 @@ def export_design_json(design_name: str = "Trowel", designs_dat_file: str = "des
     save_to_file(
         str(json.dumps(d_concrete.to_design_swri)),
         file_name=f"design_swri.json",
-        absolute_folder_path=designs_folder / d_concrete.name,
+        absolute_path=designs_folder / d_concrete.name,
     )
     print(f"{design_name} exported to json")
 
@@ -77,7 +77,7 @@ def modify_parameters_to_design(design_name: str = "Trowel", designs_dat_file: s
     save_to_file(
         str(modified_design),
         file_name=f"DConcrete",
-        absolute_folder_path=designs_folder / modified_design.name,
+        absolute_path=designs_folder / modified_design.name,
     )
     print(f"A new design {modified_design.name} has been generated from {design_name} and modifying its parameters")
 
