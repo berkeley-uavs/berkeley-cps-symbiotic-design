@@ -35,8 +35,19 @@ class CParameter:
             "max_val": None,
             "default_val": None,
             "assigned_val": None,
+            "learned_val": None,
         }
         self._edit_field("_values", vals)
+
+    @property
+    def export(self) -> dict:
+        ret = {}
+        ret["name"] = self.name
+        ret["min"] = str(self.min)
+        ret["max"] = str(self.min)
+        ret["default"] = str(self.default)
+        ret["learned"] = str(self.default)
+        return ret
 
     @property
     def values(self) -> dict[str, float]:
@@ -62,6 +73,10 @@ class CParameter:
         if self._values["assigned_val"] is not None:
             return float(self._values["assigned_val"])
         raise Exception("No default value")
+
+    @property
+    def learned(self) -> float | None:
+        return self._values["learned_val"]
 
     @property
     def summary(self) -> str:

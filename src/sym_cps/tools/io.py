@@ -6,7 +6,7 @@ from engineio import json
 
 
 def save_to_file(
-    file_content: str,
+    file_content: str | dict,
     file_name: str,
     folder_name: str | None = None,
     absolute_folder_path: Path | None = None,
@@ -35,6 +35,9 @@ def save_to_file(
 
     if not os.path.exists(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
+
+    if isinstance(file_content, dict):
+        file_content = json.dumps(file_content, indent=4)
 
     with open(file_path, "w") as f:
         if Path(file_name).suffix == ".json":

@@ -5,7 +5,7 @@ from itertools import combinations
 from sym_cps.shared.designs import designs
 from sym_cps.tools.io import save_to_file
 
-designs_to_analyze = [designs["TestQuad"][0], designs["NewAxe"][0]]
+designs_to_analyze = [d[0] for d in designs.values()]
 
 
 def _all_same_value(dictionary: dict) -> bool:
@@ -128,7 +128,39 @@ def extract_shared_parameters(data: dict):
     return shared_parameters
 
 
-if __name__ == "__main__":
+def library_analysis():
+    all_components_types_in_designs = set()
+    shared_component_types_in_designs = set()
+
+    components_types_in_design = {}
+    component_used_in_designs = {}
+
+    for design_id, (dconcrete, dtopology) in designs.items():
+        component_types = set()
+        for component in dconcrete.components:
+            component_types.add(component.c_type.id)
+            if component.c_type.id not in component_used_in_designs.keys():
+                component_used_in_designs[component.c_type.id] = []
+            if component.model not in component_used_in_designs[component.c_type.id]:
+                component_used_in_designs[component.c_type.id].append(component.model)
+        all_components_types_in_designs |= component_types
+        if len(shared_component_types_in_designs) == 0:
+            shared_component_types_in_designs |= component_types
+        else:
+            shared_component_types_in_designs = shared_component_types_in_designs.intersection(component_types)
+        components_types_in_design[design_id] = list(component_types)
+
+    save_to_file(components_types_in_design,
+                 "components_types_in_design.json",
+                 folder_name="analysis"
+                 )
+    save_to_file(component_used_in_designs,
+                 "component_choice_in_designs.json",
+                 folder_name="analysis"
+                 )
+
+
+def parameter_analysis():
     data = parse_designs()
     for design_name, info in data.items():
         save_to_file(

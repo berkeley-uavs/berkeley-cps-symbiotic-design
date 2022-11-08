@@ -33,6 +33,14 @@ class CConnector:
     def __hash__(self):
         return hash(self.id)
 
+    @property
+    def export(self) -> dict:
+        ret = {}
+        ret["name"] = self.name
+        ret["compatible_with"] = list(self.compatible_with.keys())
+        return ret
+
+
     def __str__(self):
         s = f"Connector_ID:\t{self.id}\n"
         if len(self.compatible_with) != 0:

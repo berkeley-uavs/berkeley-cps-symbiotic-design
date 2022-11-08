@@ -58,7 +58,7 @@ class Library:
         return component
 
     def get_connectors(
-        self, component_type_a: CType, component_type_b: CType, direction: str
+            self, component_type_a: CType, component_type_b: CType, direction: str
     ) -> (CConnector, CConnector):
         """TODO"""
         connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
@@ -93,10 +93,10 @@ class Library:
         return results
 
     def update_information(
-        self,
-        connectable_connectors: dict[str, set[str]] | None,
-        connectable_components_types: dict[CType, set[CType]] | None,
-        design_parameters: dict[str, str] | None,
+            self,
+            connectable_connectors: dict[str, set[str]] | None,
+            connectable_components_types: dict[CType, set[CType]] | None,
+            design_parameters: dict[str, str] | None,
     ):
         if isinstance(connectable_connectors, dict):
             for key, value in connectable_connectors.items():
@@ -139,6 +139,23 @@ class Library:
                 components.update(fill_parameters_connectors(file_path, components))
 
         return Library(components)
+
+
+    def export(self, what: str = "components") -> dict:
+        ret = {}
+
+        if what == "components":
+            for c_type, components in self.components_in_type.items():
+                ret[c_type] = []
+                for component in components:
+                    ret[c_type].append(component.export)
+        if what == "connectors":
+            for connector_id, connector in self.connectors.items():
+                ret[connector_id] = connector.export
+        if what == "parameters":
+            for parameter_id, parameter in self.parameters.items():
+                ret[parameter_id] = parameter.export
+        return ret
 
     def __str__(self):
         return "\n+++++++++++++++++++++++++++++++++\n".join(str(c) for c in list(self.components.values()))
