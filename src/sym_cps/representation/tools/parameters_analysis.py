@@ -150,14 +150,8 @@ def library_analysis():
             shared_component_types_in_designs = shared_component_types_in_designs.intersection(component_types)
         components_types_in_design[design_id] = list(component_types)
 
-    save_to_file(components_types_in_design,
-                 "components_types_in_design.json",
-                 folder_name="analysis"
-                 )
-    save_to_file(component_used_in_designs,
-                 "component_choice_in_designs.json",
-                 folder_name="analysis"
-                 )
+    save_to_file(components_types_in_design, "components_types_in_design.json", folder_name="analysis")
+    save_to_file(component_used_in_designs, "component_choice_in_designs.json", folder_name="analysis")
 
 
 def parameter_analysis():

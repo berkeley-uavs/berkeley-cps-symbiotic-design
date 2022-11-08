@@ -29,6 +29,7 @@ def load(file: str) -> object | None:
         print(file)
         if "library" in file:
             from sym_cps.representation.library import Library
+
             print("returning empty library")
             return Library()
         if "designs" in file:
