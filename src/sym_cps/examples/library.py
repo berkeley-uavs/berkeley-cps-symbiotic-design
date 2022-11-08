@@ -3,16 +3,10 @@ import json
 
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.topology import DTopology
-from sym_cps.representation.library import CConnector, CType, Library
-from sym_cps.representation.tools.parsers.parsing_library import (
-    all_parameters_lower_bounds,
-    all_parameters_upper_bounds,
-)
+from sym_cps.representation.library import Library
 from sym_cps.shared.library import c_library
-from sym_cps.shared.paths import library_folder
 from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.persistance import load
-from sym_cps.tools.strings import repr_dictionary
 
 
 def export_library():
@@ -80,15 +74,9 @@ def analysis(library_dat_file: str = "library.dat", designs_dat_file: str = "des
 
     components_types_in_design_json = json.dumps(components_types_in_design, indent=4)
 
-    save_to_file(components_types_in_design_json,
-                 "components_types_in_design.json",
-                 folder_name="library"
-                 )
+    save_to_file(components_types_in_design_json, "components_types_in_design.json", folder_name="library")
     component_used_in_designs_json = json.dumps(component_used_in_designs, indent=4)
-    save_to_file(component_used_in_designs_json,
-                 "component_choice_in_designs.json",
-                 folder_name="library"
-                 )
+    save_to_file(component_used_in_designs_json, "component_choice_in_designs.json", folder_name="library")
 
     # components_types_and_model_in_design_json = json.dumps(components_types_and_model_in_design, indent=4)
     # save_to_file(components_types_and_model_in_design_json,

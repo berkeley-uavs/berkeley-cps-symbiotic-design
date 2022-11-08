@@ -39,17 +39,10 @@ Sample input (QuadCopter)
 
 }
 """
-from sym_cps.optimizers.routing.tool import Net, Coordinate_3d
+from sym_cps.optimizers.routing.tool import Coordinate_3d, Net
+
 
 class DetailRouter(object):
     def __init__(self, netlist: list[Net], nodes: list[Coordinate_3d]):
         # create grids
         pass
-
-
-
-
-
-        
-
-

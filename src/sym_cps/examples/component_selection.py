@@ -1,47 +1,40 @@
-import math
-from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
-from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
 from sym_cps.optimizers.component_selection.component_selection import ComponentSelectionContract
-from sym_cps.shared.paths import designs_folder
-from sym_cps.shared.objects import ExportType
-from sym_cps.evaluation import evaluate_design
+from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
 
 
-class Test_Selection():
+class Test_Selection:
     def __init__(self):
-        self.c_library, self.designs = parse_library_and_seed_designs()  
+        self.c_library, self.designs = parse_library_and_seed_designs()
         self.component_selection = ComponentSelectionContract(c_library=self.c_library)
 
     def test_component_selection(self):
         """Loading Library and Seed Designs"""
         design_concrete, design_topology = self.designs["TestQuad"]
         """Perform the contract-based component selection"""
-        
+
         """Check initial Component"""
         print("Check initial component")
-        self.component_selection.check_selection(design_topology=design_topology, 
-                                            design_concrete=design_concrete)
+        self.component_selection.check_selection(design_topology=design_topology, design_concrete=design_concrete)
         """Selection"""
-        propeller, motor, battery = self.component_selection.select_hackathon(  design_topology=design_topology, 
-                                                                                design_concrete=None, 
-                                                                                max_iter=10,
-                                                                                timeout_millisecond = 100000)
+        propeller, motor, battery = self.component_selection.select_hackathon(
+            design_topology=design_topology, design_concrete=None, max_iter=10, timeout_millisecond=100000
+        )
         """Verify the Selection"""
         print("Check Result")
-        self.component_selection.check_selection(design_topology=design_topology, 
-                                            motor=motor,
-                                            battery=battery,
-                                            propeller=propeller)
+        self.component_selection.check_selection(
+            design_topology=design_topology, motor=motor, battery=battery, propeller=propeller
+        )
         return propeller, motor, battery
 
     def run_evaluation(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
-        self.component_selection.check_selection(design_topology=design_topology, 
-                                            motor=motor,
-                                            battery=battery,
-                                            propeller=propeller)
+        self.component_selection.check_selection(
+            design_topology=design_topology, motor=motor, battery=battery, propeller=propeller
+        )
         """Set the component for selection"""
-        self.component_selection.replace_with_component(design_concrete=design_concrete, propeller=propeller, motor=motor, battery=battery)
+        self.component_selection.replace_with_component(
+            design_concrete=design_concrete, propeller=propeller, motor=motor, battery=battery
+        )
         design_concrete.name += "_comp_opt"
         design_concrete.evaluate()
         # # call the pipeline for evaluation
@@ -53,10 +46,10 @@ class Test_Selection():
 
     def check_combination(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
-        self.component_selection.check_selection(design_topology=design_topology, 
-                                            motor=motor,
-                                            battery=battery,
-                                            propeller=propeller)
+        self.component_selection.check_selection(
+            design_topology=design_topology, motor=motor, battery=battery, propeller=propeller
+        )
+
 
 if __name__ == "__main__":
     tester = Test_Selection()
@@ -82,7 +75,6 @@ if __name__ == "__main__":
     # motor = tester.c_library.components["kde_direct_KDE2315XF885"]
     # battery = tester.c_library.components["TurnigyGraphene3000mAh6S75C"]
 
-    
     # propeller = tester.c_library.components["apc_propellers_5_5x2_5"]
     # motor = tester.c_library.components["t_motor_MN22041400KV"]
     # battery = tester.c_library.components["TurnigyGraphene1400mAh4S75C"]
@@ -94,8 +86,8 @@ if __name__ == "__main__":
     # propeller = tester.c_library.components["apc_propellers_8_8x8_9"]
     # motor = tester.c_library.components["kde_direct_KDE2814XF_515"]
     # battery = tester.c_library.components["TurnigyGraphene4000mAh6S75C"]
-    
-    #This one works well for TestQuad
+
+    # This one works well for TestQuad
     # Propeller: apc_propellers_19x10E
     # Motor: kde_direct_KDE3510XF_475
     # Battery: TurnigyGraphene6000mAh3S75C
@@ -126,7 +118,7 @@ if __name__ == "__main__":
     # battery = tester.c_library.components["TurnigyGraphene4000mAh6S75C"]
 
     # This one works well for TestQuad
-    #Propeller: apc_propellers_27x13E
+    # Propeller: apc_propellers_27x13E
     # Motor: Antigravity_MN8012_KV100
     # Battery: TurnigyGraphene5000mAh6S75C
 
@@ -135,4 +127,4 @@ if __name__ == "__main__":
     # battery = tester.c_library.components["TurnigyGraphene6000mAh4S75C"]
     tester.check_combination(propeller=propeller, motor=motor, battery=battery)
     tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
-    #build_contract_library()
+    # build_contract_library()

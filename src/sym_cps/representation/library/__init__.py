@@ -9,7 +9,7 @@ from sym_cps.representation.library.elements.c_parameter import CParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.representation.tools.parsers.parsing_library import fill_parameters_connectors, parse_components_and_types
-from sym_cps.shared.paths import component_library_root_path_default, data_folder, component_selection_path
+from sym_cps.shared.paths import component_library_root_path_default, component_selection_path, data_folder
 
 
 @dataclass
@@ -58,7 +58,7 @@ class Library:
         return component
 
     def get_connectors(
-            self, component_type_a: CType, component_type_b: CType, direction: str
+        self, component_type_a: CType, component_type_b: CType, direction: str
     ) -> (CConnector, CConnector):
         """TODO"""
         connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
@@ -93,10 +93,10 @@ class Library:
         return results
 
     def update_information(
-            self,
-            connectable_connectors: dict[str, set[str]] | None,
-            connectable_components_types: dict[CType, set[CType]] | None,
-            design_parameters: dict[str, str] | None,
+        self,
+        connectable_connectors: dict[str, set[str]] | None,
+        connectable_components_types: dict[CType, set[CType]] | None,
+        design_parameters: dict[str, str] | None,
     ):
         if isinstance(connectable_connectors, dict):
             for key, value in connectable_connectors.items():
@@ -139,7 +139,6 @@ class Library:
                 components.update(fill_parameters_connectors(file_path, components))
 
         return Library(components)
-
 
     def export(self, what: str = "components") -> dict:
         ret = {}
