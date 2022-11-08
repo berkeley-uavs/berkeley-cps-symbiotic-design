@@ -14,7 +14,7 @@ from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.shared.objects import ExportType
 from sym_cps.shared.paths import designs_folder
-from sym_cps.tools.io import save_to_file
+from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.strings import repr_dictionary
 
 if TYPE_CHECKING:

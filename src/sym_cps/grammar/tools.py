@@ -7,7 +7,7 @@ from pathlib import Path
 
 from sym_cps.representation.library import Library
 from sym_cps.shared.objects import connections_map
-from sym_cps.tools.io import save_to_file
+from sym_cps.tools.my_io import save_to_file
 
 
 class Direction(Enum):

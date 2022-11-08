@@ -6,7 +6,7 @@ from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.topology import DTopology
 from sym_cps.representation.tools.parsers.parsing_designs import parse_design_from_design_swri
 from sym_cps.shared.paths import designs_folder
-from sym_cps.tools.io import save_to_file
+from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.persistance import load
 
 

@@ -4,7 +4,7 @@ from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
 from sym_cps.shared.objects import ExportType
-from sym_cps.tools.io import save_to_file
+from sym_cps.tools.my_io import save_to_file
 
 """Generate design from topology.json"""
 

@@ -10,7 +10,7 @@ from sym_cps.representation.tools.parsers.parsing_library import (
 )
 from sym_cps.shared.library import c_library
 from sym_cps.shared.paths import library_folder
-from sym_cps.tools.io import save_to_file
+from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.persistance import load
 from sym_cps.tools.strings import repr_dictionary
 

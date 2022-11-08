@@ -3,7 +3,7 @@ from copy import deepcopy
 from itertools import combinations
 
 from sym_cps.shared.designs import designs
-from sym_cps.tools.io import save_to_file
+from sym_cps.tools.my_io import save_to_file
 
 designs_to_analyze = [d[0] for d in designs.values()]
 
