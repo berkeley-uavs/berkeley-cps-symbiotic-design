@@ -23,8 +23,8 @@ class Contract:
         """Instantiate a contract"""
         self._count += 1
         vs = {v: z3.Real(f"{v}_{self._name}_{instance_name}_{self._count}") for v in self._vs}
-        A = self._assumption(vs)
-        G = self._guarantee(vs)
+        A = self._assumption(vs, **kwargs)
+        G = self._guarantee(vs, **kwargs)
         return vs, A, G
 
 
@@ -366,7 +366,7 @@ class ContractManager:
         self._all_clause.extend(G)
         # connect system
         self._all_clause.append(sys_vs["thrust_sum"] == prop_vs["thrust"])
-        self._all_clause.append(sys_vs["weight_sum"] == prop_vs["W_prop"] + battery_vs["W_batt"] + motor_vs["W_motor"])
+        self._all_clause.append(sys_vs["weight_sum"] == (prop_vs["W_prop"] + battery_vs["W_batt"] + motor_vs["W_motor"] + body_weight) * 9.81) # Kg to N
         # tmp for debug
         self._all_clause.append(battery_vs["I_batt"] == battery_vs["capacity"] * 3600 / 400)  # Ah -> As
         self._all_clause.append(prop_vs["rho"] == sys_vs["rho"])  # Ah -> As
