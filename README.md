@@ -40,7 +40,6 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
     pdm install
     ```
 
-
 ### Configure AWS
 
 1. Download the `aws-cvpn-config.ovpn` configuration file from the [challenge_data repo](https://github.com/uc-berkeley-data-discovery-2022/challenge_data) repo and use it to connect
@@ -160,6 +159,39 @@ When running a python script from command line, insert `pdm run` before. For exa
 pdm run python src/sym_cps/examples/library.py
 ```
 
+<<<<<<< HEAD
+### Run
+
+#### Launch Python scripts from command line
+
+When running a python script from command line, insert `pdm run` before. For example:
+
+```bash
+pdm run pdm run python src/sym_cps/examples/library.py
+```
+
+
+#### Working with IDEs
+
+With PEP 582, dependencies will be installed into __pypackages__ directory under the project root. With PEP 582 enabled globally, you can also use the project interpreter to run scripts directly.
+Check [pdm documentation](https://pdm.fming.dev/latest/usage/pep582/) on PEP 582.
+
+
+**PYCHARM**
+Add `__pypackages__/3.10/lib` and `src` folders to your PYTHONPATH. With PyCharm you can simple right click on the folders and select `Mark Directory as` - `Source folder`.
+
+**VSCODE**
+
+To configure VSCode to support PEP 582, open `.vscode/settings.json` (create one if it does not exist) and add the following entries:
+```json
+{
+  "python.autoComplete.extraPaths": ["__pypackages__/3.10/lib"],
+  "python.analysis.extraPaths": ["__pypackages__/3.10/lib"]
+}
+```
+
+
+=======
 #### Working with IDEs
 
 With PEP 582, dependencies will be installed into __pypackages__ directory under the project root. With PEP 582 enabled
@@ -208,6 +240,7 @@ following entries:
   ```bash
   pdm run custom-design "working/test_quad_abstraction_3"
   ```
+>>>>>>> main
 
 ## Examples
 
@@ -245,6 +278,12 @@ pdm run suam-client direct2cad.process-design --design=../challenge_data/output/
 ```
 
 Evaluate designs from python
+<<<<<<< HEAD
+```bash
+pdm run python src/sym_cps/examples/evaluation.py
+```
+=======
+>>>>>>> main
 
 ```bash
 pdm run python src/sym_cps/examples/evaluation.py
@@ -295,6 +334,21 @@ inside `eval_pipeline` folder.
 
 ### Apple Silicon
 
+<<<<<<< HEAD
+> NOTE:
+> Install 
+> [PDM](https://github.com/pdm-project/pdm)
+> manually.
+>
+> You can install it with:
+>
+> ```bash
+> python3 -m pip install --user pipx
+> pipx install pdm
+> ```
+>
+> Now you can try running `make setup` again.
+=======
 For Mac M1 users, if you have architecture problems (i.e. some packages are not available for arm), you can try simulating x86_64 architecture and install the dependencies again.
 ```bash
 env /usr/bin/arch -x86_64 /bin/zsh
@@ -310,12 +364,50 @@ To run a x86 terminal by default in VSCode, add the following to your `settings.
    }},
 "terminal.integrated.defaultProfile.osx": "x86 bash"
 ```
+>>>>>>> main
 
 To run a x86 terminal by default in PyCharm, go to Preferences/Tools/Terminal and set the shell path to be:
 
+<<<<<<< HEAD
+
+> NOTE: Apple Silicon
+> Make sure that you are running a x86 terminal.
+> You can run x86 terminal commands with Apple’s Rosetta 2 by launching:
+>
+> ```bash
+> arch -x86_64 /bin/bash
+> ```
+> 
+
+
+> NOTE: VSCode and Apple Silicon
+> To run a x86 terminal by default in VSCode. Add the following to your `settings.json`
+> ```json
+> "terminal.integrated.profiles.osx": {
+>    "x86 bash": {
+>        "path": "/usr/bin/arch",
+>        "args": ["-arch", "x86_64", "/bin/bash"]
+>    }
+>},
+>"terminal.integrated.defaultProfile.osx": "x86 bash"
+> ```
+
+> NOTE: PyCharm and Apple Silicon
+> Go to Preferences/Tools/Terminal and set the shell path to be:
+>  ```bash
+>  env /usr/bin/arch -x86_64 /bin/zsh --login
+> ```
+
+
+
+## License
+
+[MIT](https://github.com/piergiuseppe/sym-cps/blob/master/LICENSE)
+=======
 ```bash
 env /usr/bin/arch -x86_64 /bin/zsh --login
 ```
+>>>>>>> main
 
 ## Features and Credits
 

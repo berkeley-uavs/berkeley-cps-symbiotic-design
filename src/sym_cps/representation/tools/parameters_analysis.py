@@ -128,6 +128,42 @@ def extract_shared_parameters(data: dict):
     return shared_parameters
 
 
+def extract_clusters():
+    data: dict() = {}
+    res: dict() = {}
+    i = 0
+    while i < 2:
+        pairs: dict[str, list[list[str]]] = {}
+        res[designs_to_analyze[i].name] = {}
+        for vertex in designs_to_analyze[i].connections:
+            comp_a = vertex.component_a.c_type.id
+            comp_b = vertex.component_b.c_type.id
+            if not comp_a in pairs.keys():
+                pairs[comp_a] = []
+            if not [comp_a, comp_b] in pairs[comp_a]:
+                pairs[comp_a].append([comp_a, comp_b])
+        res[designs_to_analyze[i].name]["2"] = pairs
+        i += 1
+
+    i = 0
+    while i < 2:
+        key = designs_to_analyze[i].name
+        triples = {}
+        pairs = res[key]["2"]
+        for lst in list(pairs.values()):
+            for comp_a, comp_b in lst:
+                if not comp_a in triples.keys():
+                    triples[comp_a] = []
+                if comp_b in pairs.keys():
+                    for b, c in pairs[comp_b]:
+                        curr = [comp_a, comp_b]
+                        if not c in curr:
+                            curr.append(c)
+                            triples[comp_a].append(curr)
+        res[designs_to_analyze[i].name]["3"] = triples
+        i += 1
+
+
 def library_analysis():
     all_components_types_in_designs = set()
     shared_component_types_in_designs = set()
@@ -165,5 +201,12 @@ def parameter_analysis():
     save_to_file(
         str(json.dumps(learned_parameters, sort_keys=True, indent=4)),
         f"learned_parameters.json",
+        folder_name=f"analysis",
+    )
+
+    learned_structures = extract_clusters()
+    save_to_file(
+        str(json.dumps(learned_structures, indent=4)),
+        f"learned_structures.json",
         folder_name=f"analysis",
     )

@@ -51,3 +51,9 @@ def get_component_type_from_instance_name(instance: str):
     if "_instance_" in instance:
         return instance.split("_instance_")[0]
     return instance
+
+
+def get_component_and_instance_type_from_instance_name(instance: str) -> (str, int):
+    if "_instance_" in instance:
+        return instance.split("_instance_")[0], instance.split("_instance_")[1]
+    return instance, 0
