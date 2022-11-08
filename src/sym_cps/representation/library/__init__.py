@@ -9,7 +9,7 @@ from sym_cps.representation.library.elements.c_parameter import CParameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.representation.tools.parsers.parsing_library import fill_parameters_connectors, parse_components_and_types
-from sym_cps.shared.paths import component_library_root_path_default, data_folder
+from sym_cps.shared.paths import component_library_root_path_default, data_folder, component_selection_path
 
 
 @dataclass
@@ -43,8 +43,7 @@ class Library:
     def get_default_component(self, component_type: str, hub_size: int = 0) -> LibraryComponent:
         if component_type not in self.component_types.keys():
             raise Exception(f"{component_type}\nComponent Type not present in the library")
-        default_comp_path = data_folder / "reverse_engineering" / "default_components.json"
-        f = open(default_comp_path)
+        f = open(component_selection_path)
         default = json.load(f)
         if component_type == "Hub":
             if hub_size == 4:
@@ -59,7 +58,7 @@ class Library:
         return component
 
     def get_connectors(
-        self, component_type_a: CType, component_type_b: CType, direction: str
+            self, component_type_a: CType, component_type_b: CType, direction: str
     ) -> (CConnector, CConnector):
         """TODO"""
         connectors_components_path = data_folder / "reverse_engineering" / "connectors_components_mapping.json"
@@ -94,10 +93,10 @@ class Library:
         return results
 
     def update_information(
-        self,
-        connectable_connectors: dict[str, set[str]] | None,
-        connectable_components_types: dict[CType, set[CType]] | None,
-        design_parameters: dict[str, str] | None,
+            self,
+            connectable_connectors: dict[str, set[str]] | None,
+            connectable_components_types: dict[CType, set[CType]] | None,
+            design_parameters: dict[str, str] | None,
     ):
         if isinstance(connectable_connectors, dict):
             for key, value in connectable_connectors.items():
@@ -140,6 +139,23 @@ class Library:
                 components.update(fill_parameters_connectors(file_path, components))
 
         return Library(components)
+
+
+    def export(self, what: str = "components") -> dict:
+        ret = {}
+
+        if what == "components":
+            for c_type, components in self.components_in_type.items():
+                ret[c_type] = []
+                for component in components:
+                    ret[c_type].append(component.export)
+        if what == "connectors":
+            for connector_id, connector in self.connectors.items():
+                ret[connector_id] = connector.export
+        if what == "parameters":
+            for parameter_id, parameter in self.parameters.items():
+                ret[parameter_id] = parameter.export
+        return ret
 
     def __str__(self):
         return "\n+++++++++++++++++++++++++++++++++\n".join(str(c) for c in list(self.components.values()))

@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class CType:
-
     id: str
 
     """Configurable parameters"""
@@ -45,6 +44,18 @@ class CType:
             return
         del attr[value]
         object.__setattr__(self, name, attr)
+
+    @property
+    def export(self) -> dict:
+        ret = {}
+        ret["id"] = self.id
+        ret["properties"] = {}
+        for parameter_id, parameter in self.parameters.items():
+            ret["properties"][parameter_id] = parameter.export
+        ret["connectors"] = {}
+        for connector_id, connector in self.connectors.items():
+            ret["connectors"][connector_id] = connector.export
+        return ret
 
     def __str__(self) -> str:
         return self.id

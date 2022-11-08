@@ -15,3 +15,10 @@ class CProperty:
 
     def __str__(self):
         return f"{self.name}: {self.value}"
+
+    @property
+    def export(self) -> dict:
+        ret = {}
+        ret["name"] = self.name
+        ret["value"] = str(self.value)
+        return ret

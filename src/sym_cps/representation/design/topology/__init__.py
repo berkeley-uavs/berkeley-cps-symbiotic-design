@@ -110,7 +110,7 @@ class DTopology:
             save_to_file(
                 str(self),
                 file_name=f"DTopology",
-                absolute_folder_path=absolute_folder,
+                absolute_path=absolute_folder,
             )
         elif file_type == ExportType.JSON:
             raise Exception("Can't create JSON from DTopology. It must be from DConcrete.")

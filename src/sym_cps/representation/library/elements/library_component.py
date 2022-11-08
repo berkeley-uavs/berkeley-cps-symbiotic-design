@@ -44,6 +44,22 @@ class LibraryComponent:
         attr.update(value)
         object.__setattr__(self, name, attr)
 
+    @property
+    def export(self) -> dict:
+        ret = {}
+        ret["id"] = self.id
+        ret["type"] = self.comp_type.id
+        ret["parameters"] = []
+        for parameter_id, parameter in self.parameters.items():
+            ret["parameters"].append(parameter.export)
+        ret["properties"] = {}
+        for property_id, property in self.properties.items():
+            ret["properties"][property_id] = property.value
+        ret["connectors"] = []
+        for connector_id, connector in self.connectors.items():
+            ret["connectors"].append(connector.name)
+        return ret
+
     def __hash__(self):
         return hash(str(self.id))
 

@@ -9,7 +9,7 @@ from matplotlib.rcsetup import all_backends
 from sym_cps.shared.designs import designs
 from sym_cps.tools.io import save_to_file
 
-designs_to_analyze = [designs["TestQuad"][0], designs["NewAxe"][0]]
+designs_to_analyze = [d[0] for d in designs.values()]
 
 
 def _all_same_value(dictionary: dict) -> bool:
@@ -166,85 +166,39 @@ def extract_clusters():
         res[designs_to_analyze[i].name]["3"] = triples
         i += 1
 
-    i = 0
-    while i < 2:
-        key = designs_to_analyze[i].name
-        tuple_4 = {}
-        triples = res[key]["3"]
-        for lst in list(triples.values()):
-            for comp_a, comp_b, comp_c in lst:
-                if comp_c in triples.keys():
-                    for b, c, d in triples[comp_c]:
-                        curr = [comp_a, comp_b, comp_c]
-                        if not c in curr:
-                            if not comp_a in tuple_4.keys():
-                                tuple_4[comp_a] = []
-                            curr.append(c)
-                            if not curr in tuple_4[comp_a]:
-                                tuple_4[comp_a].append(curr)
-                        curr = [comp_a, comp_b, comp_c]
-                        if not d in curr:
-                            if not comp_a in tuple_4.keys():
-                                tuple_4[comp_a] = []
-                            curr.append(d)
-                            if not curr in tuple_4[comp_a]:
-                                tuple_4[comp_a].append(curr)
-        res[designs_to_analyze[i].name]["4"] = tuple_4
-        i += 1
+def library_analysis():
+    all_components_types_in_designs = set()
+    shared_component_types_in_designs = set()
 
-    i = 0
-    while i < 2:
-        key = designs_to_analyze[i].name
-        tuple_5 = {}
-        quad = res[key]["4"]
-        for lst in list(quad.values()):
-            for comp_a, comp_b, comp_c, comp_d in lst:
-                if comp_d in quad.keys():
-                    for b, c, d, e in quad[comp_d]:
-                        curr = [comp_a, comp_b, comp_c, comp_d]
-                        if not c in curr:
-                            if not comp_a in tuple_5.keys():
-                                tuple_5[comp_a] = []
-                            curr.append(c)
-                            if not curr in tuple_5[comp_a]:
-                                tuple_5[comp_a].append(curr)
-                        curr = [comp_a, comp_b, comp_c, comp_d]
-                        if not d in curr:
-                            if not comp_a in tuple_5.keys():
-                                tuple_5[comp_a] = []
-                            curr.append(d)
-                            if not curr in tuple_5[comp_a]:
-                                tuple_5[comp_a].append(curr)
-                        curr = [comp_a, comp_b, comp_c, comp_d]
-                        if not e in curr:
-                            if not comp_a in tuple_5.keys():
-                                tuple_5[comp_a] = []
-                            curr.append(e)
-                            if not curr in tuple_5[comp_a]:
-                                tuple_5[comp_a].append(curr)
-        res[designs_to_analyze[i].name]["5"] = tuple_5
-        i += 1
+    components_types_in_design = {}
+    component_used_in_designs = {}
 
-    data["INDIVIDUAL"] = res
-    data["SHARED"] = {}
+    for design_id, (dconcrete, dtopology) in designs.items():
+        component_types = set()
+        for component in dconcrete.components:
+            component_types.add(component.c_type.id)
+            if component.c_type.id not in component_used_in_designs.keys():
+                component_used_in_designs[component.c_type.id] = []
+            if component.model not in component_used_in_designs[component.c_type.id]:
+                component_used_in_designs[component.c_type.id].append(component.model)
+        all_components_types_in_designs |= component_types
+        if len(shared_component_types_in_designs) == 0:
+            shared_component_types_in_designs |= component_types
+        else:
+            shared_component_types_in_designs = shared_component_types_in_designs.intersection(component_types)
+        components_types_in_design[design_id] = list(component_types)
 
-    for key in list(res[designs_to_analyze[0].name].keys()):
-        test_quad = []
-        for comp_group in list(res[designs_to_analyze[0].name][key].values()):
-            for elem in comp_group:
-                test_quad.append(elem)
+    save_to_file(components_types_in_design,
+                 "components_types_in_design.json",
+                 folder_name="analysis"
+                 )
+    save_to_file(component_used_in_designs,
+                 "component_choice_in_designs.json",
+                 folder_name="analysis"
+                 )
 
-        shared = []
-        for comp_group in list(res[designs_to_analyze[1].name][key].values()):
-            for elem in comp_group:
-                if elem in test_quad:
-                    shared.append(elem)
 
-        data["SHARED"][key] = shared
-
-    return data
-    
-if __name__ == "__main__":
+def parameter_analysis():
     data = parse_designs()
     for design_name, info in data.items():
         save_to_file(
