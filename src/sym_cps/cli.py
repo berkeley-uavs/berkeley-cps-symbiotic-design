@@ -33,7 +33,7 @@ def update_all() -> int:
     update_dat_files_and_export()
     export_library()
 
-    from sym_cps.representation.tools.parameters_analysis import library_analysis, parameter_analysis
+    from sym_cps.reverse_engineering.parameters_analysis import library_analysis, parameter_analysis
 
     library_analysis()
     parameter_analysis()

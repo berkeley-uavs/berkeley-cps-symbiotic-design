@@ -204,9 +204,9 @@ def parameter_analysis():
         folder_name=f"analysis",
     )
 
-    learned_structures = extract_clusters()
+    parameters_learned_structures = extract_clusters()
     save_to_file(
-        str(json.dumps(learned_structures, indent=4)),
-        f"learned_structures.json",
+        str(json.dumps(parameters_learned_structures, indent=4)),
+        f"parameters_learned_structures.json",
         folder_name=f"analysis",
     )

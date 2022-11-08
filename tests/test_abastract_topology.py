@@ -53,8 +53,8 @@ def test_topology_abstraction_3():
 def test_topology_abstraction_4():
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_4)
 
-
-test_topology_abstraction_1()
-test_topology_abstraction_2()
-test_topology_abstraction_3()
+#
+# test_topology_abstraction_1()
+# test_topology_abstraction_2()
+# test_topology_abstraction_3()
 test_topology_abstraction_4()

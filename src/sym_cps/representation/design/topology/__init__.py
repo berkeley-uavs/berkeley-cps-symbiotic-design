@@ -7,10 +7,8 @@ from typing import TYPE_CHECKING
 
 import igraph
 import pydot
-from igraph import Graph, plot
-from matplotlib import pyplot as plt
+from igraph import Graph
 
-from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.shared.objects import ExportType
 from sym_cps.shared.paths import designs_folder
@@ -152,3 +150,6 @@ class DTopology:
         for node in self.nodes:
             ret += f"{node.index}: {node['c_type']}\n"
         return ret
+
+
+

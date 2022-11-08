@@ -6,8 +6,10 @@ from enum import Enum, auto
 from pathlib import Path
 
 from sym_cps.representation.library import Library
-from sym_cps.shared.objects import connections_map
+from sym_cps.shared.paths import connectors_components_path
 from sym_cps.tools.my_io import save_to_file
+
+connections_map = json.load(open(connectors_components_path))
 
 
 class Direction(Enum):
@@ -23,8 +25,7 @@ def get_direction_from_components_and_connections(
     try:
         connections = connections_map[comp_type_a][comp_type_b]
     except:
-        raise Exception(f"Component Connection Missing:\n{comp_type_a}-{comp_type_b}")
-        return "COMPONENT_ABSENT"
+        raise Exception(f"Component Connection Missing:\n{comp_type_a}\n{comp_type_b}\n{connector_id_a}\n{connector_id_b}")
     for direction, (conn_a, conn_b) in connections.items():
         if conn_a == connector_id_a and conn_b == connector_id_b:
             return direction

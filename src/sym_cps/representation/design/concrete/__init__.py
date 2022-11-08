@@ -414,37 +414,11 @@ class DConcrete:
 
     def __eq__(self, other: object):
         if isinstance(other, DConcrete):
-            print(self.graph)
-            print(other.graph)
-            mapping = self._graph.get_isomorphisms_vf2(
+            mappings = self._graph.get_isomorphisms_vf2(
                 other.graph, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
             )
-            print(mapping)
-        #     set1 = self.components
-        #     set2 = other.components
-        #     if set1 != set2:
-        #         print("not equal")
-        #         unmatched_c1 = deepcopy(set1)
-        #         unmatched_c2 = deepcopy(set2)
-        #         for c1 in set1:
-        #             if c1 in unmatched_c1:
-        #                 for c2 in set2:
-        #                     if c2 in unmatched_c2:
-        #                         if c1 == c2:
-        #                             unmatched_c2.remove(c2)
-        #                             try:
-        #                                 unmatched_c1.remove(c1)
-        #                             except:
-        #                                 print("")
-        #         for unmatched in unmatched_c1:
-        #             print(f"{unmatched.id} unmatched\n{unmatched}")
-        #         for unmatched in unmatched_c2:
-        #             print(f"{unmatched.id} unmatched\n{unmatched}")
-        #         return False
-        #     print("equal")
-        #     return True
-        # else:
-        #     raise Exception("Different classes")
+            return len(mappings > 0)
+
 
     def __ne__(self, other: object):
 

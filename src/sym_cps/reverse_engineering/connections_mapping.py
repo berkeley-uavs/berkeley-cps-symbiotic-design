@@ -1,7 +1,9 @@
 import json
 from copy import deepcopy
 
-from sym_cps.shared.paths import connectors_components_path
+from sym_cps.grammar.tools import get_direction_from_components_and_connections
+from sym_cps.shared.library import c_library
+from sym_cps.shared.paths import connectors_components_path, manual_connectors_components_path
 
 
 def add_connection_with_direction(
@@ -13,6 +15,12 @@ def add_connection_with_direction(
     direction_b_to_a: str = "ANY",
 ):
     connections_map: dict = json.load(open(connectors_components_path))
+
+    try:
+        get_direction_from_components_and_connections(comp_type_a, comp_type_b, connector_id_a, connector_id_b)
+        return
+    except Exception:
+        pass
 
     if comp_type_a not in connections_map.keys():
         connections_map[comp_type_a] = {}
@@ -57,6 +65,9 @@ def delete_hubs():
     for k in connections_map:
         if "Hub" in k:
             delete_key(k)
+    from sym_cps.tools.my_io import save_to_file
+    save_to_file(connections_map, connectors_components_path)
+
 
 
 def add_hubs():
@@ -170,11 +181,22 @@ def add_sensors():
     )
 
 
+def include_all_library():
+    for connector_id_a, connector_a in c_library.connectors.items():
+        comp_type_a = connector_a.belongs_to.id
+        for connector_id_b, connector_b in connector_a.compatible_with.items():
+            comp_type_b = connector_b.belongs_to.id
+            add_connection_with_direction(
+                comp_type_a, comp_type_b, connector_id_a, connector_id_b
+            )
 def fix_connectors_mapping():
+    manual_connections_map: dict = json.load(open(manual_connectors_components_path))
+    from sym_cps.tools.my_io import save_to_file
+    save_to_file(manual_connections_map, connectors_components_path)
     add_hubs()
     add_sensors()
+    include_all_library()
 
 
 if __name__ == "__main__":
     fix_connectors_mapping()
-    # delete_hubs()
