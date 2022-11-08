@@ -43,7 +43,7 @@ class ContractManager():
         C_p: float = table.get_value(rpm = 10000, v = 0, label="Cp")#0.0659 
         C_t: float = table.get_value(rpm = 10000, v = 0, label="Ct")#0.1319
 
-        W_prop = propeller.properties["Weight"].value * num_motor
+        W_prop = propeller.properties["WEIGHT"].value * num_motor
         return {"C_p": C_p,
                 "C_t": C_t,
                 "W_prop": W_prop,
@@ -161,7 +161,7 @@ class ContractManager():
         if motors is None:
             motors = c_library.components_in_type["Motor"]
         if batteries is None:
-            batteries = c_library.components_in_type["Battery_UAV"]
+            batteries = c_library.components_in_type["Battery"]
         """Form the OMT problem"""
         #self._all_vs = {}
         self._all_clause = []
@@ -312,7 +312,7 @@ class ContractManager():
         # set obj_lower_bound requirement
         if obj_lower_bound is not None:
             print("Set Lower bound: ", obj_lower_bound)
-            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] > obj_lower_bound)
+            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] * 9.8 > obj_lower_bound)
         # 
 
 
@@ -394,12 +394,12 @@ class ContractManager():
         ret = solver.check()
         while ret == z3.sat:
             model = solver.model()   
-            self.print_metric(model=model)
             propeller, motor, battery = self.get_component_selection(model=model, c_library=c_library)
             print(f"Iteration: {num_iter}, Component Found:")
             print(f"    Propeller: {propeller.id}")
             print(f"    Motor: {motor.id}")
             print(f"    Battery: {battery.id}") 
+            self.print_metric(model=model)
             # count progress
             if num_iter >= max_iter:
                 break
