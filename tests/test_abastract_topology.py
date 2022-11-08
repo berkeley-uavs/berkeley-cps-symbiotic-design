@@ -20,6 +20,7 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
 
     # Creating DConcrete Object
     test_quad_loaded = DConcrete.from_abstract_topology(abstract_topology)
+    print("done")
 
     assert test_quad_original == test_quad_loaded
 

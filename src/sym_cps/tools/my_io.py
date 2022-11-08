@@ -25,9 +25,11 @@ def save_to_file(
 
     if folder_name is not None:
         file_folder = output_folder / folder_name
-
     else:
-        file_folder = f"{output_folder}"
+        if absolute_path is not None:
+            file_folder = absolute_path
+        else:
+            file_folder = f"{output_folder}"
 
     if not os.path.exists(file_folder):
         os.makedirs(file_folder)

@@ -116,4 +116,4 @@ class AbstractTopology:
                     if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()):
                         continue
                 export["TOPOLOGY"][component_a]["CONNECTIONS"][component_b] = direction
-        return str(json.dumps(export))
+        return str(json.dumps(export, indent=4, sort_keys=True))

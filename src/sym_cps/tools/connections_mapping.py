@@ -12,12 +12,21 @@ def add_connection_with_direction(
         direction_a_to_b: str = "ANY",
         direction_b_to_a: str = "ANY"):
     connections_map: dict = json.load(open(connectors_components_path))
+
     if comp_type_a not in connections_map.keys():
         connections_map[comp_type_a] = {}
+
     if comp_type_b not in connections_map.keys():
         connections_map[comp_type_b] = {}
-    connections_map[comp_type_a][comp_type_b] = {direction_b_to_a: [connector_id_a, connector_id_b]}
-    connections_map[comp_type_b][comp_type_a] = {direction_a_to_b: [connector_id_b, connector_id_a]}
+
+    if comp_type_b not in connections_map[comp_type_a].keys():
+        connections_map[comp_type_a][comp_type_b] = {}
+
+    if comp_type_a not in connections_map[comp_type_b].keys():
+        connections_map[comp_type_b][comp_type_a] = {}
+
+    connections_map[comp_type_a][comp_type_b][direction_b_to_a] = [connector_id_a, connector_id_b]
+    connections_map[comp_type_b][comp_type_a][direction_a_to_b] = [connector_id_b, connector_id_a]
 
     print(f"Adding {comp_type_a}-{comp_type_b}-{connector_id_a}-{connector_id_b}-{direction_a_to_b}-{direction_b_to_a}")
     from sym_cps.tools.my_io import save_to_file
