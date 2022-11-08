@@ -9,8 +9,10 @@ from aenum import Enum, auto
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters, structures
-from sym_cps.tools.strings import get_component_type_from_instance_name, \
-    get_component_and_instance_type_from_instance_name
+from sym_cps.tools.strings import (
+    get_component_and_instance_type_from_instance_name,
+    get_component_type_from_instance_name,
+)
 
 
 class AbstractionFeatures(Enum):
@@ -76,29 +78,35 @@ class AbstractTopology:
                         for comp_a in struct_component.keys():
                             topo_instance[comp_a + "_instance_" + str(instance_n)] = {
                                 "CONNECTIONS": {},
-                                "PARAMETERS": {}
+                                "PARAMETERS": {},
                             }
                             # if comp_a == "Flange" then attach tube connections to flange
                             if comp_a == component_interface:
-                                topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"] = \
-                                    topo["TOPOLOGY"][component_a]["CONNECTIONS"]
+                                topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"] = topo[
+                                    "TOPOLOGY"
+                                ][component_a]["CONNECTIONS"]
                             for struct_category in struct_component[comp_a].keys():
                                 if struct_category == "CONNECTIONS":
                                     # append instance to each of the connections as well
                                     for comp_b in struct_component[comp_a][struct_category].keys():
                                         if comp_b in c_library.component_types[comp_a].compatible_with.keys():
                                             if comp_b == "BatteryController":
-                                                topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][comp_b + "_instance_1"] = struct_component[comp_a][struct_category][comp_b]
+                                                topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
+                                                    comp_b + "_instance_1"
+                                                ] = struct_component[comp_a][struct_category][comp_b]
                                             else:
                                                 topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
-                                                    comp_b + "_instance_" + str(instance_n)] = struct_component[comp_a][struct_category][comp_b]
+                                                    comp_b + "_instance_" + str(instance_n)
+                                                ] = struct_component[comp_a][struct_category][comp_b]
                                 elif struct_category == "PARAMETERS":
-                                    topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"] = \
-                                        struct_component[comp_a][struct_category]
+                                    topo_instance[comp_a + "_instance_" + str(instance_n)][
+                                        "PARAMETERS"
+                                    ] = struct_component[comp_a][struct_category]
                                 else:
                                     raise Exception("Unknown category")
                             to_add_topo["TOPOLOGY"][comp_a + "_instance_" + str(instance_n)] = topo_instance[
-                                comp_a + "_instance_" + str(instance_n)]
+                                comp_a + "_instance_" + str(instance_n)
+                            ]
                             # remove structure key from topo
                     to_delete.add(component_a)
                 else:
@@ -113,7 +121,13 @@ class AbstractTopology:
                             for comps in structures[struct]["Components"]:
                                 curr = list(comps.keys())[0]
                                 if comp_a_type in c_library.component_types[curr].compatible_with.keys():
-                                    edit_connections[component_a].append({curr + '_instance_' + str(instance_n): topo["TOPOLOGY"][component_a]["CONNECTIONS"][connected]})
+                                    edit_connections[component_a].append(
+                                        {
+                                            curr
+                                            + "_instance_"
+                                            + str(instance_n): topo["TOPOLOGY"][component_a]["CONNECTIONS"][connected]
+                                        }
+                                    )
 
         for elem in to_delete:
             del topo["TOPOLOGY"][elem]
@@ -122,7 +136,7 @@ class AbstractTopology:
             topo["TOPOLOGY"][key] = elem
 
         for key in edit_connections.keys():
-            elem_lst = edit_connections[key] # lst of dictionaries w/ connections that need to be edited
+            elem_lst = edit_connections[key]  # lst of dictionaries w/ connections that need to be edited
             for comp in elem_lst:
                 for instance, direction in comp.items():
                     topo["TOPOLOGY"][key]["CONNECTIONS"][instance] = direction
@@ -140,8 +154,8 @@ class AbstractTopology:
                         connections[component_a][component_b] = direction
 
                         if (
-                                AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS
-                                in abstraction_levels_features[abstraction_level]
+                            AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS
+                            in abstraction_levels_features[abstraction_level]
                         ):
                             ctype_a_str = get_component_type_from_instance_name(component_a)
                             ctype_a = c_library.component_types[ctype_a_str]
@@ -176,7 +190,9 @@ class AbstractTopology:
         to_delete = set()
         structure_components = {}
         for struct in structures.keys():
-            structure_components[structures[struct]["CenterComponent"]] = {struct: [list(comps.keys())[0] for comps in structures[struct]["Components"]]}
+            structure_components[structures[struct]["CenterComponent"]] = {
+                struct: [list(comps.keys())[0] for comps in structures[struct]["Components"]]
+            }
 
         # use this to keep track of which structure a component belongs to
         tracker = {}
@@ -191,7 +207,6 @@ class AbstractTopology:
                         for component_b, direction in connections.items():
                             tracker[component_b] = structure_instance
 
-
             export["TOPOLOGY"][component_a] = {"CONNECTIONS": {}, "PARAMETERS": {}}
             """Parameters"""
             if component_a in self.parameters.keys():
@@ -205,7 +220,8 @@ class AbstractTopology:
                 print(export["TOPOLOGY"][component_a])
                 if AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]:
                     if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(
-                            export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()):
+                        export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()
+                    ):
                         continue
                 if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
                     if component_b in tracker.keys():
@@ -242,11 +258,11 @@ class AbstractTopology:
                         connector_id_a = connectors[0].id
                         connector_id_b = connectors[1].id
 
-                        export["TOPOLOGY"][comp]['CONNECTIONS'][tracker[key]] = get_direction_from_components_and_connections(
+                        export["TOPOLOGY"][comp]["CONNECTIONS"][
+                            tracker[key]
+                        ] = get_direction_from_components_and_connections(
                             ctype_b.id, ctype_a.id, connector_id_b, connector_id_a
                         )
                 del export["TOPOLOGY"][key]
-
-
 
         return str(json.dumps(export))

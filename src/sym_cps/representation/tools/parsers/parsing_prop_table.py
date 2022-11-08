@@ -1,8 +1,8 @@
-#from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
-from typing import TYPE_CHECKING
-from sym_cps.representation.library.elements.perf_table import PerfTable
+# from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
 from sym_cps.representation.library import Library
 from sym_cps.representation.library.elements.library_component import LibraryComponent
+from sym_cps.representation.library.elements.perf_table import PerfTable
+
 
 def parsing_prop_table(library: Library) -> dict[LibraryComponent, PerfTable]:
     table_dict = {}

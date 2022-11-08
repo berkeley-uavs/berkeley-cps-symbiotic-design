@@ -1,10 +1,6 @@
-from asyncore import compact_traceback
 import json
 from copy import deepcopy
 from itertools import combinations
-
-from matplotlib import test
-from matplotlib.rcsetup import all_backends
 
 from sym_cps.shared.designs import designs
 from sym_cps.tools.io import save_to_file
@@ -131,6 +127,7 @@ def extract_shared_parameters(data: dict):
             shared_parameters[k] = comp_a[k]
     return shared_parameters
 
+
 def extract_clusters():
     data: dict() = {}
     res: dict() = {}
@@ -147,7 +144,7 @@ def extract_clusters():
                 pairs[comp_a].append([comp_a, comp_b])
         res[designs_to_analyze[i].name]["2"] = pairs
         i += 1
-    
+
     i = 0
     while i < 2:
         key = designs_to_analyze[i].name
@@ -165,6 +162,7 @@ def extract_clusters():
                             triples[comp_a].append(curr)
         res[designs_to_analyze[i].name]["3"] = triples
         i += 1
+
 
 def library_analysis():
     all_components_types_in_designs = set()
@@ -188,14 +186,8 @@ def library_analysis():
             shared_component_types_in_designs = shared_component_types_in_designs.intersection(component_types)
         components_types_in_design[design_id] = list(component_types)
 
-    save_to_file(components_types_in_design,
-                 "components_types_in_design.json",
-                 folder_name="analysis"
-                 )
-    save_to_file(component_used_in_designs,
-                 "component_choice_in_designs.json",
-                 folder_name="analysis"
-                 )
+    save_to_file(components_types_in_design, "components_types_in_design.json", folder_name="analysis")
+    save_to_file(component_used_in_designs, "component_choice_in_designs.json", folder_name="analysis")
 
 
 def parameter_analysis():
@@ -218,4 +210,3 @@ def parameter_analysis():
         f"learned_structures.json",
         folder_name=f"analysis",
     )
-    

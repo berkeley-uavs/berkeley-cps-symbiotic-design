@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+
 from dynaconf import Dynaconf
 
 settings = Dynaconf(
     envvar_prefix="DYNACONF",
-    settings_files=['../../../settings.toml'],
+    settings_files=["../../../settings.toml"],
 )
 
 this_file = Path(os.path.dirname(__file__))
@@ -28,7 +29,7 @@ library_folder: Path = output_folder / "library"
 fdm_bin_folder: Path = fdm_root_folder / "bin" / "bin" / "bin"
 fdm_tmp_folder: Path = fdm_root_folder / "tmp"
 fdm_extract_folder: Path = fdm_root_folder / "extract"
-prop_table_folder: Path = fdm_root_folder / "Tables"/ "PropData"
+prop_table_folder: Path = fdm_root_folder / "Tables" / "PropData"
 
 
 component_library_root_path_default: Path = data_folder / "ComponentLibrary" / "results_json"

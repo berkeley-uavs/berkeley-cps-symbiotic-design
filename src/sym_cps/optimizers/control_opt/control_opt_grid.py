@@ -3,8 +3,8 @@ import os
 
 import numpy as np
 
-from sym_cps.optimizers.control_opt.control_opt_base import ControlOptimizer
 from sym_cps.evaluation.fdm_interface import FDMArgs
+from sym_cps.optimizers.control_opt.control_opt_base import ControlOptimizer
 
 
 class ControlGridOptimizer(ControlOptimizer):

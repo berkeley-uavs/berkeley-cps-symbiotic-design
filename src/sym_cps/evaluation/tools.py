@@ -8,9 +8,10 @@ import time
 import zipfile
 from pathlib import Path
 from typing import Optional, Union
-from sym_cps.evaluation.fdm_ret import FDMResult
+
 import dramatiq
 
+from sym_cps.evaluation.fdm_ret import FDMResult
 from sym_cps.shared.paths import aws_folder, fdm_extract_folder
 
 
@@ -192,13 +193,10 @@ def polling_results(msg, timeout: int = 800):
     return result_archive
 
 
-def extract_results(
-    result_archive_path: Path, control_opt: bool
-) -> dict:
-
+def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
 
     print("Extracting results from result zip file...")
-    fdm_extract_info = {} # the object for collecting the score and stl files 
+    fdm_extract_info = {}  # the object for collecting the score and stl files
     fdm_extract_info["status"] = "FAIL"
 
     with zipfile.ZipFile(result_archive_path) as result_zip_file:
@@ -222,7 +220,7 @@ def extract_results(
             return fdm_extract_info  # return failure
 
         extract_folder = fdm_extract_folder
-        #extract stl file
+        # extract stl file
         stl_folder = zipfile.Path(result_zip_file) / "workingdir"
         stl_file = stl_folder / "uav_gen.stl"
         stl_member = Path("workingdir", "uav_gen.stl")
@@ -232,7 +230,6 @@ def extract_results(
             info.filename = f"uav_gen.stl"
             result_zip_file.extract(member=info, path=str(extract_folder))
 
-        
         fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
         for fdm_test in folders:
             fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
@@ -245,19 +242,18 @@ def extract_results(
                 info.filename = f"{fdm_test.name}_flightDynFast.inp"
                 result_zip_file.extract(member=info, path=str(extract_folder))
                 with fdm_input.open("r") as fdm_input_file:
-                    
+
                     # TODO: read the fdm input files
                     pass
-
 
             if fdm_output.is_file():
                 info = result_zip_file.getinfo(str(fdm_output_member))
                 info.filename = f"{fdm_test.name}_flightDynFastOut.out"
-                result_zip_file.extract(member = info, path = str(extract_folder))
+                result_zip_file.extract(member=info, path=str(extract_folder))
 
-                                # 
+                #
                 fdm_ret_path = extract_folder / info.filename
-                ret = FDMResult(file_path=fdm_ret_path) 
+                ret = FDMResult(file_path=fdm_ret_path)
                 score = ret.metrics["Score"]
                 fdm_extract_info[fdm_test.name] = score
         fdm_extract_info["status"] = "SUCCESS"
@@ -272,7 +268,6 @@ def extract_results(
                 best_args = path_ret["best_args"]
         fdm_extract_info["total_score"] = ret["total_score"]
         fdm_extract_info["best_args"] = best_args
-        
 
     # TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
     return fdm_extract_info

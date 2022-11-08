@@ -6,10 +6,10 @@ from engineio import json
 
 
 def save_to_file(
-        file_content: str | dict,
-        file_name: str,
-        folder_name: str | None = None,
-        absolute_path: Path | None = None,
+    file_content: str | dict,
+    file_name: str,
+    folder_name: str | None = None,
+    absolute_path: Path | None = None,
 ) -> Path:
     if Path(file_name).suffix == "":
         file_name += ".txt"

@@ -40,7 +40,6 @@ class CConnector:
         ret["compatible_with"] = list(self.compatible_with.keys())
         return ret
 
-
     def __str__(self):
         s = f"Connector_ID:\t{self.id}\n"
         if len(self.compatible_with) != 0:
