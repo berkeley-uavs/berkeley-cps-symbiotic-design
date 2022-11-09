@@ -192,9 +192,9 @@ class DConcrete:
         raise Exception
 
     def select(
-        self,
-        library_component: LibraryComponent | None = None,
-        component_type: CType | None = None,
+            self,
+            library_component: LibraryComponent | None = None,
+            component_type: CType | None = None,
     ) -> set[Component]:
         components = set()
         if library_component is not None:
@@ -205,7 +205,7 @@ class DConcrete:
 
     @property
     def all_library_components_in_type(
-        self,
+            self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -218,7 +218,7 @@ class DConcrete:
 
     @property
     def all_components_by_library_components(
-        self,
+            self,
     ) -> dict[LibraryComponent, set[Component]]:
         """Returns all Components for each LibraryComponent in the design"""
         comp_types_n: dict[LibraryComponent, set[Component]] = {}
@@ -381,8 +381,8 @@ class DConcrete:
             )
         elif file_type == ExportType.JSON:
             return save_to_file(
-                str(json.dumps(self.to_design_swri)),
-                file_name=f"design_swri.json",
+                str(json.dumps(self.to_design_swri, indent=4, sort_keys=True)),
+                file_name=f"design_swri{tag}.json",
                 absolute_path=absolute_folder,
             )
         elif file_type == ExportType.DOT:
@@ -394,6 +394,22 @@ class DConcrete:
         elif file_type == ExportType.PDF:
             file_path = absolute_folder / f"concrete_graph{tag}.pdf"
             self.pydot.write_pdf(file_path)
+
+        elif file_type == ExportType.SUMMARY:
+            components: dict = {}
+            for component in self.components:
+                if component.c_type.id not in components:
+                    components[component.c_type.id] = {}
+                if component.model not in components[component.c_type.id]:
+                    components[component.c_type.id][component.model] = 0
+                components[component.c_type.id][component.model] += 1
+            sorted_components = {key: value for key, value in sorted(components.items())}
+            file_path = save_to_file(
+                sorted_components,
+                file_name=f"summary{tag}.json",
+                absolute_path=absolute_folder,
+            )
+
 
         elif file_type == ExportType.EVALUATION:
             file_path = absolute_folder / "evaluation_results.json"
@@ -427,7 +443,11 @@ class DConcrete:
             mappings = self._graph.get_isomorphisms_vf2(
                 other.graph, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
             )
-            return len(mappings) > 0
+            isomorphic = len(mappings) > 0
+            if not isomorphic:
+                self.export(ExportType.SUMMARY, tag="_design_self")
+                other.export(ExportType.SUMMARY, tag="_design_other")
+                print("exported")
 
     def __ne__(self, other: object):
 
@@ -440,8 +460,8 @@ class DConcrete:
 
         connection_dict = {}
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
@@ -456,8 +476,8 @@ class DConcrete:
                         )
                         if component.id == connection.component_a.id:
                             if (
-                                connection.component_b.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_b.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id
@@ -469,8 +489,8 @@ class DConcrete:
 
                         if component.id == connection.component_b.id:
                             if (
-                                connection.component_a.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_a.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id
@@ -548,8 +568,8 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:

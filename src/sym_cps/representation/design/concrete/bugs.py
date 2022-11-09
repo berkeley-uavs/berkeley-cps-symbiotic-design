@@ -1,6 +1,3 @@
-import json
-from sym_cps.grammar.tools import main
-
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
@@ -36,27 +33,6 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
     assert test_quad_original == test_quad_loaded_2
 
 
-levels = [ExportType.TOPOLOGY_1, ExportType.TOPOLOGY_2, ExportType.TOPOLOGY_3, ExportType.TOPOLOGY_4]
 
-
-def test_topology_abstraction_1():
+if __name__ == '__main__':
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_1)
-
-#
-# def test_topology_abstraction_2():
-#     assert_topology_from_and_to_json(ExportType.TOPOLOGY_2)
-#
-#
-# def test_topology_abstraction_3():
-#     assert_topology_from_and_to_json(ExportType.TOPOLOGY_3)
-#
-#
-# def test_topology_abstraction_4():
-#     assert_topology_from_and_to_json(ExportType.TOPOLOGY_4)
-
-
-#
-# test_topology_abstraction_1()
-# test_topology_abstraction_2()
-# test_topology_abstraction_3()
-# test_topology_abstraction_4()

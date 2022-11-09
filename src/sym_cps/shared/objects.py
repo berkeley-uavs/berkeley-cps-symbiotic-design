@@ -9,6 +9,7 @@ from sym_cps.shared.paths import connectors_components_path, learned_default_par
 class ExportType(Enum):
     TXT = auto()
     JSON = auto()
+    SUMMARY = auto()
     DOT = auto()
     PDF = auto()
     EVALUATION = auto()
