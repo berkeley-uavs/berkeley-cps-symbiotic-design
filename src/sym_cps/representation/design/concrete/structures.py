@@ -41,7 +41,7 @@ class Structures:
     def add_from_designs(self, designs_to_decompose: list[DConcrete], key_nodes: set[str] | None = None):
 
         if key_nodes is None:
-            key_nodes = {"Hub2", "Hub3", "Hub4", "Hub5", "Hub6"}
+            key_nodes = {"BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"}
 
         subgraphs = []
 
