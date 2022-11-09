@@ -6,6 +6,7 @@ from typing import List, Optional
 from sym_cps.evaluation import evaluate_design
 from sym_cps.examples.library import export_library
 from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.reverse_engineering.connections_mapping import fix_connectors_mapping
 from sym_cps.shared.paths import data_folder, output_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
 
@@ -37,6 +38,7 @@ def update_all() -> int:
 
     library_analysis()
     parameter_analysis()
+    fix_connectors_mapping()
     # generate_tables()
     # analysis()
     return 0

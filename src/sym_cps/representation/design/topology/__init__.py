@@ -41,7 +41,9 @@ class DTopology:
             d_topology.add_node(c_type=component.library_component.comp_type)
             # print(f"{vertex.index} - {new_vertex.index}")
         for edge in d_concrete.edges:
-            d_topology.add_edge(edge.source, edge.target, edge["connection"].direction_b_respect_to_a)
+            d_topology.add_edge(edge.source, edge.target,
+                                connection=f"{edge['connection'].key}",
+                                direction=edge["connection"].direction_b_respect_to_a)
         return d_topology
 
     @property
@@ -69,8 +71,8 @@ class DTopology:
         """TODO"""
         raise NotImplementedError
 
-    def add_edge(self, node_id_a: int, node_id_b: int, direction: str = ""):
-        self.graph.add_edge(source=node_id_a, target=node_id_b, label=direction)
+    def add_edge(self, node_id_a: int, node_id_b: int, connection: str, direction: str = ""):
+        self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection, label=direction)
 
     def remove_edge(self):
         """TODO. Tip: self.graph.delete_edges"""
@@ -93,16 +95,23 @@ class DTopology:
             nodes.add(edge.target)
         return nodes
 
+    def get_edges_connected_to(self, node: igraph.Vertex):
+        edges = set()
+        for edge in self._graph.es.select(_source=node):
+            edges.add(edge)
+        for edge in self._graph.es.select(_target=node):
+            edges.add(edge)
+        return edges
+
     @property
     def pydot(self) -> pydot.Dot:
         absolute_folder = designs_folder / self.name
-        dot_file_path = absolute_folder / "topology_graph.dot"
-        if not dot_file_path.exists():
-            self._graph.write_dot(f=str(dot_file_path))
+        dot_file_path = absolute_folder / f"topology_graph.dot"
+        self._graph.write_dot(f=str(dot_file_path))
         graphs = pydot.graph_from_dot_file(dot_file_path)
         return graphs[0]
 
-    def export(self, file_type: ExportType):
+    def export(self, file_type: ExportType, tag: str = ""):
         absolute_folder = designs_folder / self.name
         if file_type == ExportType.TXT:
             save_to_file(
@@ -115,15 +124,15 @@ class DTopology:
         elif file_type == ExportType.DOT:
             if not os.path.exists(absolute_folder):
                 os.makedirs(absolute_folder)
-            file_path = absolute_folder / "topology_graph.dot"
+            file_path = absolute_folder / f"topology_graph{tag}.dot"
             self._graph.write_dot(f=str(file_path))
 
         elif file_type == ExportType.PDF:
-            file_path = absolute_folder / "topology_graph.pdf"
+            file_path = absolute_folder / f"topology_graph{tag}.pdf"
             self.pydot.write_pdf(file_path)
 
         elif file_type == ExportType.DOT:
-            self.graph.write_dot(f=str(absolute_folder / "topo_graph.dot"))
+            self.graph.write_dot(f=str(absolute_folder / f"topo_graph{tag}.dot"))
 
         else:
             raise Exception("File type not supported")
@@ -150,6 +159,3 @@ class DTopology:
         for node in self.nodes:
             ret += f"{node.index}: {node['c_type']}\n"
         return ret
-
-
-

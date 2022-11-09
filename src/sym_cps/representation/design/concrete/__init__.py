@@ -7,10 +7,10 @@ from __future__ import annotations
 import json
 import os
 import shutil
-from copy import copy, deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import igraph
 import pydot
 from igraph import Edge, EdgeSeq, Graph, Vertex
 
@@ -21,7 +21,6 @@ from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
-from sym_cps.representation.design.concrete.tools import edge_comparison, node_comparison
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level
@@ -127,7 +126,7 @@ class DConcrete:
             library_component=component.library_component,
             c_type=component.c_type,
             component=component,
-            label=f"{component.library_component.id}",
+            label=f"{component.c_type.id}",
         )
 
     def remove_node(self, vertex_id: int):
@@ -136,7 +135,8 @@ class DConcrete:
         print(self._graph)
 
     def add_edge(self, node_id_a: int, node_id_b: int, connection: Connection):
-        self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection)
+        self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection,
+                            label=connection.direction_b_respect_to_a)
 
     def connect(self, connection: Connection):
         a = self.get_node_by_instance(connection.component_a.id).index
@@ -191,9 +191,9 @@ class DConcrete:
         raise Exception
 
     def select(
-        self,
-        library_component: LibraryComponent | None = None,
-        component_type: CType | None = None,
+            self,
+            library_component: LibraryComponent | None = None,
+            component_type: CType | None = None,
     ) -> set[Component]:
         components = set()
         if library_component is not None:
@@ -204,7 +204,7 @@ class DConcrete:
 
     @property
     def all_library_components_in_type(
-        self,
+            self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -217,7 +217,7 @@ class DConcrete:
 
     @property
     def all_components_by_library_components(
-        self,
+            self,
     ) -> dict[LibraryComponent, set[Component]]:
         """Returns all Components for each LibraryComponent in the design"""
         comp_types_n: dict[LibraryComponent, set[Component]] = {}
@@ -315,6 +315,15 @@ class DConcrete:
 
         return design_swri_data
 
+
+    def get_edges_connected_to(self, node: igraph.Vertex):
+        edges = set()
+        for edge in self._graph.es.select(_source=node):
+            edges.add(edge)
+        for edge in self._graph.es.select(_target=node):
+            edges.add(edge)
+        return edges
+
     def to_abstract_topology(self) -> AbstractTopology:
         name = self.name
         description = self.description
@@ -349,12 +358,11 @@ class DConcrete:
     def pydot(self) -> pydot.Dot:
         absolute_folder = designs_folder / self.name
         dot_file_path = absolute_folder / "concrete_graph.dot"
-        if not dot_file_path.exists():
-            self._graph.write_dot(f=str(dot_file_path))
+        self._graph.write_dot(f=str(dot_file_path))
         graphs = pydot.graph_from_dot_file(dot_file_path)
         return graphs[0]
 
-    def export(self, file_type: ExportType) -> Path:
+    def export(self, file_type: ExportType, tag: str = "") -> Path:
         absolute_folder = designs_folder / self.name
 
         if file_type == ExportType.TXT:
@@ -384,7 +392,7 @@ class DConcrete:
             # self._graph.write_dot(f=str(file_path))
 
         elif file_type == ExportType.PDF:
-            file_path = absolute_folder / "concrete_graph.pdf"
+            file_path = absolute_folder / f"concrete_graph{tag}.pdf"
             self.pydot.write_pdf(file_path)
 
         elif file_type == ExportType.EVALUATION:
@@ -413,12 +421,12 @@ class DConcrete:
         self.export(ExportType.TOPOLOGY_3)
 
     def __eq__(self, other: object):
+        from sym_cps.representation.design.concrete.tools import edge_comparison, node_comparison
         if isinstance(other, DConcrete):
             mappings = self._graph.get_isomorphisms_vf2(
                 other.graph, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
             )
             return len(mappings > 0)
-
 
     def __ne__(self, other: object):
 
@@ -431,8 +439,8 @@ class DConcrete:
 
         connection_dict = {}
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
@@ -447,8 +455,8 @@ class DConcrete:
                         )
                         if component.id == connection.component_a.id:
                             if (
-                                connection.component_b.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_b.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id
@@ -460,8 +468,8 @@ class DConcrete:
 
                         if component.id == connection.component_b.id:
                             if (
-                                connection.component_a.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_a.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id
@@ -539,8 +547,8 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:
