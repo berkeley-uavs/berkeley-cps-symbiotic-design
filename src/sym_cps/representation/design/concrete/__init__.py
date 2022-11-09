@@ -401,11 +401,10 @@ class DConcrete:
                 if component.c_type.id not in components:
                     components[component.c_type.id] = {}
                 if component.model not in components[component.c_type.id]:
-                    components[component.c_type.id][component.model] = 0
-                components[component.c_type.id][component.model] += 1
-            sorted_components = {key: value for key, value in sorted(components.items())}
+                    components[component.c_type.id][component.model] = []
+                components[component.c_type.id][component.model].append(component.params_props_values)
             file_path = save_to_file(
-                sorted_components,
+                components,
                 file_name=f"summary{tag}.json",
                 absolute_path=absolute_folder,
             )

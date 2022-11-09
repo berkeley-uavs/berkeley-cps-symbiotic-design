@@ -34,4 +34,4 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
 
 
 if __name__ == '__main__':
-    assert_topology_from_and_to_json(ExportType.TOPOLOGY_1)
+    assert_topology_from_and_to_json(ExportType.TOPOLOGY_2)
