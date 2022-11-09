@@ -115,7 +115,7 @@ class DConcrete:
 
         from sym_cps.shared.library import c_library
 
-        lib_comp_a = c_library.get_default_component(node_type_a)
+        lib_comp_a = c_library.get_default_component(node_type_a, design_name=self.name)
         instance_a = Component(id=abstract_component_id, library_component=lib_comp_a)
         self.comp_id_to_node[abstract_component_id] = self.add_node(instance_a)
         return self.comp_id_to_node[abstract_component_id]
@@ -445,9 +445,11 @@ class DConcrete:
             )
             isomorphic = len(mappings) > 0
             if not isomorphic:
+                print("Not isomorphic")
                 self.export(ExportType.SUMMARY, tag="_design_self")
                 other.export(ExportType.SUMMARY, tag="_design_other")
                 print("exported")
+            return isomorphic
 
     def __ne__(self, other: object):
 

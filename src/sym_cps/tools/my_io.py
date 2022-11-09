@@ -47,6 +47,7 @@ def save_to_file(
 
 def _write_file(file_content: str | dict, absolute_path: Path):
     if isinstance(file_content, dict):
+        file_content = {key: value for key, value in sorted(file_content.items())}
         file_content = json.dumps(file_content, indent=4)
         if Path(absolute_path).suffix != ".json":
             absolute_path_str = str(absolute_path) + ".json"

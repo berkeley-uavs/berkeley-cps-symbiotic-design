@@ -18,8 +18,7 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
     # Creating DConcrete Object
     test_quad_loaded = DConcrete.from_abstract_topology(abstract_topology)
 
-    if not test_quad_original == test_quad_loaded:
-        print("not euqal")
+    assert test_quad_original == test_quad_loaded
 
     # Exporting AbstractTopology to file
     topology_json_path_2 = test_quad_loaded.export(topology_level)
@@ -28,7 +27,7 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
     abstract_topology_2 = AbstractTopology.from_json(topology_json_path_2)
 
     # Creating DConcrete Object
-    test_quad_loaded_2 = DConcrete.from_abstract_topology(abstract_topology)
+    test_quad_loaded_2 = DConcrete.from_abstract_topology(abstract_topology_2)
 
     assert test_quad_original == test_quad_loaded_2
 

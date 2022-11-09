@@ -49,4 +49,4 @@ manual_connectors_components_path = reverse_engineering_folder / "manual_connect
 
 learned_default_params_path = reverse_engineering_folder / "analysis" / "learned_parameters.json"
 
-component_selection_path = data_folder / "reverse_engineering" / "component_selection.json"
+component_selection_path = data_folder / "reverse_engineering" / "component_choice.json"

@@ -23,9 +23,10 @@ def parse_designs():
         data[design.name] = {}
         data[design.name]["COMPONENTS"] = {}
         for component in design.components:
-            if component.c_type.id not in data[design.name]["COMPONENTS"].keys():
-                data[design.name]["COMPONENTS"][component.c_type.id] = []
-            data[design.name]["COMPONENTS"][component.c_type.id].append(component.model)
+            if component.c_type.id in data[design.name]["COMPONENTS"].keys():
+                if component.model != data[design.name]["COMPONENTS"][component.c_type.id]:
+                    raise Exception("There is already a model")
+            data[design.name]["COMPONENTS"][component.c_type.id] = component.model
     return data
 
 
@@ -161,9 +162,7 @@ def library_analysis():
         else:
             shared_component_types_in_designs = shared_component_types_in_designs.intersection(component_types)
         components_types_in_design[design_id] = list(component_types)
-
-    save_to_file(components_types_in_design, "components_types_in_design.json", folder_name="analysis")
-    save_to_file(component_used_in_designs, "component_choice_in_designs.json", folder_name="analysis")
+    return components_types_in_design, component_used_in_designs
 
 
 def components_analysis():
@@ -171,22 +170,22 @@ def components_analysis():
 
     for design_name, info in data.items():
         save_to_file(
-            str(json.dumps(info, sort_keys=True, indent=4)), f"components.json", folder_name=f"analysis/{design_name}"
+            info, f"components.json", folder_name=f"analysis/{design_name}"
         )
+    components_types_in_design, component_used_in_designs = library_analysis()
 
-    # learned_components = learn_swri_components(data)
-    # save_to_file(
-    #     str(json.dumps(learned_components, sort_keys=True, indent=4)),
-    #     f"learned_components.json",
-    #     folder_name=f"analysis",
-    # )
-    #
-    # components_learned_structures = extract_clusters()
-    # save_to_file(
-    #     str(json.dumps(components_learned_structures, indent=4)),
-    #     f"components_learned_structures.json",
-    #     folder_name=f"analysis",
-    # )
+    component_choice = {
+        "SEED_DESIGNS": {},
+        "ALL_COMPONENTS": component_used_in_designs,
+        "TYPES IN SEED_DESIGN": components_types_in_design
+    }
+
+    for design_name, info in data.items():
+        component_choice["SEED_DESIGNS"][design_name] = info
+
+    save_to_file(
+        component_choice, f"component_choice.json", folder_name=f"analysis"
+    )
 
 
 if __name__ == "__main__":
