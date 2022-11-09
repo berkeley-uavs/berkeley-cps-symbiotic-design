@@ -427,7 +427,7 @@ class DConcrete:
             mappings = self._graph.get_isomorphisms_vf2(
                 other.graph, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
             )
-            return len(mappings > 0)
+            return len(mappings) > 0
 
     def __ne__(self, other: object):
 
