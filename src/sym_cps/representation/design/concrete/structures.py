@@ -41,7 +41,7 @@ class Structures:
     def add_from_designs(self, designs_to_decompose: list[DConcrete], key_nodes: set[str] | None = None):
 
         if key_nodes is None:
-            key_nodes = {"Hub2", "Hub3", "Hub4", "Hub5", "Hub6"}
+            key_nodes = {"BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"}
 
         subgraphs = []
 
@@ -66,15 +66,15 @@ class Structures:
                     pair[1], node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
                 )
                 if len(mappings) > 0:
-                    self.add_graph(pair[1])
-                    # isomorphic_graphs.add_graph(pair[1])
+                    isomorphic_graphs.add_graph(pair[1])
 
-            # self.add_graphs(isomorphic_graphs.graphs)
+            self.add_graphs(isomorphic_graphs.graphs)
 
 
 if __name__ == "__main__":
-    dconcretes = [d[0] for d in designs.values()]
+    test_quad = designs["TestQuad"][0]
+    new_axe = designs["NewAxe"][0]
     structures = Structures()
-    structures.add_from_designs(dconcretes)
+    structures.add_from_designs([test_quad, new_axe])
     for i, struct in enumerate(structures.graphs):
         graph_to_pdf(struct, f"structure_{i}", "analysis/structures")
