@@ -1,11 +1,13 @@
-import time
-
-from sym_cps.contract.contract import Contract, ContractManager
-from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.topology import DTopology
-from sym_cps.representation.library import Library, LibraryComponent
-from sym_cps.representation.library.elements.perf_table import PerfTable
+from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.library import LibraryComponent
+from sym_cps.representation.library import Library
 from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
+from sym_cps.contract.contract import Contract, ContractManagerBruteForce
+# from sym_cps.contract.contract_general import ContractGeneralManager
+from sym_cps.representation.library.elements.perf_table import PerfTable
+from sym_cps.contract.contract_composition import Hackathon2Contract
+
 
 
 class ComponentSelectionContract:
@@ -19,18 +21,77 @@ class ComponentSelectionContract:
         self._library = c_library
         self._table_dict = parsing_prop_table(c_library)
 
-    def select_hackathon(
-        self, design_topology: DTopology, design_concrete: DConcrete = None, max_iter=10, timeout_millisecond=100000
-    ):
+
+    def select_general(self, design_topology:DTopology, design_concrete: DConcrete = None, max_iter = 10, timeout_millisecond = 100000):
+        
+        
+        manager = Hackathon2Contract(table_dict=self._table_dict, c_library=self._library)
+        """Get topology (simplified as just counting and hard-coded the number of each typed)"""
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
+        """Instantiate the contract"""
+        obj = None
+        if design_concrete is not None:
+            batteries, propellers, motors, batt_controllers =  self.create_component_lists(d_concrete=design_concrete)
+            obj = self.check_selection(design_concrete=design_concrete, design_topology=design_topology)
+        """Create the contracts based on the topology"""
+        manager.compose(num_battery=num_batteries,
+                        num_motor=num_motors,
+                        motors=[[motor] for motor in motors],
+                        propellers=[[prop] for prop in propellers],
+                        batteries=[battery],
+                        motor_ratio=[1]* num_motors,
+                        body_weight=0,
+                        better_selection_encoding=True,
+                        obj_lower_bound=obj
+                        )
+        """Solver the OMT problem to optimize selection of components """
+        start = time.time()
+        propellers, motors, battery = manager.optimize(max_iter=max_iter, timeout_millisecond=timeout_millisecond)
+        end = time.time()
+        print("Solving Time:", end - start)
+        return propellers, motors, battery
+
+    def check_selection_general(self, 
+                                design_concrete: DConcrete, 
+                                design_topology: DTopology,
+                                motors: list[LibraryComponent] = None,
+                                propellers: list[LibraryComponent] = None, 
+                                battery: LibraryComponent = None
+                              ):
+        if motors is None or battery is None or propellers is None:
+            if design_concrete is not None:
+                """get concrete component"""
+                batteries, propellers, motors, _ =  self.create_component_lists(d_concrete=design_concrete)
+                battery = batteries[0]
+            else:
+                print("Error, No component selection found for the type")
+                return False
+        print("Check Component:")
+        self.print_components(propellers=propellers, motors=motors, batteries=[battery])
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
+        manager = Hackathon2Contract(table_dict=self._table_dict, c_library=self._library)
+        start = time.time()
+        objective = manager.check_selection(num_battery=num_batteries,
+                                num_motor=num_motors,
+                                battery=battery,
+                                motors=motors,
+                                propellers=propellers,
+                                body_weight=0,
+                                motor_ratio=[1.0]*num_motors)
+        end = time.time()
+        print("Solving Time:", end - start)   
+        return objective        
+
+        
+
+    def select_hackathon(self, design_topology:DTopology, design_concrete: DConcrete = None, max_iter = 10, timeout_millisecond = 100000):
         print(" ")
-        # TODO use the d concrete as a lower bound to find a better one
+
 
         """Instantiate the contract"""
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
-        manager = ContractManager()
-        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
-            d_topology=design_topology
-        )
+        manager = ContractManagerBruteForce()
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
         """Use seed design as a lower bound"""
         obj = None
         if design_concrete is not None:
@@ -48,20 +109,13 @@ class ComponentSelectionContract:
         )
         """Solver the OMT problem to optimize selection of components """
         start = time.time()
-        propeller, motor, battery = manager.solve_optimize(
-            c_library=self._library, max_iter=max_iter, timeout_millisecond=100000
-        )
+        propeller, motor, battery = manager.solve_optimize(c_library=self._library, max_iter=max_iter, timeout_millisecond = timeout_millisecond)
         end = time.time()
         print("Solving Time:", end - start)
         return propeller, motor, battery
 
-    def replace_with_component(
-        self,
-        design_concrete: DConcrete,
-        propeller: LibraryComponent,
-        motor: LibraryComponent,
-        battery: LibraryComponent,
-    ):
+
+    def replace_with_component(self, design_concrete: DConcrete, propeller:LibraryComponent, motor:LibraryComponent, battery: LibraryComponent):
         for component in design_concrete.components:
             if component.c_type.id == "Propeller":
                 component.library_component = propeller
@@ -70,15 +124,13 @@ class ComponentSelectionContract:
             if component.c_type.id == "Motor":
                 component.library_component = motor
 
-    def check_selection(
-        self,
-        design_topology: DTopology,
-        design_concrete: DConcrete = None,
-        motor: LibraryComponent = None,
-        propeller=None,
-        battery=None,
-    ):
-        if motor is None or battery is None or battery is None:
+
+    def check_selection(self, design_topology:DTopology, 
+                              design_concrete: DConcrete = None, 
+                              motor: LibraryComponent = None,
+                              propeller = None, 
+                              battery = None):
+        if motor is None or battery is None or propeller is None:
             if design_concrete is not None:
                 """get concrete component"""
                 # battery_controller: LibraryComponent
@@ -101,10 +153,8 @@ class ComponentSelectionContract:
         print(f"Battery: {battery.id}")
         # print(f"BatteryController: {battery_controller.id}")
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
-        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
-            d_topology=design_topology
-        )
-        manager = ContractManager()
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
+        manager = ContractManagerBruteForce()
         """Create the contracts based on the topology"""
         manager.hackathon_contract(num_battery=num_batteries, num_motor=num_motors)
         """Form the contract-based componennt selection optimization problem"""
@@ -141,137 +191,31 @@ class ComponentSelectionContract:
                 num_batt_controllers += 1
         return num_batteries, num_propellers, num_motors, num_batt_controllers
 
-    def set_topology():
-        return NotImplementedError
+    @staticmethod
+    def create_component_lists(d_concrete: DConcrete):
+        batteries = []
+        propellers = []
+        motors = []
+        batt_controllers = []
+        for component in d_concrete.components:
+            c_type = component.c_type
+            if c_type.id == "Propeller":
+                propellers.append(component.library_component)
+            elif c_type.id == "Battery":
+                batteries.append(component.library_component)
+            elif c_type.id == "Motor":
+                motors.append(component.library_component)
+            elif c_type.id == "BatteryController":
+                batt_controllers.append(component.library_component)
+        return batteries, propellers, motors, batt_controllers
 
-    def set_contract():
-        """Accept Contract files"""
-        return NotImplementedError
+    @staticmethod
+    def print_components(propellers: list[LibraryComponent], motors: list[LibraryComponent], batteries: LibraryComponent):
+        for n, prop in enumerate(propellers):
+            print(f"Propeller {n}: {prop.id}")
+        for n, motor in enumerate(motors):
+            print(f"Motor {n}: {motor.id}")
+        for n, battery in enumerate(batteries):
+            print(f"Battery {n}: {battery.id}")
 
-        Contracts["Propeller"] = Contract(motor_name_list, motor_assumtion, motor_guarantee)
 
-    def select(self, d_topology: DTopology) -> dict[int, LibraryComponent]:
-        """Select the motor propeller and battery"""
-
-    def propeller_motor_g(
-        i_motor,
-        rho,
-        speed,
-        motor: LibraryComponent,
-        propeller: LibraryComponent,
-        table_dict: dict[LibraryComponent, PerfTable],
-    ) -> tuple[float, float, float]:
-        """return the thrust and voltage of the motor given the input motor current
-        Return: thrust, v_motor, weight, P_motor_max, I_motor_max
-        """
-        # ports get value
-        R_w: float = motor.properties["INTERNAL_RESISTANCE"].value / 1000  # Ohm
-        K_t: float = motor.properties["KT"].value
-        K_v: float = motor.properties["KV"].value * (2 * math.pi) / 60  # rpm/V to rad/(V-sec)
-        I_idle: float = motor.properties["IO_IDLE_CURRENT_10V"].value
-        diameter: float = propeller.properties["DIAMETER"].value / 1000
-        shaft_diameter_motor: float = motor.properties["SHAFT_DIAMETER"].value
-        shaft_diameter_propeller: float = propeller.properties["SHAFT_DIAMETER"].value
-        # print(table.get_value(rpm = 13000, v = 90, label="Cp"))
-        table = table_dict[propeller]
-        C_p: float = table.get_value(rpm=18000, v=speed, label="Cp")  # 0.0659
-        C_t: float = table.get_value(rpm=18000, v=speed, label="Ct")  # 0.1319
-
-        W_prop = propeller.properties["Weight"].value
-        W_motor = motor.properties["WEIGHT"].value
-        I_max = motor.properties["MAX_CURRENT"].value
-        P_max = motor.properties["MAX_POWER"].value
-
-        # check values
-        print(
-            f"R_w {R_w}, K_t {K_t}, K_v {K_v}, I_idle {I_idle}, diameter {diameter}",
-            f"\nC_p {C_p}, C_t {C_t}, W_prop {W_prop}, W_motor {W_motor}, I_max {I_max}, P_max {P_max}",
-        )
-        # contracts
-        if i_motor - I_idle < 0 or C_p < 0:
-            omega: float = 0
-        else:
-            omega: float = math.sqrt((2 * math.pi) ** 3 * K_t * (i_motor - I_idle) / (C_p * rho * diameter**5))
-        thrust: float = (C_t * rho * omega**2 * diameter**4) / ((2 * math.pi) ** 2)
-        v_motor: float = i_motor * R_w + omega / K_v
-        weight: float = W_prop + W_motor
-        # print(f"omege {omega}, thrust {thrust}, v_mototr {v_motor}, i_motor {i_motor}, weight {weight}")
-        return (thrust, v_motor, weight, I_max, P_max, shaft_diameter_motor, shaft_diameter_propeller)
-
-    def battery_g(num_battery: int, battery: LibraryComponent) -> tuple[float, float, float]:
-        """return capacity, i_battery"""
-        capacity: float = battery.properties["CAPACITY"].value * num_battery / 1000  # mAh -> Ah
-        weight: float = battery.properties["WEIGHT"].value * num_battery
-        voltage: float = battery.properties["VOLTAGE"].value
-        I_max: float = (battery.properties["CONT_DISCHARGE_RATE"].value) * capacity  # convert to mA
-
-        return (capacity, weight, voltage, I_max)
-
-    def battery_controller_g(i_battery, num_out: int, battery_controller):
-        """convert the i_battery to the current for all motor"""
-        return [i_battery / num_out * 0.95] * num_out
-
-    def system_requirement_a(capacity: float) -> tuple[float, float, float]:
-        """Requirement of the battery-motor-propeller system"""
-        #  current (coming from the battery), speed, rho (air density  ! (kg/m^3))
-        # Ah -> for 400s
-        # return (96, 0, 1.225)
-        return (capacity * 3600 / 400, 0, 1.225)
-
-    def system_requirement_g(
-        thrusts: list,
-        vs_motor: list,
-        v_battery,
-        i_battery,
-        weights: list,
-        I_max,
-        is_motor,
-        Is_motor_max,
-        Ps_motor_max,
-        shaft_motor,
-        shaft_prop,
-    ):
-        """Requirement of the battery-motor-propeller system"""
-        # 0. motor and propeller should match
-        if shaft_motor != shaft_prop:
-            print("Unmatched motor/propeller")
-            return False
-        # 1. thrust > weight to ensure it can fly
-        weight_sum = sum(weights)
-        thrust_sum = sum(thrusts)
-        if thrust_sum < weight_sum:
-            print("Insufficient Thrust")
-            print(f"thrust: {thrust_sum}, weight: {weight_sum}")
-            return False
-        # 2. the voltage should be allowed by the battery
-        if any(v_motor > v_battery for v_motor in vs_motor):
-            print("Unreachable voltage")
-            print(vs_motor, v_battery)
-            return False
-        # 3. the current should be less than i_max
-        if i_battery > I_max:
-            print("battery current exceeds")
-            print(i_battery, I_max)
-            return False
-        # 4. the motor power should be less than maximum
-        if any(
-            v_motor * i_motor > P_motor_max for (v_motor, i_motor, P_motor_max) in zip(vs_motor, is_motor, Ps_motor_max)
-        ):
-            print("Motor Power Exceeds")
-            print(Ps_motor_max, is_motor, vs_motor)
-            return False
-        if any(i_motor > I_motor_max for (i_motor, I_motor_max) in zip(is_motor, Is_motor_max)):
-            print("Motor Current Exceeds")
-            print(Is_motor_max, is_motor)
-            return False
-        return True
-
-    def objective(
-        thrusts: list, vs_motor: list, v_battery, i_battery, weights: list, I_max, is_motor, Is_motor_max, Ps_motor_max
-    ):
-        weight_sum = sum(weights)
-        thrust_sum = sum(thrusts)
-
-        weight_margin = thrust_sum - weight_sum
-        print(f"weight: {weight_sum}, thrust: {thrust_sum}")
-        return weight_margin
