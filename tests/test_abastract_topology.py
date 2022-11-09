@@ -1,3 +1,6 @@
+import json
+from sym_cps.grammar.tools import main
+
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
