@@ -41,9 +41,12 @@ class DTopology:
             d_topology.add_node(c_type=component.library_component.comp_type)
             # print(f"{vertex.index} - {new_vertex.index}")
         for edge in d_concrete.edges:
-            d_topology.add_edge(edge.source, edge.target,
-                                connection=f"{edge['connection'].key}",
-                                direction=edge["connection"].direction_b_respect_to_a)
+            d_topology.add_edge(
+                edge.source,
+                edge.target,
+                connection=f"{edge['connection'].key}",
+                direction=edge["connection"].direction_b_respect_to_a,
+            )
         return d_topology
 
     @property

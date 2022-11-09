@@ -2,6 +2,7 @@ import os
 
 import pydot
 from igraph import Graph
+
 from sym_cps.shared.paths import output_folder
 
 

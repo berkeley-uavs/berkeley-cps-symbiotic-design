@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from itertools import combinations, product
+from itertools import product
 
-from igraph import Graph, Vertex, Edge
+from igraph import Edge, Graph, Vertex
+
 from sym_cps.representation.design.topology import DTopology
 from sym_cps.shared.designs import designs
 from sym_cps.shared.objects import ExportType
@@ -22,8 +23,7 @@ def get_edges_connected_to_types(design: DTopology, types_to_check: set[str]) ->
     return edges_to_remove
 
 
-def get_subgraph(design: DTopology,
-                 key_nodes: set[str]) -> DTopology:
+def get_subgraph(design: DTopology, key_nodes: set[str]) -> DTopology:
     design_ret = deepcopy(design)
     edges_to_remove = get_edges_connected_to_types(design, key_nodes)
     design_ret.graph.delete_edges(edges_to_remove)
@@ -58,9 +58,7 @@ def get_subgraphs_isomorphisms(designs_to_decompose: list[DTopology], key_nodes:
         graph_2 = pair[1]
         print(graph_1)
         print(graph_2)
-        mappings = (graph_1.get_isomorphisms_vf2(
-            graph_2, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
-        ))
+        mappings = graph_1.get_isomorphisms_vf2(graph_2, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison)
         for map in mappings:
             structure = []
             for node in map:
@@ -69,7 +67,7 @@ def get_subgraphs_isomorphisms(designs_to_decompose: list[DTopology], key_nodes:
     print(mappings)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_quad = designs["TestQuad"][1]
     new_axe = designs["NewAxe"][1]
     get_subgraphs_isomorphisms([test_quad, new_axe], key_nodes=key_nodes_2)

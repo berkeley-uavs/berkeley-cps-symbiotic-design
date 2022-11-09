@@ -4,20 +4,26 @@ import hashlib
 from copy import deepcopy
 from itertools import product
 
-from igraph import Graph, Vertex, Edge
+from igraph import Edge, Graph, Vertex
+
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.objects import ExportType
 
 
 def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
     for g in graphs:
-        if len(g.get_isomorphisms_vf2(
-                graph_to_add, node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
-        )) > 0:
+        if (
+            len(
+                g.get_isomorphisms_vf2(
+                    graph_to_add, node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
+                )
+            )
+            > 0
+        ):
             return True
     return False
-        
-        
+
+
 def node_comparison(graph_1: Graph, graph_2: Graph, node_1: Vertex, node_2: Vertex):
     c1 = graph_1.vs[node_1]["component"]
     c2 = graph_2.vs[node_2]["component"]
@@ -44,8 +50,8 @@ def get_edges_connected_to_types(design: DConcrete, types_to_check: set[str]) ->
 cheap_hash = lambda input: hashlib.md5(input).hexdigest()[:6]
 hash = hashlib.sha1("my message".encode("UTF-8")).hexdigest()
 
-def get_subgraph(design: DConcrete,
-                 key_nodes: set[str]) -> DConcrete:
+
+def get_subgraph(design: DConcrete, key_nodes: set[str]) -> DConcrete:
     design_ret = deepcopy(design)
     edges_to_remove = get_edges_connected_to_types(design, key_nodes)
     design_ret.graph.delete_edges(edges_to_remove)
@@ -80,9 +86,9 @@ def get_subgraphs_isomorphisms(designs_to_decompose: list[DConcrete], key_nodes:
         graph_2 = pair[1]
         print(graph_1)
         print(graph_2)
-        mappings = (graph_1.get_isomorphisms_vf2(
+        mappings = graph_1.get_isomorphisms_vf2(
             graph_2, node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
-        ))
+        )
         for map in mappings:
             structure = []
             for node in map:

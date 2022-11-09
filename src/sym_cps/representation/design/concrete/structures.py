@@ -1,14 +1,18 @@
 from __future__ import annotations
 
-from copy import deepcopy
-from itertools import combinations, product
 from dataclasses import dataclass, field
-from igraph import Graph, Vertex, Edge
+from itertools import combinations, product
+
+from igraph import Graph
+
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.representation.design.concrete.tools import weak_node_comparison, weak_edge_comparison, get_subgraph, \
-    is_isomorphism_present
+from sym_cps.representation.design.concrete.tools import (
+    get_subgraph,
+    is_isomorphism_present,
+    weak_edge_comparison,
+    weak_node_comparison,
+)
 from sym_cps.shared.designs import designs
-from sym_cps.shared.objects import ExportType
 from sym_cps.tools.graphs import graph_to_pdf
 
 
@@ -19,6 +23,7 @@ class GraphSet:
     def add_graph(self, graph):
         if not is_isomorphism_present(self.graphs, graph):
             self.graphs.append(graph)
+
 
 @dataclass
 class Structures:
@@ -46,7 +51,8 @@ class Structures:
         combination_graphs = list(product(*subgraphs))
 
         same_n_nodes = list(
-            filter(lambda x: len(x[1].vs) > 1 and not any(len(x[0].vs) != len(i.vs) for i in x), combination_graphs))
+            filter(lambda x: len(x[1].vs) > 1 and not any(len(x[0].vs) != len(i.vs) for i in x), combination_graphs)
+        )
 
         for graph_set in same_n_nodes:
 
@@ -56,17 +62,16 @@ class Structures:
 
             for pair in pairs:
 
-                mappings = (pair[0].get_isomorphisms_vf2(
+                mappings = pair[0].get_isomorphisms_vf2(
                     pair[1], node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
-                ))
+                )
                 if len(mappings) > 0:
                     isomorphic_graphs.add_graph(pair[1])
 
             self.add_graphs(isomorphic_graphs.graphs)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_quad = designs["TestQuad"][0]
     new_axe = designs["NewAxe"][0]
     structures = Structures()

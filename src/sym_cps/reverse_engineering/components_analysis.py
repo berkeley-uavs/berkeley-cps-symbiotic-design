@@ -2,7 +2,6 @@ import json
 from copy import deepcopy
 from itertools import combinations
 
-from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
 from sym_cps.tools.my_io import save_to_file
 
@@ -30,12 +29,14 @@ def parse_designs():
     return data
 
 
-
 def learn_swri_components(data: dict):
     swri_learned_components = {
         "COMPONENTS": {
             "SHARED": {"DESCRIPTION": "All component types with same library across the seed designs", "VALUES": {}},
-            "DIFFERENT": {"DESCRIPTION": "All component types with a different component library across the seed designs", "VALUES": {}},
+            "DIFFERENT": {
+                "DESCRIPTION": "All component types with a different component library across the seed designs",
+                "VALUES": {},
+            },
             "ALWAYS": {
                 "DESCRIPTION": "Components that are always there and having the same parameters",
                 "VALUES": [],
@@ -188,5 +189,5 @@ def components_analysis():
     # )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     components_analysis()

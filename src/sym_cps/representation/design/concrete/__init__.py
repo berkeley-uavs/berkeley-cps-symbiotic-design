@@ -135,8 +135,9 @@ class DConcrete:
         print(self._graph)
 
     def add_edge(self, node_id_a: int, node_id_b: int, connection: Connection):
-        self.graph.add_edge(source=node_id_a, target=node_id_b, connection=connection,
-                            label=connection.direction_b_respect_to_a)
+        self.graph.add_edge(
+            source=node_id_a, target=node_id_b, connection=connection, label=connection.direction_b_respect_to_a
+        )
 
     def connect(self, connection: Connection):
         a = self.get_node_by_instance(connection.component_a.id).index
@@ -191,9 +192,9 @@ class DConcrete:
         raise Exception
 
     def select(
-            self,
-            library_component: LibraryComponent | None = None,
-            component_type: CType | None = None,
+        self,
+        library_component: LibraryComponent | None = None,
+        component_type: CType | None = None,
     ) -> set[Component]:
         components = set()
         if library_component is not None:
@@ -204,7 +205,7 @@ class DConcrete:
 
     @property
     def all_library_components_in_type(
-            self,
+        self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -217,7 +218,7 @@ class DConcrete:
 
     @property
     def all_components_by_library_components(
-            self,
+        self,
     ) -> dict[LibraryComponent, set[Component]]:
         """Returns all Components for each LibraryComponent in the design"""
         comp_types_n: dict[LibraryComponent, set[Component]] = {}
@@ -314,7 +315,6 @@ class DConcrete:
         design_swri_data["connections"] = data_connections
 
         return design_swri_data
-
 
     def get_edges_connected_to(self, node: igraph.Vertex):
         edges = set()
@@ -422,6 +422,7 @@ class DConcrete:
 
     def __eq__(self, other: object):
         from sym_cps.representation.design.concrete.tools import edge_comparison, node_comparison
+
         if isinstance(other, DConcrete):
             mappings = self._graph.get_isomorphisms_vf2(
                 other.graph, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
@@ -439,8 +440,8 @@ class DConcrete:
 
         connection_dict = {}
         for (
-                components_class,
-                library_components,
+            components_class,
+            library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
@@ -455,8 +456,8 @@ class DConcrete:
                         )
                         if component.id == connection.component_a.id:
                             if (
-                                    connection.component_b.library_component.id
-                                    in connection_dict[library_component.id].keys()
+                                connection.component_b.library_component.id
+                                in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id
@@ -468,8 +469,8 @@ class DConcrete:
 
                         if component.id == connection.component_b.id:
                             if (
-                                    connection.component_a.library_component.id
-                                    in connection_dict[library_component.id].keys()
+                                connection.component_a.library_component.id
+                                in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id
@@ -547,8 +548,8 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-                components_class,
-                library_components,
+            components_class,
+            library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:

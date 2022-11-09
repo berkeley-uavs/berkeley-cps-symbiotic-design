@@ -66,8 +66,8 @@ def delete_hubs():
         if "Hub" in k:
             delete_key(k)
     from sym_cps.tools.my_io import save_to_file
-    save_to_file(connections_map, connectors_components_path)
 
+    save_to_file(connections_map, connectors_components_path)
 
 
 def add_hubs():
@@ -186,12 +186,13 @@ def include_all_library():
         comp_type_a = connector_a.belongs_to.id
         for connector_id_b, connector_b in connector_a.compatible_with.items():
             comp_type_b = connector_b.belongs_to.id
-            add_connection_with_direction(
-                comp_type_a, comp_type_b, connector_id_a, connector_id_b
-            )
+            add_connection_with_direction(comp_type_a, comp_type_b, connector_id_a, connector_id_b)
+
+
 def fix_connectors_mapping():
     manual_connections_map: dict = json.load(open(manual_connectors_components_path))
     from sym_cps.tools.my_io import save_to_file
+
     save_to_file(manual_connections_map, connectors_components_path)
     add_hubs()
     add_sensors()
