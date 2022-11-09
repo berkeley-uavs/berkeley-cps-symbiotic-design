@@ -7,7 +7,7 @@ from sym_cps.contract.contract import Contract, ContractManagerBruteForce
 # from sym_cps.contract.contract_general import ContractGeneralManager
 from sym_cps.representation.library.elements.perf_table import PerfTable
 from sym_cps.contract.contract_composition import Hackathon2Contract
-
+import time
 
 
 class ComponentSelectionContract:

@@ -23,8 +23,8 @@ class Contract:
         """Instantiate a contract"""
         self._count += 1
         vs = {v: z3.Real(f"{v}_{self._name}_{instance_name}_{self._count}") for v in self._vs}
-        A = self._assumption(vs, **kwargs)
-        G = self._guarantee(vs, **kwargs)
+        A = self._assumption(vs)
+        G = self._guarantee(vs)
         return vs, A, G
 
 class ContractManagerBruteForce():
