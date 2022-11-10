@@ -41,22 +41,17 @@ class Library:
             else:
                 self.connectors.update(comp_type.connectors)
 
-    def get_default_component(self, component_type: str, hub_size: int = 0) -> LibraryComponent:
-        if component_type not in self.component_types.keys():
-            raise Exception(f"{component_type}\nComponent Type not present in the library")
+    def get_default_component(
+        self, component_type_id: str, design_name: str = "", hub_size: int = 0
+    ) -> LibraryComponent:
+        if component_type_id not in self.component_types.keys():
+            raise Exception(f"{component_type_id}\nComponent Type not present in the library")
         f = open(component_selection_path)
         default = json.load(f)
-        if component_type == "Hub":
-            if hub_size == 4:
-                component = self.components["0394od_para_hub_4"]
-            elif hub_size == 3:
-                component = self.components["0394od_para_hub_4"]
-            else:
-                raise Exception(f"No hub of size {hub_size}")
+        if design_name in default["SEED_DESIGNS"].keys():
+            return self.components[default["SEED_DESIGNS"][design_name]["COMPONENTS"][component_type_id]]
         else:
-            component = self.components[default[component_type][0]]
-
-        return component
+            return self.components[default["ALL_COMPONENTS"][component_type_id][0]]
 
     def get_connectors(
         self, component_type_a: CType, component_type_b: CType, direction: str

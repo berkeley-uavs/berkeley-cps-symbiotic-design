@@ -47,6 +47,6 @@ reverse_engineering_folder = data_folder / "reverse_engineering"
 connectors_components_path = reverse_engineering_folder / "connectors_components_mapping.json"
 manual_connectors_components_path = reverse_engineering_folder / "manual_connections_learned.json"
 
-learned_default_params_path = reverse_engineering_folder / "analysis" / "learned_parameters.json"
+learned_default_params_path = reverse_engineering_folder / "analysis" / "shared_parameters.json"
 
-component_selection_path = data_folder / "reverse_engineering" / "component_selection.json"
+component_selection_path = data_folder / "reverse_engineering" / "component_choice.json"

@@ -63,21 +63,18 @@ class AbstractTopology:
         if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
             for component_a, categories in topo["TOPOLOGY"].items():
                 # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
-                split_str = component_a.split('_')
-                struct = split_str[0] + '_' + split_str[1] + '_' + split_str[2]
+                split_str = component_a.split("_")
+                struct = split_str[0] + "_" + split_str[1] + "_" + split_str[2]
                 if struct in structures.keys():
                     topo_instance = {}
-                    instance = '_' + split_str[3] + '_' + split_str[4]
+                    instance = "_" + split_str[3] + "_" + split_str[4]
                     component_interface = structures[struct]["InterfaceComponent"]
                     for struct_component in structures[struct]["Components"]:
-                        #instantiate set of components and connect to one another
+                        # instantiate set of components and connect to one another
                         # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1" and comp_a == "Motor"
                         # component => "Motor_instance_1"
                         for comp_a in struct_component.keys():
-                            topo_instance[comp_a + instance] = {
-                                "CONNECTIONS": {},
-                                "PARAMETERS": {}
-                            }
+                            topo_instance[comp_a + instance] = {"CONNECTIONS": {}, "PARAMETERS": {}}
                             # if comp_a == "Flange" then attach tube connections to flange
                             if comp_a == component_interface:
                                 topo_instance[comp_a + instance]["CONNECTIONS"] = topo["TOPOLOGY"]["CONNECTIONS"]
@@ -85,15 +82,18 @@ class AbstractTopology:
                                 if struct_category == "CONNECTIONS":
                                     # append instance to each of the connections as well
                                     for comp_b in struct_component[comp_a][struct_category].keys():
-                                        topo_instance[comp_a + instance]["CONNECTIONS"][comp_b + instance] = struct_component[comp_a][struct_category][comp_b]
+                                        topo_instance[comp_a + instance]["CONNECTIONS"][
+                                            comp_b + instance
+                                        ] = struct_component[comp_a][struct_category][comp_b]
                                 else:
-                                    topo_instance[struct_component + instance]["PARAMETERS"] = structures[struct][struct_component][struct_category]
+                                    topo_instance[struct_component + instance]["PARAMETERS"] = structures[struct][
+                                        struct_component
+                                    ][struct_category]
                             topo[comp_a + instance] = topo_instance[struct_component + instance]
                             # remove structure key from topo
                         del topo[component_a]
                 else:
                     continue
-
 
         for component_a, categories in topo["TOPOLOGY"].items():
             for category, infos in categories.items():
@@ -123,14 +123,9 @@ class AbstractTopology:
                                 ctype_b.id, ctype_a.id, connector_id_b, connector_id_a
                             )
                 if category == "PARAMETERS":
-                    if component_a not in parameters:
-                        parameters[component_a] = {}
-                    if AbstractionFeatures.USE_DEFAULT_PARAMETERS in abstraction_levels_features[abstraction_level]:
-                        c_type: str = get_component_type_from_instance_name(component_a)
-                        for parameter in c_library.component_types[c_type].parameters.values():
-                            if parameter.id in default_parameters.keys():
-                                parameters[component_a][parameter.id] = float(default_parameters[parameter.id])
                     for param, value in infos.items():
+                        if component_a not in parameters:
+                            parameters[component_a] = {}
                         parameters[component_a][param] = float(value)
         return cls(name, description, connections, parameters)
 

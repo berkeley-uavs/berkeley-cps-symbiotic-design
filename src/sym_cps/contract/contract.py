@@ -4,10 +4,9 @@ from typing import TYPE_CHECKING
 import z3
 
 from sym_cps.representation.library import Library
-from sym_cps.representation.library.elements.c_type import CType
 
 if TYPE_CHECKING:
-    from sym_cps.representation.library.elements.c_type import CType
+    pass
 
 
 class Contract:
@@ -28,7 +27,7 @@ class Contract:
         return vs, A, G
 
 
-class ContractManager:
+class ContractManagerBruteForce:
     def __init__(self):
         self._all_vs = {}
         self._vs_dict = {}
@@ -198,6 +197,7 @@ class ContractManager:
         batteries=None,
         motors=None,
         propellers=None,
+        body_weight=0,
         obj_lower_bound=None,
     ):
         if propellers is None:
@@ -256,7 +256,7 @@ class ContractManager:
                 continue
             use_v = z3.Bool(f"use_{propeller.id}")
             prop_select_vs.update({f"{propeller.id}": use_v})
-            prop_properties = ContractManager.hackthon_get_propeller_property(
+            prop_properties = ContractManagerBruteForce.hackthon_get_propeller_property(
                 propeller=propeller, table_dict=table_dict, num_motor=num_motor
             )
             self._all_clause.append(
@@ -295,7 +295,7 @@ class ContractManager:
             use_v = z3.Bool(f"use_{motor.id}")
             motor_select_vs.update({f"{motor.id}": use_v})
 
-            motor_properties = ContractManager.hackthon_get_motor_property(motor=motor, num_motor=num_motor)
+            motor_properties = ContractManagerBruteForce.hackthon_get_motor_property(motor=motor, num_motor=num_motor)
             self._all_clause.append(
                 z3.Implies(
                     use_v,
@@ -331,7 +331,9 @@ class ContractManager:
             use_v = z3.Bool(f"use_{battery.id}")
             battery_select_vs.update({f"{battery.id}": use_v})
 
-            battery_properties = ContractManager.hackthon_get_battery_property(battery=battery, num_battery=num_battery)
+            battery_properties = ContractManagerBruteForce.hackthon_get_battery_property(
+                battery=battery, num_battery=num_battery
+            )
             self._all_clause.append(
                 z3.Implies(
                     use_v,
@@ -366,7 +368,10 @@ class ContractManager:
         self._all_clause.extend(G)
         # connect system
         self._all_clause.append(sys_vs["thrust_sum"] == prop_vs["thrust"])
-        self._all_clause.append(sys_vs["weight_sum"] == prop_vs["W_prop"] + battery_vs["W_batt"] + motor_vs["W_motor"])
+        self._all_clause.append(
+            sys_vs["weight_sum"]
+            == (prop_vs["W_prop"] + battery_vs["W_batt"] + motor_vs["W_motor"] + body_weight) * 9.81
+        )  # Kg to N
         # tmp for debug
         self._all_clause.append(battery_vs["I_batt"] == battery_vs["capacity"] * 3600 / 400)  # Ah -> As
         self._all_clause.append(prop_vs["rho"] == sys_vs["rho"])  # Ah -> As
@@ -375,7 +380,7 @@ class ContractManager:
         # set obj_lower_bound requirement
         if obj_lower_bound is not None:
             print("Set Lower bound: ", obj_lower_bound)
-            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] * 9.8 > obj_lower_bound)
+            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] * 9.81 > obj_lower_bound)
         #
 
         # self._all_clause.append(motor_vs["omega_motor"] > 2)#Ah -> As
@@ -565,30 +570,29 @@ class ContractManager:
         return propeller, motor, battery
 
 
-class ContractTemplate:
-    """Class of Contract Template, which handles information in the domain knowledge"""
+# class ContractTemplate():
+#     """Class of Contract Template, which handles information in the domain knowledge"""
+#     def __init__(self, constraints, behaviors):
+#         """associate theory: the background theory to reason about assume and guarantee"""
+#         self._constraints = constraints
+#         self._behaviors = behaviors
 
-    def __init__(self, constraints, behaviors):
-        """associate theory: the background theory to reason about assume and guarantee"""
-        self._constraints = constraints
-        self._behaviors = behaviors
+#     def list_behavior(self):
+#         pass
 
-    def list_behavior(self):
-        pass
-
-    def instantiate(port_assignments) -> Contract:
-        pass
+#     def instantiate(port_assignments) -> Contract:
+#         pass
 
 
-class ContractLibrary:
-    """Class ContractLibrary works as manager and process domain-knowledge input from designer to create
-    design platform and perform optimization"""
+# class ContractLibrary():
+#     """Class ContractLibrary works as manager and process domain-knowledge input from designer to create
+#     design platform and perform optimization"""
+#     def __init__(self):
+#         self._contract_dict = {}
 
-    def __init__(self):
-        self._contract_dict = {}
+#     def addContract(self, comp_type: CType, contract:Contract):
+#         self._contract_dict[comp_type] = contract
 
-    def addContract(self, comp_type: CType, contract: Contract):
-        self._contract_dict[comp_type] = contract
 
-    def getContract(self, comp_type: CType):
-        return self._contract_dict[comp_type]
+#     def getContract(self, comp_type: CType):
+#         return self._contract_dict[comp_type]

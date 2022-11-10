@@ -17,6 +17,23 @@ def _all_same_value(dictionary: dict) -> bool:
     return True
 
 
+def common_parameters_across_all_designs():
+    shared_parameters = {}
+    deleted_keys = []
+    for design in designs_to_analyze:
+        for parameter in design.parameters:
+            if parameter.lib_id == "Fuselage__FLOOR_CONNECTOR_1_DISP_WIDTH":
+                print(parameter)
+            if parameter.lib_id in shared_parameters.keys():
+                if shared_parameters[parameter.lib_id] != parameter.value:
+                    del shared_parameters[parameter.lib_id]
+                    deleted_keys.append(parameter.lib_id)
+            else:
+                if parameter.lib_id not in deleted_keys:
+                    shared_parameters[parameter.lib_id] = parameter.value
+    save_to_file(shared_parameters, "shared_parameters.json")
+
+
 def parse_designs():
     data = {}
     for design in designs_to_analyze:
@@ -203,10 +220,14 @@ def parameter_analysis():
         f"learned_parameters.json",
         folder_name=f"analysis",
     )
+    #
+    # parameters_learned_structures = extract_clusters()
+    # save_to_file(
+    #     str(json.dumps(parameters_learned_structures, indent=4)),
+    #     f"parameters_learned_structures.json",
+    #     folder_name=f"analysis",
+    # )
 
-    parameters_learned_structures = extract_clusters()
-    save_to_file(
-        str(json.dumps(parameters_learned_structures, indent=4)),
-        f"parameters_learned_structures.json",
-        folder_name=f"analysis",
-    )
+
+if __name__ == "__main__":
+    common_parameters_across_all_designs()
