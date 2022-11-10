@@ -39,6 +39,11 @@ class Parameter:
     def __hash__(self):
         return hash(self.__str__())
 
+
+
+    @property
+    def lib_id(self) ->str:
+        return self.c_parameter.id
     @property
     def id(self) -> str:
         return f"{self.component.id}_{self.c_parameter.id}"
