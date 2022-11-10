@@ -203,10 +203,10 @@ def parameter_analysis():
         f"learned_parameters.json",
         folder_name=f"analysis",
     )
-
-    parameters_learned_structures = extract_clusters()
-    save_to_file(
-        str(json.dumps(parameters_learned_structures, indent=4)),
-        f"parameters_learned_structures.json",
-        folder_name=f"analysis",
-    )
+    #
+    # parameters_learned_structures = extract_clusters()
+    # save_to_file(
+    #     str(json.dumps(parameters_learned_structures, indent=4)),
+    #     f"parameters_learned_structures.json",
+    #     folder_name=f"analysis",
+    # )

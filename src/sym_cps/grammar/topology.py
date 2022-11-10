@@ -123,14 +123,9 @@ class AbstractTopology:
                                 ctype_b.id, ctype_a.id, connector_id_b, connector_id_a
                             )
                 if category == "PARAMETERS":
-                    if component_a not in parameters:
-                        parameters[component_a] = {}
-                    if AbstractionFeatures.USE_DEFAULT_PARAMETERS in abstraction_levels_features[abstraction_level]:
-                        c_type: str = get_component_type_from_instance_name(component_a)
-                        for parameter in c_library.component_types[c_type].parameters.values():
-                            if parameter.id in default_parameters.keys():
-                                parameters[component_a][parameter.id] = float(default_parameters[parameter.id])
                     for param, value in infos.items():
+                        if component_a not in parameters:
+                            parameters[component_a] = {}
                         parameters[component_a][param] = float(value)
         return cls(name, description, connections, parameters)
 

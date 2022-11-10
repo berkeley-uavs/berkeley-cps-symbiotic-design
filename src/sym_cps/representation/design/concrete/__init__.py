@@ -23,10 +23,10 @@ from sym_cps.representation.design.concrete.elements.design_parameters import De
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
-from sym_cps.shared.objects import ExportType, export_type_to_topology_level
+from sym_cps.shared.objects import ExportType, export_type_to_topology_level, optimizer
 from sym_cps.shared.paths import designs_folder
 from sym_cps.tools.my_io import save_to_file
-from sym_cps.tools.strings import repr_dictionary, tab
+from sym_cps.tools.strings import repr_dictionary, tab, get_component_type_from_instance_name
 
 
 @dataclass
@@ -47,7 +47,6 @@ class DConcrete:
     name: str
     description: str = ""
     design_parameters: dict[str, DesignParameter] = field(default_factory=dict)
-    comp_id_to_node: dict[str, Vertex] = field(default_factory=dict)
     evaluation_results: dict = field(default_factory=dict)
 
     def __post_init__(self):
@@ -56,22 +55,21 @@ class DConcrete:
 
     @classmethod
     def from_abstract_topology(cls, topo: AbstractTopology):
-
         d_concrete = cls(name=topo.name)
-        for component_a, connections in topo.connections.items():
-            node_a_vertex = d_concrete.add_default_node(component_a)
+        for component_id_a, connections in topo.connections.items():
+            vertex_a = d_concrete.add_component_from_id(component_id_a)
             """Parameters"""
-            if component_a in topo.parameters.keys():
-                node_a_vertex["component"].update_parameters(topo.parameters[component_a])
+            if component_id_a in topo.parameters.keys():
+                vertex_a["component"].update_parameters(topo.parameters[component_id_a])
             """Connections"""
-            for component_b, direction in connections.items():
-                node_b_vertex = d_concrete.add_default_node(component_b)
+            for component_id_b, direction in connections.items():
+                vertex_b = d_concrete.add_component_from_id(component_id_b)
                 connection = Connection.from_direction(
-                    component_a=node_a_vertex["component"],
-                    component_b=node_b_vertex["component"],
+                    component_a=vertex_a["component"],
+                    component_b=vertex_b["component"],
                     direction=direction,
                 )
-                d_concrete.connect(connection)
+                d_concrete.add_edge(vertex_a, vertex_b, connection)
 
         return d_concrete
 
@@ -101,33 +99,35 @@ class DConcrete:
     def export_parameters(self) -> dict[str, dict[str, Parameter]]:
         pass
 
-    def add_default_node(self, abstract_component_id: str) -> Vertex:
-        if abstract_component_id in self.comp_id_to_node.keys():
-            return self.comp_id_to_node[abstract_component_id]
-        id_split = abstract_component_id.split("_")
-        try:
-            if id_split[-2] == "instance":
-                node_type_a = "_".join(id_split[:-2])
-            else:
-                node_type_a = abstract_component_id
-        except:
-            node_type_a = abstract_component_id
-
-        from sym_cps.shared.library import c_library
-
-        lib_comp_a = c_library.get_default_component(node_type_a, design_name=self.name)
+    def add_component_from_id(self, abstract_component_id: str) -> Vertex:
+        vertex = self.get_node_by_instance(abstract_component_id)
+        if vertex is not None:
+            return vertex
+        component_type_id = get_component_type_from_instance_name(abstract_component_id)
+        lib_comp_a = optimizer.choose_component(component_type_id, design_name=self.name)
+        if not isinstance(lib_comp_a, LibraryComponent):
+            raise Exception
         instance_a = Component(id=abstract_component_id, library_component=lib_comp_a)
-        self.comp_id_to_node[abstract_component_id] = self.add_node(instance_a)
-        return self.comp_id_to_node[abstract_component_id]
+        if not isinstance(instance_a, Component):
+            raise Exception
+        vertex_a = self.add_node(instance_a)
+        return vertex_a
+
 
     def add_node(self, component: Component) -> Vertex:
-        return self.graph.add_vertex(
+        if component in self.components:
+            vertex = self.get_node_by_instance(component.id)
+            print(f"{vertex['component'].id} added to vertex {vertex.index}")
+            return vertex
+        vertex = self.graph.add_vertex(
             instance=component.id,
             library_component=component.library_component,
             c_type=component.c_type,
             component=component,
             label=f"{component.c_type.id}",
         )
+        print(f"{vertex['component'].id} added to vertex {vertex.index}")
+        return vertex
 
     def remove_node(self, vertex_id: int):
         print(self._graph)
@@ -445,8 +445,8 @@ class DConcrete:
             isomorphic = len(mappings) > 0
             if not isomorphic:
                 print("Not isomorphic")
-                self.export(ExportType.SUMMARY, tag="_design_self")
-                other.export(ExportType.SUMMARY, tag="_design_other")
+                self.export(ExportType.SUMMARY, tag="_design_original")
+                other.export(ExportType.SUMMARY, tag="_design_copy")
                 print("exported")
             return isomorphic
 
