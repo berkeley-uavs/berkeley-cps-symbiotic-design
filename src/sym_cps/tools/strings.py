@@ -28,12 +28,6 @@ def _str_value(value) -> str:
 
 def rename_component_types(component_type: str) -> str:
     return component_type
-    if component_type == "Battery_UAV":
-        return "Battery"
-    if component_type == "capsule_fuselage":
-        return "Fuselage"
-    return component_type
-
 
 def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, instances_created: dict):
     instances_renaming[instance] = instance
