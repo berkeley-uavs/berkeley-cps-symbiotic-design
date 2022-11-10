@@ -51,6 +51,7 @@ class Test_Selection:
     def run_general_evaluation(self, component_dict):
         design_concrete, design_topology = self.designs["TestQuad"]
         self.component_selection.check_selection(
+            design_concrete=design_concrete,
             component_dict=component_dict
         )
         """Set the component for selection"""
