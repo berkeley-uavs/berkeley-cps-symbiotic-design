@@ -105,7 +105,7 @@ class ContractTemplate(object):
 
 
 class ContractManager(object):
-    def __init__(self, property_interface_fn: Callable):
+    def __init__(self, property_interface_fn: Callable, verbose = True):
         self._c_instance: dict[str, ContractInstance] = {}  # instance name ->  #instance
         self._clauses: list = []
         self._selection_candidate: dict[ContractInstance, dict] = {}  # map each instance to all available choice
@@ -116,7 +116,7 @@ class ContractManager(object):
         self._objective_expr = None
         self._objective_val = None
         self._objective_fn = None
-        self._print_verbose = True
+        self._print_verbose = verbose
 
     def print_debug(self, *args):
         if self._print_verbose:
@@ -185,7 +185,7 @@ class ContractManager(object):
         ret = self._solver.check()
         # print(self._solver.assertions())
         if ret == z3.sat:  # SAT
-            print("SAT")
+            self.print_debug("SAT")
             self._model = self._solver.model()
             # print(model)
             selection_result = self.get_component_selection()
@@ -193,7 +193,7 @@ class ContractManager(object):
             self.print_metric()
             return True
         else:
-            print("UNSAT")
+            self.print_debug("UNSAT")
             return False
 
     def solve_optimize(self, max_iter=0, timeout_millisecond=100000):
@@ -209,7 +209,7 @@ class ContractManager(object):
         while ret == z3.sat:
             self._model = self._solver.model()
             selection_result = self.get_component_selection()
-            print(f"Iteration: {num_iter}")
+            self.print_debug(f"Iteration: {num_iter}")
             self.print_selection_result(selection_result)
             self.print_metric()
             # count progress
@@ -223,7 +223,7 @@ class ContractManager(object):
             self._solver.add(self._objective_expr >= new_value)
             ret = self._solver.check()
         if selection_result is None:
-            print("Fail.....")
+            self.print_debug("Fail.....")
 
         return selection_result
 
@@ -251,6 +251,8 @@ class ContractManager(object):
         return ret
 
     def print_metric(self):
+        if not self._print_verbose:
+            return 
         print(f"===================Component Selection Metric=====================")
         for inst in self._c_instance.values():
             print(f" ")
@@ -264,6 +266,8 @@ class ContractManager(object):
         print("==================================================================")
 
     def print_selection_result(self, ret):
+        if not self._print_verbose:
+            return 
         print(f"===================Component Selection Result=====================")
         for inst, cand in ret.items():
             property_dict = self._property_interface_fn(cand)

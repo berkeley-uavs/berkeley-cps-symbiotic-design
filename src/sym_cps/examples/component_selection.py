@@ -95,8 +95,8 @@ class Test_Selection:
 
 if __name__ == "__main__":
     tester = Test_Selection()
-    propeller, motor, battery = tester.test_component_selection()
-    #component_dict = tester.test_general_component_selection()
+    #propeller, motor, battery = tester.test_component_selection()
+    component_dict = tester.test_general_component_selection()
     # propeller = c_library.components["62x6_2_3200_51_1390"]
     # motor = c_library.components["Rex30"]
     # battery = c_library.components["TurnigyGraphene6000mAh3S75C"]
@@ -198,6 +198,17 @@ if __name__ == "__main__":
     # MotorInst_3: t_motor_AntigravityMN6007KV320
     # PropellerInst_3: apc_propellers_15x10
     # BatteryInst: TurnigyGraphene2200mAh4S75C
+
+
+    # MotorInst_0: t_motor_AT2820KV1050
+    # PropellerInst_0: apc_propellers_8_75x8_75NN
+    # MotorInst_1: t_motor_AT2820KV1050
+    # PropellerInst_1: apc_propellers_8_75x8_75NN
+    # MotorInst_2: t_motor_AT2820KV1050
+    # PropellerInst_2: apc_propellers_8_75x8_75NN
+    # MotorInst_3: t_motor_AT2820KV1050
+    # PropellerInst_3: apc_propellers_8_75x8_75NN
+    # BatteryInst: TurnigyGraphene5000mAh4S75C
     #tester.check_combination(propeller=propeller, motor=motor, battery=battery)
     #tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     # build_contract_library()
