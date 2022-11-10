@@ -169,23 +169,19 @@ def components_analysis():
     data = parse_designs()
 
     for design_name, info in data.items():
-        save_to_file(
-            info, f"components.json", folder_name=f"analysis/{design_name}"
-        )
+        save_to_file(info, f"components.json", folder_name=f"analysis/{design_name}")
     components_types_in_design, component_used_in_designs = library_analysis()
 
     component_choice = {
         "SEED_DESIGNS": {},
         "ALL_COMPONENTS": component_used_in_designs,
-        "TYPES IN SEED_DESIGN": components_types_in_design
+        "TYPES IN SEED_DESIGN": components_types_in_design,
     }
 
     for design_name, info in data.items():
         component_choice["SEED_DESIGNS"][design_name] = info
 
-    save_to_file(
-        component_choice, f"component_choice.json", folder_name=f"analysis"
-    )
+    save_to_file(component_choice, f"component_choice.json", folder_name=f"analysis")
 
 
 if __name__ == "__main__":

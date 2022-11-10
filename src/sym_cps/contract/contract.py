@@ -4,10 +4,9 @@ from typing import TYPE_CHECKING
 import z3
 
 from sym_cps.representation.library import Library
-from sym_cps.representation.library.elements.c_type import CType
 
 if TYPE_CHECKING:
-    from sym_cps.representation.library.elements.c_type import CType
+    pass
 
 
 class Contract:
@@ -27,7 +26,8 @@ class Contract:
         G = self._guarantee(vs)
         return vs, A, G
 
-class ContractManagerBruteForce():
+
+class ContractManagerBruteForce:
     def __init__(self):
         self._all_vs = {}
         self._vs_dict = {}
@@ -187,16 +187,19 @@ class ContractManagerBruteForce():
         self._contracts["system"] = system_contract
         return self._contracts
 
-    def hackathon_compose(self, num_battery, 
-                                num_motor, 
-                                c_library, 
-                                table_dict, 
-                                better_selection_encoding = True, 
-                                batteries = None, 
-                                motors = None, 
-                                propellers = None,
-                                body_weight = 0,
-                                obj_lower_bound = None):
+    def hackathon_compose(
+        self,
+        num_battery,
+        num_motor,
+        c_library,
+        table_dict,
+        better_selection_encoding=True,
+        batteries=None,
+        motors=None,
+        propellers=None,
+        body_weight=0,
+        obj_lower_bound=None,
+    ):
         if propellers is None:
             propellers = c_library.components_in_type["Propeller"]
         if motors is None:
@@ -253,13 +256,21 @@ class ContractManagerBruteForce():
                 continue
             use_v = z3.Bool(f"use_{propeller.id}")
             prop_select_vs.update({f"{propeller.id}": use_v})
-            prop_properties = ContractManagerBruteForce.hackthon_get_propeller_property(propeller=propeller, table_dict=table_dict, num_motor=num_motor)
-            self._all_clause.append(z3.Implies(use_v, 
-                                         z3.And(prop_vs["C_p"] == prop_properties[f"C_p"], 
-                                                prop_vs["C_t"] == prop_properties[f"C_t"],
-                                                prop_vs["W_prop"] == prop_properties[f"W_prop"],
-                                                prop_vs["diameter"] == prop_properties[f"diameter"],
-                                                prop_vs["shaft_prop"] == prop_properties[f"shaft_prop"])))
+            prop_properties = ContractManagerBruteForce.hackthon_get_propeller_property(
+                propeller=propeller, table_dict=table_dict, num_motor=num_motor
+            )
+            self._all_clause.append(
+                z3.Implies(
+                    use_v,
+                    z3.And(
+                        prop_vs["C_p"] == prop_properties[f"C_p"],
+                        prop_vs["C_t"] == prop_properties[f"C_t"],
+                        prop_vs["W_prop"] == prop_properties[f"W_prop"],
+                        prop_vs["diameter"] == prop_properties[f"diameter"],
+                        prop_vs["shaft_prop"] == prop_properties[f"shaft_prop"],
+                    ),
+                )
+            )
             # set value
         self._vs_dict["prop_select"] = prop_select_vs
         # can only select one propeller
@@ -285,15 +296,21 @@ class ContractManagerBruteForce():
             motor_select_vs.update({f"{motor.id}": use_v})
 
             motor_properties = ContractManagerBruteForce.hackthon_get_motor_property(motor=motor, num_motor=num_motor)
-            self._all_clause.append(z3.Implies(use_v, 
-                                         z3.And(motor_vs["P_max_motor"] == motor_properties[f"P_max_motor"], 
-                                                motor_vs["W_motor"] == motor_properties[f"W_motor"],
-                                                motor_vs["I_max_motor"] == motor_properties[f"I_max_motor"],
-                                                motor_vs["K_t"] == motor_properties[f"K_t"],
-                                                motor_vs["K_v"] == motor_properties[f"K_v"],
-                                                motor_vs["R_w"] == motor_properties[f"R_w"],
-                                                motor_vs["I_idle"] == motor_properties[f"I_idle"],
-                                                motor_vs["shaft_motor"] == motor_properties[f"shaft_motor"])))
+            self._all_clause.append(
+                z3.Implies(
+                    use_v,
+                    z3.And(
+                        motor_vs["P_max_motor"] == motor_properties[f"P_max_motor"],
+                        motor_vs["W_motor"] == motor_properties[f"W_motor"],
+                        motor_vs["I_max_motor"] == motor_properties[f"I_max_motor"],
+                        motor_vs["K_t"] == motor_properties[f"K_t"],
+                        motor_vs["K_v"] == motor_properties[f"K_v"],
+                        motor_vs["R_w"] == motor_properties[f"R_w"],
+                        motor_vs["I_idle"] == motor_properties[f"I_idle"],
+                        motor_vs["shaft_motor"] == motor_properties[f"shaft_motor"],
+                    ),
+                )
+            )
         self._vs_dict["motor_select"] = motor_select_vs
         # can only select one motor
         print("Generate Rules to Ensure Motor Selection ")
@@ -314,12 +331,20 @@ class ContractManagerBruteForce():
             use_v = z3.Bool(f"use_{battery.id}")
             battery_select_vs.update({f"{battery.id}": use_v})
 
-            battery_properties = ContractManagerBruteForce.hackthon_get_battery_property(battery=battery, num_battery=num_battery)
-            self._all_clause.append(z3.Implies(use_v, 
-                                         z3.And(battery_vs["capacity"] == battery_properties[f"capacity"], 
-                                                battery_vs["W_batt"] == battery_properties[f"W_batt"],
-                                                battery_vs["I_max"] == battery_properties[f"I_max"],
-                                                battery_vs["V_battery"] == battery_properties[f"V_battery"])))
+            battery_properties = ContractManagerBruteForce.hackthon_get_battery_property(
+                battery=battery, num_battery=num_battery
+            )
+            self._all_clause.append(
+                z3.Implies(
+                    use_v,
+                    z3.And(
+                        battery_vs["capacity"] == battery_properties[f"capacity"],
+                        battery_vs["W_batt"] == battery_properties[f"W_batt"],
+                        battery_vs["I_max"] == battery_properties[f"I_max"],
+                        battery_vs["V_battery"] == battery_properties[f"V_battery"],
+                    ),
+                )
+            )
         self._vs_dict["battery_select"] = battery_select_vs
         # can only select one motor
         print("Generate Rules to Ensure Battery Selection ")
@@ -343,7 +368,10 @@ class ContractManagerBruteForce():
         self._all_clause.extend(G)
         # connect system
         self._all_clause.append(sys_vs["thrust_sum"] == prop_vs["thrust"])
-        self._all_clause.append(sys_vs["weight_sum"] == (prop_vs["W_prop"] + battery_vs["W_batt"] + motor_vs["W_motor"] + body_weight) * 9.81) # Kg to N
+        self._all_clause.append(
+            sys_vs["weight_sum"]
+            == (prop_vs["W_prop"] + battery_vs["W_batt"] + motor_vs["W_motor"] + body_weight) * 9.81
+        )  # Kg to N
         # tmp for debug
         self._all_clause.append(battery_vs["I_batt"] == battery_vs["capacity"] * 3600 / 400)  # Ah -> As
         self._all_clause.append(prop_vs["rho"] == sys_vs["rho"])  # Ah -> As
@@ -352,7 +380,7 @@ class ContractManagerBruteForce():
         # set obj_lower_bound requirement
         if obj_lower_bound is not None:
             print("Set Lower bound: ", obj_lower_bound)
-            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] * 9.8 > obj_lower_bound)
+            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] * 9.81 > obj_lower_bound)
         #
 
         # self._all_clause.append(motor_vs["omega_motor"] > 2)#Ah -> As
@@ -500,9 +528,7 @@ class ContractManagerBruteForce():
         )
         print("==================================================================")
 
-
-
-    def solve_optimize(self, c_library: Library, max_iter = 0, timeout_millisecond = 100000):
+    def solve_optimize(self, c_library: Library, max_iter=0, timeout_millisecond=100000):
         num_iter = 0
         propeller = None
         motor = None
@@ -544,7 +570,6 @@ class ContractManagerBruteForce():
         return propeller, motor, battery
 
 
-
 # class ContractTemplate():
 #     """Class of Contract Template, which handles information in the domain knowledge"""
 #     def __init__(self, constraints, behaviors):
@@ -571,4 +596,3 @@ class ContractManagerBruteForce():
 
 #     def getContract(self, comp_type: CType):
 #         return self._contract_dict[comp_type]
-

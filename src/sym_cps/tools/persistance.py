@@ -12,7 +12,10 @@ def dump(obj: object, file: str) -> str:
         os.makedirs(os.path.dirname(file_path))
 
     with open(file_path, "wb") as f:
-        pickle.dump(obj=obj, file=f)
+        try:
+            pickle.dump(obj=obj, file=f)
+        except Exception as e:
+            raise e
     print(f"Object saved in: {str(file_path)}")
     return str(file_path)
 
