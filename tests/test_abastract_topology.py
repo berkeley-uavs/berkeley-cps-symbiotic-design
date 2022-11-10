@@ -1,6 +1,3 @@
-import json
-from sym_cps.grammar.tools import main
-
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
@@ -52,5 +49,3 @@ def test_topology_abstraction_3():
 
 def test_topology_abstraction_4():
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_4)
-
-

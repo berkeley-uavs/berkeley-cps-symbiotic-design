@@ -32,6 +32,5 @@ def assert_topology_from_and_to_json(topology_level: ExportType):
     assert test_quad_original == test_quad_loaded_2
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_4)

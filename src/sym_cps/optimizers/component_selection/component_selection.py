@@ -1,13 +1,13 @@
-from sym_cps.representation.design.topology import DTopology
-from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.representation.library import LibraryComponent
-from sym_cps.representation.library import Library
-from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
-from sym_cps.contract.contract import Contract, ContractManagerBruteForce
-# from sym_cps.contract.contract_general import ContractGeneralManager
-from sym_cps.representation.library.elements.perf_table import PerfTable
-from sym_cps.contract.contract_composition import Hackathon2Contract
 import time
+
+from sym_cps.contract.contract import ContractManagerBruteForce
+
+# from sym_cps.contract.contract_general import ContractGeneralManager
+from sym_cps.contract.contract_composition import Hackathon2Contract
+from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.design.topology import DTopology
+from sym_cps.representation.library import Library, LibraryComponent
+from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
 
 
 class ComponentSelectionContract:
@@ -21,31 +21,34 @@ class ComponentSelectionContract:
         self._library = c_library
         self._table_dict = parsing_prop_table(c_library)
 
+    def select_general(
+        self, design_topology: DTopology, design_concrete: DConcrete = None, max_iter=10, timeout_millisecond=100000
+    ):
 
-    def select_general(self, design_topology:DTopology, design_concrete: DConcrete = None, max_iter = 10, timeout_millisecond = 100000):
-        
-        
         manager = Hackathon2Contract(table_dict=self._table_dict, c_library=self._library)
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
-        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
+            d_topology=design_topology
+        )
         """Instantiate the contract"""
         obj = None
         if design_concrete is not None:
             print("Calculate the initial objective function")
-            component_dict_input =  self.create_component_lists(d_concrete=design_concrete)
+            component_dict_input = self.create_component_lists(d_concrete=design_concrete)
             obj = self.check_selection_general(design_concrete=design_concrete, design_topology=design_topology)
             print("Objective: ", obj)
         else:
             print("Currently not supported")
             return None
         """Create the contracts based on the topology"""
-        manager.compose(num_battery=num_batteries,
-                        num_motor=num_motors,
-                        motor_ratio=[1]* num_motors,
-                        body_weight=0,
-                        better_selection_encoding=True,
-                        obj_lower_bound=obj
-                        )
+        manager.compose(
+            num_battery=num_batteries,
+            num_motor=num_motors,
+            motor_ratio=[1] * num_motors,
+            body_weight=0,
+            better_selection_encoding=True,
+            obj_lower_bound=obj,
+        )
         """Solver the OMT problem to optimize selection of components """
         start = time.time()
         component_dict_ret = manager.optimize(max_iter=max_iter, timeout_millisecond=timeout_millisecond)
@@ -58,34 +61,35 @@ class ComponentSelectionContract:
         self.print_components(component_dict=component_dict)
         return component_dict
 
-
-    def check_selection_general(self, 
-                                design_topology:DTopology, 
-                                design_concrete: DConcrete = None, 
-                                component_dict: dict = None
-                              ):
+    def check_selection_general(
+        self, design_topology: DTopology, design_concrete: DConcrete = None, component_dict: dict = None
+    ):
         if component_dict is None:
             if design_concrete is not None:
                 """get concrete component"""
-                component_dict =  self.create_component_lists(d_concrete=design_concrete)
+                component_dict = self.create_component_lists(d_concrete=design_concrete)
             else:
                 print("Error, No component selection found for the type")
                 return False
         print("Check Component:")
         self.print_components(component_dict=component_dict)
-        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
+            d_topology=design_topology
+        )
         manager = Hackathon2Contract(table_dict=self._table_dict, c_library=self._library)
         start = time.time()
-        objective = manager.check_selection(num_battery=num_batteries,
-                                num_motor=num_motors,
-                                battery=component_dict["Battery"]["lib"][0],
-                                motors=component_dict["Motor"]["lib"],
-                                propellers=component_dict["Propeller"]["lib"],
-                                body_weight=0,
-                                motor_ratio=[1.0]*num_motors)
+        objective = manager.check_selection(
+            num_battery=num_batteries,
+            num_motor=num_motors,
+            battery=component_dict["Battery"]["lib"][0],
+            motors=component_dict["Motor"]["lib"],
+            propellers=component_dict["Propeller"]["lib"],
+            body_weight=0,
+            motor_ratio=[1.0] * num_motors,
+        )
         end = time.time()
-        print("Solving Time:", end - start)   
-        return objective        
+        print("Solving Time:", end - start)
+        return objective
 
     def match_result(self, component_dict_ret, component_dict_input):
         for c_type_id, info in component_dict_ret.items():
@@ -101,16 +105,19 @@ class ComponentSelectionContract:
             comps = info["comp"]
             libs = info["lib"]
             for comp, lib in zip(comps, libs):
-                comp.library_component = lib  
+                comp.library_component = lib
 
-    def select_hackathon(self, design_topology:DTopology, design_concrete: DConcrete = None, max_iter = 10, timeout_millisecond = 100000):
+    def select_hackathon(
+        self, design_topology: DTopology, design_concrete: DConcrete = None, max_iter=10, timeout_millisecond=100000
+    ):
         print(" ")
-
 
         """Instantiate the contract"""
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
         manager = ContractManagerBruteForce()
-        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
+            d_topology=design_topology
+        )
         """Use seed design as a lower bound"""
         obj = None
         if design_concrete is not None:
@@ -128,13 +135,20 @@ class ComponentSelectionContract:
         )
         """Solver the OMT problem to optimize selection of components """
         start = time.time()
-        propeller, motor, battery = manager.solve_optimize(c_library=self._library, max_iter=max_iter, timeout_millisecond = timeout_millisecond)
+        propeller, motor, battery = manager.solve_optimize(
+            c_library=self._library, max_iter=max_iter, timeout_millisecond=timeout_millisecond
+        )
         end = time.time()
         print("Solving Time:", end - start)
         return propeller, motor, battery
 
-
-    def replace_with_component(self, design_concrete: DConcrete, propeller:LibraryComponent, motor:LibraryComponent, battery: LibraryComponent):
+    def replace_with_component(
+        self,
+        design_concrete: DConcrete,
+        propeller: LibraryComponent,
+        motor: LibraryComponent,
+        battery: LibraryComponent,
+    ):
         for component in design_concrete.components:
             if component.c_type.id == "Propeller":
                 component.library_component = propeller
@@ -143,12 +157,14 @@ class ComponentSelectionContract:
             if component.c_type.id == "Motor":
                 component.library_component = motor
 
-
-    def check_selection(self, design_topology:DTopology, 
-                              design_concrete: DConcrete = None, 
-                              motor: LibraryComponent = None,
-                              propeller = None, 
-                              battery = None):
+    def check_selection(
+        self,
+        design_topology: DTopology,
+        design_concrete: DConcrete = None,
+        motor: LibraryComponent = None,
+        propeller=None,
+        battery=None,
+    ):
         if motor is None or battery is None or propeller is None:
             if design_concrete is not None:
                 """get concrete component"""
@@ -172,7 +188,9 @@ class ComponentSelectionContract:
         print(f"Battery: {battery.id}")
         # print(f"BatteryController: {battery_controller.id}")
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
-        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(d_topology=design_topology)
+        num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
+            d_topology=design_topology
+        )
         manager = ContractManagerBruteForce()
         """Create the contracts based on the topology"""
         manager.hackathon_contract(num_battery=num_batteries, num_motor=num_motors)
@@ -219,7 +237,7 @@ class ComponentSelectionContract:
                 component_dict[c_type.id] = {}
                 component_dict[c_type.id]["comp"] = []
                 component_dict[c_type.id]["lib"] = []
-            
+
             component_dict[c_type.id]["comp"].append(component.library_component)
             component_dict[c_type.id]["lib"].append(component.library_component)
 
@@ -232,4 +250,3 @@ class ComponentSelectionContract:
             for n, comp in enumerate(comp_info["lib"]):
                 print(f"    {c_type_id} {n}: {comp.id}")
         print("===============================================")
-

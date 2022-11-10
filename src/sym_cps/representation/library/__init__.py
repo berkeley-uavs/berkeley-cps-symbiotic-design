@@ -12,7 +12,6 @@ from sym_cps.representation.tools.parsers.parsing_library import fill_parameters
 from sym_cps.shared.paths import component_library_root_path_default, component_selection_path, data_folder
 
 
-
 @dataclass
 class Library:
     components: dict[str, LibraryComponent] = field(default_factory=dict)
@@ -41,7 +40,9 @@ class Library:
             else:
                 self.connectors.update(comp_type.connectors)
 
-    def get_default_component(self, component_type_id: str, design_name: str = "", hub_size: int = 0) -> LibraryComponent:
+    def get_default_component(
+        self, component_type_id: str, design_name: str = "", hub_size: int = 0
+    ) -> LibraryComponent:
         if component_type_id not in self.component_types.keys():
             raise Exception(f"{component_type_id}\nComponent Type not present in the library")
         f = open(component_selection_path)

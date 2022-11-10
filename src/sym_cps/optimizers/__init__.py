@@ -7,6 +7,7 @@ from sym_cps.representation.library import Library, LibraryComponent
 class OptimizationStrategy(Enum):
     random_strategy = auto()
 
+
 @dataclass(frozen=True)
 class Optimizer:
     library: Library
@@ -15,4 +16,3 @@ class Optimizer:
         """Choose Component and its Parameters"""
         default_component: LibraryComponent = self.library.get_default_component(component_type_id, design_name)
         return default_component
-

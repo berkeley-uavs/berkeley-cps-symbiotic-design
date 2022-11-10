@@ -29,6 +29,7 @@ class Connection:
         connector_a = connections_map[component_a.c_type.id][component_b.c_type.id][direction][0]
         connector_b = connections_map[component_a.c_type.id][component_b.c_type.id][direction][1]
         from sym_cps.shared.library import c_library
+
         print(f"use {connector_a} - {connector_b}")
         return cls(
             component_a,

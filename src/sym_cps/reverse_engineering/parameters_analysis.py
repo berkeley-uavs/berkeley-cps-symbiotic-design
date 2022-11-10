@@ -17,7 +17,6 @@ def _all_same_value(dictionary: dict) -> bool:
     return True
 
 
-
 def common_parameters_across_all_designs():
     shared_parameters = {}
     deleted_keys = []
@@ -33,7 +32,6 @@ def common_parameters_across_all_designs():
                 if parameter.lib_id not in deleted_keys:
                     shared_parameters[parameter.lib_id] = parameter.value
     save_to_file(shared_parameters, "shared_parameters.json")
-
 
 
 def parse_designs():
@@ -231,5 +229,5 @@ def parameter_analysis():
     # )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     common_parameters_across_all_designs()
