@@ -54,6 +54,10 @@ class Connection:
         return self.component_a, self.component_b
 
     @property
+    def summary(self) -> dict:
+        return {self.component_a.id: self.connector_a.id, self.component_b.id: self.connector_b.id}
+
+    @property
     def key(self) -> str:
         a1 = self.component_a.id
         a2 = self.connector_a.id

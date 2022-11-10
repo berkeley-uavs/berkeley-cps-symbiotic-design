@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 from copy import deepcopy
-from itertools import product
+from itertools import product, combinations
 
 from igraph import Edge, Graph, Vertex
 
@@ -22,6 +22,22 @@ def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
         ):
             return True
     return False
+
+
+def find_isomorphisms(elements: list[Graph]) -> tuple[list[Graph], bool]:
+        isomorphisms = []
+        all_elements_are_isomorphic = True
+        pairs = combinations(elements, 2)
+        for pair in pairs:
+            mappings = pair[0].get_isomorphisms_vf2(
+                pair[1], node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
+            )
+            if len(mappings) > 0:
+                if not is_isomorphism_present(isomorphisms, pair[0]):
+                    isomorphisms.append(pair[0])
+            else:
+                all_elements_are_isomorphic = False
+        return isomorphisms, all_elements_are_isomorphic
 
 
 def node_comparison(graph_1: Graph, graph_2: Graph, node_1: Vertex, node_2: Vertex):
@@ -51,14 +67,13 @@ cheap_hash = lambda input: hashlib.md5(input).hexdigest()[:6]
 hash = hashlib.sha1("my message".encode("UTF-8")).hexdigest()
 
 
-def get_subgraph(design: DConcrete, key_nodes: set[str]) -> DConcrete:
+def get_subgraph(design: DConcrete, key_nodes: list[str]) -> DConcrete:
     design_ret = deepcopy(design)
     edges_to_remove = get_edges_connected_to_types(design, key_nodes)
     design_ret.graph.delete_edges(edges_to_remove)
-    tag = hashlib.sha1("".join(key_nodes).encode("UTF-8")).hexdigest()[:6]
-    design_ret.export(ExportType.PDF, tag=f"_subgraphs_{tag}")
+    key_nodes_str = "-".join(key_nodes)
+    design_ret.export(ExportType.PDF, folder=f"analysis/isomorphisms/{key_nodes_str}/decompositions", tag=f"_decomposed_{design.name}")
     return design_ret
-
 
 def weak_node_comparison(graph_1: Graph, graph_2: Graph, node_1: Vertex, node_2: Vertex):
     c1 = graph_1.vs[node_1]["c_type"].id

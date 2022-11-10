@@ -24,7 +24,7 @@ from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level, optimizer
-from sym_cps.shared.paths import designs_folder
+from sym_cps.shared.paths import designs_folder, output_folder
 from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.strings import get_component_type_from_instance_name, repr_dictionary, tab
 
@@ -191,9 +191,9 @@ class DConcrete:
         raise Exception
 
     def select(
-        self,
-        library_component: LibraryComponent | None = None,
-        component_type: CType | None = None,
+            self,
+            library_component: LibraryComponent | None = None,
+            component_type: CType | None = None,
     ) -> set[Component]:
         components = set()
         if library_component is not None:
@@ -204,7 +204,7 @@ class DConcrete:
 
     @property
     def all_library_components_in_type(
-        self,
+            self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -217,7 +217,7 @@ class DConcrete:
 
     @property
     def all_components_by_library_components(
-        self,
+            self,
     ) -> dict[LibraryComponent, set[Component]]:
         """Returns all Components for each LibraryComponent in the design"""
         comp_types_n: dict[LibraryComponent, set[Component]] = {}
@@ -361,8 +361,14 @@ class DConcrete:
         graphs = pydot.graph_from_dot_file(dot_file_path)
         return graphs[0]
 
-    def export(self, file_type: ExportType, tag: str = "") -> Path:
-        absolute_folder = designs_folder / self.name
+    def export(self, file_type: ExportType, folder: str = "", tag: str = "") -> Path:
+        if folder != "":
+            absolute_folder = output_folder / folder
+        else:
+            absolute_folder = designs_folder / self.name
+
+        if not os.path.exists(absolute_folder):
+            os.makedirs(absolute_folder)
 
         if file_type == ExportType.TXT:
             return save_to_file(
@@ -391,7 +397,7 @@ class DConcrete:
             # self._graph.write_dot(f=str(file_path))
 
         elif file_type == ExportType.PDF:
-            file_path = absolute_folder / f"concrete_graph{tag}.pdf"
+            file_path = absolute_folder / f"graph{tag}.pdf"
             self.pydot.write_pdf(file_path)
 
         elif file_type == ExportType.SUMMARY:
@@ -459,8 +465,8 @@ class DConcrete:
 
         connection_dict = {}
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
@@ -475,8 +481,8 @@ class DConcrete:
                         )
                         if component.id == connection.component_a.id:
                             if (
-                                connection.component_b.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_b.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id
@@ -488,8 +494,8 @@ class DConcrete:
 
                         if component.id == connection.component_b.id:
                             if (
-                                connection.component_a.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_a.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id
@@ -567,8 +573,8 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:

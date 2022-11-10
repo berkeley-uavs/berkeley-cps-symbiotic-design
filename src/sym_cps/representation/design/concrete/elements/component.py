@@ -77,6 +77,16 @@ class Component:
 
         return params_props_values
 
+    @property
+    def params_values(self) -> dict[str, float]:
+        params_values: dict[str, float] = {}
+
+        for param_id, parameter in self.parameters.items():
+            params_values[param_id] = parameter.value
+
+
+        return params_values
+
     def update_parameters(self, parameters: dict[str, float]):
         for param_id, value in parameters.items():
             self.parameters[param_id].value = value
