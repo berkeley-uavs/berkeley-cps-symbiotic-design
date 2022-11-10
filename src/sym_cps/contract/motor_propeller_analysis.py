@@ -90,7 +90,7 @@ class MotorPropellerAnalysis(object):
             ) * 9.81
             ret_clauses = [ vs["weight_sum"] == weight_sum,
                            vs["rho"] == 1.225,
-                           vs["thrust"] >= vs["weight_sum"]
+                           vs["thrust"] >= vs["weight_sum"],
                            vs["V_motor"] <= 7]
 
             return ret_clauses
