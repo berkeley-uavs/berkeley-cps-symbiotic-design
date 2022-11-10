@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import random
-from itertools import product, combinations
+from itertools import product
 
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.tools import find_isomorphisms, get_subgraph, is_isomorphism_present
@@ -126,7 +125,7 @@ def random_sampling_for_n(iterations: int = 10000):
     iteration = 0
     total_summary = {}
 
-    while(iteration < iterations):
+    while iteration < iterations:
         print(f"Iteration: {iteration}")
         summary, subset = random_sampling(designs_chosen, nodes_types)
         summary_file = output_folder / "analysis/isomorphisms/structure_summary.json"
@@ -138,11 +137,15 @@ def random_sampling_for_n(iterations: int = 10000):
         l_hits = len(summary["LOCAL"])
         g_hits = len(summary["GLOBAL"])
         t_hits = l_hits + g_hits
-        total_summary[str(exiting_entries + iteration)] = {"HITS": t_hits, "LOCAL": l_hits, "GLOBAL": g_hits, "KEYS": list(subset)}
+        total_summary[str(exiting_entries + iteration)] = {
+            "HITS": t_hits,
+            "LOCAL": l_hits,
+            "GLOBAL": g_hits,
+            "KEYS": list(subset),
+        }
 
         save_to_file(total_summary, "structure_summary.json", f"analysis/isomorphisms/")
         iteration += 1
-
 
 
 if __name__ == "__main__":
