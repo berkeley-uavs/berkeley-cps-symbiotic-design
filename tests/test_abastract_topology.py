@@ -55,7 +55,7 @@ def test_topology_abstraction_4():
 
 
 #
-# test_topology_abstraction_1()
-# test_topology_abstraction_2()
-# test_topology_abstraction_3()
-# test_topology_abstraction_4()
+test_topology_abstraction_1()
+test_topology_abstraction_2()
+test_topology_abstraction_3()
+test_topology_abstraction_4()
