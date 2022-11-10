@@ -29,6 +29,7 @@ def _str_value(value) -> str:
 def rename_component_types(component_type: str) -> str:
     return component_type
 
+
 def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, instances_created: dict):
     instances_renaming[instance] = instance
     if "Orient" in c_type_id:

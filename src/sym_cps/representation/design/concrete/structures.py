@@ -1,20 +1,12 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
-from itertools import combinations, product
-
-from igraph import Graph
+from itertools import product
 
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.representation.design.concrete.tools import (
-    get_subgraph,
-    is_isomorphism_present,
-    weak_edge_comparison,
-    weak_node_comparison, find_isomorphisms,
-)
+from sym_cps.representation.design.concrete.tools import find_isomorphisms, get_subgraph, is_isomorphism_present
 from sym_cps.shared.designs import designs
-from sym_cps.tools.graphs import graph_to_pdf, graph_to_dict
+from sym_cps.tools.graphs import graph_to_dict, graph_to_pdf
 from sym_cps.tools.my_io import save_to_file
 
 
@@ -74,7 +66,6 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
             else:
                 local_iso.extend(isomorphisms)
 
-
     for n_nodes, candidates in candiates.items():
         for i, groups in enumerate(candidates):
             for j, graph in enumerate(groups):
@@ -82,7 +73,6 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
 
     print(f"Found {len(local_iso)} local isomorphisms and {global_iso} global ones")
     return local_iso, global_iso
-
 
 
 def explore_structures(designs: list[DConcrete], key_nodes: list[str]):
@@ -113,4 +103,3 @@ if __name__ == "__main__":
     dconcretes = [d[0] for d in designs.values()]
     key_nodes = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
     explore_structures(dconcretes, key_nodes)
-

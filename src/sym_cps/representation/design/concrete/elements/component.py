@@ -84,7 +84,6 @@ class Component:
         for param_id, parameter in self.parameters.items():
             params_values[param_id] = parameter.value
 
-
         return params_values
 
     def update_parameters(self, parameters: dict[str, float]):

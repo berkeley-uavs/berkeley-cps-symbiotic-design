@@ -17,7 +17,6 @@ def graph_to_pdf(graph: Graph, name: str, folder: str):
     graphs[0].write_pdf(pdf_file_path)
 
 
-
 def graph_to_dict(graph: Graph, name: str):
     components = list(graph.vs()["component"])
     connections = list(graph.es()["connection"])
