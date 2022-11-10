@@ -32,35 +32,35 @@ class Hackathon2Contract(object):
                     )
         self._manager.solve()
         objective = self._manager.calculate_objective()
-        print("Check Completed")
+        print(f"Check Completed (objective: {objective})")
         return objective
 
     def optimize(self, max_iter = 0, timeout_millisecond = 100000):
         self._manager.solve_optimize(max_iter=max_iter, timeout_millisecond=timeout_millisecond)
         selection_result = self._manager.get_component_selection()
-        propellers, motors, battery = self._collect_result(selection_result=selection_result)
-        return propellers, motors, battery
+        if selection_result is None:
+            return None
+        component_dict = self._collect_result(selection_result=selection_result)
+        return component_dict
 
     def _collect_result(self, selection_result):
-        propellers = [None] * self._num_motor
-        motors = [None] * self._num_motor
-        battery = None
+        component_dict = {"Motor": {"lib": [None]*self._num_motor},
+                          "Propeller": {"lib": [None]*self._num_motor},
+                          "Battery": {"lib": [None]}}
         for inst, cand in selection_result.items():
-            if inst.template_name == "Propeller":
-                propellers[inst.index] = cand
-            elif inst.template_name == "Motor":
-                motors[inst.index] = cand
-            elif inst.template_name == 'Battery':
-                battery = cand
+            #print(inst.instance_name, inst.template_name, inst.index)
+            if inst.template_name in component_dict:
+                #print(len(component_dict[inst.template_name]["lib"]))
+                component_dict[inst.template_name]["lib"][inst.index] = cand 
 
-        if any( cand is None for cand in propellers):
+        if any( cand is None for cand in component_dict["Propeller"]["lib"]):
             print("Error: Some Component is not assigned")
-        if any( cand is None for cand in motors):
+        if any( cand is None for cand in component_dict["Motor"]["lib"]):
             print("Error: Some Component is not assigned")
-        if battery is None:
+        if any( cand is None for cand in component_dict["Battery"]["lib"]):
             print("Error: Some Component is not assigned")
 
-        return propellers, motors, battery
+        return component_dict
 
     def compose(self, 
                 num_battery, 
@@ -76,11 +76,22 @@ class Hackathon2Contract(object):
         self._num_battery = num_battery
 
         if propellers is None:
-            propellers = [self._c_library.components_in_type["Propeller"]] * num_motor
+            propellers = [list(self._c_library.components_in_type["Propeller"])] * num_motor
+            # propellers = [[self._c_library.components["apc_propellers_6x4E"],
+            #                self._c_library.components["apc_propellers_15x6E"],
+            #                self._c_library.components["apc_propellers_26x15E"]] ] * num_motor
         if motors is None:
-            motors = [self._c_library.components_in_type["Motor"]] * num_motor
+            motors = [list(self._c_library.components_in_type["Motor"])] * num_motor
+            # motors = [[ self._c_library.components["t_motor_AT2312KV1400"],
+            #             self._c_library.components["t_motor_AntigravityMN4006KV380"],
+            #             self._c_library.components["t_motor_AntigravityMN1005V2KV90"]
+            #             ] ] * num_motor
         if batteries is None:
-            batteries = self._c_library.components_in_type["Battery"]
+            batteries = list(self._c_library.components_in_type["Battery"])
+            # batteries = [  self._c_library.components["TurnigyGraphene1000mAh2S75C"],
+            #                 self._c_library.components["TurnigyGraphene1400mAh4S75C"],
+            #                 self._c_library.components["TurnigyGraphene3000mAh6S75C"]
+            #                 ]
         if motor_ratio is None:
             motor_ratio = [1] * self._num_motor
         if len(motor_ratio) != self._num_motor:
@@ -99,8 +110,8 @@ class Hackathon2Contract(object):
             prop_insts.append(prop_inst)
             self._manager.add_instance(motor_inst)
             self._manager.add_instance(prop_inst)
-            self._manager.set_selection(inst=prop_inst, candidate_list=propellers)
-            self._manager.set_selection(inst=motor_inst, candidate_list=motors)
+            self._manager.set_selection(inst=prop_inst, candidate_list=propellers[i])
+            self._manager.set_selection(inst=motor_inst, candidate_list=motors[i])
         batt_inst = self._contracts["Battery"].instantiate(f"BatteryInst")
         batt_contr_inst = self._contracts["BatteryController"].instantiate(f"BatteryControllerInst")
         system_inst = self._contracts["System"].instantiate(f"System")
@@ -114,6 +125,7 @@ class Hackathon2Contract(object):
         propeller_motor_connection = [("torque_prop", "torque_motor"),
                                       ("omega_prop", "omega_motor"),
                                       ("shaft_motor", "shaft_motor")]
+
         for i in range(self._num_motor):
             self._manager.compose(prop_insts[i], motor_insts[i], propeller_motor_connection)
         # connect motor to batt_contr
@@ -138,15 +150,15 @@ class Hackathon2Contract(object):
         system_battery_connection = [   ("W_batt", "W_batt"),
                                         ("I_battery", "I_batt"),
                                         ("batt_capacity", "capacity")]
-
+        self._manager.compose(system_inst, batt_inst, system_battery_connection)
         # set objective
         objective_expr = system_inst.get_var("thrust_sum") - system_inst.get_var("weight_sum")
         objective_val = obj_lower_bound
-        def objective_fn(model):
+        def objective_fn():
             thrust_sum = self._manager.get_metric_inst(system_inst, "thrust_sum")
             weight_sum = self._manager.get_metric_inst(system_inst, "weight_sum")
             return thrust_sum - weight_sum
-        self._manager.set_objective(expr=objective_expr, value=obj_lower_bound, evaluate_fn=objective_fn)
+        self._manager.set_objective(expr=objective_expr, value=objective_val, evaluate_fn=objective_fn)
 
         
 
@@ -161,12 +173,12 @@ class Hackathon2Contract(object):
         def system_assumption(vs):
             return [vs["I_battery"] == vs["batt_capacity"] * 3600 / 400]
         def system_guarantee(vs):
-            thrust_sum = sum([vs[f"W_motor_{i}"] for i in range(self._num_motor)])
+            thrust_sum = sum([vs[f"thrust_prop_{i}"] for i in range(self._num_motor)])
             weight_sum = (  vs["W_batt"] 
                             + body_weight 
                             + sum([vs[f"W_prop_{i}"] for i in range(self._num_motor)])
                             + sum([vs[f"W_motor_{i}"] for i in range(self._num_motor)])
-                        )
+                        ) * 9.81
             ret_clauses = ([vs[f"thrust_prop_{i}"] * motor_ratio[i] == vs[f"thrust_prop_{i+1}"] * motor_ratio[i+1] for i in range(self._num_motor - 1)] 
                           + [vs["thrust_sum"] >= vs["weight_sum"]]
                           + [vs["thrust_sum"] == thrust_sum]
@@ -188,8 +200,8 @@ class Hackathon2Contract(object):
     def set_contract(self):
         self._contracts = {}
 
-        propeller_port_name_list = ["rho", "W_prop", "omega_prop", "torque_prop", "thrust", "shaft_motor"]
-        propeller_property_name_list = ["C_p", "C_t", "diameter", "shaft_prop"]
+        propeller_port_name_list = ["rho", "omega_prop", "torque_prop", "thrust", "shaft_motor"]
+        propeller_property_name_list = ["C_p", "C_t", "diameter", "shaft_prop", "W_prop"]
         def propeller_assumption(vs):
             return [vs["shaft_prop"] >= vs["shaft_motor"], vs["C_p"] >= 0]
         def propeller_guarantee(vs):
@@ -237,11 +249,11 @@ class Hackathon2Contract(object):
         self._contracts["Battery"] = battery_contract
 
         battery_controller_port_name_list = ["V_battery", "I_battery"]
-        battery_controller_property_name_list = [ f"I_motor_{i}" for i in range(self._num_battery)] + [ f"V_motor_{i}" for i in range(self._num_battery)]
+        battery_controller_property_name_list = [ f"I_motor_{i}" for i in range(self._num_motor)] + [ f"V_motor_{i}" for i in range(self._num_motor)]
         def battery_controller_assumption(vs):
-            return [vs[f"V_motor_{i}"] <= vs["V_battery"] for i in range(self._num_battery)]
+            return [vs[f"V_motor_{i}"] <= vs["V_battery"] for i in range(self._num_motor)]
         def battery_controller_guarantee(vs):
-            i_sum = sum([vs[f"I_motor_{i}"] for i in range(self._num_battery)])
+            i_sum = sum([vs[f"I_motor_{i}"] for i in range(self._num_motor)])
             return [ i_sum == vs["I_battery"] * 0.95]
 
         battery_controller_contract = ContractTemplate(name="BatteryController", 
