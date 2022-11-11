@@ -50,10 +50,10 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
 
     candiates = {}
 
-    key_nodes_str = "-".join(key_nodes)
-    export_folder = f"analysis/isomorphisms/{key_nodes_str}/candidates/"
-    if not os.path.exists(export_folder):
-        os.makedirs(export_folder)
+    # key_nodes_str = "-".join(key_nodes)
+    # export_folder = f"analysis/isomorphisms/{key_nodes_str}/candidates/"
+    # if not os.path.exists(export_folder):
+    #     os.makedirs(export_folder)
 
     for i in range(n_nodes_min, n_nodes_max + 1):
         proposals = []

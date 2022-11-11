@@ -25,7 +25,7 @@ def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
 
 def find_isomorphisms(elements: list[Graph]) -> tuple[list[Graph], bool]:
     isomorphisms = []
-    all_elements_are_isomorphic = True
+    all_elements_with_same_nodes_types_are_isomorphic = True
     pairs = combinations(elements, 2)
     for pair in pairs:
         mappings = pair[0].get_isomorphisms_vf2(
@@ -35,8 +35,11 @@ def find_isomorphisms(elements: list[Graph]) -> tuple[list[Graph], bool]:
             if not is_isomorphism_present(isomorphisms, pair[0]):
                 isomorphisms.append(pair[0])
         else:
-            all_elements_are_isomorphic = False
-    return isomorphisms, all_elements_are_isomorphic
+            set_of_types_a = set([vs["label"] for vs in pair[0].vs])
+            set_of_types_b = set([vs["label"] for vs in pair[1].vs])
+            if set_of_types_a == set_of_types_b:
+                all_elements_with_same_nodes_types_are_isomorphic = False
+    return isomorphisms, all_elements_with_same_nodes_types_are_isomorphic
 
 
 def node_comparison(graph_1: Graph, graph_2: Graph, node_1: Vertex, node_2: Vertex):
