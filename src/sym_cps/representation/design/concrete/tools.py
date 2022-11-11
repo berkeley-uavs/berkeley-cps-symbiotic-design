@@ -65,17 +65,19 @@ def get_edges_connected_to_types(design: DConcrete, types_to_check: set[str]) ->
 cheap_hash = lambda input: hashlib.md5(input).hexdigest()[:6]
 hash = hashlib.sha1("my message".encode("UTF-8")).hexdigest()
 
+all_types = {'SensorRpmTemp', 'SensorVariometer', 'Cargo', 'Propeller', 'BatteryController', 'SensorCurrent',
+             'SensorAutopilot', 'Hub4', 'Orient', 'Hub3', 'Battery', 'Wing', 'Hub2', 'CargoCase', 'Motor', 'Flange',
+             'SensorGPS', 'Fuselage', 'SensorVoltage', 'Tube'}
+sensors = set()
+hubs = set()
+
+for t in all_types:
+    if "Sensor" in t:
+        sensors.add(t)
+    if "Hub" in t:
+        hubs.add(t)
 
 def get_subgraph(design: DConcrete, key_nodes: list[str]) -> DConcrete:
-    all_types = {'SensorRpmTemp', 'SensorVariometer', 'Cargo', 'Propeller', 'BatteryController', 'SensorCurrent', 'SensorAutopilot', 'Hub4', 'Orient', 'Hub3', 'Battery', 'Wing', 'Hub2', 'CargoCase', 'Motor', 'Flange', 'SensorGPS', 'Fuselage', 'SensorVoltage', 'Tube'}
-    sensors = set()
-    hubs = set()
-
-    for t in all_types:
-        if "Sensor" in t:
-            sensors.add(t)
-        if "Hub" in t:
-            hubs.add(t)
 
     design_ret = deepcopy(design)
 
