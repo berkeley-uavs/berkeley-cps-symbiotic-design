@@ -8,9 +8,10 @@ from itertools import product
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.tools import find_isomorphisms, get_subgraph, is_isomorphism_present
 from sym_cps.shared.designs import designs
-from sym_cps.shared.paths import output_folder
+from sym_cps.shared.paths import output_folder, popular_nodes_keys_path
 from sym_cps.tools.graphs import graph_to_dict, graph_to_pdf
 from sym_cps.tools.my_io import save_to_file
+from sym_cps.tools.strings import make_hash_sha256
 
 
 def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None = None):
@@ -68,14 +69,18 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
         for combination in combinations:
             isomorphisms, all_elements = find_isomorphisms(combination)
             if all_elements and len(combination) == len(designs_to_decompose):
-                global_iso.extend(isomorphisms)
+                for iso in isomorphisms:
+                    if not is_isomorphism_present(global_iso, iso):
+                        global_iso.append(iso)
             else:
-                local_iso.extend(isomorphisms)
+                for iso in isomorphisms:
+                    if not is_isomorphism_present(local_iso, iso):
+                        local_iso.append(iso)
 
-    for n_nodes, candidates in candiates.items():
-        for i, groups in enumerate(candidates):
-            for j, graph in enumerate(groups):
-                graph_to_pdf(graph, f"{n_nodes}_{i}_{j}_graph", export_folder)
+    # for n_nodes, candidates in candiates.items():
+    #     for i, groups in enumerate(candidates):
+    #         for j, graph in enumerate(groups):
+    #             graph_to_pdf(graph, f"{n_nodes}_{i}_{j}_graph", export_folder)
 
     print(f"Found {len(local_iso)} local isomorphisms and {len(global_iso)} global ones")
     return local_iso, global_iso
@@ -85,24 +90,43 @@ def explore_structures(designs: list[DConcrete], key_nodes: list[str]):
     local_iso, global_iso = find_isos(designs, key_nodes)
 
     key_nodes_str = "-".join(key_nodes)
-    export_folder = f"analysis/isomorphisms/{key_nodes_str}/structures"
 
-    summary = {"LOCAL": [], "GLOBAL": []}
+    summary = {"LOCAL": {}, "GLOBAL": {}}
+
+    graphs_dict = {}
 
     for i, iso in enumerate(local_iso):
-        structure = graph_to_dict(iso, f"local_{i}")
-        summary["LOCAL"].append(structure)
-        save_to_file(structure, f"local_{i}.json", folder_name=export_folder)
-        graph_to_pdf(iso, f"local_{i}.json", export_folder)
+        structure_key, structure = graph_to_dict(iso)
+        graphs_dict[structure_key] = iso
+        structure_hash = str(make_hash_sha256(structure))[-5:]
+        if structure_key not in summary["LOCAL"]:
+            structure["COUNT"] = 1
+            summary["LOCAL"] = {structure_key: {
+                "VARIANTS": {structure_hash: structure}}}
+        else:
+            if structure_hash not in summary["LOCAL"][structure_key]["VARIANTS"].keys():
+                structure["COUNT"] = 1
+                summary["LOCAL"][structure_key]["VARIANTS"][structure_hash] = structure
+            else:
+                summary["LOCAL"][structure_key]["VARIANTS"][structure_hash]["COUNT"] += 1
 
     for i, iso in enumerate(global_iso):
-        structure = graph_to_dict(iso, f"global_{i}")
-        summary["GLOBAL"].append(structure)
-        save_to_file(structure, f"global_{i}.json", folder_name=export_folder)
-        graph_to_pdf(iso, f"global_{i}", export_folder)
+        structure_key, structure = graph_to_dict(iso)
+        graphs_dict[structure_key] = iso
+        structure_hash = str(make_hash_sha256(structure))[-5:]
+        if structure_key not in summary["GLOBAL"]:
+            structure["COUNT"] = 1
+            summary["GLOBAL"] = {structure_key: {
+                "VARIANTS": {structure_hash: structure}}}
+        else:
+            if structure_hash not in summary["GLOBAL"][structure_key]["VARIANTS"].keys():
+                structure["COUNT"] = 1
+                summary["GLOBAL"][structure_key]["VARIANTS"][structure_hash] = structure
+            else:
+                summary["GLOBAL"][structure_key]["VARIANTS"][structure_hash]["COUNT"] += 1
 
-    save_to_file(summary, f"summary.json", folder_name=f"analysis/isomorphisms/{key_nodes_str}")
-    return summary
+    # save_to_file(summary, f"summary.json", folder_name=f"analysis/isomorphisms/{key_nodes_str}")
+    return summary, graphs_dict
 
 
 def predefined_nodes(designs_chosen):
@@ -113,7 +137,12 @@ def predefined_nodes(designs_chosen):
 def random_sampling(designs_chosen, nodes_types):
     subset = random.sample(nodes_types, random.randint(1, len(nodes_types)))
     print(f"Node keys: {subset}")
-    return explore_structures(designs_chosen, subset), subset
+    subset = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
+    return explore_structures(designs_chosen, subset)
+
+
+popular_nodes: dict = json.load(open(popular_nodes_keys_path))
+popular_nodes_list: list = list(popular_nodes.keys())
 
 
 def random_sampling_for_n(iterations: int = 10000):
@@ -121,34 +150,92 @@ def random_sampling_for_n(iterations: int = 10000):
     nodes_types = set()
     for d in designs_chosen:
         nodes_types |= d.all_comp_types_ids
+    node_types_default = {'SensorRpmTemp', 'SensorVariometer', 'Cargo', 'Propeller', 'BatteryController',
+                          'SensorCurrent', 'SensorAutopilot', 'Hub4', 'Orient', 'Hub3', 'Battery', 'Wing', 'Hub2',
+                          'CargoCase', 'Motor', 'Flange', 'SensorGPS', 'Fuselage', 'SensorVoltage', 'Tube'}
 
-    iteration = 0
-    total_summary = {}
+    node_types_grouped = set()
 
+    for node in node_types_default:
+        if "Sensor" in node:
+            node_types_grouped.add("Sensor")
+        elif "Hub" in node:
+            node_types_grouped.add("Hub")
+        else:
+            node_types_grouped.add(node)
+
+    summary_file = output_folder / "analysis/isomorphisms/structure_summary.json"
+    if summary_file.is_file():
+        total_summary: dict = json.load(open(output_folder / "analysis/isomorphisms/structure_summary.json"))
+    else:
+        total_summary = {"LOCAL": {}, "GLOBAL": {}}
+
+    graphs_dict_total = {}
+
+    iteration = 1
+    nodes_types_set_visited = []
     while iteration < iterations:
         print(f"Iteration: {iteration}")
-        summary, subset = random_sampling(designs_chosen, nodes_types)
-        summary_file = output_folder / "analysis/isomorphisms/structure_summary.json"
-        exiting_entries = 0
-        if summary_file.is_file():
-            existing_summary: dict = json.load(open(output_folder / "analysis/isomorphisms/structure_summary.json"))
-            exiting_entries = len(existing_summary.keys())
-            total_summary = existing_summary
-        l_hits = len(summary["LOCAL"])
-        g_hits = len(summary["GLOBAL"])
-        t_hits = l_hits + g_hits
-        total_summary[str(exiting_entries + iteration)] = {
-            "HITS": t_hits,
-            "LOCAL": l_hits,
-            "GLOBAL": g_hits,
-            "KEYS": list(subset),
-        }
+        if iteration < 1:
+            nodes_types_set = popular_nodes_list[iteration].split("-")
+            print("Choosing popular node types:")
+        else:
+            print("Choosing randomly:")
+            nodes_types_set = random.sample(node_types_grouped, random.randint(1, len(node_types_grouped)))
+        print(nodes_types_set)
+        nodes_types_set_list = sorted(list(nodes_types_set))
+        nodes_types_str = "-".join(nodes_types_set_list)
+        if nodes_types_set_list in nodes_types_set_visited:
+            continue
+        summary, graphs_dict = explore_structures(designs_chosen, nodes_types_set)
+        graphs_dict_total.update(graphs_dict)
+
+        for structure_key, structure in summary["LOCAL"].items():
+            if structure_key not in total_summary["LOCAL"].keys():
+                total_summary["LOCAL"][structure_key] = summary["LOCAL"][structure_key]
+                total_summary["LOCAL"][structure_key]["KEYS"] = [nodes_types_str]
+                total_summary["LOCAL"][structure_key]["COUNT"] = 1
+            else:
+                for struct_hash, struct in summary["LOCAL"][structure_key]["VARIANTS"].items():
+                    if struct_hash not in summary["LOCAL"][structure_key]["VARIANTS"].keys():
+                        summary["LOCAL"][structure_key]["VARIANTS"][struct_hash] = \
+                            summary["LOCAL"][structure_key]["VARIANTS"][struct_hash]
+                    else:
+                        summary["LOCAL"][structure_key]["VARIANTS"][struct_hash]["COUNT"] += 1
+                if nodes_types_str not in total_summary["LOCAL"][structure_key]["KEYS"]:
+                    total_summary["LOCAL"][structure_key]["KEYS"].append(nodes_types_str)
+                total_summary["LOCAL"][structure_key]["COUNT"] += 1
+        for structure_key, structure in summary["GLOBAL"].items():
+            if structure_key not in total_summary["GLOBAL"].keys():
+                total_summary["GLOBAL"][structure_key] = summary["GLOBAL"][structure_key]
+                total_summary["GLOBAL"][structure_key]["KEYS"] = [nodes_types_str]
+                total_summary["GLOBAL"][structure_key]["COUNT"] = 1
+            else:
+                for struct_hash, struct in summary["GLOBAL"][structure_key]["VARIANTS"].items():
+                    if struct_hash not in summary["GLOBAL"][structure_key]["VARIANTS"].keys():
+                        summary["GLOBAL"][structure_key]["VARIANTS"][struct_hash] = \
+                            summary["GLOBAL"][structure_key]["VARIANTS"][struct_hash]
+                    else:
+                        summary["GLOBAL"][structure_key]["VARIANTS"][struct_hash]["COUNT"] += 1
+                if nodes_types_str not in total_summary["GLOBAL"][structure_key]["KEYS"]:
+                    total_summary["GLOBAL"][structure_key]["KEYS"].append(nodes_types_str)
+                total_summary["GLOBAL"][structure_key]["COUNT"] += 1
 
         save_to_file(total_summary, "structure_summary.json", f"analysis/isomorphisms/")
+
+        for key, graph in graphs_dict_total.items():
+            graph_file = output_folder / f"analysis/isomorphisms/graphs/{key}.pdf"
+            if not graph_file.is_file():
+                graph_to_pdf(graph, key, "analysis/isomorphisms/graphs")
+
         iteration += 1
+        nodes_types_set_list.append(nodes_types_str)
 
 
 if __name__ == "__main__":
-    designs_chosen = [d[0] for d in designs.values()]
+    designs_chosen = []
+    for did, (dc, dt) in designs.items():
+        if did in ["NewAxe_Cargo", "PickAxe", "TestQuad_Cargo"]:
+            designs_chosen.append(dc)
     # predefined_nodes(designs_chosen)
-    random_sampling_for_n(4)
+    random_sampling_for_n()

@@ -58,6 +58,11 @@ class Connection:
         return {self.component_a.id: self.connector_a.id, self.component_b.id: self.connector_b.id}
 
     @property
+    def abstract_summary(self) -> str:
+        return f"{self.component_b.id}--{self.direction_b_respect_to_a}--{self.component_a.id}"
+
+
+    @property
     def key(self) -> str:
         a1 = self.component_a.id
         a2 = self.connector_a.id

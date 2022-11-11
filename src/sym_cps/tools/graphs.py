@@ -10,14 +10,15 @@ def graph_to_pdf(graph: Graph, name: str, folder: str):
     if not os.path.exists(output_folder / folder):
         os.makedirs(output_folder / folder)
     pdf_file_path = output_folder / folder / f"{name}.pdf"
-    dot_file_path = output_folder / folder / f"{name}.dot"
+    dot_file_path = output_folder / folder / "dot" / f"{name}.dot"
+    if not os.path.exists(output_folder / folder / "dot"):
+        os.makedirs(output_folder / folder / "dot")
     graph.write_dot(f=str(dot_file_path))
     graphs = pydot.graph_from_dot_file(dot_file_path)
-    # os.remove(dot_file_path)
     graphs[0].write_pdf(pdf_file_path)
 
 
-def graph_to_dict(graph: Graph, name: str):
+def graph_to_dict(graph: Graph):
     components = list(graph.vs()["component"])
     connections = list(graph.es()["connection"])
     components_dict = {}
@@ -28,8 +29,14 @@ def graph_to_dict(graph: Graph, name: str):
         if component.model not in components_dict[component.c_type.id].keys():
             components_dict[component.c_type.id][component.model] = {}
         if component.id not in components_dict[component.c_type.id][component.model].keys():
-            components_dict[component.c_type.id][component.model][component.id] = component.params_values
+            components_dict[component.c_type.id][component.model][component.id] = component.params_values_not_default
+    added = []
     for connection in connections:
-        connections_list.append(connection.summary)
-    structure = {"NAME": name, "COMPONENTS": components_dict, "CONNECTIONS": connections_list}
-    return structure
+        if connection.key in added:
+            continue
+        connections_list.append(connection.abstract_summary)
+        added.append(connection.key)
+    components_dict = {key: value for key, value in sorted(components_dict.items())}
+    structure = {"COMPONENTS": components_dict, "CONNECTIONS": connections_list}
+    structure_key = "-".join(components_dict.keys())
+    return structure_key, structure
