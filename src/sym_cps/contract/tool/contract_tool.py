@@ -105,7 +105,7 @@ class ContractTemplate(object):
 
 
 class ContractManager(object):
-    def __init__(self, property_interface_fn: Callable, verbose = True):
+    def __init__(self, property_interface_fn: Callable, verbose=True):
         self._c_instance: dict[str, ContractInstance] = {}  # instance name ->  #instance
         self._clauses: list = []
         self._selection_candidate: dict[ContractInstance, dict] = {}  # map each instance to all available choice
@@ -252,7 +252,7 @@ class ContractManager(object):
 
     def print_metric(self):
         if not self._print_verbose:
-            return 
+            return
         print(f"===================Component Selection Metric=====================")
         for inst in self._c_instance.values():
             print(f" ")
@@ -267,7 +267,7 @@ class ContractManager(object):
 
     def print_selection_result(self, ret):
         if not self._print_verbose:
-            return 
+            return
         print(f"===================Component Selection Result=====================")
         for inst, cand in ret.items():
             property_dict = self._property_interface_fn(cand)

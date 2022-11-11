@@ -61,7 +61,6 @@ class Connection:
     def abstract_summary(self) -> str:
         return f"{self.component_b.id}--{self.direction_b_respect_to_a}--{self.component_a.id}"
 
-
     @property
     def key(self) -> str:
         a1 = self.component_a.id

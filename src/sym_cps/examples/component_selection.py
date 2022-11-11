@@ -22,8 +22,7 @@ class Test_Selection:
         """Verify the Selection"""
         print("Check Result")
         self.component_selection.check_selection(
-            design_concrete=design_concrete,
-            motor=motor, battery=battery, propeller=propeller
+            design_concrete=design_concrete, motor=motor, battery=battery, propeller=propeller
         )
         return propeller, motor, battery
 
@@ -42,18 +41,12 @@ class Test_Selection:
         )
         """Verify the Selection"""
         print("Check Result")
-        self.component_selection.check_selection_general(
-            design_concrete=design_concrete,
-            component_dict=component_dict
-        )
-        return component_dict  
+        self.component_selection.check_selection_general(design_concrete=design_concrete, component_dict=component_dict)
+        return component_dict
 
     def run_general_evaluation(self, component_dict):
         design_concrete, design_topology = self.designs["TestQuad"]
-        self.component_selection.check_selection(
-            design_concrete=design_concrete,
-            component_dict=component_dict
-        )
+        self.component_selection.check_selection(design_concrete=design_concrete, component_dict=component_dict)
         """Set the component for selection"""
         self.component_selection.replace_with_component(component_dict=component_dict)
         design_concrete.name += "_comp_opt"
@@ -62,9 +55,7 @@ class Test_Selection:
 
     def run_evaluation(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
-        self.component_selection.check_selection(
-            motor=motor, battery=battery, propeller=propeller
-        )
+        self.component_selection.check_selection(motor=motor, battery=battery, propeller=propeller)
         """Set the component for selection"""
         self.component_selection.replace_with_component(
             design_concrete=design_concrete, propeller=propeller, motor=motor, battery=battery
@@ -80,22 +71,18 @@ class Test_Selection:
 
     def check_general_combination(self, component_dict):
         design_concrete, design_topology = self.designs["TestQuad"]
-        self.component_selection.check_selection_general(
-            component_dict=component_dict
-        )
-
+        self.component_selection.check_selection_general(component_dict=component_dict)
 
     def check_combination(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
         self.component_selection.check_selection(
-            design_concrete=design_concrete,
-            motor=motor, battery=battery, propeller=propeller
+            design_concrete=design_concrete, motor=motor, battery=battery, propeller=propeller
         )
 
 
 if __name__ == "__main__":
     tester = Test_Selection()
-    #propeller, motor, battery = tester.test_component_selection()
+    # propeller, motor, battery = tester.test_component_selection()
     component_dict = tester.test_general_component_selection()
     # propeller = c_library.components["62x6_2_3200_51_1390"]
     # motor = c_library.components["Rex30"]
@@ -199,7 +186,6 @@ if __name__ == "__main__":
     # PropellerInst_3: apc_propellers_15x10
     # BatteryInst: TurnigyGraphene2200mAh4S75C
 
-
     # MotorInst_0: t_motor_AT2820KV1050
     # PropellerInst_0: apc_propellers_8_75x8_75NN
     # MotorInst_1: t_motor_AT2820KV1050
@@ -209,6 +195,6 @@ if __name__ == "__main__":
     # MotorInst_3: t_motor_AT2820KV1050
     # PropellerInst_3: apc_propellers_8_75x8_75NN
     # BatteryInst: TurnigyGraphene5000mAh4S75C
-    #tester.check_combination(propeller=propeller, motor=motor, battery=battery)
-    #tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
+    # tester.check_combination(propeller=propeller, motor=motor, battery=battery)
+    # tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     # build_contract_library()

@@ -1,7 +1,5 @@
 import json
 from collections import Counter, OrderedDict
-from copy import deepcopy
-from itertools import combinations
 from pathlib import Path
 
 from sym_cps.shared.designs import designs
@@ -28,6 +26,5 @@ def process_isomorphisms_summary_json(json_file_path: Path):
     save_to_file(pop_dict, "popular_node_keys.json", "analysis")
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     process_isomorphisms_summary_json(summary_structure_path)

@@ -101,8 +101,7 @@ def explore_structures(designs: list[DConcrete], key_nodes: list[str]):
         structure_hash = str(make_hash_sha256(structure))[-5:]
         if structure_key not in summary["LOCAL"]:
             structure["COUNT"] = 1
-            summary["LOCAL"] = {structure_key: {
-                "VARIANTS": {structure_hash: structure}}}
+            summary["LOCAL"] = {structure_key: {"VARIANTS": {structure_hash: structure}}}
         else:
             if structure_hash not in summary["LOCAL"][structure_key]["VARIANTS"].keys():
                 structure["COUNT"] = 1
@@ -116,8 +115,7 @@ def explore_structures(designs: list[DConcrete], key_nodes: list[str]):
         structure_hash = str(make_hash_sha256(structure))[-5:]
         if structure_key not in summary["GLOBAL"]:
             structure["COUNT"] = 1
-            summary["GLOBAL"] = {structure_key: {
-                "VARIANTS": {structure_hash: structure}}}
+            summary["GLOBAL"] = {structure_key: {"VARIANTS": {structure_hash: structure}}}
         else:
             if structure_hash not in summary["GLOBAL"][structure_key]["VARIANTS"].keys():
                 structure["COUNT"] = 1
@@ -150,9 +148,28 @@ def random_sampling_for_n(iterations: int = 10000):
     nodes_types = set()
     for d in designs_chosen:
         nodes_types |= d.all_comp_types_ids
-    node_types_default = {'SensorRpmTemp', 'SensorVariometer', 'Cargo', 'Propeller', 'BatteryController',
-                          'SensorCurrent', 'SensorAutopilot', 'Hub4', 'Orient', 'Hub3', 'Battery', 'Wing', 'Hub2',
-                          'CargoCase', 'Motor', 'Flange', 'SensorGPS', 'Fuselage', 'SensorVoltage', 'Tube'}
+    node_types_default = {
+        "SensorRpmTemp",
+        "SensorVariometer",
+        "Cargo",
+        "Propeller",
+        "BatteryController",
+        "SensorCurrent",
+        "SensorAutopilot",
+        "Hub4",
+        "Orient",
+        "Hub3",
+        "Battery",
+        "Wing",
+        "Hub2",
+        "CargoCase",
+        "Motor",
+        "Flange",
+        "SensorGPS",
+        "Fuselage",
+        "SensorVoltage",
+        "Tube",
+    }
 
     node_types_grouped = set()
 
@@ -198,8 +215,9 @@ def random_sampling_for_n(iterations: int = 10000):
             else:
                 for struct_hash, struct in summary["LOCAL"][structure_key]["VARIANTS"].items():
                     if struct_hash not in summary["LOCAL"][structure_key]["VARIANTS"].keys():
-                        summary["LOCAL"][structure_key]["VARIANTS"][struct_hash] = \
-                            summary["LOCAL"][structure_key]["VARIANTS"][struct_hash]
+                        summary["LOCAL"][structure_key]["VARIANTS"][struct_hash] = summary["LOCAL"][structure_key][
+                            "VARIANTS"
+                        ][struct_hash]
                     else:
                         summary["LOCAL"][structure_key]["VARIANTS"][struct_hash]["COUNT"] += 1
                 if nodes_types_str not in total_summary["LOCAL"][structure_key]["KEYS"]:
@@ -213,8 +231,9 @@ def random_sampling_for_n(iterations: int = 10000):
             else:
                 for struct_hash, struct in summary["GLOBAL"][structure_key]["VARIANTS"].items():
                     if struct_hash not in summary["GLOBAL"][structure_key]["VARIANTS"].keys():
-                        summary["GLOBAL"][structure_key]["VARIANTS"][struct_hash] = \
-                            summary["GLOBAL"][structure_key]["VARIANTS"][struct_hash]
+                        summary["GLOBAL"][structure_key]["VARIANTS"][struct_hash] = summary["GLOBAL"][structure_key][
+                            "VARIANTS"
+                        ][struct_hash]
                     else:
                         summary["GLOBAL"][structure_key]["VARIANTS"][struct_hash]["COUNT"] += 1
                 if nodes_types_str not in total_summary["GLOBAL"][structure_key]["KEYS"]:

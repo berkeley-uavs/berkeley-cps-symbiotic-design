@@ -7,7 +7,6 @@ from itertools import combinations, product
 from igraph import Edge, Graph, Vertex
 
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.shared.objects import ExportType
 
 
 def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
@@ -62,12 +61,32 @@ def get_edges_connected_to_types(design: DConcrete, types_to_check: set[str]) ->
         edges_to_remove |= design.get_edges_connected_to(node.index)
     return edges_to_remove
 
+
 cheap_hash = lambda input: hashlib.md5(input).hexdigest()[:6]
 hash = hashlib.sha1("my message".encode("UTF-8")).hexdigest()
 
-all_types = {'SensorRpmTemp', 'SensorVariometer', 'Cargo', 'Propeller', 'BatteryController', 'SensorCurrent',
-             'SensorAutopilot', 'Hub4', 'Orient', 'Hub3', 'Battery', 'Wing', 'Hub2', 'CargoCase', 'Motor', 'Flange',
-             'SensorGPS', 'Fuselage', 'SensorVoltage', 'Tube'}
+all_types = {
+    "SensorRpmTemp",
+    "SensorVariometer",
+    "Cargo",
+    "Propeller",
+    "BatteryController",
+    "SensorCurrent",
+    "SensorAutopilot",
+    "Hub4",
+    "Orient",
+    "Hub3",
+    "Battery",
+    "Wing",
+    "Hub2",
+    "CargoCase",
+    "Motor",
+    "Flange",
+    "SensorGPS",
+    "Fuselage",
+    "SensorVoltage",
+    "Tube",
+}
 sensors = set()
 hubs = set()
 
@@ -76,6 +95,7 @@ for t in all_types:
         sensors.add(t)
     if "Hub" in t:
         hubs.add(t)
+
 
 def get_subgraph(design: DConcrete, key_nodes: list[str]) -> DConcrete:
 

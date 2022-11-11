@@ -3,6 +3,7 @@ import math
 from sym_cps.contract.tool.contract_tool import ContractManager, ContractTemplate
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 
+
 class MotorPropellerAnalysis(object):
     def __init__(self, table_dict, c_library):
         self._table_dict = table_dict
@@ -16,29 +17,23 @@ class MotorPropellerAnalysis(object):
                 if is_sat:
                     ret.append((prop, motor))
                     print("     OK")
-                else: 
+                else:
                     print("     Incompatible")
         print(len(ret))
-                    
 
-
-
-    def analysis(self, 
-                add_weight = 0,
-                motors: list[LibraryComponent] = None,
-                propellers: list[LibraryComponent] = None):
+    def analysis(self, add_weight=0, motors: list[LibraryComponent] = None, propellers: list[LibraryComponent] = None):
 
         """Analyze requirement for motor and propeller"""
         if propellers is None:
             propellers = list(self._c_library.components_in_type["Propeller"])
-            #propellers = [self._c_library.components["apc_propellers_6x4E"]]
+            # propellers = [self._c_library.components["apc_propellers_6x4E"]]
 
             # propellers = [[self._c_library.components["apc_propellers_6x4E"],
             #                self._c_library.components["apc_propellers_15x6E"],
             #                self._c_library.components["apc_propellers_26x15E"]] ] * num_motor
         if motors is None:
             motors = list(self._c_library.components_in_type["Motor"])
-            #motors = [self._c_library.components["t_motor_AT2312KV1400"]]
+            # motors = [self._c_library.components["t_motor_AT2312KV1400"]]
             #             self._c_library.components["t_motor_AntigravityMN4006KV380"],
             #             self._c_library.components["t_motor_AntigravityMN1005V2KV90"]
         self.set_contract()
@@ -75,7 +70,8 @@ class MotorPropellerAnalysis(object):
             return thrust_sum - weight_sum
 
         self._manager.set_objective(expr=objective_expr, value=objective_val, evaluate_fn=objective_fn)
-    def set_system(self, add_weight = 0):
+
+    def set_system(self, add_weight=0):
         system_port_name_list = ["rho", "thrust", "weight_sum", "I_motor", "W_motor", "W_prop", "thrust", "V_motor"]
         system_property_name_list = []
 
@@ -83,15 +79,13 @@ class MotorPropellerAnalysis(object):
             return [vs["I_motor"] <= 5]
 
         def system_guarantee(vs):
-            weight_sum = (
-                add_weight
-                + vs["W_prop"]
-                + vs["W_motor"]
-            ) * 9.81
-            ret_clauses = [ vs["weight_sum"] == weight_sum,
-                           vs["rho"] == 1.225,
-                           vs["thrust"] >= vs["weight_sum"],
-                           vs["V_motor"] <= 7]
+            weight_sum = (add_weight + vs["W_prop"] + vs["W_motor"]) * 9.81
+            ret_clauses = [
+                vs["weight_sum"] == weight_sum,
+                vs["rho"] == 1.225,
+                vs["thrust"] >= vs["weight_sum"],
+                vs["V_motor"] <= 7,
+            ]
 
             return ret_clauses
 
@@ -217,9 +211,11 @@ class MotorPropellerAnalysis(object):
             "name": motor.id,
         }
 
+
 if __name__ == "__main__":
     from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
     from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
+
     c_library, designs = parse_library_and_seed_designs()
     table_dict = parsing_prop_table(c_library)
     MotorPropellerAnalysis(table_dict=table_dict, c_library=c_library)
