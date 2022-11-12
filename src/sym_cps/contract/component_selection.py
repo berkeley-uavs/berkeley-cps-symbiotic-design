@@ -102,7 +102,7 @@ class ComponentSelectionContract:
             for comp, lib in zip(comps, libs):
                 comp.library_component = lib
 
-    def select_hackathon(self, design_concrete: DConcrete, max_iter=10, timeout_millisecond=100000):
+    def select_hackathon(self, design_concrete: DConcrete, max_iter = 10, timeout_millisecond = 100000, body_weight = 0):
         print(" ")
 
         """Instantiate the contract"""
@@ -124,6 +124,7 @@ class ComponentSelectionContract:
             c_library=self._library,
             table_dict=self._table_dict,
             better_selection_encoding=True,
+            body_weight=body_weight,
             obj_lower_bound=obj,
         )
         """Solver the OMT problem to optimize selection of components """
