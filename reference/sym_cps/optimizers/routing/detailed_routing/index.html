@@ -10,21 +10,21 @@
       
       
       
-        <link rel="canonical" href="https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/tools/io/">
+        <link rel="canonical" href="https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/optimizers/routing/detailed_routing/">
       
-      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
     
     
       
-        <title>io - sym_cps</title>
+        <title>detailed_routing - sym_cps</title>
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.20d9efc8.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
@@ -41,13 +41,13 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../../css/material.css">
+      <link rel="stylesheet" href="../../../../../css/material.css">
     
-      <link rel="stylesheet" href="../../../../css/mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../css/mkdocstrings.css">
     
-    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sym_cps.tools.io" class="md-skip">
+        <a href="#sym_cps.optimizers.routing.detailed_routing" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +92,7 @@
 
 <header class="md-header md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../.." title="sym_cps" class="md-header__button md-logo" aria-label="sym_cps" data-md-component="logo">
+    <a href="../../../../.." title="sym_cps" class="md-header__button md-logo" aria-label="sym_cps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              io
+              detailed_routing
             
           </span>
         </div>
@@ -205,7 +205,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../.." class="md-tabs__link">
+      <a href="../../../../.." class="md-tabs__link">
         Home
       </a>
     </li>
@@ -223,7 +223,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../backend/" class="md-tabs__link md-tabs__link--active">
+      <a href="../../../../backend/" class="md-tabs__link md-tabs__link--active">
         Code Reference
       </a>
     </li>
@@ -239,7 +239,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../contributing/" class="md-tabs__link">
+      <a href="../../../../../contributing/" class="md-tabs__link">
         Development
       </a>
     </li>
@@ -273,7 +273,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../.." title="sym_cps" class="md-nav__button md-logo" aria-label="sym_cps" data-md-component="logo">
+    <a href="../../../../.." title="sym_cps" class="md-nav__button md-logo" aria-label="sym_cps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -330,7 +330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../.." class="md-nav__link">
+      <a href="../../../../.." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -344,7 +344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../changelog/" class="md-nav__link">
+      <a href="../../../../../changelog/" class="md-nav__link">
         Changelog
       </a>
     </li>
@@ -358,7 +358,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../credits/" class="md-nav__link">
+      <a href="../../../../../credits/" class="md-nav__link">
         Credits
       </a>
     </li>
@@ -372,7 +372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../license/" class="md-nav__link">
+      <a href="../../../../../license/" class="md-nav__link">
         License
       </a>
     </li>
@@ -433,7 +433,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../backend/">backend</a>
+          <a href="../../../../backend/">backend</a>
           
             <label for="__nav_2_1">
               <span class="md-nav__icon md-icon"></span>
@@ -454,7 +454,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../backend/app/" class="md-nav__link">
+      <a href="../../../../backend/app/" class="md-nav__link">
         app
       </a>
     </li>
@@ -479,7 +479,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../backend/operations/">operations</a>
+          <a href="../../../../backend/operations/">operations</a>
           
             <label for="__nav_2_1_2">
               <span class="md-nav__icon md-icon"></span>
@@ -500,7 +500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../backend/operations/rating/" class="md-nav__link">
+      <a href="../../../../backend/operations/rating/" class="md-nav__link">
         rating
       </a>
     </li>
@@ -532,7 +532,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../backend/shared/">shared</a>
+          <a href="../../../../backend/shared/">shared</a>
           
             <label for="__nav_2_1_3">
               <span class="md-nav__icon md-icon"></span>
@@ -553,7 +553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../backend/shared/paths/" class="md-nav__link">
+      <a href="../../../../backend/shared/paths/" class="md-nav__link">
         paths
       </a>
     </li>
@@ -594,7 +594,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../">sym_cps</a>
+          <a href="../../../">sym_cps</a>
           
             <label for="__nav_2_2">
               <span class="md-nav__icon md-icon"></span>
@@ -615,7 +615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../classifier/" class="md-nav__link">
+      <a href="../../../classifier/" class="md-nav__link">
         classifier
       </a>
     </li>
@@ -629,7 +629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/" class="md-nav__link">
+      <a href="../../../cli/" class="md-nav__link">
         cli
       </a>
     </li>
@@ -654,7 +654,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../contract/">contract</a>
+          <a href="../../../contract/">contract</a>
           
             <label for="__nav_2_2_3">
               <span class="md-nav__icon md-icon"></span>
@@ -675,8 +675,138 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contract/contract/" class="md-nav__link">
+      <a href="../../../contract/component_selection/" class="md-nav__link">
+        component_selection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contract/contract/" class="md-nav__link">
         contract
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contract/contract_composition/" class="md-nav__link">
+        contract_composition
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contract/contract_composition_later_clause/" class="md-nav__link">
+        contract_composition_later_clause
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contract/contract_general/" class="md-nav__link">
+        contract_general
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contract/motor_propeller_analysis/" class="md-nav__link">
+        motor_propeller_analysis
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3_7" type="checkbox" id="__nav_2_2_3_7" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../contract/tool/">tool</a>
+          
+            <label for="__nav_2_2_3_7">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="tool" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_3_7">
+          <span class="md-nav__icon md-icon"></span>
+          tool
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contract/tool/contract_tool/" class="md-nav__link">
+        contract_tool
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contract/tool/contract_tool_later_clause/" class="md-nav__link">
+        contract_tool_later_clause
       </a>
     </li>
   
@@ -696,7 +826,28 @@
   
   
     <li class="md-nav__item">
-      <a href="../../control/" class="md-nav__link">
+      <a href="../../../contract/uav_contracts/" class="md-nav__link">
+        uav_contracts
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../control/" class="md-nav__link">
         control
       </a>
     </li>
@@ -721,7 +872,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../database/">database</a>
+          <a href="../../../database/">database</a>
           
             <label for="__nav_2_2_5">
               <span class="md-nav__icon md-icon"></span>
@@ -753,7 +904,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../database/tools/">tools</a>
+          <a href="../../../database/tools/">tools</a>
           
             <label for="__nav_2_2_5_1">
               <span class="md-nav__icon md-icon"></span>
@@ -774,7 +925,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../database/tools/update_database/" class="md-nav__link">
+      <a href="../../../database/tools/update_database/" class="md-nav__link">
         update_database
       </a>
     </li>
@@ -813,7 +964,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../evaluation/">evaluation</a>
+          <a href="../../../evaluation/">evaluation</a>
           
             <label for="__nav_2_2_6">
               <span class="md-nav__icon md-icon"></span>
@@ -834,7 +985,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation/cli/" class="md-nav__link">
+      <a href="../../../evaluation/cli/" class="md-nav__link">
         cli
       </a>
     </li>
@@ -848,7 +999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation/fdm_data/" class="md-nav__link">
+      <a href="../../../evaluation/fdm_data/" class="md-nav__link">
         fdm_data
       </a>
     </li>
@@ -862,7 +1013,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation/fdm_interface/" class="md-nav__link">
+      <a href="../../../evaluation/fdm_interface/" class="md-nav__link">
         fdm_interface
       </a>
     </li>
@@ -876,7 +1027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation/fdm_ret/" class="md-nav__link">
+      <a href="../../../evaluation/fdm_ret/" class="md-nav__link">
         fdm_ret
       </a>
     </li>
@@ -890,7 +1041,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation/fdm_to_json/" class="md-nav__link">
+      <a href="../../../evaluation/fdm_to_json/" class="md-nav__link">
         fdm_to_json
       </a>
     </li>
@@ -904,7 +1055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation/tools/" class="md-nav__link">
+      <a href="../../../evaluation/tools/" class="md-nav__link">
         tools
       </a>
     </li>
@@ -936,7 +1087,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../examples/">examples</a>
+          <a href="../../../examples/">examples</a>
           
             <label for="__nav_2_2_7">
               <span class="md-nav__icon md-icon"></span>
@@ -957,7 +1108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/build_uav/" class="md-nav__link">
+      <a href="../../../examples/build_uav/" class="md-nav__link">
         build_uav
       </a>
     </li>
@@ -971,7 +1122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/component_selection/" class="md-nav__link">
+      <a href="../../../examples/component_selection/" class="md-nav__link">
         component_selection
       </a>
     </li>
@@ -985,7 +1136,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/contract/" class="md-nav__link">
+      <a href="../../../examples/contract/" class="md-nav__link">
         contract
       </a>
     </li>
@@ -999,7 +1150,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/control/" class="md-nav__link">
+      <a href="../../../examples/control/" class="md-nav__link">
         control
       </a>
     </li>
@@ -1013,7 +1164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/custom_design/" class="md-nav__link">
+      <a href="../../../examples/custom_design/" class="md-nav__link">
         custom_design
       </a>
     </li>
@@ -1027,7 +1178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/design_swri/" class="md-nav__link">
+      <a href="../../../examples/design_swri/" class="md-nav__link">
         design_swri
       </a>
     </li>
@@ -1041,7 +1192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/designs/" class="md-nav__link">
+      <a href="../../../examples/designs/" class="md-nav__link">
         designs
       </a>
     </li>
@@ -1055,7 +1206,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/evaluation/" class="md-nav__link">
+      <a href="../../../examples/evaluation/" class="md-nav__link">
         evaluation
       </a>
     </li>
@@ -1069,7 +1220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/library/" class="md-nav__link">
+      <a href="../../../examples/library/" class="md-nav__link">
         library
       </a>
     </li>
@@ -1083,7 +1234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/parameter/" class="md-nav__link">
+      <a href="../../../examples/parameter/" class="md-nav__link">
         parameter
       </a>
     </li>
@@ -1097,7 +1248,21 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/topology/" class="md-nav__link">
+      <a href="../../../examples/step_wise_topology/" class="md-nav__link">
+        step_wise_topology
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/topology/" class="md-nav__link">
         topology
       </a>
     </li>
@@ -1111,7 +1276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/topology_3/" class="md-nav__link">
+      <a href="../../../examples/topology_3/" class="md-nav__link">
         topology_3
       </a>
     </li>
@@ -1143,7 +1308,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../grammar/">grammar</a>
+          <a href="../../../grammar/">grammar</a>
           
             <label for="__nav_2_2_8">
               <span class="md-nav__icon md-icon"></span>
@@ -1164,7 +1329,21 @@
   
   
     <li class="md-nav__item">
-      <a href="../../grammar/tools/" class="md-nav__link">
+      <a href="../../../grammar/rules/" class="md-nav__link">
+        rules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../grammar/tools/" class="md-nav__link">
         tools
       </a>
     </li>
@@ -1178,7 +1357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../grammar/topology/" class="md-nav__link">
+      <a href="../../../grammar/topology/" class="md-nav__link">
         topology
       </a>
     </li>
@@ -1199,7 +1378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../hci/" class="md-nav__link">
+      <a href="../../../hci/" class="md-nav__link">
         hci
       </a>
     </li>
@@ -1213,7 +1392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../initialize/" class="md-nav__link">
+      <a href="../../../initialize/" class="md-nav__link">
         initialize
       </a>
     </li>
@@ -1225,12 +1404,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11" type="checkbox" id="__nav_2_2_11" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11" type="checkbox" id="__nav_2_2_11" checked>
       
       
       
@@ -1238,7 +1419,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/">optimizers</a>
+          <a href="../../">optimizers</a>
           
             <label for="__nav_2_2_11">
               <span class="md-nav__icon md-icon"></span>
@@ -1258,40 +1439,8 @@
   
   
   
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_1" type="checkbox" id="__nav_2_2_11_1" >
-      
-      
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/component_selection/">component_selection</a>
-          
-            <label for="__nav_2_2_11_1">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
-          
-        </div>
-      
-      <nav class="md-nav" aria-label="component_selection" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_2_11_1">
-          <span class="md-nav__icon md-icon"></span>
-          component_selection
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../../optimizers/component_selection/component_selection/" class="md-nav__link">
+      <a href="../../component_selection/" class="md-nav__link">
         component_selection
       </a>
     </li>
@@ -1299,20 +1448,13 @@
 
             
           
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
             
               
   
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/concrete_opt/" class="md-nav__link">
+      <a href="../../concrete_opt/" class="md-nav__link">
         concrete_opt
       </a>
     </li>
@@ -1337,7 +1479,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/control_opt/">control_opt</a>
+          <a href="../../control_opt/">control_opt</a>
           
             <label for="__nav_2_2_11_3">
               <span class="md-nav__icon md-icon"></span>
@@ -1358,7 +1500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/control_opt/control_opt_base/" class="md-nav__link">
+      <a href="../../control_opt/control_opt_base/" class="md-nav__link">
         control_opt_base
       </a>
     </li>
@@ -1372,7 +1514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/control_opt/control_opt_bayes/" class="md-nav__link">
+      <a href="../../control_opt/control_opt_bayes/" class="md-nav__link">
         control_opt_bayes
       </a>
     </li>
@@ -1386,7 +1528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/control_opt/control_opt_grid/" class="md-nav__link">
+      <a href="../../control_opt/control_opt_grid/" class="md-nav__link">
         control_opt_grid
       </a>
     </li>
@@ -1400,7 +1542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/control_opt/control_opt_interface/" class="md-nav__link">
+      <a href="../../control_opt/control_opt_interface/" class="md-nav__link">
         control_opt_interface
       </a>
     </li>
@@ -1414,7 +1556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/control_opt/optimizer/" class="md-nav__link">
+      <a href="../../control_opt/optimizer/" class="md-nav__link">
         optimizer
       </a>
     </li>
@@ -1446,7 +1588,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/params_opt/">params_opt</a>
+          <a href="../../params_opt/">params_opt</a>
           
             <label for="__nav_2_2_11_4">
               <span class="md-nav__icon md-icon"></span>
@@ -1467,7 +1609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/params_opt/optimizer/" class="md-nav__link">
+      <a href="../../params_opt/optimizer/" class="md-nav__link">
         optimizer
       </a>
     </li>
@@ -1481,8 +1623,114 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/params_opt/param_opt_problem/" class="md-nav__link">
+      <a href="../../params_opt/param_opt_problem/" class="md-nav__link">
         param_opt_problem
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_5" type="checkbox" id="__nav_2_2_11_5" checked>
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../">routing</a>
+          
+            <label for="__nav_2_2_11_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="routing" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_2_11_5">
+          <span class="md-nav__icon md-icon"></span>
+          routing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          detailed_routing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        detailed_routing
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sym_cps.optimizers.routing.detailed_routing" class="md-nav__link">
+    sym_cps.optimizers.routing.detailed_routing
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool/" class="md-nav__link">
+        tool
       </a>
     </li>
   
@@ -1505,7 +1753,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_5" type="checkbox" id="__nav_2_2_11_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_6" type="checkbox" id="__nav_2_2_11_6" >
       
       
       
@@ -1513,16 +1761,16 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/tools/">tools</a>
+          <a href="../../tools/">tools</a>
           
-            <label for="__nav_2_2_11_5">
+            <label for="__nav_2_2_11_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="tools" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_2_11_5">
+        <label class="md-nav__title" for="__nav_2_2_11_6">
           <span class="md-nav__icon md-icon"></span>
           tools
         </label>
@@ -1537,7 +1785,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_5_1" type="checkbox" id="__nav_2_2_11_5_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_6_1" type="checkbox" id="__nav_2_2_11_6_1" >
       
       
       
@@ -1545,16 +1793,16 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/tools/optimization/">optimization</a>
+          <a href="../../tools/optimization/">optimization</a>
           
-            <label for="__nav_2_2_11_5_1">
+            <label for="__nav_2_2_11_6_1">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="optimization" data-md-level="5">
-        <label class="md-nav__title" for="__nav_2_2_11_5_1">
+        <label class="md-nav__title" for="__nav_2_2_11_6_1">
           <span class="md-nav__icon md-icon"></span>
           optimization
         </label>
@@ -1566,7 +1814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/bayesian_opt_visualizer/" class="md-nav__link">
+      <a href="../../tools/optimization/bayesian_opt_visualizer/" class="md-nav__link">
         bayesian_opt_visualizer
       </a>
     </li>
@@ -1580,7 +1828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/bayesian_optimizer/" class="md-nav__link">
+      <a href="../../tools/optimization/bayesian_optimizer/" class="md-nav__link">
         bayesian_optimizer
       </a>
     </li>
@@ -1594,7 +1842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/cem_optimizer/" class="md-nav__link">
+      <a href="../../tools/optimization/cem_optimizer/" class="md-nav__link">
         cem_optimizer
       </a>
     </li>
@@ -1608,7 +1856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/nm_optimizer/" class="md-nav__link">
+      <a href="../../tools/optimization/nm_optimizer/" class="md-nav__link">
         nm_optimizer
       </a>
     </li>
@@ -1622,7 +1870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/optimizer_base/" class="md-nav__link">
+      <a href="../../tools/optimization/optimizer_base/" class="md-nav__link">
         optimizer_base
       </a>
     </li>
@@ -1636,7 +1884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/problem_base/" class="md-nav__link">
+      <a href="../../tools/optimization/problem_base/" class="md-nav__link">
         problem_base
       </a>
     </li>
@@ -1653,7 +1901,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_5_1_7" type="checkbox" id="__nav_2_2_11_5_1_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_6_1_7" type="checkbox" id="__nav_2_2_11_6_1_7" >
       
       
       
@@ -1661,16 +1909,16 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/tools/optimization/test_optimization/">test_optimization</a>
+          <a href="../../tools/optimization/test_optimization/">test_optimization</a>
           
-            <label for="__nav_2_2_11_5_1_7">
+            <label for="__nav_2_2_11_6_1_7">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="test_optimization" data-md-level="6">
-        <label class="md-nav__title" for="__nav_2_2_11_5_1_7">
+        <label class="md-nav__title" for="__nav_2_2_11_6_1_7">
           <span class="md-nav__icon md-icon"></span>
           test_optimization
         </label>
@@ -1682,7 +1930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/test_optimization/test_bayesian_opt/" class="md-nav__link">
+      <a href="../../tools/optimization/test_optimization/test_bayesian_opt/" class="md-nav__link">
         test_bayesian_opt
       </a>
     </li>
@@ -1706,7 +1954,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_5_1_8" type="checkbox" id="__nav_2_2_11_5_1_8" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_11_6_1_8" type="checkbox" id="__nav_2_2_11_6_1_8" >
       
       
       
@@ -1714,16 +1962,16 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../optimizers/tools/optimization/util/">util</a>
+          <a href="../../tools/optimization/util/">util</a>
           
-            <label for="__nav_2_2_11_5_1_8">
+            <label for="__nav_2_2_11_6_1_8">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="util" data-md-level="6">
-        <label class="md-nav__title" for="__nav_2_2_11_5_1_8">
+        <label class="md-nav__title" for="__nav_2_2_11_6_1_8">
           <span class="md-nav__icon md-icon"></span>
           util
         </label>
@@ -1735,7 +1983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/util/exceptions/" class="md-nav__link">
+      <a href="../../tools/optimization/util/exceptions/" class="md-nav__link">
         exceptions
       </a>
     </li>
@@ -1749,7 +1997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/util/history/" class="md-nav__link">
+      <a href="../../tools/optimization/util/history/" class="md-nav__link">
         history
       </a>
     </li>
@@ -1763,7 +2011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/util/surrogate/" class="md-nav__link">
+      <a href="../../tools/optimization/util/surrogate/" class="md-nav__link">
         surrogate
       </a>
     </li>
@@ -1777,7 +2025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/tools/optimization/util/visualize/" class="md-nav__link">
+      <a href="../../tools/optimization/util/visualize/" class="md-nav__link">
         visualize
       </a>
     </li>
@@ -1812,7 +2060,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../optimizers/topo_opt/" class="md-nav__link">
+      <a href="../../topo_opt/" class="md-nav__link">
         topo_opt
       </a>
     </li>
@@ -1844,7 +2092,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/">representation</a>
+          <a href="../../../representation/">representation</a>
           
             <label for="__nav_2_2_12">
               <span class="md-nav__icon md-icon"></span>
@@ -1876,7 +2124,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/design/">design</a>
+          <a href="../../../representation/design/">design</a>
           
             <label for="__nav_2_2_12_1">
               <span class="md-nav__icon md-icon"></span>
@@ -1908,7 +2156,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/design/concrete/">concrete</a>
+          <a href="../../../representation/design/concrete/">concrete</a>
           
             <label for="__nav_2_2_12_1_1">
               <span class="md-nav__icon md-icon"></span>
@@ -1928,11 +2176,25 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../../representation/design/concrete/bugs/" class="md-nav__link">
+        bugs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_12_1_1_1" type="checkbox" id="__nav_2_2_12_1_1_1" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_12_1_1_2" type="checkbox" id="__nav_2_2_12_1_1_2" >
       
       
       
@@ -1940,16 +2202,16 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/design/concrete/elements/">elements</a>
+          <a href="../../../representation/design/concrete/elements/">elements</a>
           
-            <label for="__nav_2_2_12_1_1_1">
+            <label for="__nav_2_2_12_1_1_2">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="elements" data-md-level="6">
-        <label class="md-nav__title" for="__nav_2_2_12_1_1_1">
+        <label class="md-nav__title" for="__nav_2_2_12_1_1_2">
           <span class="md-nav__icon md-icon"></span>
           elements
         </label>
@@ -1961,7 +2223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/design/concrete/elements/component/" class="md-nav__link">
+      <a href="../../../representation/design/concrete/elements/component/" class="md-nav__link">
         component
       </a>
     </li>
@@ -1975,7 +2237,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/design/concrete/elements/connection/" class="md-nav__link">
+      <a href="../../../representation/design/concrete/elements/connection/" class="md-nav__link">
         connection
       </a>
     </li>
@@ -1989,7 +2251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/design/concrete/elements/design_parameters/" class="md-nav__link">
+      <a href="../../../representation/design/concrete/elements/design_parameters/" class="md-nav__link">
         design_parameters
       </a>
     </li>
@@ -2003,7 +2265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/design/concrete/elements/parameter/" class="md-nav__link">
+      <a href="../../../representation/design/concrete/elements/parameter/" class="md-nav__link">
         parameter
       </a>
     </li>
@@ -2018,6 +2280,34 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../representation/design/concrete/structures/" class="md-nav__link">
+        structures
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../representation/design/concrete/tools/" class="md-nav__link">
+        tools
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -2031,7 +2321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/design/tools/" class="md-nav__link">
+      <a href="../../../representation/design/tools/" class="md-nav__link">
         tools
       </a>
     </li>
@@ -2044,10 +2334,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_12_1_3" type="checkbox" id="__nav_2_2_12_1_3" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../representation/design/topology/">topology</a>
+          
+            <label for="__nav_2_2_12_1_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="topology" data-md-level="5">
+        <label class="md-nav__title" for="__nav_2_2_12_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          topology
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../representation/design/topology/" class="md-nav__link">
-        topology
+      <a href="../../../representation/design/topology/tools/" class="md-nav__link">
+        tools
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -2077,7 +2406,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/library/">library</a>
+          <a href="../../../representation/library/">library</a>
           
             <label for="__nav_2_2_12_2">
               <span class="md-nav__icon md-icon"></span>
@@ -2109,7 +2438,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/library/elements/">elements</a>
+          <a href="../../../representation/library/elements/">elements</a>
           
             <label for="__nav_2_2_12_2_1">
               <span class="md-nav__icon md-icon"></span>
@@ -2130,7 +2459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/library/elements/c_connector/" class="md-nav__link">
+      <a href="../../../representation/library/elements/c_connector/" class="md-nav__link">
         c_connector
       </a>
     </li>
@@ -2144,7 +2473,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/library/elements/c_parameter/" class="md-nav__link">
+      <a href="../../../representation/library/elements/c_parameter/" class="md-nav__link">
         c_parameter
       </a>
     </li>
@@ -2158,7 +2487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/library/elements/c_property/" class="md-nav__link">
+      <a href="../../../representation/library/elements/c_property/" class="md-nav__link">
         c_property
       </a>
     </li>
@@ -2172,7 +2501,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/library/elements/c_type/" class="md-nav__link">
+      <a href="../../../representation/library/elements/c_type/" class="md-nav__link">
         c_type
       </a>
     </li>
@@ -2186,7 +2515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/library/elements/library_component/" class="md-nav__link">
+      <a href="../../../representation/library/elements/library_component/" class="md-nav__link">
         library_component
       </a>
     </li>
@@ -2200,7 +2529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/library/elements/perf_table/" class="md-nav__link">
+      <a href="../../../representation/library/elements/perf_table/" class="md-nav__link">
         perf_table
       </a>
     </li>
@@ -2239,7 +2568,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/tools/">tools</a>
+          <a href="../../../representation/tools/">tools</a>
           
             <label for="__nav_2_2_12_3">
               <span class="md-nav__icon md-icon"></span>
@@ -2260,7 +2589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/analyze/" class="md-nav__link">
+      <a href="../../../representation/tools/analyze/" class="md-nav__link">
         analyze
       </a>
     </li>
@@ -2274,7 +2603,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/connectors/" class="md-nav__link">
+      <a href="../../../representation/tools/connectors/" class="md-nav__link">
         connectors
       </a>
     </li>
@@ -2288,7 +2617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/dictionaries/" class="md-nav__link">
+      <a href="../../../representation/tools/dictionaries/" class="md-nav__link">
         dictionaries
       </a>
     </li>
@@ -2313,7 +2642,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/tools/export/">export</a>
+          <a href="../../../representation/tools/export/">export</a>
           
             <label for="__nav_2_2_12_3_4">
               <span class="md-nav__icon md-icon"></span>
@@ -2334,7 +2663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/export/design_swri/" class="md-nav__link">
+      <a href="../../../representation/tools/export/design_swri/" class="md-nav__link">
         design_swri
       </a>
     </li>
@@ -2355,22 +2684,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/ids/" class="md-nav__link">
+      <a href="../../../representation/tools/ids/" class="md-nav__link">
         ids
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../representation/tools/parameters_analysis/" class="md-nav__link">
-        parameters_analysis
       </a>
     </li>
   
@@ -2386,7 +2701,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_12_3_7" type="checkbox" id="__nav_2_2_12_3_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_12_3_6" type="checkbox" id="__nav_2_2_12_3_6" >
       
       
       
@@ -2394,16 +2709,16 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../representation/tools/parsers/">parsers</a>
+          <a href="../../../representation/tools/parsers/">parsers</a>
           
-            <label for="__nav_2_2_12_3_7">
+            <label for="__nav_2_2_12_3_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="parsers" data-md-level="5">
-        <label class="md-nav__title" for="__nav_2_2_12_3_7">
+        <label class="md-nav__title" for="__nav_2_2_12_3_6">
           <span class="md-nav__icon md-icon"></span>
           parsers
         </label>
@@ -2415,7 +2730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/parsers/learn_from_designs/" class="md-nav__link">
+      <a href="../../../representation/tools/parsers/learn_from_designs/" class="md-nav__link">
         learn_from_designs
       </a>
     </li>
@@ -2429,7 +2744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/parsers/parse/" class="md-nav__link">
+      <a href="../../../representation/tools/parsers/parse/" class="md-nav__link">
         parse
       </a>
     </li>
@@ -2443,7 +2758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/parsers/parsing_designs/" class="md-nav__link">
+      <a href="../../../representation/tools/parsers/parsing_designs/" class="md-nav__link">
         parsing_designs
       </a>
     </li>
@@ -2457,7 +2772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/parsers/parsing_library/" class="md-nav__link">
+      <a href="../../../representation/tools/parsers/parsing_library/" class="md-nav__link">
         parsing_library
       </a>
     </li>
@@ -2471,7 +2786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/parsers/parsing_prop_table/" class="md-nav__link">
+      <a href="../../../representation/tools/parsers/parsing_prop_table/" class="md-nav__link">
         parsing_prop_table
       </a>
     </li>
@@ -2485,7 +2800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../representation/tools/parsers/temp_objects/" class="md-nav__link">
+      <a href="../../../representation/tools/parsers/temp_objects/" class="md-nav__link">
         temp_objects
       </a>
     </li>
@@ -2531,7 +2846,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../shared/">shared</a>
+          <a href="../../../reverse_engineering/">reverse_engineering</a>
           
             <label for="__nav_2_2_13">
               <span class="md-nav__icon md-icon"></span>
@@ -2539,8 +2854,103 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="shared" data-md-level="3">
+      <nav class="md-nav" aria-label="reverse_engineering" data-md-level="3">
         <label class="md-nav__title" for="__nav_2_2_13">
+          <span class="md-nav__icon md-icon"></span>
+          reverse_engineering
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reverse_engineering/components_analysis/" class="md-nav__link">
+        components_analysis
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reverse_engineering/connections_mapping/" class="md-nav__link">
+        connections_mapping
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reverse_engineering/isomorphisms_analysis/" class="md-nav__link">
+        isomorphisms_analysis
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reverse_engineering/parameters_analysis/" class="md-nav__link">
+        parameters_analysis
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_14" type="checkbox" id="__nav_2_2_14" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../shared/">shared</a>
+          
+            <label for="__nav_2_2_14">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="shared" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_2_14">
           <span class="md-nav__icon md-icon"></span>
           shared
         </label>
@@ -2552,7 +2962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../shared/designs/" class="md-nav__link">
+      <a href="../../../shared/designs/" class="md-nav__link">
         designs
       </a>
     </li>
@@ -2566,7 +2976,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../shared/library/" class="md-nav__link">
+      <a href="../../../shared/library/" class="md-nav__link">
         library
       </a>
     </li>
@@ -2580,7 +2990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../shared/objects/" class="md-nav__link">
+      <a href="../../../shared/objects/" class="md-nav__link">
         objects
       </a>
     </li>
@@ -2594,7 +3004,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../shared/paths/" class="md-nav__link">
+      <a href="../../../shared/paths/" class="md-nav__link">
         paths
       </a>
     </li>
@@ -2613,14 +3023,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_14" type="checkbox" id="__nav_2_2_14" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_15" type="checkbox" id="__nav_2_2_15" >
       
       
       
@@ -2628,16 +3036,16 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../">tools</a>
+          <a href="../../../tools/">tools</a>
           
-            <label for="__nav_2_2_14">
+            <label for="__nav_2_2_15">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="tools" data-md-level="3">
-        <label class="md-nav__title" for="__nav_2_2_14">
+        <label class="md-nav__title" for="__nav_2_2_15">
           <span class="md-nav__icon md-icon"></span>
           tools
         </label>
@@ -2647,48 +3055,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          io
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        io
+    <li class="md-nav__item">
+      <a href="../../../tools/connections_mapping/" class="md-nav__link">
+        connections_mapping
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#sym_cps.tools.io" class="md-nav__link">
-    sym_cps.tools.io
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2700,7 +3071,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../persistance/" class="md-nav__link">
+      <a href="../../../tools/graphs/" class="md-nav__link">
+        graphs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/my_io/" class="md-nav__link">
+        my_io
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/persistance/" class="md-nav__link">
         persistance
       </a>
     </li>
@@ -2714,7 +3113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../strings/" class="md-nav__link">
+      <a href="../../../tools/strings/" class="md-nav__link">
         strings
       </a>
     </li>
@@ -2728,7 +3127,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../update_library/" class="md-nav__link">
+      <a href="../../../tools/update_library/" class="md-nav__link">
         update_library
       </a>
     </li>
@@ -2790,7 +3189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../contributing/" class="md-nav__link">
+      <a href="../../../../../contributing/" class="md-nav__link">
         Contributing
       </a>
     </li>
@@ -2804,7 +3203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../coverage/" class="md-nav__link">
+      <a href="../../../../../coverage/" class="md-nav__link">
         Coverage report
       </a>
     </li>
@@ -2843,8 +3242,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#sym_cps.tools.io" class="md-nav__link">
-    sym_cps.tools.io
+  <a href="#sym_cps.optimizers.routing.detailed_routing" class="md-nav__link">
+    sym_cps.optimizers.routing.detailed_routing
   </a>
   
 </li>
@@ -2863,19 +3262,60 @@
                 
                   
 
-  <a href="https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git/edit/master/docs/src/sym_cps/tools/io.py" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/uc-berkeley-data-discovery-2022/berkeley-cps-symbiotic-design.git/edit/master/docs/src/sym_cps/optimizers/routing/detailed_routing.py" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
-  <h1>io</h1>
+  <h1>detailed_routing</h1>
 
 <div class="doc doc-object doc-module">
 
 
-<a id="sym_cps.tools.io"></a>
+<a id="sym_cps.optimizers.routing.detailed_routing"></a>
   <div class="doc doc-contents first">
+  
+      <p>Detail Routing for UAV tubes and Hubs
+The following are the interface for this level of routing problem:
+Given: 
+    Nodes: location of each node to be connected
+    Edges: Netlist of the required connection</p>
+
+<details class="goal">
+  <summary>Goal</summary>
+  <p>Generate hubs and tubes with correct parameters such that all the required connection is connected.</p>
+</details>      <p>Sample input (QuadCopter)
+{
+    "Grid":
+        "L1": 
+        {
+                "edges":[[0, 4], [1, 4], [2, 4], [3, 4]]
+                "nodes":
+                [
+                {
+                        "location":[0,5],
+                        "type": "P",
+                },
+                {
+                        "location":[5,0],
+                        "type": "P",
+                }, 
+                {
+                        "location":[5, 10],
+                        "type": "P",
+                }, 
+                {
+                        "location":[10,5],
+                        "type": "P",
+                },
+        {
+            "location":[5,5],
+                        "type": "F",
+                }
+        ]     <br />
+        }</p>
+<p>}</p>
 
   
 
@@ -2921,7 +3361,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: tools" rel="prev">
+        <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: routing" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -2930,20 +3370,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              tools
+              routing
             </div>
           </div>
         </a>
       
       
         
-        <a href="../persistance/" class="md-footer__link md-footer__link--next" aria-label="Next: persistance" rel="next">
+        <a href="../tool/" class="md-footer__link md-footer__link--next" aria-label="Next: tool" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              persistance
+              tool
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -2987,10 +3427,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.8492ddcf.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.8492ddcf.min.js"></script>
       
     
   </body>
