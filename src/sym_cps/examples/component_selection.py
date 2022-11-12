@@ -1,4 +1,4 @@
-from sym_cps.optimizers.component_selection.component_selection import ComponentSelectionContract
+from sym_cps.contract.component_selection import ComponentSelectionContract
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
 
 
@@ -14,22 +14,50 @@ class Test_Selection:
 
         """Check initial Component"""
         print("Check initial component")
-        self.component_selection.check_selection(design_topology=design_topology, design_concrete=design_concrete)
+        self.component_selection.check_selection(design_concrete=design_concrete)
         """Selection"""
         propeller, motor, battery = self.component_selection.select_hackathon(
-            design_topology=design_topology, design_concrete=None, max_iter=10, timeout_millisecond=100000
+            design_concrete=design_concrete, max_iter=10, timeout_millisecond=100000, body_weight=0
         )
         """Verify the Selection"""
         print("Check Result")
         self.component_selection.check_selection(
-            design_topology=design_topology, motor=motor, battery=battery, propeller=propeller
+            design_concrete=design_concrete, motor=motor, battery=battery, propeller=propeller
         )
         return propeller, motor, battery
+
+    def test_general_component_selection(self):
+        """Loading Library and Seed Designs"""
+        design_concrete, design_topology = self.designs["TestQuad"]
+        """Perform the contract-based component selection"""
+
+        """Check initial Component"""
+        print("Check initial component")
+        self.component_selection.check_selection_general(design_concrete=design_concrete)
+        """Selection"""
+        print("Start Selection")
+        component_dict = self.component_selection.select_general(
+            design_concrete=design_concrete, max_iter=10, timeout_millisecond=3000000
+        )
+        """Verify the Selection"""
+        print("Check Result")
+        self.component_selection.check_selection_general(design_concrete=design_concrete, component_dict=component_dict)
+        return component_dict
+
+    def run_general_evaluation(self, component_dict):
+        design_concrete, design_topology = self.designs["TestQuad"]
+        self.component_selection.check_selection(design_concrete=design_concrete, component_dict=component_dict)
+        """Set the component for selection"""
+        self.component_selection.replace_with_component(component_dict=component_dict)
+        design_concrete.name += "_comp_opt"
+        design_concrete.evaluate()
+        print(design_concrete.evaluation_results)
 
     def run_evaluation(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
         self.component_selection.check_selection(
-            design_topology=design_topology, motor=motor, battery=battery, propeller=propeller
+            design_concrete=design_concrete,
+            motor=motor, battery=battery, propeller=propeller
         )
         """Set the component for selection"""
         self.component_selection.replace_with_component(
@@ -44,16 +72,21 @@ class Test_Selection:
         # )
         print(design_concrete.evaluation_results)
 
+    def check_general_combination(self, component_dict):
+        design_concrete, design_topology = self.designs["TestQuad"]
+        self.component_selection.check_selection_general(component_dict=component_dict)
+
     def check_combination(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
         self.component_selection.check_selection(
-            design_topology=design_topology, motor=motor, battery=battery, propeller=propeller
+            design_concrete=design_concrete, motor=motor, battery=battery, propeller=propeller
         )
 
 
 if __name__ == "__main__":
     tester = Test_Selection()
     propeller, motor, battery = tester.test_component_selection()
+    #component_dict = tester.test_general_component_selection()
     # propeller = c_library.components["62x6_2_3200_51_1390"]
     # motor = c_library.components["Rex30"]
     # battery = c_library.components["TurnigyGraphene6000mAh3S75C"]
@@ -125,6 +158,51 @@ if __name__ == "__main__":
     # propeller = tester.c_library.components["apc_propellers_9x3N"]
     # motor = tester.c_library.components["t_motor_AT2820KV1250"]
     # battery = tester.c_library.components["TurnigyGraphene6000mAh4S75C"]
+
+    # MotorInst_0: t_motor_AT2820KV1050
+    # PropellerInst_0: apc_propellers_10x4_5MR
+    # MotorInst_1: t_motor_AT2820KV1050
+    # PropellerInst_1: apc_propellers_10x4_5MR
+    # MotorInst_2: t_motor_AT2820KV1050
+    # PropellerInst_2: apc_propellers_10x4_5MR
+    # MotorInst_3: t_motor_AT2820KV1050
+    # PropellerInst_3: apc_propellers_10x4_5MR
+    # BatteryInst: Tattu25C11000mAh6S1PHV
+
+    # MotorInst_0: t_motor_AntigravityMN7005KV230
+    # PropellerInst_0: apc_propellers_20x13E
+    # MotorInst_1: t_motor_AntigravityMN7005KV230
+    # PropellerInst_1: apc_propellers_20x13E
+    # MotorInst_2: t_motor_AntigravityMN7005KV230
+    # PropellerInst_2: apc_propellers_20x13E
+    # MotorInst_3: t_motor_AntigravityMN7005KV230
+    # PropellerInst_3: apc_propellers_20x13E
+    # BatteryInst: TurnigyGraphene2200mAh3S75C
+
+    # MotorInst_0: t_motor_AntigravityMN6007KV320
+    # PropellerInst_0: apc_propellers_15x10
+    # MotorInst_1: t_motor_AntigravityMN6007KV320
+    # PropellerInst_1: apc_propellers_15x10
+    # MotorInst_2: t_motor_AntigravityMN6007KV320
+    # PropellerInst_2: apc_propellers_15x10
+    # MotorInst_3: t_motor_AntigravityMN6007KV320
+    # PropellerInst_3: apc_propellers_15x10
+    # BatteryInst: TurnigyGraphene2200mAh4S75C
+
+    # MotorInst_0: t_motor_AT2820KV1050
+    # PropellerInst_0: apc_propellers_8_75x8_75NN
+    # MotorInst_1: t_motor_AT2820KV1050
+    # PropellerInst_1: apc_propellers_8_75x8_75NN
+    # MotorInst_2: t_motor_AT2820KV1050
+    # PropellerInst_2: apc_propellers_8_75x8_75NN
+    # MotorInst_3: t_motor_AT2820KV1050
+    # PropellerInst_3: apc_propellers_8_75x8_75NN
+    # BatteryInst: TurnigyGraphene5000mAh4S75C
+
+    # propeller = tester.c_library.components["apc_propellers_17x10"]
+    # motor = tester.c_library.components["t_motor_AntigravityMN1005V2KV90"]
+    # battery = tester.c_library.components["TurnigyGraphene1000mAh2S75C"] 
+        
     tester.check_combination(propeller=propeller, motor=motor, battery=battery)
     tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     # build_contract_library()

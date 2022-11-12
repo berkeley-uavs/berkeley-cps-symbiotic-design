@@ -1,15 +1,13 @@
 # type: ignore
 import os
 from pathlib import Path
+from typing import OrderedDict
 
 from engineio import json
 
 
 def save_to_file(
-    file_content: str | dict,
-    file_name: str,
-    folder_name: str | None = None,
-    absolute_path: Path | None = None,
+    file_content: str | dict, file_name: str, folder_name: str | None = None, absolute_path: Path | None = None
 ) -> Path:
     if Path(file_name).suffix == "":
         file_name += ".txt"
@@ -46,13 +44,19 @@ def save_to_file(
 
 
 def _write_file(file_content: str | dict, absolute_path: Path):
-    if isinstance(file_content, dict):
+    if isinstance(file_content, OrderedDict):
+        with open(absolute_path, "w") as f:
+            file_content = json.dumps(file_content, indent=4)
+            json.dump(json.loads(file_content), f, indent=4, sort_keys=False)
+        f.close()
+    elif isinstance(file_content, dict):
+        file_content = {key: value for key, value in sorted(file_content.items())}
         file_content = json.dumps(file_content, indent=4)
         if Path(absolute_path).suffix != ".json":
             absolute_path_str = str(absolute_path) + ".json"
             absolute_path = Path(absolute_path_str)
         with open(absolute_path, "w") as f:
-            json.dump(json.loads(file_content), f, indent=4, sort_keys=True)
+            json.dump(json.loads(file_content), f, indent=4)
         f.close()
     else:
         with open(absolute_path, "w") as f:

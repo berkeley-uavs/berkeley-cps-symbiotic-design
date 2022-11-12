@@ -1,10 +1,8 @@
-
 # from typing import TYPE_CHECKING
 # from sym_cps.representation.library import Library
 # from sym_cps.contract.tool.contract_tool import ContractInstance, ContractTemplate, ContractManager
 # from sym_cps.representation.library.elements.c_type import CType
 # import math
-
 
 
 # class Hackathon2Contract():
@@ -22,7 +20,7 @@
 #         shaft_prop: float = propeller.properties["SHAFT_DIAMETER"].value
 #         #print(table.get_value(rpm = 13000, v = 90, label="Cp"))
 #         table = table_dict[propeller]
-#         C_p: float = table.get_value(rpm = 10000, v = 0, label="Cp")#0.0659 
+#         C_p: float = table.get_value(rpm = 10000, v = 0, label="Cp")#0.0659
 #         C_t: float = table.get_value(rpm = 10000, v = 0, label="Ct")#0.1319
 
 #         W_prop = propeller.properties["WEIGHT"].value * num_motor
@@ -64,10 +62,10 @@
 #                 "I_max": I_max}
 
 #     def check_selection(self, num_battery, num_motor, c_library, table_dict, battery, motor, propeller):
-#         self.hackathon_compose(num_battery=num_battery, 
-#             num_motor=num_motor, 
-#             c_library=c_library, 
-#             table_dict=table_dict, 
+#         self.hackathon_compose(num_battery=num_battery,
+#             num_motor=num_motor,
+#             c_library=c_library,
+#             table_dict=table_dict,
 #             batteries=[battery],
 #             motors=[motor],
 #             propellers=[propeller])
@@ -82,7 +80,7 @@
 #         def motor_assumtion(vs):
 #             return [vs["V_motor"] * vs["I_motor"] < vs["P_max_motor"], vs["I_motor"] < vs["I_max_motor"]]
 #         def motor_guarantee(vs):
-#             return [vs["I_motor"] * vs["R_w"] == vs["V_motor"] - vs["omega_motor"] / vs["K_v"], 
+#             return [vs["I_motor"] * vs["R_w"] == vs["V_motor"] - vs["omega_motor"] / vs["K_v"],
 #                     vs["torque_motor"] == vs["K_t"]/vs["R_w"] * (vs["V_motor"] - vs["R_w"] * vs["I_idle"] - vs["omega_motor"]/vs["K_v"])]
 #         motor_name_list = ["torque_motor", "omega_motor", "I_motor", "V_motor", "P_max_motor",
 #                             "I_max_motor", "K_t", "K_v", "W_motor", "R_w", "I_idle", "shaft_motor"]
@@ -97,7 +95,7 @@
 #                     vs["omega_prop"] >= 0]
 #         propeller_name_list = ["C_p", "C_t", "rho", "W_prop", "omega_prop", "torque_prop", "diameter", "thrust", "shaft_motor", "shaft_prop"]
 #         propeller_contract = Contract("propeller", propeller_name_list, propeller_assumption, propeller_guarantee)
-        
+
 #         self._contracts["propeller"] = propeller_contract
 
 
@@ -107,7 +105,7 @@
 #             return []
 #         battery_name_list = ["capacity", "W_batt", "I_batt", "I_max", "V_battery"]
 #         battery_contract = Contract("battery", battery_name_list, battery_assumption, battery_guarantee)
-        
+
 #         self._contracts["battery"] = battery_contract
 
 #         def battery_controller_assumption(vs, num_battery = num_battery):
@@ -119,7 +117,7 @@
 #         battery_controller_name_list += [ f"I_motor_{i}" for i in range(num_battery)]
 #         battery_controller_name_list += [ f"V_motor_{i}" for i in range(num_battery)]
 #         battery_controller_contract = Contract("batt_controller", battery_controller_name_list, battery_controller_assumption, battery_controller_guarantee)
-        
+
 #         self._contracts["battery_controller"] = battery_controller_contract
 
 #         def system_assumption(vs):
@@ -132,15 +130,14 @@
 #         return self._contracts
 
 
-
-#     def hackathon_compose(self,num_battery, 
-#                                         num_motor, 
-#                                         c_library, 
-#                                         table_dict, 
+#     def hackathon_compose(self,num_battery,
+#                                         num_motor,
+#                                         c_library,
+#                                         table_dict,
 #                                         motor_ratio: list[float]| None = None,
-#                                         better_selection_encoding = True, 
-#                                         batteries = None, 
-#                                         motors = None, 
+#                                         better_selection_encoding = True,
+#                                         batteries = None,
+#                                         motors = None,
 #                                         propellers = None,
 #                                         body_weight = 0,
 #                                         obj_lower_bound = None):
@@ -198,7 +195,7 @@
 #             motor_vs = self._vs_dict[f"motor_{i}"]
 #             self._all_clause.append(contr_vs[f"I_motor_{i}"] == motor_vs["I_motor"])
 #             self._all_clause.append(contr_vs[f"V_motor_{i}"] == motor_vs["V_motor"])
-        
+
 #         # connect controller to battery
 #         print("Generate Battery Contract")
 #         battery_vs, A, G = self._contracts["battery"].instantiate()
@@ -208,10 +205,10 @@
 #         self._all_clause.extend(G)
 #         self._all_clause.append(battery_vs["I_batt"] == contr_vs["I_battery"])
 #         self._all_clause.append(battery_vs["V_battery"] == contr_vs["V_battery"])
-        
+
 
 #         # selection of all battery
-#         self._prop_select_vs_system = [] 
+#         self._prop_select_vs_system = []
 #         print("Generate Propeller Selection Property")
 #         for i in range(num_motor):
 #             prop_select_vs = {}
@@ -222,8 +219,8 @@
 #                 use_v = z3.Bool(f"propeller_{i}_use_{propeller.id}")
 #                 prop_select_vs.update({f"{propeller.id}": use_v})
 #                 prop_properties = ContractManager.hackthon_get_propeller_property(propeller=propeller, table_dict=table_dict, num_motor=1)
-#                 self._all_clause.append(z3.Implies(use_v, 
-#                                             z3.And(prop_vs["C_p"] == prop_properties[f"C_p"], 
+#                 self._all_clause.append(z3.Implies(use_v,
+#                                             z3.And(prop_vs["C_p"] == prop_properties[f"C_p"],
 #                                                     prop_vs["C_t"] == prop_properties[f"C_t"],
 #                                                     prop_vs["W_prop"] == prop_properties[f"W_prop"],
 #                                                     prop_vs["diameter"] == prop_properties[f"diameter"],
@@ -237,7 +234,7 @@
 #                 print(n_p, end="")
 #                 if better_selection_encoding:
 #                     tmp_vs = [prop2 for prop2 in prop_select_vs.values() if prop.get_id() != prop2.get_id()]
-#                     self._all_clause.append(z3.Implies(prop, z3.And(*[z3.Not(prop2) for prop2 in tmp_vs])))      
+#                     self._all_clause.append(z3.Implies(prop, z3.And(*[z3.Not(prop2) for prop2 in tmp_vs])))
 #                 else:
 #                     for prop2 in prop_select_vs.values():
 #                         if prop.get_id() != prop2.get_id():
@@ -257,8 +254,8 @@
 #                 motor_select_vs.update({f"{motor.id}": use_v})
 
 #                 motor_properties = ContractManager.hackthon_get_motor_property(motor=motor, num_motor=1)
-#                 self._all_clause.append(z3.Implies(use_v, 
-#                                             z3.And(motor_vs["P_max_motor"] == motor_properties[f"P_max_motor"], 
+#                 self._all_clause.append(z3.Implies(use_v,
+#                                             z3.And(motor_vs["P_max_motor"] == motor_properties[f"P_max_motor"],
 #                                                     motor_vs["W_motor"] == motor_properties[f"W_motor"],
 #                                                     motor_vs["I_max_motor"] == motor_properties[f"I_max_motor"],
 #                                                     motor_vs["K_t"] == motor_properties[f"K_t"],
@@ -273,8 +270,8 @@
 #             for motor in motor_select_vs.values():
 #                 if better_selection_encoding:
 #                     tmp_vs = [motor2 for motor2 in motor_select_vs.values() if motor.get_id() != motor2.get_id()]
-#                     self._all_clause.append(z3.Implies(motor, z3.And(*[z3.Not(motor2) for motor2 in tmp_vs])))                
-#                 else:   
+#                     self._all_clause.append(z3.Implies(motor, z3.And(*[z3.Not(motor2) for motor2 in tmp_vs])))
+#                 else:
 #                     for motor2 in motor_select_vs.values():
 #                         if motor.get_id() != motor2.get_id():
 #                             self._all_clause.append(z3.Implies(motor, z3.Not(motor2)))
@@ -288,20 +285,20 @@
 #             battery_select_vs.update({f"{battery.id}": use_v})
 
 #             battery_properties = ContractManager.hackthon_get_battery_property(battery=battery, num_battery=num_battery)
-#             self._all_clause.append(z3.Implies(use_v, 
-#                                          z3.And(battery_vs["capacity"] == battery_properties[f"capacity"], 
+#             self._all_clause.append(z3.Implies(use_v,
+#                                          z3.And(battery_vs["capacity"] == battery_properties[f"capacity"],
 #                                                 battery_vs["W_batt"] == battery_properties[f"W_batt"],
 #                                                 battery_vs["I_max"] == battery_properties[f"I_max"],
 #                                                 battery_vs["V_battery"] == battery_properties[f"V_battery"])))
 #         self._vs_dict["battery_select"] = battery_select_vs
 #         # can only select one motor
 #         print("Generate Rules to Ensure Battery Selection ")
-#         for battery in battery_select_vs.values():         
+#         for battery in battery_select_vs.values():
 #             if better_selection_encoding:
 #                 tmp_vs = [battery2 for battery2 in battery_select_vs.values() if battery.get_id() != battery2.get_id()]
-#                 self._all_clause.append(z3.Implies(battery, z3.And(*[z3.Not(battery2) for battery2 in tmp_vs])))   
+#                 self._all_clause.append(z3.Implies(battery, z3.And(*[z3.Not(battery2) for battery2 in tmp_vs])))
 #             else:
-#                 for battery2 in battery_select_vs.values():   
+#                 for battery2 in battery_select_vs.values():
 #                     if battery.get_id() != battery2.get_id():
 #                         self._all_clause.append(z3.Implies(battery, z3.Not(battery2)))
 #         # must select one
@@ -335,39 +332,39 @@
 #         print("===================Component Selection Metric=====================")
 #         num_motor = len(self._motor_select_vs_system)
 #         print(num_motor)
-#         print("    Thrust: ", model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long())    
-#         print("    Weight: ", model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long())  
+#         print("    Thrust: ", model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long())
+#         print("    Weight: ", model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long())
 #         for i in range(num_motor):
 #             print(" ")
 #             print(f"    Motor {i}:")
 #             motor_vs = self._vs_dict[f"motor_{i}"]
 #             print("    Omega_motor: ", model[motor_vs["omega_motor"]])
-#             print("    Torque: ", model[motor_vs["torque_motor"]].numerator_as_long()/model[motor_vs["torque_motor"]].denominator_as_long())  
-#             print("    Current Battery (Motor): ", model[motor_vs["I_motor"]].numerator_as_long()/model[motor_vs["I_motor"]].denominator_as_long())  
-#             print("    Voltage (Motor): ", model[motor_vs["V_motor"]])  
-#             print("    K_t: ", model[motor_vs["K_t"]].numerator_as_long()/model[motor_vs["K_t"]].denominator_as_long())  
-#             print("    K_v: ", model[motor_vs["K_v"]].numerator_as_long()/model[motor_vs["K_v"]].denominator_as_long())  
-#             print("    R_w: ", model[motor_vs["R_w"]].numerator_as_long()/model[motor_vs["R_w"]].denominator_as_long())  
-#             print("    I_idle: ", model[motor_vs["I_idle"]].numerator_as_long()/model[motor_vs["I_idle"]].denominator_as_long())  
-#             print("    P_max_motor: ", model[motor_vs["P_max_motor"]].numerator_as_long()/model[motor_vs["P_max_motor"]].denominator_as_long())  
-#             print("    I_max_motor: ", model[motor_vs["I_max_motor"]].numerator_as_long()/model[motor_vs["I_max_motor"]].denominator_as_long())  
-      
+#             print("    Torque: ", model[motor_vs["torque_motor"]].numerator_as_long()/model[motor_vs["torque_motor"]].denominator_as_long())
+#             print("    Current Battery (Motor): ", model[motor_vs["I_motor"]].numerator_as_long()/model[motor_vs["I_motor"]].denominator_as_long())
+#             print("    Voltage (Motor): ", model[motor_vs["V_motor"]])
+#             print("    K_t: ", model[motor_vs["K_t"]].numerator_as_long()/model[motor_vs["K_t"]].denominator_as_long())
+#             print("    K_v: ", model[motor_vs["K_v"]].numerator_as_long()/model[motor_vs["K_v"]].denominator_as_long())
+#             print("    R_w: ", model[motor_vs["R_w"]].numerator_as_long()/model[motor_vs["R_w"]].denominator_as_long())
+#             print("    I_idle: ", model[motor_vs["I_idle"]].numerator_as_long()/model[motor_vs["I_idle"]].denominator_as_long())
+#             print("    P_max_motor: ", model[motor_vs["P_max_motor"]].numerator_as_long()/model[motor_vs["P_max_motor"]].denominator_as_long())
+#             print("    I_max_motor: ", model[motor_vs["I_max_motor"]].numerator_as_long()/model[motor_vs["I_max_motor"]].denominator_as_long())
+
 #             print(" ")
 #             print(f"    Propeller {i}")
 #             prop_vs = self._vs_dict[f"propeller_{i}"]
 #             print("    Omega_prop: ", model[prop_vs["omega_prop"]])
 #             print("    Thrust: ", model[prop_vs["thrust"]].numerator_as_long()/model[prop_vs["thrust"]].denominator_as_long())
-#             print("    Torque: ", model[prop_vs["torque_prop"]].numerator_as_long()/model[prop_vs["torque_motor"]].denominator_as_long())  
-#             print("    C_t: ", model[prop_vs["C_t"]].numerator_as_long()/model[prop_vs["C_t"]].denominator_as_long())  
-#             print("    C_p: ", model[prop_vs["C_p"]].numerator_as_long()/model[prop_vs["C_p"]].denominator_as_long())  
-#             print("    Diameter: ", model[prop_vs["diameter"]].numerator_as_long()/model[prop_vs["diameter"]].denominator_as_long())  
+#             print("    Torque: ", model[prop_vs["torque_prop"]].numerator_as_long()/model[prop_vs["torque_motor"]].denominator_as_long())
+#             print("    C_t: ", model[prop_vs["C_t"]].numerator_as_long()/model[prop_vs["C_t"]].denominator_as_long())
+#             print("    C_p: ", model[prop_vs["C_p"]].numerator_as_long()/model[prop_vs["C_p"]].denominator_as_long())
+#             print("    Diameter: ", model[prop_vs["diameter"]].numerator_as_long()/model[prop_vs["diameter"]].denominator_as_long())
 
 #         print(" ")
 #         print("    Battery")
-#         print("    Current Battery: ", model[self._vs_dict["battery"]["I_batt"]].numerator_as_long()/model[self._vs_dict["battery"]["I_batt"]].denominator_as_long())  
-#         print("    Capacity: ", model[self._vs_dict["battery"]["capacity"]].numerator_as_long()/model[self._vs_dict["battery"]["capacity"]].denominator_as_long())  
-#         print("    I_max: ", model[self._vs_dict["battery"]["I_max"]].numerator_as_long()/model[self._vs_dict["battery"]["I_max"]].denominator_as_long())  
-#         print("    V_battery: ", model[self._vs_dict["battery"]["V_battery"]].numerator_as_long()/model[self._vs_dict["battery"]["V_battery"]].denominator_as_long())  
+#         print("    Current Battery: ", model[self._vs_dict["battery"]["I_batt"]].numerator_as_long()/model[self._vs_dict["battery"]["I_batt"]].denominator_as_long())
+#         print("    Capacity: ", model[self._vs_dict["battery"]["capacity"]].numerator_as_long()/model[self._vs_dict["battery"]["capacity"]].denominator_as_long())
+#         print("    I_max: ", model[self._vs_dict["battery"]["I_max"]].numerator_as_long()/model[self._vs_dict["battery"]["I_max"]].denominator_as_long())
+#         print("    V_battery: ", model[self._vs_dict["battery"]["V_battery"]].numerator_as_long()/model[self._vs_dict["battery"]["V_battery"]].denominator_as_long())
 #         print("==================================================================")
 
 
@@ -378,14 +375,14 @@
 #         #print(solver.assertions())
 #         if ret == z3.sat:# SAT
 #             print("SAT")
-#             model = solver.model()      
+#             model = solver.model()
 #             #print(model)
 #             self.print_metric(model=model)
 #             propeller, motor, battery = self.get_component_selection(model=model, c_library=c_library)
 #             print("Found Component:")
 #             print(f"    Propeller: {propeller.id}")
 #             print(f"    Motor: {motor.id}")
-#             print(f"    Battery: {battery.id}") 
+#             print(f"    Battery: {battery.id}")
 #             thrust = model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long()
 #             weight = model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long()
 #             return thrust - weight
@@ -405,41 +402,40 @@
 #                 battery = c_library.components[name]
 #         for name, v in self._vs_dict["motor_select"].items():
 #             if z3.is_true(model[v]):
-#                 motor = c_library.components[name]    
+#                 motor = c_library.components[name]
 
 #         return propeller, motor, battery
 
 #     def print_metric(self, model):
 #         print("===================Component Selection Metric=====================")
-#         print("    Thrust: ", model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long())    
-#         print("    Weight: ", model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long())  
+#         print("    Thrust: ", model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long())
+#         print("    Weight: ", model[self._vs_dict["system"]["weight_sum"]].numerator_as_long()/model[self._vs_dict["system"]["weight_sum"]].denominator_as_long())
 #         print("    Omega_prop: ", model[self._vs_dict["propeller"]["omega_prop"]])
 #         print("    Omega_motor: ", model[self._vs_dict["motor"]["omega_motor"]])
-#         print("    Torque: ", model[self._vs_dict["motor"]["torque_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())  
-#         print("    Torque: ", model[self._vs_dict["propeller"]["torque_prop"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())  
-#         print("    Current Battery: ", model[self._vs_dict["battery"]["I_batt"]].numerator_as_long()/model[self._vs_dict["battery"]["I_batt"]].denominator_as_long())  
-#         print("    Current Battery (Motor): ", model[self._vs_dict["motor"]["I_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_motor"]].denominator_as_long())  
+#         print("    Torque: ", model[self._vs_dict["motor"]["torque_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())
+#         print("    Torque: ", model[self._vs_dict["propeller"]["torque_prop"]].numerator_as_long()/model[self._vs_dict["motor"]["torque_motor"]].denominator_as_long())
+#         print("    Current Battery: ", model[self._vs_dict["battery"]["I_batt"]].numerator_as_long()/model[self._vs_dict["battery"]["I_batt"]].denominator_as_long())
+#         print("    Current Battery (Motor): ", model[self._vs_dict["motor"]["I_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_motor"]].denominator_as_long())
 #         print("    Voltage (Motor): ", model[self._vs_dict["motor"]["V_motor"]])
-#         print("    Capacity: ", model[self._vs_dict["battery"]["capacity"]].numerator_as_long()/model[self._vs_dict["battery"]["capacity"]].denominator_as_long())  
-#         print("    I_max: ", model[self._vs_dict["battery"]["I_max"]].numerator_as_long()/model[self._vs_dict["battery"]["I_max"]].denominator_as_long())  
-#         print("    V_battery: ", model[self._vs_dict["battery"]["V_battery"]].numerator_as_long()/model[self._vs_dict["battery"]["V_battery"]].denominator_as_long())  
-#         print("    C_t: ", model[self._vs_dict["propeller"]["C_t"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_t"]].denominator_as_long())  
-#         print("    C_p: ", model[self._vs_dict["propeller"]["C_p"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_p"]].denominator_as_long())  
-#         print("    K_t: ", model[self._vs_dict["motor"]["K_t"]].numerator_as_long()/model[self._vs_dict["motor"]["K_t"]].denominator_as_long())  
-#         print("    K_v: ", model[self._vs_dict["motor"]["K_v"]].numerator_as_long()/model[self._vs_dict["motor"]["K_v"]].denominator_as_long())  
-#         print("    R_w: ", model[self._vs_dict["motor"]["R_w"]].numerator_as_long()/model[self._vs_dict["motor"]["R_w"]].denominator_as_long())  
-#         print("    I_idle: ", model[self._vs_dict["motor"]["I_idle"]].numerator_as_long()/model[self._vs_dict["motor"]["I_idle"]].denominator_as_long())  
-#         print("    P_max_motor: ", model[self._vs_dict["motor"]["P_max_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["P_max_motor"]].denominator_as_long())  
-#         print("    I_max_motor: ", model[self._vs_dict["motor"]["I_max_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_max_motor"]].denominator_as_long())  
-#         print("    Diameter: ", model[self._vs_dict["propeller"]["diameter"]].numerator_as_long()/model[self._vs_dict["propeller"]["diameter"]].denominator_as_long())  
+#         print("    Capacity: ", model[self._vs_dict["battery"]["capacity"]].numerator_as_long()/model[self._vs_dict["battery"]["capacity"]].denominator_as_long())
+#         print("    I_max: ", model[self._vs_dict["battery"]["I_max"]].numerator_as_long()/model[self._vs_dict["battery"]["I_max"]].denominator_as_long())
+#         print("    V_battery: ", model[self._vs_dict["battery"]["V_battery"]].numerator_as_long()/model[self._vs_dict["battery"]["V_battery"]].denominator_as_long())
+#         print("    C_t: ", model[self._vs_dict["propeller"]["C_t"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_t"]].denominator_as_long())
+#         print("    C_p: ", model[self._vs_dict["propeller"]["C_p"]].numerator_as_long()/model[self._vs_dict["propeller"]["C_p"]].denominator_as_long())
+#         print("    K_t: ", model[self._vs_dict["motor"]["K_t"]].numerator_as_long()/model[self._vs_dict["motor"]["K_t"]].denominator_as_long())
+#         print("    K_v: ", model[self._vs_dict["motor"]["K_v"]].numerator_as_long()/model[self._vs_dict["motor"]["K_v"]].denominator_as_long())
+#         print("    R_w: ", model[self._vs_dict["motor"]["R_w"]].numerator_as_long()/model[self._vs_dict["motor"]["R_w"]].denominator_as_long())
+#         print("    I_idle: ", model[self._vs_dict["motor"]["I_idle"]].numerator_as_long()/model[self._vs_dict["motor"]["I_idle"]].denominator_as_long())
+#         print("    P_max_motor: ", model[self._vs_dict["motor"]["P_max_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["P_max_motor"]].denominator_as_long())
+#         print("    I_max_motor: ", model[self._vs_dict["motor"]["I_max_motor"]].numerator_as_long()/model[self._vs_dict["motor"]["I_max_motor"]].denominator_as_long())
+#         print("    Diameter: ", model[self._vs_dict["propeller"]["diameter"]].numerator_as_long()/model[self._vs_dict["propeller"]["diameter"]].denominator_as_long())
 #         print("==================================================================")
-
 
 
 #     def solve_optimize(self, c_library: Library, max_iter = 0, timeout_millisecond = 100000):
 #         num_iter = 0
 #         propeller = None
-#         motor = None 
+#         motor = None
 #         battery = None
 #         solver = z3.Solver()
 #         #solver = z3.Optimize()
@@ -447,17 +443,17 @@
 #         solver.set("timeout", timeout_millisecond)
 #         ret = solver.check()
 #         while ret == z3.sat:
-#             model = solver.model()   
+#             model = solver.model()
 #             propeller, motor, battery = self.get_component_selection(model=model, c_library=c_library)
 #             print(f"Iteration: {num_iter}, Component Found:")
 #             print(f"    Propeller: {propeller.id}")
 #             print(f"    Motor: {motor.id}")
-#             print(f"    Battery: {battery.id}") 
+#             print(f"    Battery: {battery.id}")
 #             self.print_metric(model=model)
 #             # count progress
 #             if num_iter >= max_iter:
 #                 break
-#             else: 
+#             else:
 #                 num_iter += 1
 #             # set for next iteration
 #             thrust = model[self._vs_dict["system"]["thrust_sum"]].numerator_as_long()/model[self._vs_dict["system"]["thrust_sum"]].denominator_as_long()
@@ -468,7 +464,6 @@
 #             print("Fail.....")
 
 #         return propeller, motor, battery
-
 
 
 # class ContractTemplate():
@@ -497,4 +492,3 @@
 
 #     def getContract(self, comp_type: CType):
 #         return self._contract_dict[comp_type]
-

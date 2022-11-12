@@ -7,6 +7,7 @@ from sym_cps.representation.library.elements.c_parameter import CParameter
 from sym_cps.representation.library.elements.c_property import CProperty
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
+from sym_cps.shared.objects import default_parameters
 
 
 @dataclass(frozen=False)
@@ -45,6 +46,8 @@ class Component:
                 self.parameters[parameter_accepted.id] = new_parameter
             for parameter in self.parameters.values():
                 parameter.component = self
+        # Set the parameters to the value learned from the seed designs
+        self.set_shared_parameters()
 
     @property
     def model(self) -> str:
@@ -75,9 +78,38 @@ class Component:
 
         return params_props_values
 
+    @property
+    def params_values(self) -> dict[str, float]:
+        params_values: dict[str, float] = {}
+
+        for param_id, parameter in self.parameters.items():
+            params_values[param_id] = parameter.value
+
+        return params_values
+
+    @property
+    def params_values_not_default(self) -> dict[str, float]:
+        params_values: dict[str, float] = {}
+
+        for param_id, parameter in self.parameters.items():
+            if param_id in default_parameters.keys():
+                if default_parameters[param_id] == parameter.value:
+                    continue
+            params_values[param_id] = parameter.value
+
+        return params_values
+
     def update_parameters(self, parameters: dict[str, float]):
         for param_id, value in parameters.items():
             self.parameters[param_id].value = value
+
+    def set_shared_parameters(self):
+        print("Setting default parameters...")
+        for param_id, parameter in self.parameters.items():
+            from sym_cps.shared.objects import default_parameters
+
+            if param_id in default_parameters:
+                self.parameters[param_id].value = float(default_parameters[param_id])
 
     def _edit_field(self, name, value):
         object.__setattr__(self, name, value)

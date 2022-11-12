@@ -30,6 +30,7 @@ class Connection:
         connector_b = connections_map[component_a.c_type.id][component_b.c_type.id][direction][1]
         from sym_cps.shared.library import c_library
 
+        print(f"use {connector_a} - {connector_b}")
         return cls(
             component_a,
             c_library.connectors[connector_a],
@@ -51,6 +52,14 @@ class Connection:
         """Returns the two components connected"""
 
         return self.component_a, self.component_b
+
+    @property
+    def summary(self) -> dict:
+        return {self.component_a.id: self.connector_a.id, self.component_b.id: self.connector_b.id}
+
+    @property
+    def abstract_summary(self) -> str:
+        return f"{self.component_b.id}--{self.direction_b_respect_to_a}--{self.component_a.id}"
 
     @property
     def key(self) -> str:

@@ -123,8 +123,9 @@ class Hackathon2Contract(object):
         self._manager.add_instance(batt_inst)
         self._manager.set_selection(inst=batt_inst, candidate_list=batteries)
         self._manager.add_instance(batt_contr_inst)
+        self._manager.set_selection(inst=batt_contr_inst, candidate_list=None)
         self._manager.add_instance(system_inst)
-
+        self._manager.set_selection(inst=system_inst, candidate_list=None)
         # make connection
         # connect propeller to motor
         propeller_motor_connection = [
@@ -174,10 +175,10 @@ class Hackathon2Contract(object):
         )
         system_property_name_list = []
 
-        def system_assumption(vs):
+        def system_assumption(vs, props):
             return [vs["I_battery"] == vs["batt_capacity"] * 3600 / 400]
 
-        def system_guarantee(vs):
+        def system_guarantee(vs, props):
             thrust_sum = sum([vs[f"thrust_prop_{i}"] for i in range(self._num_motor)])
             weight_sum = (
                 vs["W_batt"]
@@ -211,17 +212,18 @@ class Hackathon2Contract(object):
         self._contracts = {}
 
         propeller_port_name_list = ["rho", "omega_prop", "torque_prop", "thrust", "shaft_motor"]
-        propeller_property_name_list = ["C_p", "C_t", "diameter", "shaft_prop", "W_prop"]
+        # propeller_property_name_list = ["C_p", "C_t", "diameter", "shaft_prop", "W_prop"]
+        propeller_property_name_list = ["W_prop"]
 
-        def propeller_assumption(vs):
-            return [vs["shaft_prop"] >= vs["shaft_motor"], vs["C_p"] >= 0]
+        def propeller_assumption(vs, props):
+            return [props["shaft_prop"] >= vs["shaft_motor"], props["C_p"] >= 0]
 
-        def propeller_guarantee(vs):
+        def propeller_guarantee(vs, props):
             return [
                 vs["torque_prop"]
-                == vs["C_p"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 5 / (2 * 3.14159265) ** 3,
+                == props["C_p"] * vs["rho"] * vs["omega_prop"] ** 2 * props["diameter"] ** 5 / (2 * 3.14159265) ** 3,
                 vs["thrust"]
-                == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2),
+                == (props["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * props["diameter"] ** 4 / (2 * 3.14159265) ** 2),
                 vs["omega_prop"] >= 0,
             ]
 
@@ -235,25 +237,19 @@ class Hackathon2Contract(object):
         self._contracts["Propeller"] = propeller_contract
 
         motor_port_name_list = ["torque_motor", "omega_motor", "I_motor", "V_motor"]
-        motor_property_name_list = [
-            "I_max_motor",
-            "P_max_motor",
-            "K_t",
-            "K_v",
-            "W_motor",
-            "R_w",
-            "I_idle",
-            "shaft_motor",
-        ]
+        # motor_property_name_list = ["I_max_motor", "P_max_motor", "K_t", "K_v", "W_motor", "R_w", "I_idle", "shaft_motor"]
+        motor_property_name_list = ["W_motor", "shaft_motor"]
 
-        def motor_assumption(vs):
-            return [vs["V_motor"] * vs["I_motor"] < vs["P_max_motor"], vs["I_motor"] < vs["I_max_motor"]]
+        def motor_assumption(vs, props):
+            return [vs["V_motor"] * vs["I_motor"] < props["P_max_motor"], vs["I_motor"] < props["I_max_motor"]]
 
-        def motor_guarantee(vs):
+        def motor_guarantee(vs, props):
             return [
-                vs["I_motor"] * vs["R_w"] == vs["V_motor"] - vs["omega_motor"] / vs["K_v"],
+                vs["I_motor"] * props["R_w"] == vs["V_motor"] - vs["omega_motor"] / props["K_v"],
                 vs["torque_motor"]
-                == vs["K_t"] / vs["R_w"] * (vs["V_motor"] - vs["R_w"] * vs["I_idle"] - vs["omega_motor"] / vs["K_v"]),
+                == props["K_t"]
+                / props["R_w"]
+                * (vs["V_motor"] - props["R_w"] * props["I_idle"] - vs["omega_motor"] / props["K_v"]),
             ]
 
         motor_contract = ContractTemplate(
@@ -266,12 +262,13 @@ class Hackathon2Contract(object):
         self._contracts["Motor"] = motor_contract
 
         battery_port_name_list = ["I_batt"]
-        battery_property_name_list = ["capacity", "W_batt", "I_max", "V_battery"]
+        # battery_property_name_list = ["capacity", "W_batt", "I_max", "V_battery"]
+        battery_property_name_list = ["capacity", "W_batt", "V_battery"]
 
-        def battery_assumption(vs):
-            return [vs["I_batt"] < vs["I_max"]]
+        def battery_assumption(vs, props):
+            return [vs["I_batt"] < props["I_max"]]
 
-        def battery_guarantee(vs):
+        def battery_guarantee(vs, props):
             return []
 
         battery_contract = ContractTemplate(
@@ -284,15 +281,18 @@ class Hackathon2Contract(object):
 
         self._contracts["Battery"] = battery_contract
 
-        battery_controller_port_name_list = ["V_battery", "I_battery"]
-        battery_controller_property_name_list = [f"I_motor_{i}" for i in range(self._num_motor)] + [
-            f"V_motor_{i}" for i in range(self._num_motor)
-        ]
+        # NOTE: Old code has incorrect property name list
+        battery_controller_port_name_list = (
+            ["V_battery", "I_battery"]
+            + [f"I_motor_{i}" for i in range(self._num_motor)]
+            + [f"V_motor_{i}" for i in range(self._num_motor)]
+        )
+        battery_controller_property_name_list = []
 
-        def battery_controller_assumption(vs):
+        def battery_controller_assumption(vs, props):
             return [vs[f"V_motor_{i}"] <= vs["V_battery"] for i in range(self._num_motor)]
 
-        def battery_controller_guarantee(vs):
+        def battery_controller_guarantee(vs, props):
             i_sum = sum([vs[f"I_motor_{i}"] for i in range(self._num_motor)])
             return [i_sum == vs["I_battery"] * 0.95]
 
