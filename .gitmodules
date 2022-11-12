@@ -1,3 +1,4 @@
 [submodule "eval_pipeline"]
 	path = eval_pipeline
 	url = https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git
+	branch = features/oct-22-fdm-update
