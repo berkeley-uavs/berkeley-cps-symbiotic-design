@@ -7,6 +7,7 @@ from itertools import combinations, product
 from igraph import Edge, Graph, Vertex
 
 from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.tools.graphs import graph_to_dict
 
 
 def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
@@ -23,8 +24,23 @@ def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
     return False
 
 
-def find_isomorphisms(elements: list[Graph]) -> tuple[list[Graph], bool]:
-    isomorphisms = []
+# def same_instanciation(struct_a: dict, struct_b: dict):
+#     print(struct_a)
+#     print(struct_b)
+#
+#     return True
+
+def strong_mapping(graph_a: Graph, graph_b: Graph) -> bool:
+    mappings = graph_a.get_isomorphisms_vf2(
+                graph_b, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
+            )
+    return len(mappings) > 0
+
+# def strong_mapping_dict(gra)
+def find_isomorphisms(elements: list[Graph]) -> tuple[dict[str, list[dict]], dict[str, Graph], bool]:
+    isomorphisms_summary = {}
+    isomorphisms_graphs_summary = {}
+    iso_graphs = {}
     all_elements_with_same_nodes_types_are_isomorphic = True
     pairs = combinations(elements, 2)
     for pair in pairs:
@@ -32,14 +48,32 @@ def find_isomorphisms(elements: list[Graph]) -> tuple[list[Graph], bool]:
             pair[1], node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
         )
         if len(mappings) > 0:
-            if not is_isomorphism_present(isomorphisms, pair[0]):
-                isomorphisms.append(pair[0])
+            iso_a_key, iso_a_struct = graph_to_dict(pair[0])
+            iso_b_key, iso_b_struct = graph_to_dict(pair[1])
+            iso_graphs[iso_a_key] = pair[0]
+            if iso_a_key not in isomorphisms_summary.keys():
+                isomorphisms_summary[iso_a_key] = [iso_a_struct]
+                isomorphisms_graphs_summary[iso_a_key] = [pair[0]]
+            append_a = True
+            append_b = True
+            for elem in isomorphisms_graphs_summary[iso_a_key]:
+                if strong_mapping(pair[0], elem):
+                    append_a = False
+                if strong_mapping(pair[1], elem):
+                    append_b = False
+            if append_a:
+                isomorphisms_summary[iso_a_key].append(iso_a_struct)
+                isomorphisms_graphs_summary[iso_a_key].append(pair[0])
+            if append_b:
+                isomorphisms_summary[iso_b_key].append(iso_b_struct)
+                isomorphisms_graphs_summary[iso_a_key].append(pair[1])
+
         else:
             set_of_types_a = set([vs["label"] for vs in pair[0].vs])
             set_of_types_b = set([vs["label"] for vs in pair[1].vs])
             if set_of_types_a == set_of_types_b:
                 all_elements_with_same_nodes_types_are_isomorphic = False
-    return isomorphisms, all_elements_with_same_nodes_types_are_isomorphic
+    return isomorphisms_summary, iso_graphs, all_elements_with_same_nodes_types_are_isomorphic
 
 
 def node_comparison(graph_1: Graph, graph_2: Graph, node_1: Vertex, node_2: Vertex):

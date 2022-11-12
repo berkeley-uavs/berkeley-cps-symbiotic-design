@@ -18,9 +18,9 @@ def graph_to_pdf(graph: Graph, name: str, folder: str):
     graphs[0].write_pdf(pdf_file_path)
 
 
-def graph_to_dict(graph: Graph):
-    components = list(graph.vs()["component"])
-    connections = list(graph.es()["connection"])
+def graph_to_dict(graph: Graph) -> tuple[str, dict]:
+    components = sorted(list(graph.vs()["component"]), key=lambda x: x.c_type.id)
+    connections = sorted(list(graph.es()["connection"]), key=lambda x: x.abstract_summary)
     components_dict = {}
     connections_list = []
     for component in components:
