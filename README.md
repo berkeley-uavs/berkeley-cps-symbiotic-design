@@ -11,6 +11,15 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 
 Make sure that in your `eval_pipeline` there is [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/tree/features/oct-22-fdm-update) branch. If you have problems with the submodule, just clone it inside `eval_pipeline`.
 
+Make sure that the `challenge_data` is updated to the latest version and then run again:
+
+```bash
+sudo pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+```
+
+If the file exists already on your system, delete it and run the command again.
+
+
 
 ## Local Installation
 
