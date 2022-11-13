@@ -49,6 +49,8 @@ manual_connectors_components_path = reverse_engineering_folder / "manual_connect
 
 learned_default_params_path = reverse_engineering_folder / "analysis" / "shared_parameters.json"
 
+grammar_rules_path = reverse_engineering_folder / "grammar_rules_self.json"
+
 component_selection_path = data_folder / "reverse_engineering" / "component_choice.json"
 summary_structure_path = output_folder / "analysis" / "isomorphisms" / "structure_summary.json"
 isomorphisms_data_path = output_folder / "analysis" / "isomorphisms" / "isomorphisms_data.json"

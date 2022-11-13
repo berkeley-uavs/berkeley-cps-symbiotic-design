@@ -9,6 +9,7 @@ from pathlib import Path
 from aenum import Enum, auto
 
 import numpy as np
+from sym_cps.shared.objects import grammar_rules
 
 
 # from igraph import Edge, Graph, Vertex
@@ -37,6 +38,10 @@ class Neighbors(Enum):
     BOTTOM = auto()
     FRONT = auto()
     REAR = auto()
+
+
+#Dictionary connected to the json
+my_rules = grammar_rules
 
 
 class Rule:
