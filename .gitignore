@@ -238,3 +238,4 @@ fabric.properties
 .python-version
 # Ignore dynaconf secret files
 .secrets.*
+/eval_pipeline/simple_uam/
