@@ -148,7 +148,13 @@ class PerfTable(object):
         # interpolate/extrapolate the value
         v_m1 = ((v12 - v) * val11 + (v - v11) * val12) / (v12 - v11)
         v_m2 = ((v22 - v) * val21 + (v - v21) * val22) / (v22 - v21)
-        ret = ((rpm2 - rpm) * v_m1 + (rpm - rpm1) * v_m2) / (rpm2 - rpm1)
+
+        if rpm > rpm2:
+            ret = v_m2
+        elif rpm < rpm1:
+            ret = v_m1
+        else:
+            ret = ((rpm2 - rpm) * v_m1 + (rpm - rpm1) * v_m2) / (rpm2 - rpm1)
         # debug
         # print("rpm: ", rpm1, rpm2)
         # print("v1:", v11, v12)
@@ -158,3 +164,7 @@ class PerfTable(object):
         return ret
 
         # return rpm_list[i]
+
+
+if __name__ == "__main__":
+    pass

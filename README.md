@@ -6,6 +6,39 @@ Project description available [here](https://www.darpa.mil/program/symbiotic-des
 
 Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/)
 
+
+## Updates October 22
+
+Make sure that in your `eval_pipeline` there is [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/tree/features/oct-22-fdm-update) branch. If you have problems with the submodule, just clone it inside `eval_pipeline`. 
+
+After pulling the latest main branch from this repo and `challenge_data` repo, you can launch these commands to have a clean installation:
+
+```bash
+make uninstall
+```
+
+```bash
+sudo rm -r eval_pipeline
+```
+
+```bash
+git clone -b features/oct-22-fdm-update --single-branch https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git ./eval_pipeline
+```
+
+```bash
+pdm install
+```
+
+Make sure that the `challenge_data` is updated to the latest version and then run again:
+
+```bash
+sudo pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+```
+
+If the file exists already on your system, delete it and run the command again.
+
+
+
 ## Local Installation
 
 ### System Requirements
@@ -106,7 +139,7 @@ To initialize the library of components and seed design
 To generate a custom design from json file (this script does not send it to evaluation)
 
   ```bash
-  pdm run evaluate "working/test_quad_abstraction_3"
+  pdm run evaluate "test_quad_cargo"
   ```
 To generate a custom design from json file, send it to evaluation and retrieve the results. 
 The results appear in the `challenge_data/output/<DESIGN_NAME>` automatically (a json file with the evaluation results and an STL file with the 3D model).

@@ -1,0 +1,283 @@
+digraph make_uav {
+  subgraph L {
+    uav [require_label="uav"];
+  }
+
+  subgraph R {
+    body [label="body"];
+    head [label="head"];
+    tail [label="tail"];
+    top [label="top"];
+    bottom [label="bottom"];
+  }
+}
+
+digraph add_wings_to_body {
+  subgraph L {
+    body [require_label="body"];
+    top -> body [id="top_edges"];
+    body -> bottom [id="bottom_edges"];
+    body -> head [label="head"];
+    body -> tail [label="tail"];
+  }
+
+  subgraph R {
+    body [label="body"];
+    wing_link [label="wing"];
+    wing_link [label="wing"];
+    body -> wing_link [direction="right"];
+    body -> wing_link [direction="left", mirror=true];
+    wing_link -> wing;
+    wing_link -> wing;
+    top -> body [id="top_edges"];
+    body -> bottom [id="bottom_edges"];
+    head -> body [id="head_edges"];
+    body -> tail [label="tail_edges"];
+  }
+}
+
+digraph add_rotor_joint_to_body {
+  subgraph L {
+    body [require_label="body"];
+    top -> body [id="top_edges"];
+    body -> bottom [id="bottom_edges"];
+    head -> body [label="head"];
+    body -> tail [label="tail"];
+  }
+  subgraph R {
+    body [label="body"];
+    rotor_joint [label="rotor_joint"];
+    body -> bottom [id="bottom_edges"];
+    head -> body [label="head"];
+    body -> tail [label="tail"];
+    body -> rotor_joint [type=fixed, offset=0.5, axis_angle="0 1 0 90"];
+  }
+}
+
+digraph add_body_link_to_body {
+  subgraph L {
+    body [require_label="body"];
+    parent -> body [id="parent_edges"];
+    body -> child [id="child_edges"];
+  }
+  subgraph R {
+    body [require_label="body"];
+    body_link [label="body_link"];
+    parent -> body [id="parent_edges"];
+    body -> body_link [type=fixed, offset=0.5, axis_angle="0 1 0 90"];
+    body_link -> child [id="child_edges"];
+  }
+}
+
+digraph add_clockwise_rotor_to_rotor_joint {
+  subgraph L {
+    rotor_joint [require_label="rotor_joint"];
+    parent -> rotor_joint [id="parent_edges"];
+  }
+
+  subgraph R {
+    rotor_joint [label="rotor_joint"];
+    rotor [label="rotor", rotation="clockwise"];
+    parent -> rotor_joint [id="parent_edges"];
+    rotor_joint -> rotor [type=fixed, offset=0.5, axis_angle="0 1 0 90"];
+    rotor -> child [id="child_edges"];
+  }
+}
+
+
+digraph add_counterclockwise_rotor_to_rotor_joint {
+  subgraph L {
+    rotor_joint [require_label="rotor_joint"];
+    parent -> rotor_joint [id="parent_edges"];
+    rotor_joint -> child [id="child_edges"];
+  }
+
+  subgraph R {
+    rotor_joint [label="rotor_joint"];
+    rotor [label="rotor", rotation="counterclockwise"];
+    parent -> rotor_joint [id="parent_edges"];
+    rotor_joint -> rotor [type=fixed, offset=0.5, axis_angle="0 1 0 90"];
+    rotor -> child [id="child_edges"];
+  }
+}
+
+digraph add_rotor_joint_to_rotor_joint {
+  subgraph L {
+    rotor_joint [require_label="rotor_joint"];
+    parent -> rotor_joint [id="parent_edges"];
+    rotor_joint -> child [id="child_edges"];
+  }
+
+  subgraph R {
+    rotor_joint [label="rotor_joint"];
+    rotor_joint [label="rotor_joint"];
+    parent -> rotor_joint [id="parent_edges"];
+    rotor_joint -> rotor_joint [type=fixed, offset=0.5, axis_angle="0 1 0 90"];
+    rotor_joint -> child [id="child_edges"];
+  }
+}
+
+digraph add_symmetric_rotor_joints_to_rotor_joint {
+  subgraph L {
+    rotor_joint [require_label="rotor_joint"];
+    parent -> rotor_joint [id="parent_edges"];
+    rotor_joint -> child [id="child_edges"];
+  }
+
+  subgraph R {
+    rotor_joint [label="rotor_joint"];
+    rotor_joint [label="rotor_joint"];
+    rotor_joint [label="rotor_joint"];
+    parent -> rotor_joint [id="parent_edges"];
+    rotor_joint -> rotor_joint [type=fixed, offset=0.5, axis_angle="0 1 0 90"];
+    rotor_joint -> rotor_joint [type=fixed, offset=0.5, axis_angle="0 1 0 90", mirror=true];
+    rotor_joint -> child [id="child_edges"];
+  }
+}
+
+digraph append_body {
+  subgraph L {
+    body_link [require_label="body_link"];
+    parent -> body_link [id="parent_edges"];
+    body_link -> child [id="child_edges"];
+  }
+
+  subgraph R {
+    body_link [label="body_link"];
+    body [label="body"];
+    body_link -> body [type=fixed, offset=0.5, axis_angle="0 1 0 90"];
+  }
+}
+
+digraph end_rotor {
+  subgraph L {
+    rotor [require_label="rotor"];
+    parent -> rotor;
+  }
+
+  subgraph R {
+    parent;
+  }
+}
+
+digraph end_wing {
+  subgraph L {
+    wing [require_label="wing"];
+    parent -> wing;
+  }
+
+  subgraph R {
+    parent;
+  }
+}
+
+digraph end_body {
+  subgraph L {
+    body [require_label="body"];
+    body -> child;
+  }
+
+  subgraph R {
+    child;
+  }
+}
+
+digraph make_fixed_body_joint {
+  subgraph L {
+    parent -> child [require_label="body_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=fixed];
+  }
+}
+
+digraph make_roll_body_joint {
+  subgraph L {
+    parent -> child [require_label="body_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, joint_axis="1 0 0"];
+  }
+}
+
+digraph make_swing_body_joint {
+  subgraph L {
+    parent -> child [require_label="body_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, joint_axis="0 1 0", color="0 0.5 0"];
+  }
+}
+
+digraph make_lift_body_joint {
+  subgraph L {
+    parent -> child [require_label="body_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, joint_axis="0 0 1"];
+  }
+}
+
+digraph make_left_roll_limb_joint {
+  subgraph L {
+    parent -> child [require_label="limb_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, axis_angle="0 1 0 -90", joint_axis="1 0 0"];
+  }
+}
+
+digraph make_right_roll_limb_joint {
+  subgraph L {
+    parent -> child [require_label="limb_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, axis_angle="0 1 0 90", joint_axis="1 0 0"];
+  }
+}
+
+digraph make_swing_limb_joint {
+  subgraph L {
+    parent -> child [require_label="limb_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, joint_axis="0 1 0", color="0 0.5 0"];
+  }
+}
+
+digraph make_acute_lift_limb_joint {
+  subgraph L {
+    parent -> child [require_label="limb_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, axis_angle="0 0 1 120", joint_axis="0 0 1"];
+  }
+}
+
+digraph make_obtuse_lift_limb_joint {
+  subgraph L {
+    parent -> child [require_label="limb_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, axis_angle="0 0 1 60", joint_axis="0 0 1"];
+  }
+}
+
+digraph make_backwards_lift_limb_joint {
+  subgraph L {
+    parent -> child [require_label="limb_joint"];
+  }
+
+  subgraph R {
+    parent -> child [type=hinge, axis_angle="0 0 1 -60", joint_axis="0 0 1"];
+  }
+}
