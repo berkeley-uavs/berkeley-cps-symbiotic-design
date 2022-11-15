@@ -134,11 +134,9 @@ popular_nodes_list: list = list(popular_nodes.keys())
 
 def random_sampling_for_n(iterations: int = 10000000):
     designs_chosen = []
-    if designs_chosen is None:
-        for did, (dc, dt) in designs.items():
-            if did in ["NewAxe_Cargo", "PickAxe", "TestQuad_Cargo"]:
-                designs_chosen.append(dc)
-
+    for did, (dc, dt) in designs.items():
+        if did in ["NewAxe_Cargo", "PickAxe", "TestQuad_Cargo"]:
+            designs_chosen.append(dc)
     nodes_types = set()
     for d in designs_chosen:
         nodes_types |= d.all_comp_types_ids
