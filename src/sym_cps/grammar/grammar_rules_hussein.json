@@ -218,7 +218,7 @@
     "production":
       {
         "S": "CONNECTOR",
-        "EDGES": ["B"]
+        "EDGES": ["T"]
       }
   },
   "CONNECTOR-RIGHT": {
