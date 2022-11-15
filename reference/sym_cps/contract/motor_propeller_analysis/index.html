@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://uc-berkeley-data-discovery-2022.github.io/berkeley-cps-symbiotic-design/reference/sym_cps/contract/motor_propeller_analysis/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.7">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -21,10 +21,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.472b142f.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.08040f6c.min.css">
         
       
       
@@ -122,6 +122,7 @@
         
           
           
+          
           <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
@@ -129,6 +130,7 @@
             </label>
           
         
+          
           
           
           <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="lime"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
@@ -691,6 +693,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../component_selection_refined/" class="md-nav__link">
+        component_selection_refined
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../contract/" class="md-nav__link">
         contract
       </a>
@@ -835,7 +851,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3_7" type="checkbox" id="__nav_2_2_3_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_3_8" type="checkbox" id="__nav_2_2_3_8" >
       
       
       
@@ -845,14 +861,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../tool/">tool</a>
           
-            <label for="__nav_2_2_3_7">
+            <label for="__nav_2_2_3_8">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="tool" data-md-level="4">
-        <label class="md-nav__title" for="__nav_2_2_3_7">
+        <label class="md-nav__title" for="__nav_2_2_3_8">
           <span class="md-nav__icon md-icon"></span>
           tool
         </label>
@@ -3863,20 +3879,27 @@
 <span class="normal">494</span>
 <span class="normal">495</span>
 <span class="normal">496</span>
-<span class="normal">497</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MotorPropellerAnalysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MotorPropellerAnalysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_dict</span><span class="p">,</span> <span class="n">c_library</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_table_dict</span> <span class="o">=</span> <span class="n">table_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_c_library</span> <span class="o">=</span> <span class="n">c_library</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collect_abstracted_battery</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rpm_static</span> <span class="o">=</span> <span class="mi">10000</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solver_verbose</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">np</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_library</span><span class="o">.</span><span class="n">components_in_type</span><span class="p">[</span><span class="s2">&quot;Propeller&quot;</span><span class="p">])):</span>
             <span class="k">for</span> <span class="n">nm</span><span class="p">,</span> <span class="n">motor</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_library</span><span class="o">.</span><span class="n">components_in_type</span><span class="p">[</span><span class="s2">&quot;Motor&quot;</span><span class="p">])):</span>
                 <span class="c1">##### first find the prop motor that can generates thrust</span>
                 <span class="c1">##### Then find the maximum voltage to break the system... save the voltage in result.</span>
-        <span class="c1"># for np, prop in enumerate([self._c_library.components[&quot;apc_propellers_6x4E&quot;]]):</span>
-        <span class="c1">#     for nm, motor in enumerate([self._c_library.components[&quot;t_motor_AT2312KV1400&quot;]]):</span>
+        <span class="c1"># for np, prop in enumerate([self._c_library.components[&quot;apc_propellers_7x5E&quot;]]):#apc_propellers_6x4E</span>
+        <span class="c1">#     for nm, motor in enumerate([self._c_library.components[&quot;kde_direct_KDE2315XF_885&quot;]]): #t_motor_AT2312KV1400</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nm</span><span class="si">}</span><span class="s2"> Analyze (</span><span class="si">{</span><span class="n">prop</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">motor</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">battery_system_analysis_thrust</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">motors</span><span class="o">=</span><span class="p">[</span><span class="n">motor</span><span class="p">],</span> <span class="n">propellers</span><span class="o">=</span><span class="p">[</span><span class="n">prop</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">battery_system_analysis_thrust</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">motors</span><span class="o">=</span><span class="p">[</span><span class="n">motor</span><span class="p">],</span> <span class="n">propellers</span><span class="o">=</span><span class="p">[</span><span class="n">prop</span><span class="p">])</span>
                 <span class="n">is_sat_thrust</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_sat_thrust</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     Incompatible&quot;</span><span class="p">)</span>
@@ -3907,7 +3930,7 @@
                 <span class="k">else</span><span class="p">:</span> 
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     Error&quot;</span><span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     Incompatible?&quot;</span><span class="p">)</span>
-        <span class="n">file_path</span> <span class="o">=</span> <span class="n">data_folder</span><span class="o">/</span> <span class="s2">&quot;ComponentLibrary&quot;</span> <span class="o">/</span> <span class="s2">&quot;motor_propeller_battery_analysis_thrust_minimal.json&quot;</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">data_folder</span><span class="o">/</span> <span class="s2">&quot;ComponentLibrary&quot;</span> <span class="o">/</span> <span class="s2">&quot;component_selection_analysis&quot;</span> <span class="o">/</span><span class="s2">&quot;motor_propeller_pair.json&quot;</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
@@ -3950,8 +3973,9 @@
             <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN4006KV380&quot;],</span>
             <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN1005V2KV90&quot;]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_contract</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_rpm</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_system_battery_thrust</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="n">add_weight</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver_verbose</span><span class="p">)</span>
 
         <span class="n">motor_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Motor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MotorInst&quot;</span><span class="p">)</span>
         <span class="n">prop_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Propeller&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PropellerInst&quot;</span><span class="p">)</span>
@@ -4020,8 +4044,9 @@
             <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN4006KV380&quot;],</span>
             <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN1005V2KV90&quot;]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_contract</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_rpm</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">18000</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_system_battery_voltage</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="n">add_weight</span><span class="p">,</span> <span class="n">check_power</span><span class="o">=</span><span class="n">check_power</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver_verbose</span><span class="p">)</span>
 
         <span class="n">motor_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Motor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MotorInst&quot;</span><span class="p">)</span>
         <span class="n">prop_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Propeller&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PropellerInst&quot;</span><span class="p">)</span>
@@ -4089,8 +4114,9 @@
             <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN4006KV380&quot;],</span>
             <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN1005V2KV90&quot;]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_contract</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_rpm</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_system</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="n">add_weight</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver_verbose</span><span class="p">)</span>
 
         <span class="n">motor_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Motor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MotorInst&quot;</span><span class="p">)</span>
         <span class="n">prop_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Propeller&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PropellerInst&quot;</span><span class="p">)</span>
@@ -4297,7 +4323,7 @@
 
     <span class="k">def</span> <span class="nf">hackathon_property_interface_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="n">LibraryComponent</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">comp_type</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;Propeller&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hackthon_get_propeller_property</span><span class="p">(</span><span class="n">propeller</span><span class="o">=</span><span class="n">component</span><span class="p">,</span> <span class="n">table_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_dict</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hackthon_get_propeller_property</span><span class="p">(</span><span class="n">propeller</span><span class="o">=</span><span class="n">component</span><span class="p">,</span> <span class="n">table_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_dict</span><span class="p">,</span> <span class="n">rpm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_rpm_static</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">component</span><span class="o">.</span><span class="n">comp_type</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;Battery&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hackthon_get_battery_property</span><span class="p">(</span><span class="n">battery</span><span class="o">=</span><span class="n">component</span><span class="p">,</span> <span class="n">num_battery</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_battery</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">component</span><span class="o">.</span><span class="n">comp_type</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;Motor&quot;</span><span class="p">:</span>
@@ -4305,16 +4331,15 @@
         <span class="k">elif</span> <span class="n">component</span><span class="o">.</span><span class="n">comp_type</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;BatteryController&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">hackthon_get_propeller_property</span><span class="p">(</span><span class="n">propeller</span><span class="p">,</span> <span class="n">table_dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">hackthon_get_propeller_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">propeller</span><span class="p">,</span> <span class="n">table_dict</span><span class="p">,</span> <span class="n">rpm</span><span class="p">):</span>
         <span class="c1"># ports get value</span>
 
         <span class="n">diameter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">propeller</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;DIAMETER&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mi">1000</span>
         <span class="n">shaft_prop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">propeller</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;SHAFT_DIAMETER&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
         <span class="c1"># print(table.get_value(rpm = 13000, v = 90, label=&quot;Cp&quot;))</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">table_dict</span><span class="p">[</span><span class="n">propeller</span><span class="p">]</span>
-        <span class="n">C_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cp&quot;</span><span class="p">)</span>  <span class="c1"># 0.0659</span>
-        <span class="n">C_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ct&quot;</span><span class="p">)</span>  <span class="c1"># 0.1319</span>
+        <span class="n">C_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="n">rpm</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cp&quot;</span><span class="p">)</span>  <span class="c1"># 0.0659</span>
+        <span class="n">C_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="n">rpm</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ct&quot;</span><span class="p">)</span>  <span class="c1"># 0.1319</span>
 
         <span class="n">W_prop</span> <span class="o">=</span> <span class="n">propeller</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;WEIGHT&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -4326,8 +4351,7 @@
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">propeller</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">hackthon_get_motor_property</span><span class="p">(</span><span class="n">motor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">hackthon_get_motor_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">motor</span><span class="p">):</span>
         <span class="n">R_w</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;INTERNAL_RESISTANCE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mi">1000</span>  <span class="c1"># Ohm</span>
         <span class="n">K_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;KT&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
         <span class="n">K_v</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;KV&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span>  <span class="c1"># rpm/V to rad/(V-sec)</span>
@@ -4348,13 +4372,15 @@
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">motor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">hackthon_get_battery_property</span><span class="p">(</span><span class="n">battery</span><span class="p">,</span> <span class="n">num_battery</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">hackthon_get_battery_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">battery</span><span class="p">,</span> <span class="n">num_battery</span><span class="p">):</span>
         <span class="n">capacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">battery</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;CAPACITY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">num_battery</span> <span class="o">/</span> <span class="mi">1000</span>  <span class="c1"># mAh -&gt; Ah</span>
         <span class="n">W_batt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">battery</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;WEIGHT&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">num_battery</span>
         <span class="n">V_battery</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">battery</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;VOLTAGE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
         <span class="n">I_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="n">battery</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;CONT_DISCHARGE_RATE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">*</span> <span class="n">capacity</span>  <span class="c1"># convert to mA</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;capacity&quot;</span><span class="p">:</span> <span class="n">capacity</span><span class="p">,</span> <span class="s2">&quot;W_batt&quot;</span><span class="p">:</span> <span class="n">W_batt</span><span class="p">,</span> <span class="s2">&quot;V_battery&quot;</span><span class="p">:</span> <span class="n">V_battery</span><span class="p">,</span> <span class="s2">&quot;I_max&quot;</span><span class="p">:</span> <span class="n">I_max</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">battery</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">set_rpm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rpm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rpm_static</span> <span class="o">=</span> <span class="n">rpm</span>
 </code></pre></div></td></tr></table></div>
         </details>
 
@@ -4386,11 +4412,7 @@
 
       <details class="quote">
         <summary>Source code in <code>sym_cps/contract/motor_propeller_analysis.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span>
@@ -4437,7 +4459,12 @@
 <span class="normal">261</span>
 <span class="normal">262</span>
 <span class="normal">263</span>
-<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
             <span class="n">add_weight</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="n">motors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LibraryComponent</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">propellers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LibraryComponent</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -4456,8 +4483,9 @@
         <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN4006KV380&quot;],</span>
         <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN1005V2KV90&quot;]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_contract</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_rpm</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_system</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="n">add_weight</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver_verbose</span><span class="p">)</span>
 
     <span class="n">motor_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Motor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MotorInst&quot;</span><span class="p">)</span>
     <span class="n">prop_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Propeller&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PropellerInst&quot;</span><span class="p">)</span>
@@ -4511,9 +4539,7 @@
 
       <details class="quote">
         <summary>Source code in <code>sym_cps/contract/motor_propeller_analysis.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 74</span>
-<span class="normal"> 75</span>
-<span class="normal"> 76</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 76</span>
 <span class="normal"> 77</span>
 <span class="normal"> 78</span>
 <span class="normal"> 79</span>
@@ -4578,7 +4604,10 @@
 <span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
-<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">battery_system_analysis_thrust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">battery_system_analysis_thrust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                             <span class="n">add_weight</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                             <span class="n">motors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LibraryComponent</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">propellers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LibraryComponent</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4597,8 +4626,9 @@
         <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN4006KV380&quot;],</span>
         <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN1005V2KV90&quot;]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_contract</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_rpm</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_system_battery_thrust</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="n">add_weight</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver_verbose</span><span class="p">)</span>
 
     <span class="n">motor_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Motor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MotorInst&quot;</span><span class="p">)</span>
     <span class="n">prop_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Propeller&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PropellerInst&quot;</span><span class="p">)</span>
@@ -4668,10 +4698,7 @@
 
       <details class="quote">
         <summary>Source code in <code>sym_cps/contract/motor_propeller_analysis.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
@@ -4735,7 +4762,11 @@
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
-<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">battery_system_analysis_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">battery_system_analysis_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                             <span class="n">add_weight</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                             <span class="n">check_power</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                             <span class="n">motors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LibraryComponent</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4754,8 +4785,9 @@
         <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN4006KV380&quot;],</span>
         <span class="c1">#             self._c_library.components[&quot;t_motor_AntigravityMN1005V2KV90&quot;]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_contract</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_rpm</span><span class="p">(</span><span class="n">rpm</span><span class="o">=</span><span class="mi">18000</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_system_battery_voltage</span><span class="p">(</span><span class="n">add_weight</span><span class="o">=</span><span class="n">add_weight</span><span class="p">,</span> <span class="n">check_power</span><span class="o">=</span><span class="n">check_power</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">ContractManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hackathon_property_interface_fn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver_verbose</span><span class="p">)</span>
 
     <span class="n">motor_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Motor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MotorInst&quot;</span><span class="p">)</span>
     <span class="n">prop_inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contracts</span><span class="p">[</span><span class="s2">&quot;Propeller&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PropellerInst&quot;</span><span class="p">)</span>
@@ -4919,7 +4951,7 @@
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.8492ddcf.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
       
     
   </body>
