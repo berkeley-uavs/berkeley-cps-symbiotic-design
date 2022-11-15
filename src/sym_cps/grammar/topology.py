@@ -88,7 +88,8 @@ class AbstractTopology:
                                     for comp_b in struct_component[comp_a][struct_category].keys():
                                         if comp_b in c_library.component_types[comp_a].compatible_with.keys():
                                             if comp_b == "BatteryController":
-                                                topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][comp_b + "_instance_1"] = struct_component[comp_a][struct_category][comp_b]
+                                                continue
+                                                # topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][comp_b + "_instance_1"] = struct_component[comp_a][struct_category][comp_b]
                                             else:
                                                 topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
                                                     comp_b + "_instance_" + str(instance_n)] = struct_component[comp_a][struct_category][comp_b]
