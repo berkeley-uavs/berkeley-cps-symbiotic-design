@@ -31,9 +31,11 @@ class Hackathon2Contract(object):
             better_selection_encoding=True,
             obj_lower_bound=0,
         )
-        self._manager.solve()
-        objective = self._manager.calculate_objective()
-        print(f"Check Completed (objective: {objective})")
+        is_sat = self._manager.solve()
+        objective = None
+        if is_sat:
+            objective = self._manager.calculate_objective()
+            print(f"Check Completed (objective: {objective})")
         return objective
 
     def optimize(self, max_iter=0, timeout_millisecond=100000):
