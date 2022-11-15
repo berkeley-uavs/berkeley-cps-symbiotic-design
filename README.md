@@ -9,7 +9,25 @@ Documentation available [here](https://uc-berkeley-data-discovery-2022.github.io
 
 ## Updates October 22
 
-Make sure that in your `eval_pipeline` there is [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/tree/features/oct-22-fdm-update) branch. If you have problems with the submodule, just clone it inside `eval_pipeline`.
+Make sure that in your `eval_pipeline` there is [this](https://github.com/LOGiCS-Project/swri-simple-uam-pipeline/tree/features/oct-22-fdm-update) branch. If you have problems with the submodule, just clone it inside `eval_pipeline`. 
+
+After pulling the latest main branch from this repo and `challenge_data` repo, you can launch these commands to have a clean installation:
+
+```bash
+make uninstall
+```
+
+```bash
+sudo rm -r eval_pipeline
+```
+
+```bash
+git clone -b features/oct-22-fdm-update --single-branch https://github.com/LOGiCS-Project/swri-simple-uam-pipeline.git ./eval_pipeline
+```
+
+```bash
+pdm install
+```
 
 Make sure that the `challenge_data` is updated to the latest version and then run again:
 

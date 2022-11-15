@@ -16,7 +16,7 @@ from sym_cps.tools.strings import make_hash_sha256
 
 def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None = None) -> tuple[dict[str, list[dict]],
                                                                                                   dict[str, list[dict]],
-                                                                                                  dict]:
+                                                                                                  dict, dict]:
     if key_nodes is None:
         key_nodes = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
 
@@ -38,7 +38,7 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
             subgraphs.append(dec_designs)
 
     if len(subgraphs) <= 1:
-        return {}, {}, {}
+        return {}, {}, {}, {}
 
     n_nodes_min = 100
     n_nodes_max = 1
@@ -59,14 +59,18 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
         if len(proposals) > 0:
             candiates[i] = list(product(*proposals))
 
-    all_iso_graphs = {}
+    global_iso_graphs = {}
+    local_iso_graphs = {}
     global_iso = {}
     local_iso = {}
     for n_nodes, combinations in candiates.items():
+        if len(combinations) <= 1:
+            print("no combinations same length")
+            return {}, {}, {}, {}
         for combination in combinations:
             isomorphisms_summary, iso_graphs, all_elements = find_isomorphisms(combination)
-            all_iso_graphs.update(iso_graphs)
             if all_elements:
+                global_iso_graphs.update(iso_graphs)
                 for iso_key, structures in isomorphisms_summary.items():
                     if iso_key not in global_iso.keys():
                         global_iso[iso_key] = structures
@@ -74,6 +78,7 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
                         if elem not in global_iso[iso_key]:
                             global_iso[iso_key].append(elem)
             else:
+                local_iso_graphs.update(iso_graphs)
                 for iso_key, structures in isomorphisms_summary.items():
                     if iso_key not in local_iso.keys():
                         local_iso[iso_key] = structures
@@ -82,11 +87,11 @@ def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None
                             local_iso[iso_key].append(elem)
 
     print(f"Found {len(local_iso)} local isomorphisms and {len(global_iso)} global ones")
-    return local_iso, global_iso, all_iso_graphs
+    return local_iso, global_iso, global_iso_graphs, local_iso_graphs
 
 
 def explore_structures(designs: list[DConcrete], key_nodes: list[str]):
-    local_iso, global_iso, graphs_dict = find_isos(designs, key_nodes)
+    local_iso, global_iso, global_iso_graphs, local_iso_graphs = find_isos(designs, key_nodes)
 
     summary = {"LOCAL": {}, "GLOBAL": {}}
 
@@ -108,27 +113,33 @@ def explore_structures(designs: list[DConcrete], key_nodes: list[str]):
                 if new_elem not in summary["GLOBAL"][structure_key]:
                     summary["GLOBAL"][structure_key].append(new_elem)
 
-    return summary, graphs_dict
+    return summary, global_iso_graphs, local_iso_graphs
 
-
-def predefined_nodes(designs_chosen):
-    key_nodes = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
-    return explore_structures(designs_chosen, key_nodes)
-
-
-def random_sampling(designs_chosen, nodes_types):
-    subset = random.sample(nodes_types, random.randint(1, len(nodes_types)))
-    print(f"Node keys: {subset}")
-    subset = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
-    return explore_structures(designs_chosen, subset)
+#
+# def predefined_nodes(designs_chosen):
+#     key_nodes = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
+#     return explore_structures(designs_chosen, key_nodes)
+#
+#
+# def random_sampling(designs_chosen, nodes_types):
+#     subset = random.sample(nodes_types, random.randint(1, len(nodes_types)))
+#     print(f"Node keys: {subset}")
+#     subset = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
+#     return explore_structures(designs_chosen, subset)
 
 
 popular_nodes: dict = json.load(open(popular_nodes_keys_path))
 popular_nodes_list: list = list(popular_nodes.keys())
 
 
-def random_sampling_for_n(iterations: int = 100000):
-    designs_chosen = [d[0] for d in designs.values()]
+def random_sampling_for_n(designs_chosen: list[DConcrete] | None = None, iterations: int = 100000):
+    # designs_chosen = [d[0] for d in designs.values()]
+    designs_chosen = []
+    if designs_chosen is None:
+        for did, (dc, dt) in designs.items():
+            if did in ["NewAxe_Cargo", "PickAxe", "TestQuad_Cargo"]:
+                designs_chosen.append(dc)
+
     nodes_types = set()
     for d in designs_chosen:
         nodes_types |= d.all_comp_types_ids
@@ -171,7 +182,8 @@ def random_sampling_for_n(iterations: int = 100000):
     else:
         total_summary = {"LOCAL": {}, "GLOBAL": {}}
 
-    graphs_dict_total = {}
+    global_graphs_dict_total = {}
+    local_graphs_dict_total = {}
 
     iteration = 1
     nodes_types_set_visited = []
@@ -188,8 +200,9 @@ def random_sampling_for_n(iterations: int = 100000):
         nodes_types_str = "-".join(nodes_types_set_list)
         if nodes_types_set_list in nodes_types_set_visited:
             continue
-        summary, graphs_dict = explore_structures(designs_chosen, nodes_types_set)
-        graphs_dict_total.update(graphs_dict)
+        summary, global_iso_graphs, local_iso_graphs = explore_structures(designs_chosen, nodes_types_set)
+        global_graphs_dict_total.update(global_iso_graphs)
+        local_graphs_dict_total.update(local_iso_graphs)
 
         for structure_key, structures in summary["LOCAL"].items():
             if structure_key not in total_summary["LOCAL"].keys():
@@ -216,10 +229,14 @@ def random_sampling_for_n(iterations: int = 100000):
 
         save_to_file(total_summary, "structure_summary.json", f"analysis/isomorphisms/")
 
-        for key, graph in graphs_dict_total.items():
-            graph_file = output_folder / f"analysis/isomorphisms/graphs/{key}.pdf"
+        for key, graph in global_graphs_dict_total.items():
+            graph_file = output_folder / f"analysis/isomorphisms/graphs/global/{key}.pdf"
             if not graph_file.is_file():
-                graph_to_pdf(graph, key, "analysis/isomorphisms/graphs")
+                graph_to_pdf(graph, key, "analysis/isomorphisms/graphs/global")
+        for key, graph in local_graphs_dict_total.items():
+            graph_file = output_folder / f"analysis/isomorphisms/graphs/local/{key}.pdf"
+            if not graph_file.is_file():
+                graph_to_pdf(graph, key, "analysis/isomorphisms/graphs/local")
 
         iteration += 1
         nodes_types_set_list.append(nodes_types_str)
@@ -230,4 +247,4 @@ if __name__ == "__main__":
     for did, (dc, dt) in designs.items():
         if did in ["NewAxe_Cargo", "PickAxe", "TestQuad_Cargo"]:
             designs_chosen.append(dc)
-    random_sampling_for_n()
+    random_sampling_for_n(designs_chosen)
