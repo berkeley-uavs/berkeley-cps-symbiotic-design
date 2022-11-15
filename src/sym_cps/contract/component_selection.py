@@ -5,7 +5,6 @@ from sym_cps.contract.contract import ContractManagerBruteForce
 # from sym_cps.contract.contract_general import ContractGeneralManager
 from sym_cps.contract.contract_composition import Hackathon2Contract
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.representation.design.topology import DTopology
 from sym_cps.representation.library import Library, LibraryComponent
 from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
 
@@ -21,21 +20,19 @@ class ComponentSelectionContract:
         self._library = c_library
         self._table_dict = parsing_prop_table(c_library)
 
-    def select_general(
-        self, design_topology: DTopology, design_concrete: DConcrete = None, max_iter=10, timeout_millisecond=100000
-    ):
+    def select_general(self, design_concrete: DConcrete, max_iter=10, timeout_millisecond=100000):
 
         manager = Hackathon2Contract(table_dict=self._table_dict, c_library=self._library)
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
         num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
-            d_topology=design_topology
+            d_concrete=design_concrete
         )
         """Instantiate the contract"""
         obj = None
         if design_concrete is not None:
             print("Calculate the initial objective function")
             component_dict_input = self.create_component_lists(d_concrete=design_concrete)
-            obj = self.check_selection_general(design_concrete=design_concrete, design_topology=design_topology)
+            obj = self.check_selection_general(design_concrete=design_concrete)
             print("Objective: ", obj)
         else:
             print("Currently not supported")
@@ -61,9 +58,7 @@ class ComponentSelectionContract:
         self.print_components(component_dict=component_dict)
         return component_dict
 
-    def check_selection_general(
-        self, design_topology: DTopology, design_concrete: DConcrete = None, component_dict: dict = None
-    ):
+    def check_selection_general(self, design_concrete: DConcrete, component_dict: dict = None):
         if component_dict is None:
             if design_concrete is not None:
                 """get concrete component"""
@@ -74,7 +69,7 @@ class ComponentSelectionContract:
         print("Check Component:")
         self.print_components(component_dict=component_dict)
         num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
-            d_topology=design_topology
+            d_concrete=design_concrete
         )
         manager = Hackathon2Contract(table_dict=self._table_dict, c_library=self._library)
         start = time.time()
@@ -107,21 +102,19 @@ class ComponentSelectionContract:
             for comp, lib in zip(comps, libs):
                 comp.library_component = lib
 
-    def select_hackathon(
-        self, design_topology: DTopology, design_concrete: DConcrete = None, max_iter=10, timeout_millisecond=100000
-    ):
+    def select_hackathon(self, design_concrete: DConcrete, max_iter = 10, timeout_millisecond = 100000, body_weight = 0):
         print(" ")
 
         """Instantiate the contract"""
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
         manager = ContractManagerBruteForce()
         num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
-            d_topology=design_topology
+            d_concrete=design_concrete
         )
         """Use seed design as a lower bound"""
         obj = None
         if design_concrete is not None:
-            obj = self.check_selection(design_concrete=design_concrete, design_topology=design_topology)
+            obj = self.check_selection(design_concrete=design_concrete)
         """Create the contracts based on the topology"""
         manager.hackathon_contract(num_battery=num_batteries, num_motor=num_motors)
         """Form the contract-based optimization problem"""
@@ -131,6 +124,7 @@ class ComponentSelectionContract:
             c_library=self._library,
             table_dict=self._table_dict,
             better_selection_encoding=True,
+            body_weight=body_weight,
             obj_lower_bound=obj,
         )
         """Solver the OMT problem to optimize selection of components """
@@ -157,14 +151,7 @@ class ComponentSelectionContract:
             if component.c_type.id == "Motor":
                 component.library_component = motor
 
-    def check_selection(
-        self,
-        design_topology: DTopology,
-        design_concrete: DConcrete = None,
-        motor: LibraryComponent = None,
-        propeller=None,
-        battery=None,
-    ):
+    def check_selection(self, design_concrete: DConcrete, motor: LibraryComponent = None, propeller=None, battery=None):
         if motor is None or battery is None or propeller is None:
             if design_concrete is not None:
                 """get concrete component"""
@@ -189,7 +176,7 @@ class ComponentSelectionContract:
         # print(f"BatteryController: {battery_controller.id}")
         """Get topology (simplified as just counting and hard-coded the number of each typed)"""
         num_batteries, num_propellers, num_motors, num_batt_controllers = ComponentSelectionContract.count_components(
-            d_topology=design_topology
+            d_concrete=design_concrete
         )
         manager = ContractManagerBruteForce()
         """Create the contracts based on the topology"""
@@ -211,13 +198,13 @@ class ComponentSelectionContract:
         return objective
 
     @staticmethod
-    def count_components(d_topology: DTopology):
+    def count_components(d_concrete: DConcrete):
         num_batteries = 0
         num_propellers = 0
         num_motors = 0
         num_batt_controllers = 0
-        for node in d_topology.nodes:
-            c_type = node["c_type"]
+        for component in d_concrete.components:
+            c_type = component.c_type
             if c_type.id == "Propeller":
                 num_propellers += 1
             elif c_type.id == "Battery":

@@ -24,7 +24,7 @@ from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level, optimizer
-from sym_cps.shared.paths import designs_folder
+from sym_cps.shared.paths import designs_folder, output_folder
 from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.strings import get_component_type_from_instance_name, repr_dictionary, tab
 
@@ -216,6 +216,16 @@ class DConcrete:
         return comp_types_n
 
     @property
+    def all_comp_types_ids(
+        self,
+    ) -> set[str]:
+        comp_types_ds = set()
+        for component in self.components:
+            if component.c_type not in comp_types_ds:
+                comp_types_ds.add(component.c_type.id)
+        return comp_types_ds
+
+    @property
     def all_components_by_library_components(
         self,
     ) -> dict[LibraryComponent, set[Component]]:
@@ -361,8 +371,14 @@ class DConcrete:
         graphs = pydot.graph_from_dot_file(dot_file_path)
         return graphs[0]
 
-    def export(self, file_type: ExportType, tag: str = "") -> Path:
-        absolute_folder = designs_folder / self.name
+    def export(self, file_type: ExportType, folder: str = "", tag: str = "") -> Path:
+        if folder != "":
+            absolute_folder = output_folder / folder
+        else:
+            absolute_folder = designs_folder / self.name
+
+        if not os.path.exists(absolute_folder):
+            os.makedirs(absolute_folder)
 
         if file_type == ExportType.TXT:
             return save_to_file(
@@ -391,7 +407,7 @@ class DConcrete:
             # self._graph.write_dot(f=str(file_path))
 
         elif file_type == ExportType.PDF:
-            file_path = absolute_folder / f"concrete_graph{tag}.pdf"
+            file_path = absolute_folder / f"graph{tag}.pdf"
             self.pydot.write_pdf(file_path)
 
         elif file_type == ExportType.SUMMARY:

@@ -380,7 +380,7 @@ class ContractManagerBruteForce:
         # set obj_lower_bound requirement
         if obj_lower_bound is not None:
             print("Set Lower bound: ", obj_lower_bound)
-            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] * 9.81 > obj_lower_bound)
+            self._all_clause.append(sys_vs["thrust_sum"] - sys_vs["weight_sum"] > obj_lower_bound)
         #
 
         # self._all_clause.append(motor_vs["omega_motor"] > 2)#Ah -> As
