@@ -31,10 +31,10 @@ def evaluate_design(
     print("Sending Design to Broker")
     if info_only:
         print("Generating info...")
-        msg = gen_info_files(design, metadata=metadata)
+        msg = gen_info_files.send(design, metadata=metadata)
     else:
         print("Processing design...")
-        msg = process_design(design, metadata=metadata)
+        msg = process_design.send(design, metadata=metadata)
     print("Waiting for results...")
     result_path = polling_results(msg, timeout)
     print(f"Command completed. Results can be found at:{result_path}")
