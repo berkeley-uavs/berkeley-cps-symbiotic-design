@@ -13,12 +13,12 @@ from sym_cps.tools.graphs import graph_to_dict
 def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
     for g in graphs:
         if (
-            len(
-                g.get_isomorphisms_vf2(
-                    graph_to_add, node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
+                len(
+                    g.get_isomorphisms_vf2(
+                        graph_to_add, node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
+                    )
                 )
-            )
-            > 0
+                > 0
         ):
             return True
     return False
@@ -32,12 +32,20 @@ def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
 
 def strong_mapping(graph_a: Graph, graph_b: Graph) -> bool:
     mappings = graph_a.get_isomorphisms_vf2(
-                graph_b, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
-            )
+        graph_b, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
+    )
     return len(mappings) > 0
+
 
 # def strong_mapping_dict(gra)
 def find_isomorphisms(elements: list[Graph]) -> tuple[dict[str, list[dict]], dict[str, Graph], bool]:
+    set_of_types_a = set([vs["label"] for vs in elements[0].vs])
+    for e in elements[1:]:
+        set_of_types_b = set([vs["label"] for vs in e.vs])
+        if set_of_types_a != set_of_types_b:
+            print("Uncomparable")
+            return {}, {}, {}
+
     isomorphisms_summary = {}
     isomorphisms_graphs_summary = {}
     iso_graphs = {}
@@ -69,10 +77,11 @@ def find_isomorphisms(elements: list[Graph]) -> tuple[dict[str, list[dict]], dic
                 isomorphisms_graphs_summary[iso_a_key].append(pair[1])
 
         else:
-            set_of_types_a = set([vs["label"] for vs in pair[0].vs])
-            set_of_types_b = set([vs["label"] for vs in pair[1].vs])
-            if set_of_types_a == set_of_types_b:
-                all_elements_with_same_nodes_types_are_isomorphic = False
+            all_elements_with_same_nodes_types_are_isomorphic = False
+            # set_of_types_a = set([vs["label"] for vs in pair[0].vs])
+            # set_of_types_b = set([vs["label"] for vs in pair[1].vs])
+            # if set_of_types_a != set_of_types_b:
+            #     all_elements_with_same_nodes_types_are_isomorphic = False
     return isomorphisms_summary, iso_graphs, all_elements_with_same_nodes_types_are_isomorphic
 
 
@@ -135,7 +144,6 @@ for t in all_types:
 
 
 def get_subgraph(design: DConcrete, key_nodes: list[str]) -> DConcrete:
-
     design_ret = deepcopy(design)
 
     if "Sensor" in key_nodes:
