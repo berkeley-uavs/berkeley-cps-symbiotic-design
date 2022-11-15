@@ -8,15 +8,17 @@ class MotorPropellerAnalysis(object):
         self._table_dict = table_dict
         self._c_library = c_library
         self.collect_abstracted_battery()
+        self._rpm_static = 10000
+        self._solver_verbose = False
         ret = []
         for np, prop in enumerate(list(self._c_library.components_in_type["Propeller"])):
             for nm, motor in enumerate(list(self._c_library.components_in_type["Motor"])):
                 ##### first find the prop motor that can generates thrust
                 ##### Then find the maximum voltage to break the system... save the voltage in result.
-        # for np, prop in enumerate([self._c_library.components["apc_propellers_6x4E"]]):
-        #     for nm, motor in enumerate([self._c_library.components["t_motor_AT2312KV1400"]]):
+        # for np, prop in enumerate([self._c_library.components["apc_propellers_7x5E"]]):#apc_propellers_6x4E
+        #     for nm, motor in enumerate([self._c_library.components["kde_direct_KDE2315XF_885"]]): #t_motor_AT2312KV1400
                 print(f"{np} {nm} Analyze ({prop.id}, {motor.id})", end="")
-                self.battery_system_analysis_thrust(add_weight=0.2, motors=[motor], propellers=[prop])
+                self.battery_system_analysis_thrust(add_weight=0.5, motors=[motor], propellers=[prop])
                 is_sat_thrust = self._manager.solve()
                 if not is_sat_thrust:
                     print("     Incompatible")
@@ -47,7 +49,7 @@ class MotorPropellerAnalysis(object):
                 else: 
                     print("     Error")
                     print("     Incompatible?")
-        file_path = data_folder/ "ComponentLibrary" / "motor_propeller_battery_analysis_thrust_minimal.json"
+        file_path = data_folder/ "ComponentLibrary" / "component_selection_analysis" /"motor_propeller_pair.json"
         
         with open(file_path, "w") as outfile:
             print(len(ret))
@@ -90,8 +92,9 @@ class MotorPropellerAnalysis(object):
             #             self._c_library.components["t_motor_AntigravityMN4006KV380"],
             #             self._c_library.components["t_motor_AntigravityMN1005V2KV90"]
         self.set_contract()
+        self.set_rpm(rpm=10000)
         self.set_system_battery_thrust(add_weight=add_weight)
-        self._manager = ContractManager(self.hackathon_property_interface_fn, verbose=False)
+        self._manager = ContractManager(self.hackathon_property_interface_fn, verbose=self._solver_verbose)
 
         motor_inst = self._contracts["Motor"].instantiate(f"MotorInst")
         prop_inst = self._contracts["Propeller"].instantiate(f"PropellerInst")
@@ -160,8 +163,9 @@ class MotorPropellerAnalysis(object):
             #             self._c_library.components["t_motor_AntigravityMN4006KV380"],
             #             self._c_library.components["t_motor_AntigravityMN1005V2KV90"]
         self.set_contract()
+        self.set_rpm(rpm=18000)
         self.set_system_battery_voltage(add_weight=add_weight, check_power=check_power)
-        self._manager = ContractManager(self.hackathon_property_interface_fn, verbose=False)
+        self._manager = ContractManager(self.hackathon_property_interface_fn, verbose=self._solver_verbose)
 
         motor_inst = self._contracts["Motor"].instantiate(f"MotorInst")
         prop_inst = self._contracts["Propeller"].instantiate(f"PropellerInst")
@@ -229,8 +233,9 @@ class MotorPropellerAnalysis(object):
             #             self._c_library.components["t_motor_AntigravityMN4006KV380"],
             #             self._c_library.components["t_motor_AntigravityMN1005V2KV90"]
         self.set_contract()
+        self.set_rpm(rpm=10000)
         self.set_system(add_weight=add_weight)
-        self._manager = ContractManager(self.hackathon_property_interface_fn, verbose=False)
+        self._manager = ContractManager(self.hackathon_property_interface_fn, verbose=self._solver_verbose)
 
         motor_inst = self._contracts["Motor"].instantiate(f"MotorInst")
         prop_inst = self._contracts["Propeller"].instantiate(f"PropellerInst")
@@ -437,7 +442,7 @@ class MotorPropellerAnalysis(object):
 
     def hackathon_property_interface_fn(self, component: LibraryComponent):
         if component.comp_type.id == "Propeller":
-            return self.hackthon_get_propeller_property(propeller=component, table_dict=self._table_dict)
+            return self.hackthon_get_propeller_property(propeller=component, table_dict=self._table_dict, rpm=self._rpm_static)
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
         elif component.comp_type.id == "Motor":
@@ -445,16 +450,15 @@ class MotorPropellerAnalysis(object):
         elif component.comp_type.id == "BatteryController":
             return {}
 
-    @staticmethod
-    def hackthon_get_propeller_property(propeller, table_dict):
+    def hackthon_get_propeller_property(self, propeller, table_dict, rpm):
         # ports get value
 
         diameter: float = propeller.properties["DIAMETER"].value / 1000
         shaft_prop: float = propeller.properties["SHAFT_DIAMETER"].value
         # print(table.get_value(rpm = 13000, v = 90, label="Cp"))
         table = table_dict[propeller]
-        C_p: float = table.get_value(rpm=10000, v=0, label="Cp")  # 0.0659
-        C_t: float = table.get_value(rpm=10000, v=0, label="Ct")  # 0.1319
+        C_p: float = table.get_value(rpm=rpm, v=0, label="Cp")  # 0.0659
+        C_t: float = table.get_value(rpm=rpm, v=0, label="Ct")  # 0.1319
 
         W_prop = propeller.properties["WEIGHT"].value
         return {
@@ -466,8 +470,7 @@ class MotorPropellerAnalysis(object):
             "name": propeller.id,
         }
 
-    @staticmethod
-    def hackthon_get_motor_property(motor):
+    def hackthon_get_motor_property(self, motor):
         R_w: float = motor.properties["INTERNAL_RESISTANCE"].value / 1000  # Ohm
         K_t: float = motor.properties["KT"].value
         K_v: float = motor.properties["KV"].value * (2 * math.pi) / 60  # rpm/V to rad/(V-sec)
@@ -488,13 +491,15 @@ class MotorPropellerAnalysis(object):
             "name": motor.id,
         }
 
-    @staticmethod
-    def hackthon_get_battery_property(battery, num_battery):
+    def hackthon_get_battery_property(self, battery, num_battery):
         capacity: float = battery.properties["CAPACITY"].value * num_battery / 1000  # mAh -> Ah
         W_batt: float = battery.properties["WEIGHT"].value * num_battery
         V_battery: float = battery.properties["VOLTAGE"].value
         I_max: float = (battery.properties["CONT_DISCHARGE_RATE"].value) * capacity  # convert to mA
         return {"capacity": capacity, "W_batt": W_batt, "V_battery": V_battery, "I_max": I_max, "name": battery.id}
+
+    def set_rpm(self, rpm):
+        self._rpm_static = rpm
 
 if __name__ == "__main__":
     from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs

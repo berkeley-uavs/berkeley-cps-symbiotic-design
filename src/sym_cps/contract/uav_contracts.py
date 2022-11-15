@@ -9,6 +9,7 @@ class UAVContract(object):
         self._num_motor = num_motor
         self._num_battery = num_battery
         self.set_contract()
+        self._rpm_static = 10000
 
 
     def set_contract(self):
@@ -111,27 +112,26 @@ class UAVContract(object):
 
         # system contract
 
-    @staticmethod
-    def hackathon_property_interface_fn(component: LibraryComponent):
+
+    def hackathon_property_interface_fn(self, component: LibraryComponent):
         if component.comp_type.id == "Propeller":
-            return UAVContract.hackthon_get_propeller_property(propeller=component, table_dict=self._table_dict)
+            return self.hackthon_get_propeller_property(propeller=component, table_dict=self._table_dict, rpm=self._rpm_static)
         elif component.comp_type.id == "Battery":
-            return UAVContract.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
+            return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
         elif component.comp_type.id == "Motor":
-            return UAVContract.hackthon_get_motor_property(motor=component)
+            return self.hackthon_get_motor_property(motor=component)
         elif component.comp_type.id == "BatteryController":
             return {}
 
-    @staticmethod
-    def hackthon_get_propeller_property(propeller, table_dict):
+    def hackthon_get_propeller_property(self, propeller, table_dict, rpm):
         # ports get value
 
         diameter: float = propeller.properties["DIAMETER"].value / 1000
         shaft_prop: float = propeller.properties["SHAFT_DIAMETER"].value
         # print(table.get_value(rpm = 13000, v = 90, label="Cp"))
         table = table_dict[propeller]
-        C_p: float = table.get_value(rpm=10000, v=0, label="Cp")  # 0.0659
-        C_t: float = table.get_value(rpm=10000, v=0, label="Ct")  # 0.1319
+        C_p: float = table.get_value(rpm=rpm, v=0, label="Cp")  # 0.0659
+        C_t: float = table.get_value(rpm=rpm, v=0, label="Ct")  # 0.1319
 
         W_prop = propeller.properties["WEIGHT"].value
         return {
@@ -143,8 +143,8 @@ class UAVContract(object):
             "name": propeller.id,
         }
 
-    @staticmethod
-    def hackthon_get_motor_property(motor):
+
+    def hackthon_get_motor_property(self, motor):
         R_w: float = motor.properties["INTERNAL_RESISTANCE"].value / 1000  # Ohm
         K_t: float = motor.properties["KT"].value
         K_v: float = motor.properties["KV"].value * (2 * math.pi) / 60  # rpm/V to rad/(V-sec)
@@ -165,10 +165,13 @@ class UAVContract(object):
             "name": motor.id,
         }
 
-    @staticmethod
-    def hackthon_get_battery_property(battery, num_battery):
+
+    def hackthon_get_battery_property(self, battery, num_battery):
         capacity: float = battery.properties["CAPACITY"].value * num_battery / 1000  # mAh -> Ah
         W_batt: float = battery.properties["WEIGHT"].value * num_battery
         V_battery: float = battery.properties["VOLTAGE"].value
         I_max: float = (battery.properties["CONT_DISCHARGE_RATE"].value) * capacity  # convert to mA
         return {"capacity": capacity, "W_batt": W_batt, "V_battery": V_battery, "I_max": I_max, "name": battery.id}
+
+    def set_rpm(self, rpm):
+        self._rpm_static = rpm
