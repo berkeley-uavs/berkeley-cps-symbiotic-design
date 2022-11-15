@@ -132,8 +132,14 @@ popular_nodes: dict = json.load(open(popular_nodes_keys_path))
 popular_nodes_list: list = list(popular_nodes.keys())
 
 
-def random_sampling_for_n(designs_chosen: list[DConcrete], iterations: int = 100000):
+def random_sampling_for_n(designs_chosen: list[DConcrete] | None = None, iterations: int = 100000):
     # designs_chosen = [d[0] for d in designs.values()]
+    designs_chosen = []
+    if designs_chosen is None:
+        for did, (dc, dt) in designs.items():
+            if did in ["NewAxe_Cargo", "PickAxe", "TestQuad_Cargo"]:
+                designs_chosen.append(dc)
+
     nodes_types = set()
     for d in designs_chosen:
         nodes_types |= d.all_comp_types_ids
