@@ -3,13 +3,13 @@ from __future__ import annotations
 import copy
 import json
 import random
-from dataclasses import dataclass
-from pathlib import Path
 
 from aenum import Enum, auto
 
 import numpy as np
-from sym_cps.shared.objects import grammar_rules
+
+
+# from sym_cps.shared.objects import grammar_rules
 
 
 # from igraph import Edge, Graph, Vertex
@@ -40,8 +40,8 @@ class Neighbors(Enum):
     REAR = auto()
 
 
-#Dictionary connected to the json
-my_rules = grammar_rules
+# Dictionary connected to the json
+# my_rules = grammar_rules
 
 
 class Rule:
@@ -111,181 +111,327 @@ class RuleBook:
         pass
 
 
-def node_matches_rule_center(node, state, rule_lhs, symbol_groups):
-    return state[node[0]][node[1]][node[2]] == rule_lhs[Neighbors.CENTER] \
-           or (rule_lhs[Neighbors.CENTER] in symbol_groups and
-               state[node[0]][node[1]][node[2]] in symbol_groups[rule_lhs[Neighbors.CENTER]])
+def node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    rule_lhs = rule["conditions"]
+    rule_rhs = rule["production"]
+    if "ROTOR" in rule_rhs.values() and not remaining_rotors or "WING" in rule_rhs.values() and not remaining_wings:
+        return False
+    if state[node[0]][node[1]][node[2]] in rule_lhs["S"]:
+        return True
+    for symbol in rule_lhs["S"]:
+        if symbol in symbol_groups and state[node[0]][node[1]][node[2]] in symbol_groups[symbol]:
+            return True
+    return False
 
 
-def node_matches_rule_right(node, state, rule_lhs, symbol_groups):
+def node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    rule_lhs = rule["conditions"]
+    rule_rhs = rule["production"]
+    if "ROTOR" in rule_rhs.values() and not remaining_rotors or "WING" in rule_rhs.values() and not remaining_wings:
+        return False
+    if "RS" not in rule_lhs:
+        return True
+    if node[0] + 1 < len(state):
+        if state[node[0] + 1][node[1]][node[2]] in rule_lhs["RS"]:
+            return True
+        for symbol in rule_lhs["RS"]:
+            if symbol in symbol_groups and state[node[0] + 1][node[1]][node[2]] in symbol_groups[symbol]:
+                return True
+        return False
+    if "BOUNDARY" in rule_lhs["RS"]:
+        return True
+    return False
+    '''
     return (not Neighbors.RIGHT in rule_lhs) or (node[0] + 1 < len(state) and
                                                  (state[node[0] + 1][node[1]][node[2]] == rule_lhs[Neighbors.RIGHT] or
                                                   (rule_lhs[Neighbors.RIGHT] in symbol_groups and
                                                    state[node[0] + 1][node[1]][node[2]] in symbol_groups[
                                                        rule_lhs[Neighbors.RIGHT]])))
+    '''
 
 
-def node_matches_rule_left(node, state, rule_lhs, symbol_groups):
+def node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    rule_lhs = rule["conditions"]
+    rule_rhs = rule["production"]
+    if "ROTOR" in rule_rhs.values() and not remaining_rotors or "WING" in rule_rhs.values() and not remaining_wings:
+        return False
+    if "LS" not in rule_lhs:
+        return True
+    if node[0] >= 1:
+        if state[node[0] - 1][node[1]][node[2]] in rule_lhs["LS"]:
+            return True
+        for symbol in rule_lhs["LS"]:
+            if symbol in symbol_groups and state[node[0] - 1][node[1]][node[2]] in symbol_groups[symbol]:
+                return True
+        return False
+    if "BOUNDARY" in rule_lhs["LS"]:
+        return True
+    return False
+    '''
     return (not Neighbors.LEFT in rule_lhs) or (node[0] >= 1 and
                                                 (state[node[0] - 1][node[1]][node[2]] == rule_lhs[Neighbors.LEFT] or
                                                 (rule_lhs[Neighbors.LEFT] in symbol_groups and
                                                  state[node[0] - 1][node[1]][node[2]] in symbol_groups[
                                                      rule_lhs[Neighbors.LEFT]])))
+    '''
 
 
-def node_matches_rule_top(node, state, rule_lhs, symbol_groups):
+def node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    rule_lhs = rule["conditions"]
+    rule_rhs = rule["production"]
+    if "ROTOR" in rule_rhs.values() and not remaining_rotors or "WING" in rule_rhs.values() and not remaining_wings:
+        return False
+    if "T" not in rule_lhs:
+        return True
+    if node[2] + 1 < len(state[0][0]):
+        if state[node[0]][node[1]][node[2] + 1] in rule_lhs["T"]:
+            return True
+        for symbol in rule_lhs["T"]:
+            if symbol in symbol_groups and state[node[0]][node[1]][node[2] + 1] in symbol_groups[symbol]:
+                return True
+        return False
+    if "BOUNDARY" in rule_lhs["T"]:
+        return True
+    return False
+    '''
     return (not Neighbors.TOP in rule_lhs) or (node[2] + 1 < len(state[0][0]) and
                                                (state[node[0]][node[1]][node[2] + 1] == rule_lhs[Neighbors.TOP] or
                                                (rule_lhs[Neighbors.TOP] in symbol_groups and
                                                 state[node[0]][node[1]][node[2] + 1] in symbol_groups[
                                                     rule_lhs[Neighbors.TOP]])))
+    '''
 
 
-def node_matches_rule_bottom(node, state, rule_lhs, symbol_groups):
+def node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    rule_lhs = rule["conditions"]
+    rule_rhs = rule["production"]
+    if "ROTOR" in rule_rhs.values() and not remaining_rotors or "WING" in rule_rhs.values() and not remaining_wings:
+        return False
+    if "B" not in rule_lhs:
+        return True
+    if node[2] >= 1:
+        if state[node[0]][node[1]][node[2] - 1] in rule_lhs["B"]:
+            return True
+        for symbol in rule_lhs["B"]:
+            if symbol in symbol_groups and state[node[0]][node[1]][node[2] - 1] in symbol_groups[symbol]:
+                return True
+        return False
+    if "BOUNDARY" in rule_lhs["B"]:
+        return True
+    return False
+    '''
     return (not Neighbors.BOTTOM in rule_lhs) or (node[2] >= 1 and
                                                   (state[node[0]][node[1]][node[2] - 1] == rule_lhs[Neighbors.BOTTOM] or
                                                   (rule_lhs[Neighbors.BOTTOM] in symbol_groups and
                                                    state[node[0]][node[1]][node[2] - 1] in symbol_groups[
                                                        rule_lhs[Neighbors.BOTTOM]])))
+    '''
 
 
-def node_matches_rule_front(node, state, rule_lhs, symbol_groups):
+def node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    rule_lhs = rule["conditions"]
+    rule_rhs = rule["production"]
+    if "ROTOR" in rule_rhs.values() and not remaining_rotors or "WING" in rule_rhs.values() and not remaining_wings:
+        return False
+    if "F" not in rule_lhs:
+        return True
+    if node[1] < len(state[0]) - 1:
+        if state[node[0]][node[1] + 1][node[2]] in rule_lhs["F"]:
+            return True
+        for symbol in rule_lhs["F"]:
+            if symbol in symbol_groups and state[node[0]][node[1] + 1][node[2]] in symbol_groups[symbol]:
+                return True
+        return False
+    if "BOUNDARY" in rule_lhs["F"]:
+        return True
+    return False
+    '''
     return (not Neighbors.FRONT in rule_lhs) or (node[1] + 1 < len(state[0]) and
                                                  (state[node[0]][node[1] + 1][node[2]] == rule_lhs[Neighbors.FRONT] or
                                                  (rule_lhs[Neighbors.FRONT] in symbol_groups and
                                                   state[node[0]][node[1] + 1][node[2]] in symbol_groups[
                                                       rule_lhs[Neighbors.FRONT]])))
+    '''
 
 
-def node_matches_rule_rear(node, state, rule_lhs, symbol_groups):
+def node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    rule_lhs = rule["conditions"]
+    rule_rhs = rule["production"]
+    if "ROTOR" in rule_rhs.values() and not remaining_rotors or "WING" in rule_rhs.values() and not remaining_wings:
+        return False
+    if "R" not in rule_lhs:
+        return True
+    if node[1] >= 1:
+        if state[node[0]][node[1] - 1][node[2]] in rule_lhs["R"]:
+            return True
+        for symbol in rule_lhs["R"]:
+            if symbol in symbol_groups and state[node[0]][node[1] - 1][node[2]] in symbol_groups[symbol]:
+                return True
+        return False
+    if "BOUNDARY" in rule_lhs["R"]:
+        return True
+    return False
+    '''
     return (not Neighbors.REAR in rule_lhs) or (node[1] >= 1 and
                                                 (state[node[0]][node[1] - 1][node[2]] == rule_lhs[Neighbors.REAR] or
                                                  (rule_lhs[Neighbors.REAR] in symbol_groups and
                                                   state[node[0]][node[1] - 1][node[2]] in symbol_groups[
                                                       rule_lhs[Neighbors.REAR]])))
+    '''
 
 
-def node_matches_rule(node, state, rule_lhs, symbol_groups):
-    return node_matches_rule_center(node, state, rule_lhs, symbol_groups) and \
-           node_matches_rule_right(node, state, rule_lhs, symbol_groups) and \
-           node_matches_rule_left(node, state, rule_lhs, symbol_groups) and \
-           node_matches_rule_top(node, state, rule_lhs, symbol_groups) and \
-           node_matches_rule_bottom(node, state, rule_lhs, symbol_groups) and \
-           node_matches_rule_front(node, state, rule_lhs, symbol_groups) and \
-           node_matches_rule_rear(node, state, rule_lhs, symbol_groups)
+def node_matches_rule(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
+    return node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
+           node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
+           node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
+           node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
+           node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
+           node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
+           node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
 
 
-def get_matching_rules(node, state, rule_list, symbol_groups):
+def get_matching_rules(node, state, rule_dict, symbol_groups, remaining_rotors, remaining_wings):
     matching_rules = []
-    for rule in rule_list:
-        if node_matches_rule(node, state, rule[0], symbol_groups):
-            matching_rules.append(rule)
+    for id in rule_dict:
+        if node_matches_rule(node, state, rule_dict[id], symbol_groups, remaining_rotors, remaining_wings):
+            matching_rules.append(rule_dict[id])
     return matching_rules
 
 
-def apply_rule(node, state, adjacency_dict, rule_lhs, rule_rhs):
-    if Neighbors.CENTER in rule_rhs:
-        state[node[0]][node[1]][node[2]] = rule_rhs[Neighbors.CENTER]
-        if Neighbors.LEFT in rule_lhs:
-            if (node[0] - 1, node[1], node[2]) in adjacency_dict:
-                adjacency_dict[(node[0] - 1, node[1], node[2])].append((node[0], node[1], node[2]))
-            else:
-                adjacency_dict[(node[0] - 1, node[1], node[2])] = [(node[0], node[1], node[2])]
-        if Neighbors.RIGHT in rule_lhs:
-            if (node[0] + 1, node[1], node[2]) in adjacency_dict:
-                adjacency_dict[(node[0] + 1, node[1], node[2])].append((node[0], node[1], node[2]))
-            else:
-                adjacency_dict[(node[0] + 1, node[1], node[2])] = [(node[0], node[1], node[2])]
-        if Neighbors.FRONT in rule_lhs:
-            if (node[0], node[1] + 1, node[2]) in adjacency_dict:
-                adjacency_dict[(node[0], node[1] + 1, node[2])].append((node[0], node[1], node[2]))
-            else:
-                adjacency_dict[(node[0], node[1] + 1, node[2])] = [(node[0], node[1], node[2])]
-        if Neighbors.REAR in rule_lhs:
-            if (node[0], node[1] - 1, node[2]) in adjacency_dict:
-                adjacency_dict[(node[0], node[1] - 1, node[2])].append((node[0], node[1], node[2]))
-            else:
-                adjacency_dict[(node[0], node[1] - 1, node[2])] = [(node[0], node[1], node[2])]
-        if Neighbors.TOP in rule_lhs:
-            if (node[0], node[1], node[2] + 1) in adjacency_dict:
-                adjacency_dict[(node[0], node[1], node[2] + 1)].append((node[0], node[1], node[2]))
-            else:
-                adjacency_dict[(node[0], node[1], node[2] + 1)] = [(node[0], node[1], node[2])]
-        if Neighbors.BOTTOM in rule_lhs:
-            if (node[0], node[1], node[2] - 1) in adjacency_dict:
-                adjacency_dict[(node[0], node[1], node[2] - 1)].append((node[0], node[1], node[2]))
-            else:
-                adjacency_dict[(node[0], node[1], node[2] - 1)] = [(node[0], node[1], node[2])]
+def apply_rule(node, state, adjacency_dict, rule_rhs, remaining_rotors, remaining_wings):
+    if "S" in rule_rhs:
+        state[node[0]][node[1]][node[2]] = rule_rhs["S"]
+    if "ROTOR" in rule_rhs["S"]:
+        remaining_rotors -= 1
+    if "WING" in rule_rhs["S"]:
+        remaining_wings -= 1
+    '''
     if Neighbors.RIGHT in rule_rhs:
         state[node[0] + 1][node[1]][node[2]] = rule_rhs[Neighbors.RIGHT]
-        if rule_rhs[Neighbors.RIGHT] != GrammarSymbols.EMPTY:
+        if rule_rhs[Neighbors.RIGHT] != "EMPTY":
             if (node[0], node[1], node[2]) in adjacency_dict:
                 adjacency_dict[(node[0], node[1], node[2])].append((node[0] + 1, node[1], node[2]))
             else:
                 adjacency_dict[(node[0], node[1], node[2])] = [(node[0] + 1, node[1], node[2])]
     if Neighbors.LEFT in rule_rhs:
         state[node[0] - 1][node[1]][node[2]] = rule_rhs[Neighbors.LEFT]
-        if rule_rhs[Neighbors.LEFT] != GrammarSymbols.EMPTY:
+        if rule_rhs[Neighbors.LEFT] != "EMPTY":
             if (node[0], node[1], node[2]) in adjacency_dict:
                 adjacency_dict[(node[0], node[1], node[2])].append((node[0] - 1, node[1], node[2]))
             else:
                 adjacency_dict[(node[0], node[1], node[2])] = [(node[0] - 1, node[1], node[2])]
     if Neighbors.FRONT in rule_rhs:
         state[node[0]][node[1] + 1][node[2]] = rule_rhs[Neighbors.FRONT]
-        if rule_rhs[Neighbors.FRONT] != GrammarSymbols.EMPTY:
+        if rule_rhs[Neighbors.FRONT] != "EMPTY":
             if (node[0], node[1] + 1, node[2]) in adjacency_dict:
                 adjacency_dict[(node[0], node[1], node[2])].append((node[0], node[1] + 1, node[2]))
             else:
                 adjacency_dict[(node[0], node[1], node[2])] = [(node[0], node[1] + 1, node[2])]
     if Neighbors.REAR in rule_rhs:
         state[node[0]][node[1] - 1][node[2]] = rule_rhs[Neighbors.REAR]
-        if rule_rhs[Neighbors.REAR] != GrammarSymbols.EMPTY:
+        if rule_rhs[Neighbors.REAR] != "EMPTY":
             if (node[0], node[1], node[2]) in adjacency_dict:
                 adjacency_dict[(node[0], node[1], node[2])].append((node[0], node[1] - 1, node[2]))
             else:
                 adjacency_dict[(node[0], node[1], node[2])] = [(node[0], node[1] - 1, node[2])]
     if Neighbors.TOP in rule_rhs:
         state[node[0]][node[1]][node[2] + 1] = rule_rhs[Neighbors.TOP]
-        if rule_rhs[Neighbors.TOP] != GrammarSymbols.EMPTY:
+        if rule_rhs[Neighbors.TOP] != "EMPTY":
             if (node[0], node[1], node[2]) in adjacency_dict:
                 adjacency_dict[(node[0], node[1], node[2])].append((node[0], node[1], node[2] + 1))
             else:
                 adjacency_dict[(node[0], node[1], node[2])] = [(node[0], node[1], node[2] + 1)]
     if Neighbors.BOTTOM in rule_rhs:
         state[node[0]][node[1]][node[2] - 1] = rule_rhs[Neighbors.BOTTOM]
-        if rule_rhs[Neighbors.BOTTOM] != GrammarSymbols.EMPTY:
+        if rule_rhs[Neighbors.BOTTOM] != "EMPTY":
             if (node[0], node[1], node[2]) in adjacency_dict:
                 adjacency_dict[(node[0], node[1], node[2])].append((node[0], node[1], node[2] - 1))
             else:
                 adjacency_dict[(node[0], node[1], node[2])] = [(node[0], node[1], node[2] - 1)]
-    return state, adjacency_dict
+    '''
+    if "EDGES" in rule_rhs:
+        if "LS" in rule_rhs["EDGES"]:
+            if (node[0] - 1, node[1], node[2]) in adjacency_dict:
+                adjacency_dict[(node[0] - 1, node[1], node[2])].append((node[0], node[1], node[2]))
+            else:
+                adjacency_dict[(node[0] - 1, node[1], node[2])] = [(node[0], node[1], node[2])]
+        if "RS" in rule_rhs["EDGES"]:
+            if (node[0] + 1, node[1], node[2]) in adjacency_dict:
+                adjacency_dict[(node[0] + 1, node[1], node[2])].append((node[0], node[1], node[2]))
+            else:
+                adjacency_dict[(node[0] + 1, node[1], node[2])] = [(node[0], node[1], node[2])]
+        if "F" in rule_rhs["EDGES"]:
+            if (node[0], node[1] + 1, node[2]) in adjacency_dict:
+                adjacency_dict[(node[0], node[1] + 1, node[2])].append((node[0], node[1], node[2]))
+            else:
+                adjacency_dict[(node[0], node[1] + 1, node[2])] = [(node[0], node[1], node[2])]
+        if "R" in rule_rhs["EDGES"]:
+            if (node[0], node[1] - 1, node[2]) in adjacency_dict:
+                adjacency_dict[(node[0], node[1] - 1, node[2])].append((node[0], node[1], node[2]))
+            else:
+                adjacency_dict[(node[0], node[1] - 1, node[2])] = [(node[0], node[1], node[2])]
+        if "T" in rule_rhs["EDGES"]:
+            if (node[0], node[1], node[2] + 1) in adjacency_dict:
+                adjacency_dict[(node[0], node[1], node[2] + 1)].append((node[0], node[1], node[2]))
+            else:
+                adjacency_dict[(node[0], node[1], node[2] + 1)] = [(node[0], node[1], node[2])]
+        if "B" in rule_rhs["EDGES"]:
+            if (node[0], node[1], node[2] - 1) in adjacency_dict:
+                adjacency_dict[(node[0], node[1], node[2] - 1)].append((node[0], node[1], node[2]))
+            else:
+                adjacency_dict[(node[0], node[1], node[2] - 1)] = [(node[0], node[1], node[2])]
+    return state, adjacency_dict, remaining_rotors, remaining_wings
 
 
 def get_children(node, state, adjacency_dict):
     children = []
     if tuple(node) in adjacency_dict:
         for child in adjacency_dict[tuple(node)]:
-            if state[child[0]][child[1]][child[2]] != GrammarSymbols.EMPTY and \
-                    state[child[0]][child[1]][child[2]] != GrammarSymbols.UNOCCUPIED:
+            if state[child[0]][child[1]][child[2]] != "EMPTY" and \
+                    state[child[0]][child[1]][child[2]] != "UNOCCUPIED":
                 children.append(tuple(child))
-            elif state[child[0]][child[1]][child[2]] == GrammarSymbols.UNOCCUPIED and node not in children:
+            elif state[child[0]][child[1]][child[2]] == "UNOCCUPIED" and node not in children:
                 children.append(node)
     else:
-        if node[0] + 1 < len(state) and state[node[0] + 1][node[1]][node[2]] == GrammarSymbols.UNOCCUPIED:
+        if node[0] + 1 < len(state) and state[node[0] + 1][node[1]][node[2]] == "UNOCCUPIED":
             children.append((node[0] + 1, node[1], node[2]))
-        if node[0] >= 1 and state[node[0] - 1][node[1]][node[2]] == GrammarSymbols.UNOCCUPIED:
+        if node[0] >= 1 and state[node[0] - 1][node[1]][node[2]] == "UNOCCUPIED":
             children.append((node[0] - 1, node[1], node[2]))
-        if node[1] + 1 < len(state[0]) and state[node[0]][node[1] + 1][node[2]] == GrammarSymbols.UNOCCUPIED:
+        if node[1] + 1 < len(state[0]) and state[node[0]][node[1] + 1][node[2]] == "UNOCCUPIED":
             children.append((node[0], node[1] + 1, node[2]))
-        if node[1] >= 1 and state[node[0]][node[1] - 1][node[2]] == GrammarSymbols.UNOCCUPIED:
+        if node[1] >= 1 and state[node[0]][node[1] - 1][node[2]] == "UNOCCUPIED":
             children.append((node[0], node[1] - 1, node[2]))
-        if node[2] + 1 < len(state[0][0]) and state[node[0]][node[1]][node[2] + 1] == GrammarSymbols.UNOCCUPIED:
+        if node[2] + 1 < len(state[0][0]) and state[node[0]][node[1]][node[2] + 1] == "UNOCCUPIED":
             children.append((node[0], node[1], node[2] + 1))
-        if node[2] >= 1 and state[node[0]][node[1]][node[2] - 1] == GrammarSymbols.UNOCCUPIED:
+        if node[2] >= 1 and state[node[0]][node[1]][node[2] - 1] == "UNOCCUPIED":
             children.append((node[0], node[1], node[2] - 1))
         if children:
             children.append((node[0], node[1], node[2]))
     return children
+
+
+def trim_loose_ends(state, adjacency_dict):
+    progress = True
+    while progress:
+        progress = False
+        for i in range(len(state)):
+            for j in range(len(state[0])):
+                for k in range(len(state[0][0])):
+                    remove_connector = False
+                    if state[i][j][k] == "CONNECTOR":
+                        remove_connector = True
+                        if (i, j, k) in adjacency_dict:
+                            for child in adjacency_dict[(i, j, k)]:
+                                if state[child[0]][child[1]][child[2]] not in symbol_groups["FREE"]:
+                                    remove_connector = False
+                                    break
+                    if remove_connector or state[i][j][k] == "UNOCCUPIED" or state[i][j][k] == "EMPTY":
+                        state[i][j][k] = ""
+                        if (i, j, k) in adjacency_dict:
+                            del adjacency_dict[(i,j,k)]
+                        progress = True
+    return state, adjacency_dict
+
 
 
 def reflect_state_and_edges(state, adjacency_dict):
@@ -327,14 +473,14 @@ def concatenate_state_and_edges(left_state, right_state, left_adjacency_dict, ri
         for neighbor in right_adjacency_dict[key]:
             joint_adjacency_dict[(key[0] + len(left_state), key[1], key[2])].append(
                 (neighbor[0] + len(left_state), neighbor[1], neighbor[2]))
-            if key[0] == 0 and neighbor[0] > 0: # these are the edges going from the center
+            if key[0] == 0 and neighbor[0] > 0:  # these are the edges going from the center
                 joint_adjacency_dict[(len(left_state), key[1], key[2])].append(
                     (len(left_state) - neighbor[0], neighbor[1], neighbor[2]))
 
     return design, joint_adjacency_dict
 
 
-def valid_design(design):
+def components_count(design):
     # this can be extended to include more conditions for rejecting undesired designs
     num_wings = 0
     num_rotors = 0
@@ -342,194 +488,37 @@ def valid_design(design):
     for i in range(len(design)):
         for j in range(len(design[0])):
             for k in range(len(design[0][0])):
-                if design[i][j][k] == GrammarSymbols.FUSELAGE:
+                if design[i][j][k] == "FUSELAGE":
                     num_fuselage += 1
-                elif design[i][j][k] == GrammarSymbols.ROTOR:
+                elif design[i][j][k] == "ROTOR":
                     num_rotors += 1
-                elif design[i][j][k] == GrammarSymbols.WING:
+                elif design[i][j][k] == "WING":
                     num_wings += 1
-    return num_fuselage and num_rotors and num_wings
+    return num_fuselage, num_rotors, num_wings
 
 
 if __name__ == "__main__":
+    '''
     symbol_groups = {GrammarSymbols.BODY: [GrammarSymbols.FUSELAGE,
                                            GrammarSymbols.HUB, GrammarSymbols.TUBE],
                      GrammarSymbols.CONNECTOR: [GrammarSymbols.HUB, GrammarSymbols.TUBE],
                      GrammarSymbols.ANYTHING: [GrammarSymbols.FUSELAGE, GrammarSymbols.HUB, GrammarSymbols.TUBE,
                                                GrammarSymbols.WING, GrammarSymbols.ROTOR, GrammarSymbols.CONNECTOR]}
-
-    rule_list = []
-    # add horizontal wing to the right of a body
-    l_state = {Neighbors.CENTER: GrammarSymbols.BODY, Neighbors.RIGHT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.RIGHT: GrammarSymbols.WING}
-    rule_list.append([l_state, r_state])
-
-    # add horizontal wing at the right of a body
-    l_state = {Neighbors.CENTER: GrammarSymbols.UNOCCUPIED, Neighbors.LEFT: GrammarSymbols.BODY}
-    r_state = {Neighbors.CENTER: GrammarSymbols.WING}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the right
-    l_state = {Neighbors.CENTER: GrammarSymbols.BODY, Neighbors.RIGHT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.RIGHT: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the right
-    l_state = {Neighbors.CENTER: GrammarSymbols.UNOCCUPIED, Neighbors.LEFT: GrammarSymbols.BODY}
-    r_state = {Neighbors.CENTER: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the left
-    l_state = {Neighbors.CENTER: GrammarSymbols.BODY, Neighbors.LEFT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.LEFT: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the left
-    l_state = {Neighbors.CENTER: GrammarSymbols.UNOCCUPIED, Neighbors.RIGHT: GrammarSymbols.BODY}
-    r_state = {Neighbors.CENTER: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the front
-    l_state = {Neighbors.CENTER: GrammarSymbols.BODY, Neighbors.FRONT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.FRONT: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the front
-    l_state = {Neighbors.CENTER: GrammarSymbols.UNOCCUPIED, Neighbors.REAR: GrammarSymbols.BODY}
-    r_state = {Neighbors.CENTER: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the REAR
-    l_state = {Neighbors.CENTER: GrammarSymbols.BODY, Neighbors.REAR: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.REAR: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the REAR
-    l_state = {Neighbors.CENTER: GrammarSymbols.UNOCCUPIED, Neighbors.FRONT: GrammarSymbols.BODY}
-    r_state = {Neighbors.CENTER: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotors to the rear and front
-    l_state = {Neighbors.CENTER: GrammarSymbols.BODY, Neighbors.REAR: GrammarSymbols.UNOCCUPIED,
-               Neighbors.FRONT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.REAR: GrammarSymbols.ROTOR, Neighbors.FRONT: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the top
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.TOP: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.TOP: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # add rotor to the top
-    l_state = {Neighbors.CENTER: GrammarSymbols.UNOCCUPIED, Neighbors.BOTTOM: GrammarSymbols.CONNECTOR}
-    r_state = {Neighbors.CENTER: GrammarSymbols.ROTOR}
-    rule_list.append([l_state, r_state])
-
-    # Extend horizontal wing
-    l_state = {Neighbors.CENTER: GrammarSymbols.WING, Neighbors.RIGHT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.RIGHT: GrammarSymbols.WING}
-    rule_list.append([l_state, r_state])
-
-    # Add vertical wing
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.TOP: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.TOP: GrammarSymbols.VERT_WING}
-    rule_list.append([l_state, r_state])
-
-    # Add wing on top of vertical wing
-    l_state = {Neighbors.CENTER: GrammarSymbols.VERT_WING, Neighbors.TOP: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.TOP: GrammarSymbols.WING}
-    rule_list.append([l_state, r_state])
-
-    # Add connector to the right
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.RIGHT: GrammarSymbols.CONNECTOR}
-    r_state = {Neighbors.RIGHT: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Add connector to the LEFT
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.LEFT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.LEFT: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Add connector to the front
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.FRONT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.FRONT: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Add connector to the rear
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.REAR: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.REAR: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Add connector to the BOTTOM
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.BOTTOM: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.BOTTOM: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Add connector to the top
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.TOP: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.TOP: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
     '''
-    # Extend connector to the right
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.RIGHT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.RIGHT: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Extend connector to the LEFT
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.LEFT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.LEFT: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Extend connector to the front
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.FRONT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.FRONT: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Extend connector to the rear
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.REAR: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.REAR: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Extend connector to the BOTTOM
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.BOTTOM: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.BOTTOM: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-
-    # Extend connector to the top
-    l_state = {Neighbors.CENTER: GrammarSymbols.CONNECTOR, Neighbors.TOP: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.TOP: GrammarSymbols.CONNECTOR}
-    rule_list.append([l_state, r_state])
-    '''
-    # Leave TOP intentionally empty
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.TOP: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.TOP: GrammarSymbols.EMPTY}
-    rule_list.append([l_state, r_state])
-
-    # Leave BOTTOM intentionally empty
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.BOTTOM: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.BOTTOM: GrammarSymbols.EMPTY}
-    rule_list.append([l_state, r_state])
-
-    # Leave LEFT intentionally empty
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.LEFT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.LEFT: GrammarSymbols.EMPTY}
-    rule_list.append([l_state, r_state])
-
-    # Leave RIGHT intentionally empty
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.RIGHT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.RIGHT: GrammarSymbols.EMPTY}
-    rule_list.append([l_state, r_state])
-
-    # Leave FRONT intentionally empty
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.FRONT: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.FRONT: GrammarSymbols.EMPTY}
-    rule_list.append([l_state, r_state])
-
-    # Leave REAR intentionally empty
-    l_state = {Neighbors.CENTER: GrammarSymbols.ANYTHING, Neighbors.REAR: GrammarSymbols.UNOCCUPIED}
-    r_state = {Neighbors.REAR: GrammarSymbols.EMPTY}
-    rule_list.append([l_state, r_state])
-
+    symbol_groups = {"BODY": ["FUSELAGE", "HUB", "TUBE"],
+                     "CONNECTOR": ["HUB", "TUBE"],
+                     "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
+                     "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
+                                  "EMPTY", "UNOCCUPIED", "BOUNDARY"],
+                     "FREE": ["UNOCCUPIED", "EMPTY"],
+                     "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
+                     "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
+                     "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
+                     "WING_FRONT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"]
+                     }
+    # rule_list = []
+    rule_dict_path = "grammar_rules_hussein.json"
+    rule_dict = json.load(open(rule_dict_path))
     num_designs = 10
     designs = []
     invalid_designs = []
@@ -537,6 +526,10 @@ if __name__ == "__main__":
         possible_half_widths = random.randint(2, 5)  # list(range(1, 5))
         possible_lengths = random.randint(2, 5)  # list(range(5))
         possible_depths = random.randint(1, 4)
+        max_right_num_rotors = random.randint(1, 3)
+        max_right_num_wings = random.randint(1, 3)
+        remaining_rotors = max_right_num_rotors
+        remaining_wings = max_right_num_wings
         fuselage_position_y = random.choice(range(possible_lengths))
         fuselage_position_z = random.choice(range(possible_depths))
         origin = [0, fuselage_position_y, fuselage_position_z]
@@ -547,31 +540,35 @@ if __name__ == "__main__":
             for j in range(possible_lengths):
                 state[-1].append([])
                 for k in range(possible_depths):
-                    state[-1][-1].append(GrammarSymbols.UNOCCUPIED)
+                    state[-1][-1].append("UNOCCUPIED")
                     # np.ones((possible_half_widths, possible_lengths, possible_depths))
-        # state[:, :, :] = GrammarSymbols.UNOCCUPIED
+        # state[:, :, :] = "UNOCCUPIED"
         adjacency_dict = {}
         while traversal_stack:
             node = traversal_stack.pop()
             if (node[0] == origin[0] or node[1] == origin[1] or node[2] == origin[2]) and \
-                    state[origin[0]][origin[1]][origin[2]] == GrammarSymbols.UNOCCUPIED:
-                state[origin[0]][origin[1]][origin[2]] = GrammarSymbols.FUSELAGE  # fuselage
+                    state[origin[0]][origin[1]][origin[2]] == "UNOCCUPIED":
+                state[origin[0]][origin[1]][origin[2]] = "FUSELAGE"  # fuselage
             else:
-                matching_rules = get_matching_rules(node, state, rule_list, symbol_groups)
+                matching_rules = get_matching_rules(node, state, rule_dict, symbol_groups,
+                                                    remaining_rotors, remaining_wings)
                 if not matching_rules:
                     continue
                 rule_to_apply = random.choice(matching_rules)
-                state, adjacency_dict = apply_rule(node, state, adjacency_dict, rule_to_apply[0], rule_to_apply[1])
+                state, adjacency_dict, remaining_rotors, remaining_wings = \
+                    apply_rule(node, state, adjacency_dict, rule_to_apply["production"],
+                                                   remaining_rotors, remaining_wings)
             children = get_children(node, state, adjacency_dict)
             for child in children:
                 if child not in traversal_stack:
                     traversal_stack.append(child)
-
+        state, adjacency_dict = trim_loose_ends(state, adjacency_dict)
         left_state, left_adjacency_dict = reflect_state_and_edges(state, adjacency_dict)
         design, joint_adjacency_dict = concatenate_state_and_edges(left_state, state, left_adjacency_dict,
                                                                    adjacency_dict)
-        if valid_design(design):
-            designs.append((design, joint_adjacency_dict))
+        num_fuselage, num_rotors, num_wings = components_count(design)
+        if num_fuselage and num_rotors and num_wings:
+            designs.append((design, joint_adjacency_dict, num_fuselage, num_rotors, num_wings))
         else:
             invalid_designs.append((design, joint_adjacency_dict))
 
