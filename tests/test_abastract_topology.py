@@ -10,7 +10,7 @@ from sym_cps.shared.objects import ExportType
 def assert_topology_from_and_to_json(topology_level: ExportType):
     """Test of AbstractTopology at the level of abstraction 1 (lowest)"""
     # Loading DConcrete Object
-    test_quad_original = designs["TestQuad"][0]
+    test_quad_original = designs["NewAxe_Cargo"][0]
 
     # Exporting AbstractTopology to file
     topology_json_path_1 = test_quad_original.export(topology_level)
@@ -52,7 +52,6 @@ def test_topology_abstraction_3():
 
 def test_topology_abstraction_4():
     assert_topology_from_and_to_json(ExportType.TOPOLOGY_4)
-
 
 
 test_topology_abstraction_1()
