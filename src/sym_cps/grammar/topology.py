@@ -216,7 +216,7 @@ class AbstractTopology:
                     export["TOPOLOGY"][component_a]["PARAMETERS"][param] = value
             """Connections"""
             for component_b, direction in connections.items():
-                print(export["TOPOLOGY"][component_a])
+                # print(export["TOPOLOGY"][component_a])
                 if AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]:
                     if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(
                             export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()):
@@ -262,4 +262,4 @@ class AbstractTopology:
                             )
                     del export["TOPOLOGY"][key]
 
-        return str(json.dumps(export))
+        return str(json.dumps(export, indent=4))

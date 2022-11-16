@@ -116,7 +116,7 @@ class DConcrete:
     def add_node(self, component: Component) -> Vertex:
         if component in self.components:
             vertex = self.get_node_by_instance(component.id)
-            print(f"{vertex['component'].id} added to vertex {vertex.index}")
+            # print(f"{vertex['component'].id} added to vertex {vertex.index}")
             return vertex
         vertex = self.graph.add_vertex(
             instance=component.id,
@@ -125,7 +125,7 @@ class DConcrete:
             component=component,
             label=f"{component.c_type.id}",
         )
-        print(f"{vertex['component'].id} added to vertex {vertex.index}")
+        # print(f"{vertex['component'].id} added to vertex {vertex.index}")
         return vertex
 
     def remove_node(self, vertex_id: int):
@@ -358,7 +358,7 @@ class DConcrete:
                 """Adding nodes with no connections"""
                 parameters[node_id] = {}
             for parameter_id, parameter in node["component"].parameters.items():
-                print(node["component"])
+                # print(node["component"])
                 parameters[node_id][parameter_id] = float(parameter.value)
 
         return AbstractTopology(name, description, connections, parameters)
