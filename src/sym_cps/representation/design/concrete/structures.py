@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import random
 from itertools import product
 
@@ -9,9 +8,8 @@ from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.concrete.tools import find_isomorphisms, get_subgraph, is_isomorphism_present
 from sym_cps.shared.designs import designs
 from sym_cps.shared.paths import output_folder, popular_nodes_keys_path
-from sym_cps.tools.graphs import graph_to_dict, graph_to_pdf
+from sym_cps.tools.graphs import graph_to_pdf
 from sym_cps.tools.my_io import save_to_file
-from sym_cps.tools.strings import make_hash_sha256
 
 
 def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None = None) -> tuple[dict[str, list[dict]],
@@ -114,6 +112,7 @@ def explore_structures(designs: list[DConcrete], key_nodes: list[str]):
                     summary["GLOBAL"][structure_key].append(new_elem)
 
     return summary, global_iso_graphs, local_iso_graphs
+
 
 #
 # def predefined_nodes(designs_chosen):

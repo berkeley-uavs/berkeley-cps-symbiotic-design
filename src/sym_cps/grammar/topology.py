@@ -10,13 +10,14 @@ from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import get_component_type_from_instance_name, \
-    get_component_and_instance_type_from_instance_name
+    get_component_and_instance_type_from_instance_name, sort_dictionary
 
 
 class AbstractionFeatures(Enum):
     AVOID_REDUNDANT_CONNECTIONS = auto()
     USE_DEFAULT_PARAMETERS = auto()
     USE_STRUCTURES = auto()
+    HIDE_TUBE_CONNECTIONS = auto()
 
 
 abstraction_levels_features = {
@@ -24,9 +25,13 @@ abstraction_levels_features = {
     2: {AbstractionFeatures.USE_DEFAULT_PARAMETERS},
     3: {AbstractionFeatures.USE_DEFAULT_PARAMETERS, AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
     4: {
-        AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS,
         AbstractionFeatures.USE_DEFAULT_PARAMETERS,
         AbstractionFeatures.USE_STRUCTURES,
+    },
+    5: {
+        AbstractionFeatures.USE_DEFAULT_PARAMETERS,
+        AbstractionFeatures.USE_STRUCTURES,
+        AbstractionFeatures.HIDE_TUBE_CONNECTIONS,
     },
 }
 
@@ -262,4 +267,5 @@ class AbstractTopology:
                             )
                     del export["TOPOLOGY"][key]
 
+        export = sort_dictionary(export)
         return str(json.dumps(export, indent=4))

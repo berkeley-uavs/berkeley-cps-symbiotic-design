@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import json
 
 
 def tab(stringable_object) -> str:
@@ -44,6 +45,42 @@ def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, ins
         instances_created[c_type_id] = instances_created[c_type_id] + 1
     new_name = f"{c_type_id}_instance_{instances_created[c_type_id]}"
     instances_renaming[instance] = new_name
+
+
+# def sort_dictionary(element: dict):
+#     ordered_dict = {}
+#     for k, v in sorted(element.items()):
+#         if isinstance(v, dict):
+#             ordered_dict = sort_dictionary(v)
+#         else:
+#             ordered_dict[k] = v
+#
+#     return ordered_dict
+
+
+def sort_dictionary(d):
+    if isinstance(d, list):
+        return sorted(sort_dictionary(v) for v in d)
+    if isinstance(d, dict):
+        return {k: sort_dictionary(d[k]) for k in sorted(d)}
+    return d
+
+
+#
+# def sort_dictionary(obj: dict):
+#     if isinstance(obj, dict):
+#         obj = sorted(obj.items())
+#         for k, v in obj.items():
+#             if isinstance(v, dict) or isinstance(v, list):
+#                 obj[k] = sort_dictionary(v)
+#
+#     if isinstance(obj, list):
+#         for i, v in enumerate(obj):
+#             if isinstance(v, dict) or isinstance(v, list):
+#                 obj[i] = sort_dictionary(v)
+#         obj = sorted(obj, key=lambda x: json.dumps(x))
+#
+#     return obj
 
 
 def get_component_type_from_instance_name(instance: str):
