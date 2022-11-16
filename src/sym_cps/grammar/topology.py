@@ -63,6 +63,7 @@ class AbstractTopology:
         to_add_topo = {"TOPOLOGY": {}}
         edit_connections = {}
         if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
+            prop = -1
             for component_a, categories in topo["TOPOLOGY"].items():
                 # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
                 struct, instance_n = get_component_and_instance_type_from_instance_name(component_a)
@@ -94,8 +95,17 @@ class AbstractTopology:
                                                 topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
                                                     comp_b + "_instance_" + str(instance_n)] = struct_component[comp_a][struct_category][comp_b]
                                 elif struct_category == "PARAMETERS":
-                                    topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"] = \
-                                        struct_component[comp_a][struct_category]
+                                    if comp_a == "Motor":
+                                        topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"]["Motor__CONTROL_CHANNEL"] = \
+                                            float(instance_n)
+                                    elif comp_a == "Propeller":
+                                        topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"]["Propeller__Direction"] = float(prop)
+                                        topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"]["Propeller__Prop_type"] = float(prop)
+                                        prop = prop * -1
+                                    else:
+                                        topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"] = \
+                                            struct_component[comp_a][struct_category]
+
                                 else:
                                     raise Exception("Unknown category")
                             to_add_topo["TOPOLOGY"][comp_a + "_instance_" + str(instance_n)] = topo_instance[
@@ -192,7 +202,8 @@ class AbstractTopology:
                         export["TOPOLOGY"][structure_instance] = {"CONNECTIONS": {}, "PARAMETERS": {}}
                         tracker[component_a] = structure_instance
                         for component_b, direction in connections.items():
-                            tracker[component_b] = structure_instance
+                            if component_b in structure_components[c_type_a].values():
+                                tracker[component_b] = structure_instance
 
 
             export["TOPOLOGY"][component_a] = {"CONNECTIONS": {}, "PARAMETERS": {}}

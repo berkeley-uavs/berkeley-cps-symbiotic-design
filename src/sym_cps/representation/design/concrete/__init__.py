@@ -458,10 +458,28 @@ class DConcrete:
             )
             isomorphic = len(mappings) > 0
             if not isomorphic:
-                print("Not isomorphic")
-                self.export(ExportType.SUMMARY, tag="_design_original")
-                other.export(ExportType.SUMMARY, tag="_design_copy")
-                print("exported")
+                components_self: dict = {}
+                for component in self.components:
+                    if component.c_type.id not in components_self:
+                        components_self[component.c_type.id] = {}
+                    if component.model not in components_self[component.c_type.id]:
+                        components_self[component.c_type.id][component.model] = []
+                    components_self[component.c_type.id][component.model].append(component.params_props_values)
+                components_other: dict = {}
+                for component in self.components:
+                    if component.c_type.id not in components_other:
+                        components_other[component.c_type.id] = {}
+                    if component.model not in components_other[component.c_type.id]:
+                        components_other[component.c_type.id][component.model] = []
+                    components_other[component.c_type.id][component.model].append(component.params_props_values)
+
+                if sorted(components_self) == sorted(components_other):
+                    return True
+                else:
+                    print("Not isomorphic")
+                    self.export(ExportType.SUMMARY, tag="_design_original")
+                    other.export(ExportType.SUMMARY, tag="_design_copy")
+                    print("exported")
             return isomorphic
 
     def __ne__(self, other: object):
