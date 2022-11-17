@@ -10,6 +10,8 @@ from sym_cps.shared.paths import grammar_rules_path
 rule_dict = json.load(open(grammar_rules_path))
 
 
+
+@dataclass
 class Grid:
     nodes: list[list[list[str]]]
     adjacencies: dict[tuple, list[tuple]]
@@ -86,7 +88,7 @@ class AbstractConnection:
 
 
 @dataclass
-class AbstractConnections:
+class AbstractDesign:
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
     connections: list[AbstractConnection] = field(default_factory=list)
 
@@ -129,5 +131,5 @@ class AbstractConnections:
 
 
 if __name__ == '__main__':
-    new_design = AbstractConnections()
+    new_design = AbstractDesign()
     new_design.parse_grid()
