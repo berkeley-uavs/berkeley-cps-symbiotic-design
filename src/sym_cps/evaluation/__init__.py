@@ -2,10 +2,11 @@
 File adapted from:
 https://github.com/LOGiCS-Project/swri-simple-uam-example
 """
-
+import json
 from pathlib import Path
 
 from simple_uam.direct2cad.actions.actors import process_design, gen_info_files
+from simple_uam.client.watch import poll_results_backend
 
 from sym_cps.evaluation.tools import extract_results, load_design, load_metadata, polling_results
 
@@ -35,8 +36,10 @@ def evaluate_design(
     else:
         print("Processing design...")
         msg = process_design.send(design, metadata=metadata)
+        print("Hello")
+        print(json.dumps(msg.asdict()))
     print("Waiting for results...")
-    result_path = polling_results(msg, timeout)
+    result_path =  poll_results_backend(msg, timeout) # polling_results(msg, timeout)
     print(f"Command completed. Results can be found at:{result_path}")
     # Obtain information from the result foleder
     if not info_only:
