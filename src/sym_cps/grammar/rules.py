@@ -4,7 +4,9 @@ import copy
 import json
 import random
 import numpy as np
+from sym_cps.shared.paths import data_folder
 
+rule_dict_path_constant = data_folder / "reverse_engineering" / "grammar_rules.json"
 
 def node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
     rule_lhs = rule["conditions"]
@@ -113,6 +115,7 @@ def node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, 
         return True
     return False
 
+
 def node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
     rule_lhs = rule["conditions"]
     rule_rhs = rule["production"]
@@ -218,7 +221,7 @@ def get_children(node, state, adjacency_dict):
     return children
 
 
-def trim_loose_ends(state, adjacency_dict):
+def trim_loose_ends(state, adjacency_dict, symbol_groups):
     progress = True
     while progress:
         progress = False
@@ -236,7 +239,7 @@ def trim_loose_ends(state, adjacency_dict):
                     if remove_connector or state[i][j][k] == "UNOCCUPIED" or state[i][j][k] == "EMPTY":
                         state[i][j][k] = ""
                         if (i, j, k) in adjacency_dict:
-                            del adjacency_dict[(i,j,k)]
+                            del adjacency_dict[(i, j, k)]
                         progress = True
     return state, adjacency_dict
 
@@ -264,9 +267,9 @@ def concatenate_state_and_edges(left_state, right_state, left_adjacency_dict, ri
     design = []
     for i in range(design_shape[0]):
         design.append([])
-        for j in range(len(state[0])):
+        for j in range(len(right_state[0])):
             design[-1].append([])
-            for k in range(len(state[0][0])):
+            for k in range(len(right_state[0][0])):
                 if i < len(left_state):
                     design[i][j].append(left_state[i][j][k])
                 else:
@@ -301,8 +304,34 @@ def components_count(design):
     return num_fuselage, num_rotors, num_wings
 
 
-def generate_random_topology(right_width, length, depth, origin,
-                           max_right_num_rotors, max_right_num_wings, rule_dict_path, symbol_groups):
+def generate_random_topology(right_width=None, length=None, depth=None, origin=None,
+                             max_right_num_rotors=None, max_right_num_wings=None,
+                             rule_dict_path=rule_dict_path_constant):
+    symbol_groups = {"BODY": ["FUSELAGE", "HUB", "TUBE"],
+                     "CONNECTOR": ["HUB", "TUBE"],
+                     "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
+                     "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
+                                  "EMPTY", "UNOCCUPIED", "BOUNDARY"],
+                     "FREE": ["UNOCCUPIED", "EMPTY"],
+                     "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
+                     "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
+                     "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
+                     "WING_FRONT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"]
+                     }
+    if right_width is None:
+        right_width = random.randint(2, 5)  # list(range(1, 5))
+    if length is None:
+        length = random.randint(2, 5)
+    if depth is None:
+        depth = random.randint(1, 4)
+    if max_right_num_rotors is None:
+        max_right_num_rotors = random.randint(1, 3)
+    if max_right_num_wings is None:
+        max_right_num_wings = random.randint(1, 3)
+    if origin is None:
+        fuselage_position_y = random.choice(range(possible_lengths))
+        fuselage_position_z = random.choice(range(possible_depths))
+        origin = [0, fuselage_position_y, fuselage_position_z]
     traversal_stack = [origin]
     state = []
     rule_dict = json.load(open(rule_dict_path))
@@ -333,7 +362,7 @@ def generate_random_topology(right_width, length, depth, origin,
         for child in children:
             if child not in traversal_stack:
                 traversal_stack.append(child)
-    state, adjacency_dict = trim_loose_ends(state, adjacency_dict)
+    state, adjacency_dict = trim_loose_ends(state, adjacency_dict, symbol_groups)
     left_state, left_adjacency_dict = reflect_state_and_edges(state, adjacency_dict)
     design, joint_adjacency_dict = concatenate_state_and_edges(left_state, state, left_adjacency_dict,
                                                                adjacency_dict)
@@ -343,23 +372,9 @@ def generate_random_topology(right_width, length, depth, origin,
     else:
         return None, (design, joint_adjacency_dict, num_fuselage, num_rotors, num_wings)
 
-# def generate_random_topologies(rule_dict_path, symbol_groups):
-
 
 if __name__ == "__main__":
-    symbol_groups = {"BODY": ["FUSELAGE", "HUB", "TUBE"],
-                     "CONNECTOR": ["HUB", "TUBE"],
-                     "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
-                     "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
-                                  "EMPTY", "UNOCCUPIED", "BOUNDARY"],
-                     "FREE": ["UNOCCUPIED", "EMPTY"],
-                     "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
-                     "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
-                     "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
-                     "WING_FRONT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"]
-                     }
-    rule_dict_path = "grammar_rules_hussein.json"
-    rule_dict = json.load(open(rule_dict_path))
+    # rule_dict = json.load(open(rule_dict_path))
     num_designs = 10
     designs = []
     invalid_designs = []
@@ -374,41 +389,10 @@ if __name__ == "__main__":
         fuselage_position_y = random.choice(range(possible_lengths))
         fuselage_position_z = random.choice(range(possible_depths))
         origin = [0, fuselage_position_y, fuselage_position_z]
-        traversal_stack = [origin]
-        state = []
-        for i in range(possible_half_widths):
-            state.append([])
-            for j in range(possible_lengths):
-                state[-1].append([])
-                for k in range(possible_depths):
-                    state[-1][-1].append("UNOCCUPIED")
-        adjacency_dict = {}
-        while traversal_stack:
-            node = traversal_stack.pop()
-            if (node[0] == origin[0] or node[1] == origin[1] or node[2] == origin[2]) and \
-                    state[origin[0]][origin[1]][origin[2]] == "UNOCCUPIED":
-                state[origin[0]][origin[1]][origin[2]] = "FUSELAGE"
-            else:
-                matching_rules = get_matching_rules(node, state, rule_dict, symbol_groups,
-                                                    remaining_rotors, remaining_wings)
-                if not matching_rules:
-                    continue
-                rule_to_apply = random.choice(matching_rules)
-                state, adjacency_dict, remaining_rotors, remaining_wings = \
-                    apply_rule(node, state, adjacency_dict, rule_to_apply["production"],
-                                                   remaining_rotors, remaining_wings)
-            children = get_children(node, state, adjacency_dict)
-            for child in children:
-                if child not in traversal_stack:
-                    traversal_stack.append(child)
-        state, adjacency_dict = trim_loose_ends(state, adjacency_dict)
-        left_state, left_adjacency_dict = reflect_state_and_edges(state, adjacency_dict)
-        design, joint_adjacency_dict = concatenate_state_and_edges(left_state, state, left_adjacency_dict,
-                                                                   adjacency_dict)
-        num_fuselage, num_rotors, num_wings = components_count(design)
-        if num_fuselage and num_rotors and num_wings:
-            designs.append((design, joint_adjacency_dict, num_fuselage, num_rotors, num_wings))
-        else:
-            invalid_designs.append((design, joint_adjacency_dict))
-
+        design, invalid_design = generate_random_topology(possible_half_widths, possible_lengths, possible_depths, origin,
+                                 max_right_num_rotors, max_right_num_wings)
+        if design is not None:
+            designs.append(design)
+        if invalid_design is not None:
+            invalid_designs.append(invalid_design)
     print(np.array(designs))
