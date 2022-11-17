@@ -252,7 +252,7 @@ def trim_loose_ends(state, adjacency_dict, symbol_groups):
     new_adjacency_dict = {}
     for node in adjacency_dict:
         new_adjacency_dict[node] = []
-        for idx, neighbor in adjacency_dict[node]:
+        for idx, neighbor in enumerate(adjacency_dict[node]):
             if state[neighbor[0]][neighbor[1]][neighbor[2]] != "":
                 new_adjacency_dict[node].append(neighbor)
     return state, new_adjacency_dict
