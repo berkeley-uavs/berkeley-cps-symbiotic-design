@@ -111,33 +111,29 @@ class AbstractConnection:
         return np.linalg.norm(point1 - point2)
 
     @property
-    def relative_position_from_a_to_b(self, ) -> [int, int]:
+    def relative_position_from_a_to_b(self) -> tuple[int, int]:
         """returns the steps  (right(pos)/left(neg), top(pos)/bottom(neg))
         from component_a to _component_b"""
 
         position_a = self.component_a.grid_position
         position_b = self.component_b.grid_position
-        point1 = np.array(position_a)
-        point2 = np.array(position_b)
 
-        #TODO
+        # position_b.x - position_a.x
+        # position_b.z - position_a.z
 
-        return np.linalg.norm(point1 - point2)
+        rel_right = position_b[0] - position_a[0]
+        rel_top = position_b[2] - position_a[2]
+
+        return rel_right, rel_top
 
     @property
-    def relative_position_from_b_to_a(self, ) -> [int, int]:
+    def relative_position_from_b_to_a(self) -> tuple[int, int]:
         """returns the steps  (right(pos)/left(neg), top(pos)/bottom(neg))
         from component_b to _component_a"""
 
-        position_a = self.component_a.grid_position
-        position_b = self.component_b.grid_position
-        point1 = np.array(position_a)
-        point2 = np.array(position_b)
+        (rel_right, rel_top) = self.relative_position_from_a_to_b
 
-        #TODO
-
-
-        return np.linalg.norm(point1 - point2)
+        return -rel_right, -rel_top
 
 
 @dataclass
