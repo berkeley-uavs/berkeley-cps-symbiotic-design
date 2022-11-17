@@ -7,7 +7,7 @@ from sym_cps.evaluation import evaluate_design
 from sym_cps.examples.library import export_library
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.reverse_engineering.connections_mapping import fix_connectors_mapping
-from sym_cps.shared.paths import data_folder, output_folder
+from sym_cps.shared.paths import data_folder, output_folder, aws_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
 
 
@@ -70,7 +70,8 @@ def evaluate_design_swri(args: Optional[List[str]] = None) -> int:
     opts = parser.parse_args(args=args)
     print(f"args: {opts}")
     print(opts.design_name)
-    design_json_path = output_folder / "designs" / opts.design_name / "design_swri.json"
+    design_json_path = aws_folder / "examples" / opts.design_name / "design_swri.json"
+    # output_folder / "designs" / opts.design_name / "design_swri.json"
     ret = evaluate_design(
         design_json_path=design_json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
     )
