@@ -4,6 +4,22 @@ import copy
 import json
 import random
 import numpy as np
+import grammar_rules_path
+
+
+symbol_groups = {"BODY": ["FUSELAGE", "HUB", "TUBE"],
+                     "CONNECTOR": ["HUB", "TUBE"],
+                     "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
+                     "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
+                                  "EMPTY", "UNOCCUPIED", "BOUNDARY"],
+                     "FREE": ["UNOCCUPIED", "EMPTY"],
+                     "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
+                     "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
+                     "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
+                     "WING_FRONT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"]
+                     }
+
+rule_dict_path = "grammar_rules_hussein.json"
 
 
 def node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
@@ -302,7 +318,7 @@ def components_count(design):
 
 
 def generate_random_topology(right_width, length, depth, origin,
-                           max_right_num_rotors, max_right_num_wings, rule_dict_path, symbol_groups):
+                           max_right_num_rotors, max_right_num_wings, rule_dict_path):
     traversal_stack = [origin]
     state = []
     rule_dict = json.load(open(rule_dict_path))
@@ -343,22 +359,10 @@ def generate_random_topology(right_width, length, depth, origin,
     else:
         return None, (design, joint_adjacency_dict, num_fuselage, num_rotors, num_wings)
 
-# def generate_random_topologies(rule_dict_path, symbol_groups):
+def generate_random_topologies(N):
 
 
 if __name__ == "__main__":
-    symbol_groups = {"BODY": ["FUSELAGE", "HUB", "TUBE"],
-                     "CONNECTOR": ["HUB", "TUBE"],
-                     "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
-                     "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
-                                  "EMPTY", "UNOCCUPIED", "BOUNDARY"],
-                     "FREE": ["UNOCCUPIED", "EMPTY"],
-                     "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
-                     "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
-                     "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
-                     "WING_FRONT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"]
-                     }
-    rule_dict_path = "grammar_rules_hussein.json"
     rule_dict = json.load(open(rule_dict_path))
     num_designs = 10
     designs = []
