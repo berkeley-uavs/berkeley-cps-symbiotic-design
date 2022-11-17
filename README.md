@@ -291,6 +291,14 @@ npm run start
 
 ## Troubleshooting
 
+
+### Dot not found on your PATH
+Mac users:
+
+```bash
+brew install gprof2dot
+```
+
 ### Installation process
 
 If you have problems with the environment you can clean up the files and folders created by pdm and conda by running
