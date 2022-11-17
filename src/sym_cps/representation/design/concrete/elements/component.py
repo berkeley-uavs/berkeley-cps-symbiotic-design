@@ -104,7 +104,7 @@ class Component:
             self.parameters[param_id].value = value
 
     def set_shared_parameters(self):
-        print("Setting default parameters...")
+        # print("Setting default parameters...")
         for param_id, parameter in self.parameters.items():
             from sym_cps.shared.objects import default_parameters
 

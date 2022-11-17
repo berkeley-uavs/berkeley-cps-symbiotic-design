@@ -116,7 +116,7 @@ class DConcrete:
     def add_node(self, component: Component) -> Vertex:
         if component in self.components:
             vertex = self.get_node_by_instance(component.id)
-            print(f"{vertex['component'].id} added to vertex {vertex.index}")
+            # print(f"{vertex['component'].id} added to vertex {vertex.index}")
             return vertex
         vertex = self.graph.add_vertex(
             instance=component.id,
@@ -125,7 +125,7 @@ class DConcrete:
             component=component,
             label=f"{component.c_type.id}",
         )
-        print(f"{vertex['component'].id} added to vertex {vertex.index}")
+        # print(f"{vertex['component'].id} added to vertex {vertex.index}")
         return vertex
 
     def remove_node(self, vertex_id: int):
@@ -358,7 +358,7 @@ class DConcrete:
                 """Adding nodes with no connections"""
                 parameters[node_id] = {}
             for parameter_id, parameter in node["component"].parameters.items():
-                print(node["component"])
+                # print(node["component"])
                 parameters[node_id][parameter_id] = float(parameter.value)
 
         return AbstractTopology(name, description, connections, parameters)
@@ -458,10 +458,28 @@ class DConcrete:
             )
             isomorphic = len(mappings) > 0
             if not isomorphic:
-                print("Not isomorphic")
-                self.export(ExportType.SUMMARY, tag="_design_original")
-                other.export(ExportType.SUMMARY, tag="_design_copy")
-                print("exported")
+                components_self: dict = {}
+                for component in self.components:
+                    if component.c_type.id not in components_self:
+                        components_self[component.c_type.id] = {}
+                    if component.model not in components_self[component.c_type.id]:
+                        components_self[component.c_type.id][component.model] = []
+                    components_self[component.c_type.id][component.model].append(component.params_props_values)
+                components_other: dict = {}
+                for component in self.components:
+                    if component.c_type.id not in components_other:
+                        components_other[component.c_type.id] = {}
+                    if component.model not in components_other[component.c_type.id]:
+                        components_other[component.c_type.id][component.model] = []
+                    components_other[component.c_type.id][component.model].append(component.params_props_values)
+
+                if sorted(components_self) == sorted(components_other):
+                    return True
+                else:
+                    print("Not isomorphic")
+                    self.export(ExportType.SUMMARY, tag="_design_original")
+                    other.export(ExportType.SUMMARY, tag="_design_copy")
+                    print("exported")
             return isomorphic
 
     def __ne__(self, other: object):

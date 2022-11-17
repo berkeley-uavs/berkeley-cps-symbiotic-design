@@ -192,7 +192,6 @@ When running a python script from command line, insert `pdm run` before. For exa
 pdm run python src/sym_cps/examples/library.py
 ```
 
-<<<<<<< HEAD
 ### Run
 
 #### Launch Python scripts from command line
@@ -224,56 +223,6 @@ To configure VSCode to support PEP 582, open `.vscode/settings.json` (create one
 ```
 
 
-=======
-#### Working with IDEs
-
-With PEP 582, dependencies will be installed into __pypackages__ directory under the project root. With PEP 582 enabled
-globally, you can also use the project interpreter to run scripts directly.
-Check [pdm documentation](https://pdm.fming.dev/latest/usage/pep582/) on PEP 582.
-
-**PYCHARM**
-Add `__pypackages__/3.10/lib` and `src` folders to your PYTHONPATH. With PyCharm you can simple right click on the
-folders and select `Mark Directory as` - `Source folder`.
-
-**VSCODE**
-
-To configure VSCode to support PEP 582, open `.vscode/settings.json` (create one if it does not exist) and add the
-following entries:
-
-```json
-{
-  "python.autoComplete.extraPaths": [
-    "__pypackages__/3.10/lib"
-  ],
-  "python.analysis.extraPaths": [
-    "__pypackages__/3.10/lib"
-  ]
-}
-```
-
-## Useful scripts
-
-* Uninstall all dependencies and clean up the repository from temporary files
-  ```bash
-  make uninstall
-  ```
-
-* Load library and seed designs and export them in the output folder
-  ```bash
-  pdm run init
-  ```
-
-* Export all seed designs in the output folder
-  ```bash
-  pdm run export-designs
-  ```
-
-* Load and export custom design where "custom_design_file" is the file name of the `json` file in
-  the `data/custom_designs` folder, for example:
-  ```bash
-  pdm run custom-design "working/test_quad_abstraction_3"
-  ```
->>>>>>> main
 
 ## Examples
 
