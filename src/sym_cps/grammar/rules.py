@@ -339,8 +339,8 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
         if max_right_num_wings is None:
             max_right_num_wings = random.randint(1, 3)
         if origin is None:
-            fuselage_position_y = random.choice(range(possible_lengths))
-            fuselage_position_z = random.choice(range(possible_depths))
+            fuselage_position_y = random.choice(range(length))
+            fuselage_position_z = random.choice(range(depth))
             origin = [0, fuselage_position_y, fuselage_position_z]
         traversal_stack = [origin]
         state = []
