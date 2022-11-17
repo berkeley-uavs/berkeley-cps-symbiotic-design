@@ -105,7 +105,8 @@ class AbstractConnections:
         dist = np.linalg.norm(point1 - point2)
 
         self.grid[position_a].connected_with(self.grid[position_b], dist)
-        #TODO
+        # TODO
+
     def parse_grid(self, grid: Grid):
         nodes = grid.nodes
 
@@ -125,3 +126,8 @@ class AbstractConnections:
         for position_a, connections in grid.adjacencies.items():
             for position_b in connections:
                 self.add_connection(position_a, position_b)
+
+
+if __name__ == '__main__':
+    new_design = AbstractConnections()
+    new_design.parse_grid()
