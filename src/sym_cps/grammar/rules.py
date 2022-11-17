@@ -249,7 +249,13 @@ def trim_loose_ends(state, adjacency_dict, symbol_groups):
                         if (i, j, k) in adjacency_dict:
                             del adjacency_dict[(i, j, k)]
                         progress = True
-    return state, adjacency_dict
+    new_adjacency_dict = {}
+    for node in adjacency_dict:
+        new_adjacency_dict[node] = []
+        for idx, neighbor in adjacency_dict[node]:
+            if state[neighbor[0]][neighbor[1]][neighbor[2]] != "":
+                new_adjacency_dict[node].append(neighbor)
+    return state, new_adjacency_dict
 
 
 def reflect_state_and_edges(state, adjacency_dict):
@@ -379,6 +385,10 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
         num_fuselage, num_rotors, num_wings = components_count(design)
         if num_fuselage and num_rotors and num_wings:
             return Grid(nodes=design, adjacencies=joint_adjacency_dict)
+
+def get_seed_design_topo(design_name: str):
+    if design_name == "TestQuad_Cargo":
+        state = []
 
 
 if __name__ == "__main__":
