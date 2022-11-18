@@ -12,15 +12,20 @@ rule_dict = json.load(open(grammar_rules_path))
 
 
 @dataclass
-class AbstractComponent(abc.ABC):
+class AbstractComponent:
     grid_position: tuple[int, int, int]
     base_name: str = ""
-    id: str = ""
+    instance_n: int = 1
     connections: set[AbstractConnection] = field(default_factory=set)
     parameters: {} = field(default_factory=dict)
+    color: str = "black"
 
     def add_connection(self, abstract_connection: AbstractConnection):
         self.connections.add(abstract_connection)
+
+    @property
+    def id(self) -> str:
+        return f"{self.base_name}_instance_{self.instance_n}"
 
 
 @dataclass
@@ -29,7 +34,10 @@ class Fuselage(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Fuselage_str"
-        self.instance_id = f"Fuselage_str_instance_{self.instance_n}"
+        self.color = "red"
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass
@@ -38,7 +46,10 @@ class Propeller(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Propeller_str"
-        self.instance_id = f"Propeller_str_instance_{self.instance_n}"
+        self.color = "green"
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass
@@ -47,7 +58,10 @@ class Wing(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Wing"
-        self.instance_id = f"Wing_instance_{self.instance_n}"
+        self.color = "blue"
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass
@@ -56,7 +70,10 @@ class Connector(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Connector"
-        self.instance_id = f"Connector_instance_{self.instance_n}"
+        self.color = "gray"
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass
@@ -65,7 +82,9 @@ class Tube(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Tube"
-        self.instance_id = f"Tube_instance_{self.instance_n}"
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass
@@ -74,7 +93,9 @@ class Hub(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Hub"
-        self.instance_id = f"Hub_instance_{self.instance_n}"
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass
@@ -134,4 +155,3 @@ class AbstractConnection:
         (rel_right, rel_top) = self.relative_position_from_a_to_b
 
         return -rel_right, -rel_top
-
