@@ -6,7 +6,7 @@ from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
 from sym_cps.shared.objects import ExportType
 
-designs_to_check = ["NewAxe_Cargo", "PickAxe", "TestQuad_Cargo"]
+designs_to_check = [ "TestQuad_Cargo", "NewAxe_Cargo", "PickAxe"]
 
 
 def assert_topology_from_and_to_json(topology_level: ExportType):

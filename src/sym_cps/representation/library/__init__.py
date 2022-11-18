@@ -48,10 +48,10 @@ class Library:
             raise Exception(f"{component_type_id}\nComponent Type not present in the library")
         f = open(component_selection_path)
         default = json.load(f)
-        if design_name in default["SEED_DESIGNS"].keys():
-            return self.components[default["SEED_DESIGNS"][design_name]["COMPONENTS"][component_type_id]]
-        else:
-            return self.components[default["ALL_COMPONENTS"][component_type_id][0]]
+        # if design_name in default["SEED_DESIGNS"].keys():
+        #     return self.components[default["SEED_DESIGNS"][design_name]["COMPONENTS"][component_type_id]]
+        # else:
+        return self.components[default["ALL_COMPONENTS"][component_type_id][0]]
 
     def get_connectors(
         self, component_type_a: CType, component_type_b: CType, direction: str
