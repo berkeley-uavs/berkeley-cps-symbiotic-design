@@ -11,7 +11,7 @@ def design_test_quad():
     new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
     new_design.save()
 
-    abstract_topology = AbstractTopology.from_abstract_design(new_design)
+    abstract_topology = AbstractTopology.from_abstract_design(new_design, test_quad_at)
 
 
 def random_designs():
