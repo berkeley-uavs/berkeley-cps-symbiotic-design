@@ -191,8 +191,8 @@ def parse_designs_from_folder(path: Path, library: Library) -> dict[str, tuple[D
             try:
                 for connection in connections_set:
                     new_design.connect(connection)
-            except:
-                raise Exception("ERROR")
+            except Exception as e:
+                raise e
 
             d_concrete = new_design
             d_topology = DTopology.from_concrete(new_design)
