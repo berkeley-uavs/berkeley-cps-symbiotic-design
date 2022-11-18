@@ -389,15 +389,11 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
 
 def get_seed_design_topo(design_name: str):
     if design_name == "TestQuad_Cargo":
-        state = [[["", ""], ["CONNECTOR", "ROTOR"], ["", ""]],
-                 [["CONNECTOR", "ROTOR"], ["CONNECTOR", "FUSELAGE"], ["CONNECTOR", "ROTOR"]],
-                 [["", ""], ["CONNECTOR", "ROTOR"], ["", ""]]]
+        state = [[[""], ["ROTOR"], [""]],
+                 [["ROTOR"], ["FUSELAGE"], ["ROTOR"]],
+                 [[""], ["ROTOR"], [""]]]
         adjacency_dict = {}
-        adjacency_dict[(0, 1, 0)] = [(0, 1, 1)]
-        adjacency_dict[(1, 0, 0)] = [(1, 0, 1)]
         adjacency_dict[(1, 1, 0)] = [(1, 0, 0), (0, 1, 0), (2, 1, 0), (1, 2, 0)]
-        adjacency_dict[(2, 1, 0)] = [(2, 1, 1)]
-        adjacency_dict[(1, 1, 1)] = [(1, 1, 0)]
         return Grid(nodes=state, adjacencies=adjacency_dict)
 
 
