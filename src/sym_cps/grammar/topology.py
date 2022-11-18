@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from aenum import Enum, auto
+from sym_cps.grammar.abstract_design import AbstractDesign
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
@@ -53,6 +54,13 @@ class AbstractTopology:
     description: str
     connections: dict[str, dict[str, str]]
     parameters: dict[str, dict[str, float]]
+
+
+    @classmethod
+    def from_abstract_design(cls, abstract_design: AbstractDesign) -> AbstractTopology:
+
+        return
+
 
     @classmethod
     def from_json(cls, topology_json_path: Path) -> AbstractTopology:
