@@ -326,7 +326,7 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
                      "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
                      "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
                                   "EMPTY", "UNOCCUPIED", "BOUNDARY"],
-                     "FREE": ["UNOCCUPIED", "EMPTY"],
+                     "FREE": ["UNOCCUPIED", "EMPTY", ""],
                      "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
                      "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
                      "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
