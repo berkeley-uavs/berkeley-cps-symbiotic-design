@@ -23,7 +23,7 @@ output_folder: Path = challenge_data / "output"
 fdm_root_folder: Path = challenge_data / "fdm"
 
 aws_folder: Path = challenge_data / "aws"
-designs_folder: Path = output_folder / "designs"
+designs_folder: Path = aws_folder / "examples"
 library_folder: Path = output_folder / "library"
 
 fdm_bin_folder: Path = fdm_root_folder / "bin" / "bin" / "bin"

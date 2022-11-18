@@ -38,7 +38,7 @@ def evaluate_design(
         print("Processing design...")
         msg = process_design.send(design, metadata=metadata)
         print("Hello")
-        print(json.dumps(msg.asdict()))
+        print(json.dumps(msg.asdict(), indent=2, sort_keys=True))
     print("Waiting for results...")
     result_path = poll_results_backend(msg, timeout)  # polling_results(msg, timeout)
     print(f"Command completed. Results can be found at:{result_path}")
