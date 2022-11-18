@@ -44,7 +44,7 @@ persistence_path: Path = output_folder / "persistence"
 
 reverse_engineering_folder = data_folder / "reverse_engineering"
 
-connectors_components_path = reverse_engineering_folder / "connectors_components_mapping.json"
+connectors_components_path = reverse_engineering_folder / "connectors_components_backup.json"
 manual_connectors_components_path = reverse_engineering_folder / "manual_connections_learned.json"
 
 learned_default_params_path = reverse_engineering_folder / "analysis" / "shared_parameters.json"
