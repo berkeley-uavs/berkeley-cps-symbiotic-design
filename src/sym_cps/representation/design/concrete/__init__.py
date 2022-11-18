@@ -448,6 +448,7 @@ class DConcrete:
         self.export(ExportType.TOPOLOGY_1)
         self.export(ExportType.TOPOLOGY_2)
         self.export(ExportType.TOPOLOGY_3)
+        self.export(ExportType.TOPOLOGY_4)
 
     def __eq__(self, other: object):
         from sym_cps.representation.design.concrete.tools import edge_comparison, node_comparison

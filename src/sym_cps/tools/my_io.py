@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 from typing import OrderedDict
+import pickle
 
 from matplotlib.figure import Figure
 from sym_cps.tools.strings import sort_dictionary
@@ -11,12 +12,15 @@ from sym_cps.tools.strings import sort_dictionary
 def save_to_file(
     file_content: str | dict | Figure, file_name: str, folder_name: str | None = None, absolute_path: Path | None = None
 ) -> Path:
-    if Path(file_name).suffix == "" and file_content == dict:
+    if Path(file_name).suffix == "" and isinstance(file_content, dict):
         file_name += ".json"
-    elif Path(file_name).suffix == "" and file_content == Figure:
+    elif Path(file_name).suffix == "" and isinstance(file_content, Figure):
         file_name += ".svg"
-    elif Path(file_name).suffix == "" and file_content == str:
+    elif Path(file_name).suffix == "" and isinstance(file_content, str):
         file_name += ".txt"
+    elif Path(file_name).suffix == "":
+        file_name += ".dat"
+
 
     if absolute_path is not None:
         if absolute_path.suffix == "txt" or absolute_path.suffix == "json":
@@ -49,7 +53,7 @@ def save_to_file(
     return file_path
 
 
-def _write_file(file_content: str | dict | Figure, absolute_path: Path):
+def _write_file(file_content: str | dict | Figure | object, absolute_path: Path):
     if isinstance(file_content, OrderedDict):
         with open(absolute_path, "w") as f:
             file_content = json.dumps(file_content, indent=4)
@@ -67,7 +71,14 @@ def _write_file(file_content: str | dict | Figure, absolute_path: Path):
         f.close()
     elif isinstance(file_content, Figure):
         file_content.savefig(absolute_path)
-    else:
+    elif isinstance(file_content, str):
         with open(absolute_path, "w") as f:
             f.write(file_content)
+        f.close()
+    else:
+        with open(absolute_path, "wb") as f:
+            try:
+                pickle.dump(obj=file_content, file=f)
+            except Exception as e:
+                raise e
         f.close()

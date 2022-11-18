@@ -71,7 +71,7 @@ class AbstractDesign:
         return max_x, max_y, max_z
 
     @property
-    def get_graph(self):
+    def graph(self):
 
         graph = nx.Graph()
 
@@ -102,12 +102,13 @@ class AbstractDesign:
         plot = self.plot
         print(plot.__class__)
         save_to_file(self.plot, file_name=self.name, folder_name="grammar")
+        save_to_file(self, file_name=self.name, folder_name="grammar")
 
 
     @property
     def plot(self):
 
-        graph = self.get_graph
+        graph = self.graph
 
         # Extract node and edge positions from the layout
         node_xyz = np.array([graph.nodes[v]["position"] for v in sorted(graph)])
