@@ -386,9 +386,19 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
         if num_fuselage and num_rotors and num_wings:
             return Grid(nodes=design, adjacencies=joint_adjacency_dict)
 
+
 def get_seed_design_topo(design_name: str):
     if design_name == "TestQuad_Cargo":
-        state = []
+        state = [[["", ""], ["CONNECTOR", "ROTOR"], ["", ""]],
+                 [["CONNECTOR", "ROTOR"], ["CONNECTOR", "FUSELAGE"], ["CONNECTOR", "ROTOR"]],
+                 [["", ""], ["CONNECTOR", "ROTOR"], ["", ""]]]
+        adjacency_dict = {}
+        adjacency_dict[(0, 1, 0)] = [(0, 1, 1)]
+        adjacency_dict[(1, 0, 0)] = [(1, 0, 1)]
+        adjacency_dict[(1, 1, 0)] = [(1, 0, 0), (0, 1, 0), (2, 1, 0), (1, 2, 0)]
+        adjacency_dict[(2, 1, 0)] = [(2, 1, 1)]
+        adjacency_dict[(1, 1, 1)] = [(1, 1, 0)]
+        return Grid(nodes=state, adjacencies=adjacency_dict)
 
 
 if __name__ == "__main__":
@@ -407,11 +417,14 @@ if __name__ == "__main__":
         fuselage_position_y = random.choice(range(possible_lengths))
         fuselage_position_z = random.choice(range(possible_depths))
         origin = [0, fuselage_position_y, fuselage_position_z]
-        design, invalid_design = generate_random_topology(possible_half_widths, possible_lengths, possible_depths,
+        grid = generate_random_topology(possible_half_widths, possible_lengths, possible_depths,
                                                           origin,
                                                           max_right_num_rotors, max_right_num_wings)
-        if design is not None:
-            designs.append(design)
-        if invalid_design is not None:
-            invalid_designs.append(invalid_design)
-    print(np.array(designs))
+        # if design is not None:
+        designs.append((grid.nodes, grid.adjacencies))
+        # if invalid_design is not None:
+        #    invalid_designs.append(invalid_design)
+    # print(np.array(designs))
+    result = get_seed_design_topo("TestQuad_Cargo")
+    print(len(result.nodes), len(result.nodes[0]), len(result.nodes[0][0]))
+    print(result.adjacencies)
