@@ -36,11 +36,11 @@ def evaluate_design(
         msg = gen_info_files.send(design, metadata=metadata)
     else:
         print("Processing design...")
-        msg = process_design.send(design, metadata=metadata)
+        msg = process_design.send(design, metadata=metadata, compile_args={'srcs': None})
         print("Hello")
         print(json.dumps(msg.asdict(), indent=2, sort_keys=True))
     print("Waiting for results...")
-    result_path = poll_results_backend(msg, timeout)  # polling_results(msg, timeout)
+    result_path = polling_results(msg, timeout) # poll_results_backend(msg, timeout)  #
     print(f"Command completed. Results can be found at:{result_path}")
     # Obtain information from the result foleder
     if not info_only:
