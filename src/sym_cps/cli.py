@@ -38,7 +38,8 @@ def update_all() -> int:
 
     library_analysis()
     parameter_analysis()
-    fix_connectors_mapping()
+    # TODO: FIX BUG IN fix_connecotrs_mapping, chaning the order of connectors
+    # fix_connectors_mapping()
     # generate_tables()
     # analysis()
     return 0
