@@ -54,6 +54,19 @@ class AbstractDesign:
             for position_b in connections:
                 self.add_connection(position_a, position_b)
 
+    def connect_components(self):
+        """TODO"""
+        for position, abstract_component in self.grid.items():
+            for connection in abstract_component.connections:
+                other_component = None
+                if connection.component_a != abstract_component:
+                    other_component = connection.component_a
+                else:
+                    other_component = connection.component_b
+
+
+
+
     @property
     def grid_size(self) -> tuple[int, int, int]:
         max_x = 0

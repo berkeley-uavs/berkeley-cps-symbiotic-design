@@ -56,13 +56,26 @@ class AbstractTopology:
     parameters: dict[str, dict[str, float]]
 
     @classmethod
-    def from_abstract_design(cls, abstract_design: AbstractDesign, dict_example: dict) -> AbstractTopology:
+    def from_abstract_design(cls, abstract_design: AbstractDesign, topo_example: AbstractTopology) -> AbstractTopology:
         abstract_design.grid
         abstract_design.graph
 
+        goal_example = topo_example.to_dict(4)
+
         export: dict = {"NAME": abstract_design.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": 4, "TOPOLOGY": {}}
 
+        export["TOPOLOGY"] = {}
 
+        for position, abstract_component in abstract_design.grid.items():
+            export["TOPOLOGY"][abstract_component.id] = {}
+            export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
+            for connection in abstract_component.connections:
+                other_component = None
+                if connection.component_a != abstract_component:
+                    other_component = connection.component_a
+
+
+        print("wa")
 
 
 
@@ -286,7 +299,9 @@ class AbstractTopology:
         return cls(name, description, connections, parameters)
 
     def to_json(self, abstraction_level: int) -> str:
-        AbstractTopology.to_dict()
+        export_dict = self.to_dict(abstraction_level)
+        return str(json.dumps(export, indent=4))
+
     def to_dict(self, abstraction_level: int) -> dict:
         export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": abstraction_level, "TOPOLOGY": {}}
         # if level 4 abstraction, we should group the structures during the looping process and remove extraneous
@@ -382,6 +397,4 @@ class AbstractTopology:
                     #         ctype_b.id, ctype_a.id, connector_id_b, connector_id_a
                     #     )
                     del export["TOPOLOGY"][key]
-
-        export = sort_dictionary(export)
-        return str(json.dumps(export, indent=4))
+        return export

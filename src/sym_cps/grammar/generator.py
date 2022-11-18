@@ -7,6 +7,7 @@ from sym_cps.shared.paths import designs_folder
 def design_test_quad():
     test_quad_at = AbstractTopology.from_json(designs_folder / "TestQuad_Cargo" / "topology_summary_4.json")
     new_design = AbstractDesign(f"TestQuad_Cargo")
+    new_design.connect_components()
     # new_design.parse_grid(generate_random_topology())
     new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
     new_design.save()
