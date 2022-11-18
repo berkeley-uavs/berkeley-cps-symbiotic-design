@@ -144,7 +144,14 @@ class AbstractDesign:
 if __name__ == '__main__':
     # new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
 
-    for i in range(0,100):
-        new_design = AbstractDesign(f"random_{i}")
-        new_design.parse_grid(generate_random_topology())
-        new_design.save()
+    new_design = AbstractDesign(f"TestQuad_Cargo")
+    # new_design.parse_grid(generate_random_topology())
+    new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
+    new_design.save()
+
+
+    # for i in range(0,100):
+    #     new_design = AbstractDesign(f"random_{i}")
+    #     # new_design.parse_grid(generate_random_topology())
+    #     new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
+    #     new_design.save()
