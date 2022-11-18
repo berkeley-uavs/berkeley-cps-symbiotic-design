@@ -59,10 +59,14 @@ def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, ins
 
 
 def sort_dictionary(d):
-    if isinstance(d, list):
-        return sorted(sort_dictionary(v) for v in d)
-    if isinstance(d, dict):
-        return {k: sort_dictionary(d[k]) for k in sorted(d)}
+    try:
+        if isinstance(d, list):
+            return sorted(sort_dictionary(v) for v in d)
+        if isinstance(d, dict):
+            return {k: sort_dictionary(d[k]) for k in sorted(d)}
+        return d
+    except Exception as e:
+        print(e)
     return d
 
 

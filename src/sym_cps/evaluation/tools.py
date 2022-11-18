@@ -185,7 +185,7 @@ def watch_results_dir(msg: dramatiq.Message, results_dir: Path, interval: int = 
 
 def polling_results(msg, timeout: int = 800):
     print("Waiting for the results to appear...")
-    result_archive = watch_results_dir(msg, results_dir=aws_folder / "results", timeout=timeout)
+    result_archive = watch_results_dir(msg, results_dir=aws_folder / "d2c_results", timeout=timeout)
     result = get_zip_metadata(result_archive)
     print("Result archive found in results dir w/ metadata:")
     print(json.dumps(result, indent="  "))
