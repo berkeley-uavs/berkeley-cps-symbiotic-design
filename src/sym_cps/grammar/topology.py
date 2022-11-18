@@ -73,6 +73,7 @@ class AbstractTopology:
                 # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
                 struct, instance_n = get_component_and_instance_type_from_instance_name(component_a)
                 if struct in structures.keys():
+                    paramters = [param.split("__")[0] for param in list(topo["TOPOLOGY"][component_a]["PARAMETERS"].keys())]
                     instance_n = instance_n[0]
                     topo_instance = {}
                     component_interface = structures[struct]["InterfaceComponent"]
@@ -97,6 +98,7 @@ class AbstractTopology:
                                     "CONNECTIONS": {},
                                     "PARAMETERS": {}
                                 }
+
                             # if comp_a == "Flange" then attach tube connections to flange
                             # if comp_a == component_interface:
                             #     topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"] = \
@@ -127,7 +129,15 @@ class AbstractTopology:
                                                 topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
                                                 comp_b + "_instance_" + str(instance_n)] = struct_component[comp_a][struct_category][comp_b]
                                 elif struct_category == "PARAMETERS":
-                                    if comp_a == "Motor":
+                                    # if paramter in specified at the structural level, then include that value in
+                                    # their respective component
+                                    if comp_a in parameters:
+                                        for i in range(len(paramters)):
+                                            if comp_a == paramters[i]:
+                                                param_name = list(topo["TOPOLOGY"][component_a]["PARAMETERS"].keys())[i]
+                                                value = topo["TOPOLOGY"][component_a]["PARAMETERS"][param_name]
+                                                topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"][param_name] = value
+                                    elif comp_a == "Motor":
                                         topo_instance[comp_a + "_instance_" + str(instance_n)]["PARAMETERS"]["Motor__CONTROL_CHANNEL"] = \
                                             float(instance_n)
                                     elif comp_a == "Propeller":
@@ -303,11 +313,14 @@ class AbstractTopology:
                 prev = len(to_delete)
                 copy = tracker.copy()
                 for key, item in copy.items():
-                    structure_name = get_component_type_from_instance_name(item)
+                    structure_name, instance_n = get_component_and_instance_type_from_instance_name(item)
                     c_type_a = get_component_type_from_instance_name(key)
                     group = [list(comps.keys())[0] for comps in structures[structure_name]["Components"]]
                     for component_b, direction in self.connections[key].items():
                         c_type_b = get_component_type_from_instance_name(component_b)
+                        if c_type_b == "Hub3" and structure_name == "Fuselage_str":
+                            c_type_b = "Hub4"
+                            # component_b = "Hub4" + "_instance_" + instance_n
                         if c_type_b in group and not component_b in copy.keys():
                             tracker[component_b] = item
                         if key in export["TOPOLOGY"][component_b]["CONNECTIONS"].keys():
