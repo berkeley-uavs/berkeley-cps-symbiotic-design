@@ -7,7 +7,7 @@ import networkx as nx
 
 import matplotlib.pyplot as plt
 
-from sym_cps.grammar.elements import AbstractComponent, AbstractConnection, Fuselage, Wing, Propeller, Connector
+from sym_cps.grammar.elements import AbstractComponent, AbstractConnection, Fuselage, Wing, Propeller, Connector, Tube
 from sym_cps.grammar.rules import generate_random_topology, Grid, get_seed_design_topo
 from sym_cps.tools.my_io import save_to_file
 
@@ -54,16 +54,41 @@ class AbstractDesign:
             for position_b in connections:
                 self.add_connection(position_a, position_b)
 
-    def connect_components(self):
+    def instanciate_tubes(self) -> dict:
         """TODO"""
-        for position, abstract_component in self.grid.items():
-            for connection in abstract_component.connections:
-                other_component = None
-                if connection.component_a != abstract_component:
-                    other_component = connection.component_a
-                else:
-                    other_component = connection.component_b
-
+        """
+        "Tube_instance_1": {
+            "CONNECTIONS": {
+                "Fuselage_str_instance_1__Hub4": "SIDE4-BOTTOM",
+                "Propeller_str_top_instance_2__Flange": "TOP-SIDE"
+            },
+            "PARAMETERS": {
+                "Tube__END_ROT": 0.0,
+                "Tube__Length": 400.0,
+                "Tube__Offset1": 0.0
+            }
+        },
+        "Tube_instance_2": {
+            "CONNECTIONS": {
+                "Fuselage_str_instance_1__Hub4": "SIDE1-BOTTOM",
+                "Propeller_str_top_instance_3__Flange": "TOP-SIDE"
+            },
+            "PARAMETERS": {
+                "Tube__END_ROT": 0.0,
+                "Tube__Length": 400.0,
+                "Tube__Offset1": 0.0
+            }
+        },
+        """
+        for connection in self.connections:
+            other_component = None
+            if connection.component_a != connection:
+                other_component = connection.component_a
+            else:
+                other_component = connection.component_b
+            # Add Tube
+            new_tube = Tube(connection.euclid_distance)
+            # Connect it based on connection.relative_position
 
 
 

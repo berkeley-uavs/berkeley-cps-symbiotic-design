@@ -86,6 +86,7 @@ class Connector(AbstractComponent):
 
 @dataclass
 class Tube(AbstractComponent):
+    euclid_distance: int
     instance_n: int = 1
 
     def __post_init__(self):
