@@ -1,9 +1,9 @@
 # type: ignore
+import json
 import os
 from pathlib import Path
 from typing import OrderedDict
 
-from engineio import json
 from matplotlib.figure import Figure
 from sym_cps.tools.strings import sort_dictionary
 

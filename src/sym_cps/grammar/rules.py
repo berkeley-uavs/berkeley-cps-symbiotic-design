@@ -326,7 +326,7 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
                      "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
                      "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
                                   "EMPTY", "UNOCCUPIED", "BOUNDARY"],
-                     "FREE": ["UNOCCUPIED", "EMPTY"],
+                     "FREE": ["UNOCCUPIED", "EMPTY", ""],
                      "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
                      "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
                      "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
@@ -383,7 +383,7 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
         design, joint_adjacency_dict = concatenate_state_and_edges(left_state, state, left_adjacency_dict,
                                                                    adjacency_dict)
         num_fuselage, num_rotors, num_wings = components_count(design)
-        if num_fuselage and num_rotors and num_wings:
+        if num_fuselage and num_rotors: # and num_wings
             return Grid(nodes=design, adjacencies=joint_adjacency_dict)
 
 
