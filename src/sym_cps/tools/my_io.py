@@ -4,13 +4,18 @@ from pathlib import Path
 from typing import OrderedDict
 
 from engineio import json
+from matplotlib.figure import Figure
 from sym_cps.tools.strings import sort_dictionary
 
 
 def save_to_file(
-    file_content: str | dict, file_name: str, folder_name: str | None = None, absolute_path: Path | None = None
+    file_content: str | dict | Figure, file_name: str, folder_name: str | None = None, absolute_path: Path | None = None
 ) -> Path:
-    if Path(file_name).suffix == "":
+    if Path(file_name).suffix == "" and file_content == dict:
+        file_name += ".json"
+    elif Path(file_name).suffix == "" and file_content == Figure:
+        file_name += ".svg"
+    elif Path(file_name).suffix == "" and file_content == str:
         file_name += ".txt"
 
     if absolute_path is not None:
@@ -40,11 +45,11 @@ def save_to_file(
 
     _write_file(file_content, file_path)
 
-    print(f"File saved in {str(file_path)}")
+    print(f"{file_name} saved in {str(file_path)}")
     return file_path
 
 
-def _write_file(file_content: str | dict, absolute_path: Path):
+def _write_file(file_content: str | dict | Figure, absolute_path: Path):
     if isinstance(file_content, OrderedDict):
         with open(absolute_path, "w") as f:
             file_content = json.dumps(file_content, indent=4)
@@ -60,6 +65,8 @@ def _write_file(file_content: str | dict, absolute_path: Path):
         with open(absolute_path, "w") as f:
             json.dump(json.loads(file_content), f, indent=4)
         f.close()
+    elif isinstance(file_content, Figure):
+        file_content.savefig(absolute_path)
     else:
         with open(absolute_path, "w") as f:
             f.write(file_content)

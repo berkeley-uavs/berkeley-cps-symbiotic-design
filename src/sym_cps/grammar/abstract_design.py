@@ -8,11 +8,13 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 from sym_cps.grammar.elements import AbstractComponent, AbstractConnection, Fuselage, Wing, Propeller, Connector
-from sym_cps.grammar.rules import generate_random_topology, Grid
+from sym_cps.grammar.rules import generate_random_topology, Grid, get_seed_design_topo
+from sym_cps.tools.my_io import save_to_file
 
 
 @dataclass
 class AbstractDesign:
+    name: str
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
     connections: set[AbstractConnection] = field(default_factory=set)
 
@@ -68,6 +70,7 @@ class AbstractDesign:
 
         return max_x, max_y, max_z
 
+    @property
     def get_graph(self):
 
         graph = nx.Graph()
@@ -88,9 +91,23 @@ class AbstractDesign:
 
         return graph
 
+    def save(self):
+        export: dict = {"NODES": {}, "EDGES": []}
+        for position, component in self.grid.items():
+            export["NODES"][component.id] = position
+        for connection in self.connections:
+            export["EDGES"].append((connection.component_a.id, connection.component_b.id))
+
+        save_to_file(export, file_name=self.name, folder_name="grammar")
+        plot = self.plot
+        print(plot.__class__)
+        save_to_file(self.plot, file_name=self.name, folder_name="grammar")
+
+
+    @property
     def plot(self):
 
-        graph = self.get_graph()
+        graph = self.get_graph
 
         # Extract node and edge positions from the layout
         node_xyz = np.array([graph.nodes[v]["position"] for v in sorted(graph)])
@@ -113,19 +130,21 @@ class AbstractDesign:
         ax.grid(False)
         # Suppress tick labels
         for dim in (ax.xaxis, ax.yaxis, ax.zaxis):
-            dim.set_ticks([1])
+            dim.set_ticks([])
         # Set axes labels
         ax.set_xlabel("x")
         ax.set_ylabel("y")
         ax.set_zlabel("z")
 
         fig.tight_layout()
-        plt.show()
+        # fig.show()
+        return fig
 
 
 if __name__ == '__main__':
-    new_design = AbstractDesign()
-    new_design.parse_grid(generate_random_topology())
-    new_design.plot()
+    # new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
 
-
+    for i in range(0,100):
+        new_design = AbstractDesign(f"random_{i}")
+        new_design.parse_grid(generate_random_topology())
+        new_design.save()

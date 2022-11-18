@@ -27,6 +27,14 @@ class AbstractComponent:
     def id(self) -> str:
         return f"{self.base_name}_instance_{self.instance_n}"
 
+    @property
+    def export(self) -> dict:
+        return {
+            self.id: {
+                "position": self.grid_position,
+                "connections": [e.component_b.id for e in self.connections]
+            }}
+
 
 @dataclass
 class Fuselage(AbstractComponent):
