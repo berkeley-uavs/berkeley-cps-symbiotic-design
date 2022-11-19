@@ -47,23 +47,25 @@ class SimplifiedSelector():
         
         comps = []
         best_comp = None
-        best_diff = float("inf")
-        for comp in self._c_library.components_in_type[comp_type]:
+        best_diff = 0#float("inf")
+        for comp in list(self._c_library.components_in_type[comp_type]):
         #for batt in [self._c_library.components["TurnigyGraphene1000mAh2S75C"]]:
         #for batt in [self._c_library.components["TurnigyGraphene1000mAh4S75C"]]:
-        
+            self._uav_contract.set_rpm(rpm=18000)
             component_list[comp_type]["lib"] = [comp] * len(component_list[comp_type]["lib"])
             contract_system = self.build_contract_system(
                 verbose=verbose,
                 component_list=component_list
             )
             sys_inst, sys_connection = self._set_check_max_voltage_system_contract(body_weight=body_weight)
-            is_find = contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
+            is_refine = contract_system.check_refinement(sys_inst=sys_inst, sys_connection_map=sys_connection)
+            #is_refine = contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
             # compute something....
-            if is_find:
+            if is_refine:
                 comps.append(comp)
 
         for comp in comps:
+            self._uav_contract.set_rpm(rpm=6000)
             component_list[comp_type]["lib"] = [comp] * len(component_list[comp_type]["lib"])
             contract_system = self.build_contract_system(
                 verbose=verbose,
@@ -71,13 +73,16 @@ class SimplifiedSelector():
             )            
             sys_inst, sys_connection = self._set_check_balance_system_contract(body_weight=body_weight)
             is_find = contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
-            V = contract_system.get_metric_inst(inst=sys_inst, port_property_name="V_motor")
-            I = contract_system.get_metric(inst_name="Motor", port_property_name="I_motor")
-            obj = V * I
-            if obj < best_diff:
-                best_diff = obj
-                best_comp = comp
-        print(best_comp.id, best_diff)
+            if is_find:
+                V = contract_system.get_metric_inst(inst=sys_inst, port_property_name="V_motor")
+                I = contract_system.get_metric(inst_name="Motor", port_property_name="I_motor")
+                C = contract_system.get_metric(inst_name="Battery", port_property_name="capacity")
+                obj = C / (V * I)
+                print(comp.id, ": ", obj)
+                if obj > best_diff:
+                    best_diff = obj
+                    best_comp = comp
+        print("Best: ", best_comp.id, best_diff)
         return best_comp
 
     def _set_check_max_voltage_system_contract(self, body_weight: float):
@@ -179,7 +184,8 @@ class SimplifiedSelector():
         def system_guarantee(vs):
 
             ret_clauses = [
-                vs["thrust_sum"] >= vs["weight_sum"]
+                vs["thrust_sum"] >= vs["weight_sum"],
+                vs["I_battery"] <= vs["batt_capacity"] * 3600 / 400
             ]
 
             return ret_clauses
@@ -367,17 +373,20 @@ class SimplifiedSelector():
     @staticmethod
     def replace_with_component(
         design_concrete: DConcrete,
-        propeller: LibraryComponent,
-        motor: LibraryComponent,
-        battery: LibraryComponent,
+        propeller: LibraryComponent = None,
+        motor: LibraryComponent = None,
+        battery: LibraryComponent = None,
     ):
         for component in design_concrete.components:
             if component.c_type.id == "Propeller":
-                component.library_component = propeller
+                if propeller is not None:
+                    component.library_component = propeller
             if component.c_type.id == "Battery":
-                component.library_component = battery
+                if battery is not None:
+                    component.library_component = battery
             if component.c_type.id == "Motor":
-                component.library_component = motor
+                if motor is not None:
+                    component.library_component = motor
 
     @staticmethod
     def dconcrete_component_lists(d_concrete: DConcrete):
@@ -398,10 +407,19 @@ class SimplifiedSelector():
         self._c_library, self._seed_designs = parse_library_and_seed_designs()
         self.set_library(library=self._c_library)
 
-        self._testquad_design, _ = self._seed_designs["TestQuad"]
+        self._testquad_design, _ = self._seed_designs["TestQuad_Cargo"]
+        self._testquad_design.name += "_comp_opt"
         #self.check(d_concrete=self._testquad_design)
-        self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Propeller", body_weight=1.0)
+        for i in range(1):
+            battery = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Battery", body_weight=1.0, verbose=True)
+            self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
+            # propeller = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Propeller", body_weight=1.0, verbose=False)
+            # self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
+            # motor = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Motor", body_weight=1.0, verbose=False)
+            # self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
 
+
+        self._testquad_design.evaluate()
 
 
 

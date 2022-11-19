@@ -265,8 +265,8 @@ class UAVContract(object):
         shaft_prop: float = propeller.properties["SHAFT_DIAMETER"].value
         # print(table.get_value(rpm = 13000, v = 90, label="Cp"))
         table = table_dict[propeller]
-        C_p: float = table.get_value(rpm=rpm, v=0, label="Cp")  # 0.0659
-        C_t: float = table.get_value(rpm=rpm, v=0, label="Ct")  # 0.1319
+        C_p: float = table.get_value(rpm=rpm, v=1, label="Cp")  # 0.0659
+        C_t: float = table.get_value(rpm=rpm, v=1, label="Ct")  # 0.1319
 
         W_prop = propeller.properties["WEIGHT"].value * num_motor
         return {

@@ -59,7 +59,7 @@ class ContractSystem(object):
         is_sat = self._solver.check()    
         if is_sat and self._print_verbose:
             self.print_metric()
-        return is_sat
+        return not is_sat
 
     def find_behavior(self, sys_inst: ContractInstance, sys_connection_map: dict[str, list[tuple[str, str]]]):
         self.print_debug("Find Behavior Invoked!")
