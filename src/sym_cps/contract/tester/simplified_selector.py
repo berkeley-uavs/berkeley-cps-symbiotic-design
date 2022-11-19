@@ -344,7 +344,7 @@ class SimplifiedSelector:
         self._c_library, self._seed_designs = parse_library_and_seed_designs()
         self.set_library(library=self._c_library)
 
-        self._testquad_design, _ = self._seed_designs["TestQuad_Cargo"]
+        self._testquad_design, _ = self._seed_designs["TestQuad"]
         self._testquad_design.name += "_comp_opt"
         # self.check(d_concrete=self._testquad_design)
         for i in range(1):
