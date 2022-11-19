@@ -80,15 +80,39 @@ class AbstractDesign:
             }
         },
         """
+        tubes = []
         for connection in self.connections:
-            other_component = None
-            if connection.component_a != connection:
-                other_component = connection.component_a
+            propeller_component = None
+            fuselage_str = None
+            if connection.component_a.base_name == "Propeller_str":
+                propeller_component = connection.component_a
+                fuselage_str = connection.component_b
             else:
-                other_component = connection.component_b
+                propeller_component = connection.component_b
+                fuselage_str = connection.component_a
+
+            current = propeller_component.base_name + "_top_instance_" + str(propeller_component.instance_n)
+            instance = propeller_component.instance_n
+            length = 400 * connection.euclid_distance
             # Add Tube
-            new_tube = Tube(connection.euclid_distance)
+            # new_tube = Tube(AbstractComponent=connection,instance_n=instance, euclid_distance=connection.euclid_distance)
+            tube_instance = "Tube_instance_" + str(instance)
+            new_tube = {tube_instance:
+                {
+                    "CONNECTIONS": {
+                        fuselage_str.id + "__Hub4": "SIDE" + str(instance) + "-BOTTOM",
+                        current + "__Flange": "TOP-SIDE"
+                    },
+                    "PARAMETERS": {
+                        "Tube__END_ROT": 0.0,
+                        "Tube__Length": length,
+                        "Tube__Offset1": 0.0
+                    }
+                }
+            }
+            tubes.append((new_tube))
             # Connect it based on connection.relative_position
+        return tubes
 
 
 

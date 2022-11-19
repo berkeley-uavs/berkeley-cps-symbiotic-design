@@ -66,16 +66,34 @@ class AbstractTopology:
 
         export["TOPOLOGY"] = {}
 
+        tubes = abstract_design.instanciate_tubes()
+        for tube in tubes:
+            key = list(tube.keys())[0]
+            value = tube[key]
+            export["TOPOLOGY"][key] = value
+
+        #instantiate BatteryController
+        export["TOPOLOGY"]["BatteryController_instance_1"] = {"CONNECTIONS": {}, "PARAMETERS": {}}
+
         for position, abstract_component in abstract_design.grid.items():
-            export["TOPOLOGY"][abstract_component.id] = {}
-            export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
-            for connection in abstract_component.connections:
-                other_component = None
-                if connection.component_a != abstract_component:
-                    other_component = connection.component_a
+            if abstract_component.base_name == "Propeller_str":
+                current = abstract_component.base_name + "_top_instance_" + str(abstract_component.instance_n)
+                export["TOPOLOGY"][current] = {}
+                export["TOPOLOGY"][current]["CONNECTIONS"] = {}
+                export["TOPOLOGY"][current]["PARAMETERS"] = {}
+                export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
+                    current + "__Motor"] = "ANY"
+            else:
+                export["TOPOLOGY"][abstract_component.id] = {}
+                export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
+                export["TOPOLOGY"][abstract_component.id]["PARAMETERS"] = {}
+                export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
+                    abstract_component.id + "__Battery"] = "ANY"
 
 
-        print("wa")
+        abTop = AbstractTopology.from_dict(export)
+        return abTop
+
 
 
 
