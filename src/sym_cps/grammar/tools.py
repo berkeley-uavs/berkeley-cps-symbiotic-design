@@ -31,7 +31,9 @@ def get_direction_from_components_and_connections(
     for direction, (conn_a, conn_b) in connections.items():
         if conn_a == connector_id_a and conn_b == connector_id_b:
             return direction
-    raise Exception(f"Unknown Direction:\n{comp_type_a}  ->  {connector_id_a} \t-o-o- \t {connector_id_b}  <-  {comp_type_b}")
+    raise Exception(
+        f"Unknown Direction:\n{comp_type_a}  ->  {connector_id_a} \t-o-o- \t {connector_id_b}  <-  {comp_type_b}"
+    )
 
 
 def merge_connection_rules(folder: Path, library: Library):

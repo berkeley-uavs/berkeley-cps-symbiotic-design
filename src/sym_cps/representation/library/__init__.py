@@ -12,7 +12,6 @@ from sym_cps.representation.tools.parsers.parsing_library import fill_parameters
 from sym_cps.shared.paths import component_library_root_path_default, component_selection_path, data_folder
 
 
-
 @dataclass
 class Library:
     components: dict[str, LibraryComponent] = field(default_factory=dict)

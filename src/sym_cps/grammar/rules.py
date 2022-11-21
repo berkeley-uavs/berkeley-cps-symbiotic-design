@@ -3,9 +3,9 @@ from __future__ import annotations
 import copy
 import json
 import random
-import numpy as np
+from dataclasses import dataclass
+
 from sym_cps.shared.paths import data_folder
-from dataclasses import dataclass, field
 
 rule_dict_path_constant = data_folder / "reverse_engineering" / "grammar_rules.json"
 
@@ -144,13 +144,15 @@ def node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, r
 
 
 def node_matches_rule(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
-    return node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
-           node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
-           node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
-           node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
-           node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
-           node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings) and \
-           node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+    return (
+        node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+    )
 
 
 def get_matching_rules(node, state, rule_dict, symbol_groups, remaining_rotors, remaining_wings):
@@ -206,8 +208,7 @@ def get_children(node, state, adjacency_dict):
     children = []
     if tuple(node) in adjacency_dict:
         for child in adjacency_dict[tuple(node)]:
-            if state[child[0]][child[1]][child[2]] != "EMPTY" and \
-                    state[child[0]][child[1]][child[2]] != "UNOCCUPIED":
+            if state[child[0]][child[1]][child[2]] != "EMPTY" and state[child[0]][child[1]][child[2]] != "UNOCCUPIED":
                 children.append(tuple(child))
             elif state[child[0]][child[1]][child[2]] == "UNOCCUPIED" and node not in children:
                 children.append(node)
@@ -271,8 +272,9 @@ def reflect_state_and_edges(state, adjacency_dict):
         if key[0] > 0:
             left_adjacency_dict[(len(state) - 1 - key[0], key[1], key[2])] = []
             for neighbor in adjacency_dict[key]:
-                left_adjacency_dict[(len(state) - 1 - key[0], key[1], key[2])].append((len(state) - 1 - neighbor[0],
-                                                                                       neighbor[1], neighbor[2]))
+                left_adjacency_dict[(len(state) - 1 - key[0], key[1], key[2])].append(
+                    (len(state) - 1 - neighbor[0], neighbor[1], neighbor[2])
+                )
     return reflected_state, left_adjacency_dict
 
 
@@ -293,10 +295,12 @@ def concatenate_state_and_edges(left_state, right_state, left_adjacency_dict, ri
         joint_adjacency_dict[(key[0] + len(left_state), key[1], key[2])] = []
         for neighbor in right_adjacency_dict[key]:
             joint_adjacency_dict[(key[0] + len(left_state), key[1], key[2])].append(
-                (neighbor[0] + len(left_state), neighbor[1], neighbor[2]))
+                (neighbor[0] + len(left_state), neighbor[1], neighbor[2])
+            )
             if key[0] == 0 and neighbor[0] > 0:  # these are the edges going from the center
                 joint_adjacency_dict[(len(left_state), key[1], key[2])].append(
-                    (len(left_state) - neighbor[0], neighbor[1], neighbor[2]))
+                    (len(left_state) - neighbor[0], neighbor[1], neighbor[2])
+                )
 
     return design, joint_adjacency_dict
 
@@ -318,20 +322,26 @@ def components_count(design):
     return num_fuselage, num_rotors, num_wings
 
 
-def generate_random_topology(right_width=None, length=None, depth=None, origin=None,
-                             max_right_num_rotors=None, max_right_num_wings=None,
-                             rule_dict_path=rule_dict_path_constant):
-    symbol_groups = {"BODY": ["FUSELAGE", "HUB", "TUBE"],
-                     "CONNECTOR": ["HUB", "TUBE"],
-                     "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
-                     "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR",
-                                  "EMPTY", "UNOCCUPIED", "BOUNDARY"],
-                     "FREE": ["UNOCCUPIED", "EMPTY", ""],
-                     "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
-                     "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
-                     "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
-                     "WING_FRONT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"]
-                     }
+def generate_random_topology(
+    right_width=None,
+    length=None,
+    depth=None,
+    origin=None,
+    max_right_num_rotors=None,
+    max_right_num_wings=None,
+    rule_dict_path=rule_dict_path_constant,
+):
+    symbol_groups = {
+        "BODY": ["FUSELAGE", "HUB", "TUBE"],
+        "CONNECTOR": ["HUB", "TUBE"],
+        "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
+        "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR", "EMPTY", "UNOCCUPIED", "BOUNDARY"],
+        "FREE": ["UNOCCUPIED", "EMPTY", ""],
+        "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
+        "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
+        "WING-TOP": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "WING", "BOUNDARY"],
+        "WING_FRONT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
+    }
 
     while True:
         if right_width is None:
@@ -362,36 +372,37 @@ def generate_random_topology(right_width=None, length=None, depth=None, origin=N
         adjacency_dict = {}
         while traversal_stack:
             node = traversal_stack.pop()
-            if (node[0] == origin[0] or node[1] == origin[1] or node[2] == origin[2]) and \
-                    state[origin[0]][origin[1]][origin[2]] == "UNOCCUPIED":
+            if (node[0] == origin[0] or node[1] == origin[1] or node[2] == origin[2]) and state[origin[0]][origin[1]][
+                origin[2]
+            ] == "UNOCCUPIED":
                 state[origin[0]][origin[1]][origin[2]] = "FUSELAGE"
             else:
-                matching_rules = get_matching_rules(node, state, rule_dict, symbol_groups,
-                                                    remaining_rotors, remaining_wings)
+                matching_rules = get_matching_rules(
+                    node, state, rule_dict, symbol_groups, remaining_rotors, remaining_wings
+                )
                 if not matching_rules:
                     continue
                 rule_to_apply = random.choice(matching_rules)
-                state, adjacency_dict, remaining_rotors, remaining_wings = \
-                    apply_rule(node, state, adjacency_dict, rule_to_apply["production"],
-                               remaining_rotors, remaining_wings)
+                state, adjacency_dict, remaining_rotors, remaining_wings = apply_rule(
+                    node, state, adjacency_dict, rule_to_apply["production"], remaining_rotors, remaining_wings
+                )
             children = get_children(node, state, adjacency_dict)
             for child in children:
                 if child not in traversal_stack:
                     traversal_stack.append(child)
         state, adjacency_dict = trim_loose_ends(state, adjacency_dict, symbol_groups)
         left_state, left_adjacency_dict = reflect_state_and_edges(state, adjacency_dict)
-        design, joint_adjacency_dict = concatenate_state_and_edges(left_state, state, left_adjacency_dict,
-                                                                   adjacency_dict)
+        design, joint_adjacency_dict = concatenate_state_and_edges(
+            left_state, state, left_adjacency_dict, adjacency_dict
+        )
         num_fuselage, num_rotors, num_wings = components_count(design)
-        if num_fuselage and num_rotors: # and num_wings
+        if num_fuselage and num_rotors:  # and num_wings
             return Grid(nodes=design, adjacencies=joint_adjacency_dict)
 
 
 def get_seed_design_topo(design_name: str):
     if design_name == "TestQuad_Cargo":
-        state = [[[""], ["ROTOR"], [""]],
-                 [["ROTOR"], ["FUSELAGE"], ["ROTOR"]],
-                 [[""], ["ROTOR"], [""]]]
+        state = [[[""], ["ROTOR"], [""]], [["ROTOR"], ["FUSELAGE"], ["ROTOR"]], [[""], ["ROTOR"], [""]]]
         adjacency_dict = {}
         adjacency_dict[(1, 1, 0)] = [(1, 0, 0), (0, 1, 0), (2, 1, 0), (1, 2, 0)]
         return Grid(nodes=state, adjacencies=adjacency_dict)
@@ -413,9 +424,9 @@ if __name__ == "__main__":
         fuselage_position_y = random.choice(range(possible_lengths))
         fuselage_position_z = random.choice(range(possible_depths))
         origin = [0, fuselage_position_y, fuselage_position_z]
-        grid = generate_random_topology(possible_half_widths, possible_lengths, possible_depths,
-                                                          origin,
-                                                          max_right_num_rotors, max_right_num_wings)
+        grid = generate_random_topology(
+            possible_half_widths, possible_lengths, possible_depths, origin, max_right_num_rotors, max_right_num_wings
+        )
         # if design is not None:
         designs.append((grid.nodes, grid.adjacencies))
         # if invalid_design is not None:

@@ -5,19 +5,19 @@ https://github.com/LOGiCS-Project/swri-simple-uam-example
 import json
 from pathlib import Path
 
-from simple_uam.direct2cad.actions.actors import process_design, gen_info_files
 from simple_uam.client.watch import poll_results_backend
+from simple_uam.direct2cad.actions.actors import gen_info_files, process_design
 
 from sym_cps.evaluation.tools import extract_results, load_design, load_metadata, polling_results
 from sym_cps.shared.paths import designs_folder
 
 
 def evaluate_design(
-        design_json_path: Path,
-        metadata: Path | dict | None = None,
-        timeout: int = 800,
-        info_only: bool = False,
-        control_opt: bool = False,
+    design_json_path: Path,
+    metadata: Path | dict | None = None,
+    timeout: int = 800,
+    info_only: bool = False,
+    control_opt: bool = False,
 ) -> dict:
     """Evaluate a design_swri.json provided at location 'design_json_path'
     Metadata to include with the operation, becomes part of metadata.json in the result.
@@ -36,11 +36,11 @@ def evaluate_design(
         msg = gen_info_files.send(design, metadata=metadata)
     else:
         print("Processing design...")
-        msg = process_design.send(design, metadata=metadata, compile_args={'srcs': None})
+        msg = process_design.send(design, metadata=metadata, compile_args={"srcs": None})
         print("Hello")
         print(json.dumps(msg.asdict(), indent=2, sort_keys=True))
     print("Waiting for results...")
-    result_path = polling_results(msg, timeout) # poll_results_backend(msg, timeout)  #
+    result_path = polling_results(msg, timeout)  # poll_results_backend(msg, timeout)  #
     print(f"Command completed. Results can be found at:{result_path}")
     # Obtain information from the result foleder
     if not info_only:
@@ -50,7 +50,7 @@ def evaluate_design(
         return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     "Testing evaluation data"
     design_json_path = designs_folder / "NewAxe_Cargo" / "design_swri.json"
     evaluate_design(design_json_path)

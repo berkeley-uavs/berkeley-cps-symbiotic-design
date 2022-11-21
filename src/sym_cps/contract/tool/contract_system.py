@@ -1,18 +1,20 @@
-from sym_cps.contract.tool.contract_instance import ContractInstance
 from sym_cps.contract.tool.component_interface import ComponentInterface
+from sym_cps.contract.tool.contract_instance import ContractInstance
 from sym_cps.contract.tool.solver.solver_interface import SolverInterface
+
 
 class ContractSystem(object):
     """Define the system in horizontal view, in this view, contracts are interacting using their interface"""
+
     def __init__(self, verbose=True):
         self._c_instance: dict[str, ContractInstance] = {}  # instance name ->  #instance
-        #self._clauses: list = []
-        self._constraint_clauses: list = []# list to make compositon
-        self._guarantee_clauses: list = []# list to make compositon
-        self._system_clauses: list = []# list to contain all the connection and selection constraint encoding
+        # self._clauses: list = []
+        self._constraint_clauses: list = []  # list to make compositon
+        self._guarantee_clauses: list = []  # list to make compositon
+        self._system_clauses: list = []  # list to contain all the connection and selection constraint encoding
         self._selection_candidate: dict[ContractInstance, dict] = {}  # map each instance to all available choice
         # the tuple contains {z3 var: actual component}
-        #self._model = None
+        # self._model = None
         self._solver: SolverInterface = None
         self._objective_expr = None
         self._objective_val = None
@@ -24,7 +26,7 @@ class ContractSystem(object):
 
     def not_connected_ports(self) -> list[ComponentInterface]:
         """Return the list of ports that are not connected
-            Useful for create system ports 
+        Useful for create system ports
         """
         return NotImplementedError
 
@@ -32,7 +34,7 @@ class ContractSystem(object):
         """Check whether the whole system is concrete, meaning that all component has been selected"""
         for inst in self._c_instance.values():
             if inst.is_selectable:
-                return False 
+                return False
         return True
 
     def print_debug(self, *args):
@@ -51,12 +53,8 @@ class ContractSystem(object):
         self._build_connection_one_to_multi(sys_inst, sys_connection_map=sys_connection_map)
         self._solver.add_conjunction_clause(self._guarantee_clauses)
         self._solver.add_conjunction_clause(self._system_clauses)
-        self._solver.add_conjunction_clause(
-            self._solver.clause_not(
-                self._solver.clause_and(*self._constraint_clauses)
-            )
-        )
-        is_sat = self._solver.check()    
+        self._solver.add_conjunction_clause(self._solver.clause_not(self._solver.clause_and(*self._constraint_clauses)))
+        is_sat = self._solver.check()
         if is_sat and self._print_verbose:
             self.print_metric()
         return not is_sat
@@ -70,7 +68,7 @@ class ContractSystem(object):
         self._solver.add_conjunction_clause(self._guarantee_clauses)
         self._solver.add_conjunction_clause(self._system_clauses)
         self._solver.add_conjunction_clause(self._constraint_clauses)
-        is_sat = self._solver.check()    
+        is_sat = self._solver.check()
         if is_sat and self._print_verbose:
             self.print_debug("SAT")
             self.print_metric()
@@ -79,10 +77,13 @@ class ContractSystem(object):
             self.print_debug("UNSAT")
         return is_sat
 
-    def select(self, sys_inst: ContractInstance, 
-                     sys_connection_map: dict[str, list[tuple[str, str]]],
-                     max_iter: int,
-                     timeout_milliseconds: int):
+    def select(
+        self,
+        sys_inst: ContractInstance,
+        sys_connection_map: dict[str, list[tuple[str, str]]],
+        max_iter: int,
+        timeout_milliseconds: int,
+    ):
         self.print_debug("Select Component!")
         self._clear_clauses()
         sys_inst.build_clauses(solver_interface=self._solver)
@@ -126,9 +127,10 @@ class ContractSystem(object):
             self._guarantee_clauses.extend(inst.guarantee_clauses)
         self._constraint_clauses.extend(sys_inst.guarantee_clauses)
         self._guarantee_clauses.extend(sys_inst.assumption_clauses)
-    
 
-    def _build_connection_one_to_multi(self, sys_inst:ContractInstance, sys_connection_map: dict[str, list[tuple[str, str]]]):
+    def _build_connection_one_to_multi(
+        self, sys_inst: ContractInstance, sys_connection_map: dict[str, list[tuple[str, str]]]
+    ):
         for inst_name, connection_map in sys_connection_map.items():
             inst = self._c_instance[inst_name]
             self.compose(inst1=sys_inst, inst2=inst, connection_map=connection_map)
@@ -138,7 +140,7 @@ class ContractSystem(object):
             self._constraint_clauses.extend(inst.assumption_clauses)
             self._guarantee_clauses.extend(inst.guarantee_clauses)
         self._constraint_clauses.extend(sys_inst.assumption_clauses)
-        self._guarantee_clauses.extend(sys_inst.guarantee_clauses)        
+        self._guarantee_clauses.extend(sys_inst.guarantee_clauses)
 
     def add_instance(self, inst1: ContractInstance):
         self.print_debug("Add instance: ", inst1.instance_name)
@@ -159,11 +161,13 @@ class ContractSystem(object):
 
     def set_selection(self, inst: ContractInstance, candidate_list: list[dict]):
         """Set selection for a instance
-        candidte_list: a list where each element represents a component, the element should be 
+        candidte_list: a list where each element represents a component, the element should be
         a dictionary which map the name of the property to an actual value
         """
         if not inst.is_selectable:
-            print(f"Error, instance {inst.instance_name} has been instantiated with a concrete component and thus cannot be selected.")
+            print(
+                f"Error, instance {inst.instance_name} has been instantiated with a concrete component and thus cannot be selected."
+            )
         if inst.instance_name not in self._c_instance:
             print(f"Error, instance {inst.instance_name} has not been added. Use add_instance")
             return False
@@ -173,7 +177,8 @@ class ContractSystem(object):
         for candidate in candidate_list:
             use_v = self._solver.get_fresh_variable(var_name=f"{inst.instance_name}_use_{candidate.id}", sort="bool")
             assignment_constraint = [
-                self._solver.clause_equal(inst.get_property_var(prop_name), candidate[prop_name]) for prop_name in inst.property_name_list
+                self._solver.clause_equal(inst.get_property_var(prop_name), candidate[prop_name])
+                for prop_name in inst.property_name_list
             ]
             self._system_clauses.append(
                 self._solver.clause_implication(use_v, self._solver.clause_and(*assignment_constraint))
@@ -185,14 +190,10 @@ class ContractSystem(object):
         # constraint that no multiple chosen
         for v, cand in selection_dict.items():
             not_v2s = [self._solver.clause_not(v2) for v2 in selection_dict.keys() if v.get_id() != v2.get_id()]
-            self._system_clauses.append(
-                self._solver.clause_implication(v, self._solver.clause_and(*not_v2s))
-            )
+            self._system_clauses.append(self._solver.clause_implication(v, self._solver.clause_and(*not_v2s)))
 
         # select one
-        self._guarantee_clauses.append(
-            self._solver.clause_or(*(selection_dict.keys()))
-        )
+        self._guarantee_clauses.append(self._solver.clause_or(*(selection_dict.keys())))
 
     def set_objective(self, expr, value, evaluate_fn):
         self._objective_expr = expr

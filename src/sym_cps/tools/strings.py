@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import json
 
 
 def tab(stringable_object) -> str:

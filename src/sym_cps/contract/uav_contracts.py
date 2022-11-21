@@ -1,7 +1,8 @@
 import math
 
-from sym_cps.contract.tool.contract_tool import ContractManager, ContractTemplate
+from sym_cps.contract.tool.contract_tool import ContractTemplate
 from sym_cps.representation.library.elements.library_component import LibraryComponent
+
 
 class UAVContract(object):
     def __init__(self, num_motor, num_battery):
@@ -10,7 +11,6 @@ class UAVContract(object):
         self._num_battery = num_battery
         self.set_contract()
         self._rpm_static = 10000
-
 
     def set_contract(self):
 
@@ -112,10 +112,11 @@ class UAVContract(object):
 
         # system contract
 
-
     def hackathon_property_interface_fn(self, component: LibraryComponent):
         if component.comp_type.id == "Propeller":
-            return self.hackthon_get_propeller_property(propeller=component, table_dict=self._table_dict, rpm=self._rpm_static)
+            return self.hackthon_get_propeller_property(
+                propeller=component, table_dict=self._table_dict, rpm=self._rpm_static
+            )
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
         elif component.comp_type.id == "Motor":
@@ -143,7 +144,6 @@ class UAVContract(object):
             "name": propeller.id,
         }
 
-
     def hackthon_get_motor_property(self, motor):
         R_w: float = motor.properties["INTERNAL_RESISTANCE"].value / 1000  # Ohm
         K_t: float = motor.properties["KT"].value
@@ -164,7 +164,6 @@ class UAVContract(object):
             "shaft_motor": shaft__motor,
             "name": motor.id,
         }
-
 
     def hackthon_get_battery_property(self, battery, num_battery):
         capacity: float = battery.properties["CAPACITY"].value * num_battery / 1000  # mAh -> Ah

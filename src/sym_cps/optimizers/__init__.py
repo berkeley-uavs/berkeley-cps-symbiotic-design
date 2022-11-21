@@ -3,6 +3,8 @@ from enum import Enum, auto
 
 # from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.library import Library, LibraryComponent
+
+
 class OptimizationStrategy(Enum):
     random_strategy = auto()
 
@@ -15,6 +17,7 @@ class Optimizer:
         """Choose Component and its Parameters"""
         default_component: LibraryComponent = self.library.get_default_component(component_type_id, design_name)
         return default_component
+
     #
     # def component_selection(self, d_concrete: DConcrete,
     #                               body_weight = 0,
