@@ -19,7 +19,7 @@ def design_test_quad():
 def random_designs_to_d_concrete():
     new_design = AbstractDesign(f"random_design_test")
     new_design.parse_grid(generate_random_topology())
-    new_design.save()
+    new_design.save(folder_name=f"designs/{new_design.name}")
     abstract_topology = AbstractTopology.from_abstract_design(new_design)
     d_concrete = DConcrete.from_abstract_topology(abstract_topology)
     d_concrete.export_all()

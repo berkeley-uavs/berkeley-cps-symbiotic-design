@@ -56,6 +56,7 @@ class AbstractTopology:
     description: str
     connections: dict[str, dict[str, str]]
     parameters: dict[str, dict[str, float]]
+    abstract_design: AbstractDesign | None = None
 
     @classmethod
     def from_abstract_design(cls, abstract_design: AbstractDesign) -> AbstractTopology:

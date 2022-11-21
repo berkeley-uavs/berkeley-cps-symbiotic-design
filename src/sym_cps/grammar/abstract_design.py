@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -210,18 +211,19 @@ class AbstractDesign:
 
         return graph
 
-    def save(self):
+    def save(self, folder_name: str | None):
         export: dict = {"NODES": {}, "EDGES": []}
         for position, component in self.grid.items():
             export["NODES"][component.id] = position
         for connection in self.connections:
             export["EDGES"].append((connection.component_a.id, connection.component_b.id))
 
-        save_to_file(export, file_name=self.name, folder_name="grammar")
-        plot = self.plot
-        print(plot.__class__)
-        save_to_file(self.plot, file_name=self.name, folder_name="grammar")
-        save_to_file(self, file_name=self.name, folder_name="grammar")
+        if folder_name is None:
+            folder_name = "grammar"
+
+        save_to_file(export, file_name=self.name, folder_name=folder_name)
+        save_to_file(self.plot, file_name=self.name, folder_name=folder_name)
+        save_to_file(self, file_name=self.name, folder_name=folder_name)
 
     @property
     def plot(self):
