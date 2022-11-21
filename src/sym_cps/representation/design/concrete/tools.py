@@ -13,12 +13,12 @@ from sym_cps.tools.graphs import graph_to_dict
 def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
     for g in graphs:
         if (
-                len(
-                    g.get_isomorphisms_vf2(
-                        graph_to_add, node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
-                    )
+            len(
+                g.get_isomorphisms_vf2(
+                    graph_to_add, node_compat_fn=weak_node_comparison, edge_compat_fn=weak_edge_comparison
                 )
-                > 0
+            )
+            > 0
         ):
             return True
     return False
@@ -30,10 +30,9 @@ def is_isomorphism_present(graphs: list[Graph], graph_to_add: Graph):
 #
 #     return True
 
+
 def strong_mapping(graph_a: Graph, graph_b: Graph) -> bool:
-    mappings = graph_a.get_isomorphisms_vf2(
-        graph_b, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison
-    )
+    mappings = graph_a.get_isomorphisms_vf2(graph_b, node_compat_fn=node_comparison, edge_compat_fn=edge_comparison)
     return len(mappings) > 0
 
 

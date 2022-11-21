@@ -107,7 +107,7 @@ class ContractTemplate(object):
 class ContractManager(object):
     def __init__(self, property_interface_fn: Callable, verbose=True):
         self._c_instance: dict[str, ContractInstance] = {}  # instance name ->  #instance
-        #self._clauses: list = []
+        # self._clauses: list = []
         self._constraint_clauses: list = []
         self._guarantee_clauses: list = []
         self._selection_candidate: dict[ContractInstance, dict] = {}  # map each instance to all available choice
@@ -130,8 +130,8 @@ class ContractManager(object):
         self._selection_candidate[sys_inst] = {}
         self._guarantee_clauses.extend(sys_inst.assumption)
         self._constraint_clauses.extend(sys_inst.guarantee)
-        #self._clauses.extend(sys_inst.assumption)
-        #self._clauses.append(z3.Not(z3.And(*sys_inst.guarantee)))
+        # self._clauses.extend(sys_inst.assumption)
+        # self._clauses.append(z3.Not(z3.And(*sys_inst.guarantee)))
 
     def add_instance(self, inst1: ContractInstance):
         self.print_debug("Add instance: ", inst1.instance_name)
@@ -187,7 +187,6 @@ class ContractManager(object):
     def get_var(self, inst_name, port_property_name):
         return self._c_instance[inst_name].get_var(port_property_name=port_property_name)
 
-
     def solve_contract(self):
         self._solver = z3.Solver()
         self._solver.add(z3.Not(z3.And(*self._constraint_clauses)))
@@ -204,7 +203,7 @@ class ContractManager(object):
             self.print_metric()
             # selection_result = self.get_component_selection()
             # self.print_selection_result(selection_result)
-            
+
             return True
         else:
             self.print_debug("UNSAT")

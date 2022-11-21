@@ -56,8 +56,7 @@ class Test_Selection:
     def run_evaluation(self, propeller, motor, battery):
         design_concrete, design_topology = self.designs["TestQuad"]
         self.component_selection.check_selection(
-            design_concrete=design_concrete,
-            motor=motor, battery=battery, propeller=propeller
+            design_concrete=design_concrete, motor=motor, battery=battery, propeller=propeller
         )
         """Set the component for selection"""
         self.component_selection.replace_with_component(
@@ -86,7 +85,7 @@ class Test_Selection:
 if __name__ == "__main__":
     tester = Test_Selection()
     propeller, motor, battery = tester.test_component_selection()
-    #component_dict = tester.test_general_component_selection()
+    # component_dict = tester.test_general_component_selection()
     # propeller = c_library.components["62x6_2_3200_51_1390"]
     # motor = c_library.components["Rex30"]
     # battery = c_library.components["TurnigyGraphene6000mAh3S75C"]
@@ -201,8 +200,8 @@ if __name__ == "__main__":
 
     # propeller = tester.c_library.components["apc_propellers_17x10"]
     # motor = tester.c_library.components["t_motor_AntigravityMN1005V2KV90"]
-    # battery = tester.c_library.components["TurnigyGraphene1000mAh2S75C"] 
-        
+    # battery = tester.c_library.components["TurnigyGraphene1000mAh2S75C"]
+
     tester.check_combination(propeller=propeller, motor=motor, battery=battery)
     tester.run_evaluation(propeller=propeller, motor=motor, battery=battery)
     # build_contract_library()

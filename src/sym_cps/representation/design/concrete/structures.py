@@ -12,9 +12,9 @@ from sym_cps.tools.graphs import graph_to_pdf
 from sym_cps.tools.my_io import save_to_file
 
 
-def find_isos(designs_to_decompose: list[DConcrete], key_nodes: list[str] | None = None) -> tuple[dict[str, list[dict]],
-                                                                                                  dict[str, list[dict]],
-                                                                                                  dict, dict]:
+def find_isos(
+    designs_to_decompose: list[DConcrete], key_nodes: list[str] | None = None
+) -> tuple[dict[str, list[dict]], dict[str, list[dict]], dict, dict]:
     if key_nodes is None:
         key_nodes = ["BatteryController", "Tube", "Hub2", "Hub3", "Hub4", "Hub5", "Hub6"]
 
