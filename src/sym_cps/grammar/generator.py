@@ -44,4 +44,4 @@ def abstract_topo_from_random():
 
 
 if __name__ == "__main__":
-    design_test_quad()
+    random_designs_to_d_concrete()

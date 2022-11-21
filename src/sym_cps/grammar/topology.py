@@ -361,7 +361,7 @@ class AbstractTopology:
 
     def to_json(self, abstraction_level: int) -> str:
         export_dict = self.to_dict(abstraction_level)
-        return str(json.dumps(export, indent=4))
+        return str(json.dumps(export_dict, indent=4))
 
     def to_dict(self, abstraction_level: int) -> dict:
         export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": abstraction_level, "TOPOLOGY": {}}
