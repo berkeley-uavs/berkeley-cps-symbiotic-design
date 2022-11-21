@@ -54,7 +54,21 @@ class AbstractDesign:
             for position_b in connections:
                 self.add_connection(position_a, position_b)
 
-    def instanciate_tubes(self) -> dict:
+    def instantiate_hubs(self) -> dict:
+        hubs = []
+        for component in self.grid.values():
+            if component.base_name == "Connector":
+                new_hub = {"Hub6_instance_" + str(component.instance_n):
+                    {
+                        "CONNECTIONS": {},
+                        "PARAMETERS": {}
+                    }
+                }
+                hubs.append(new_hub)
+        return hubs
+
+
+    def instantiate_tubes(self, num_hubs) -> dict:
         """TODO"""
         """
         "Tube_instance_1": {
@@ -80,28 +94,132 @@ class AbstractDesign:
             }
         },
         """
+        hub_counter = [1 for _ in range(num_hubs)]
+        fuselage_counter = {}
         tubes = []
+        instance = 1
         for connection in self.connections:
-            propeller_component = None
-            fuselage_str = None
-            if connection.component_a.base_name == "Propeller_str":
-                propeller_component = connection.component_a
-                fuselage_str = connection.component_b
-            else:
-                propeller_component = connection.component_b
-                fuselage_str = connection.component_a
+            # if connection.component_a.base_name == "Propeller_str":
+            #     current = connection.component_a
+            #     other = connection.component_b
+            #     new_tube = self.get_tube_for_propeller(current, other, length, instance, hub_counter)
+            # elif connection.component_a.base_name == "Fuselage_str":
+            #     other = connection.component_b
+            #     current = connection.component_a
+            #     new_tube = self.get_tube_for_fuselage(current, other, length, instance, hub_counter)
+            # elif connection.component_a.base_name == "Wing":
+            #     current = connection.component_a
+            #     other = connection.component_b
+            #     new_tube = self.get_tube_for_wing(current, other, length, instance, hub_counter)
+            # elif connection.component_a.base_name == "Connector":
+            #     current = connection.component_a
+            #     other = connection.component_b
+            #     new_tube = self.get_tube_for_hubs(current, other, length, instance, hub_counter)
+            #     hub_counter[connection.component_a.instance_n - 1] += 1
+            if connection.component_a.base_name == "Fuselage_str":
+                if not connection.component_a.instance_n in fuselage_counter.keys():
+                    fuselage_counter[connection.component_a.instance_n] = 1
+                else:
+                    fuselage_counter[connection.component_a.instance_n] += 1
+            if connection.component_b.base_name == "Fuselage_str":
+                if not connection.component_b.instance_n in fuselage_counter.keys():
+                    fuselage_counter[connection.component_b.instance_n] = 1
+                else:
+                    fuselage_counter[connection.component_b.instance_n] += 1
 
-            current = propeller_component.base_name + "_top_instance_" + str(propeller_component.instance_n)
-            instance = propeller_component.instance_n
             length = 400 * connection.euclid_distance
-            # Add Tube
-            # new_tube = Tube(AbstractComponent=connection,instance_n=instance, euclid_distance=connection.euclid_distance)
-            tube_instance = "Tube_instance_" + str(instance)
+            new_tube = self.get_tube(connection.component_a, connection.component_b, length, instance, hub_counter, fuselage_counter)
+
+            if connection.component_a.base_name == "Connector":
+                hub_counter[connection.component_a.instance_n - 1] += 1
+            if connection.component_b.base_name == "Connector":
+                hub_counter[connection.component_b.instance_n - 1] += 1
+
+            tubes.append(new_tube)
+            instance += 1
+            # Connect it based on connection.relative_position
+        return tubes
+
+    def get_mapping(self, component):
+        mapping = {
+            "Propeller_str": component.base_name + "_top_instance_" + str(component.instance_n),
+            "Fuselage_str": component.id,
+            "Wing": component.id,
+            "Connector": "Hub6_instance_" + str(component.instance_n)
+        }
+        return mapping[component.base_name]
+    def get_tube(self, current, other, length, instance, hub_counter, fuselage_counter):
+        comp_a = self.get_mapping(current)
+        comp_b = self.get_mapping(other)
+        tube_instance = "Tube_instance_" + str(instance)
+
+        new_tube = {tube_instance:
+            {
+                "CONNECTIONS": {},
+                "PARAMETERS": {
+                    "Tube__END_ROT": 0.0,
+                    "Tube__Length": length,
+                    "Tube__Offset1": 0.0
+                }
+            }
+        }
+
+        if current.base_name == "Fuselage_str":
+            side = fuselage_counter[current.instance_n]
+            new_tube[tube_instance]["CONNECTIONS"][comp_a + "__Hub4"] = "SIDE" + str(side) + "-BOTTOM"
+        elif current.base_name == "Wing":
+            new_tube[tube_instance]["CONNECTIONS"][comp_a] = "BOTTOM"
+        elif current.base_name == "Propeller_str":
+            new_tube[tube_instance]["CONNECTIONS"][comp_a + "__Flange"] = "TOP-SIDE"
+        elif current.base_name == "Connector":
+            new_tube[tube_instance]["CONNECTIONS"][comp_a] = "SIDE" + str(hub_counter[current.instance_n - 1]) + "-BOTTOM"
+
+        if other.base_name == "Fuselage_str":
+            side = fuselage_counter[other.instance_n]
+            new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Hub4"] = "SIDE" + str(side) + "-BOTTOM"
+        elif other.base_name == "Wing":
+            new_tube[tube_instance]["CONNECTIONS"][comp_b] = "BOTTOM"
+        elif other.base_name == "Propeller_str":
+            new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Flange"] = "TOP-SIDE"
+        elif other.base_name == "Connector":
+            new_tube[tube_instance]["CONNECTIONS"][comp_b] = "SIDE" + str(hub_counter[other.instance_n - 1]) + "-BOTTOM"
+
+        return new_tube
+    def get_tube_for_hubs(self, connection, instance, hub_counter):
+        comp_a = "Hub6_instance_" + str(connection.component_a.instance_n)
+        comp_b = "Hub6_instance_" + str(connection.component_b.instance_n)
+        side_a = hub_counter[connection.component_a.instance_n - 1]
+        side_b = hub_counter[connection.component_b.instance_n - 1]
+
+        tube_instance = "Tube_instance_" + str(instance)
+        new_tube = {tube_instance:
+            {
+                "CONNECTIONS": {
+                    comp_a: "SIDE" + str(side_a) + "-BOTTOM",
+                    comp_b: "SIDE" + str(side_b) + "-TOP"
+                },
+                "PARAMETERS": {
+                    "Tube__END_ROT": 0.0,
+                    "Tube__Length": 400 * connection.euclid_distance,
+                    "Tube__Offset1": 0.0
+                }
+            }
+        }
+        return new_tube
+
+
+    def get_tube_for_wing(self, wing_inst, other, length, instance, hub_counter):
+        # Add Tube
+
+        new_tube = None
+        tube_instance = "Tube_instance_" + str(instance)
+        if other.base_name == "Propeller":
+            current = other.base_name + "_top_instance_" + str(other.instance_n)
             new_tube = {tube_instance:
                 {
                     "CONNECTIONS": {
-                        fuselage_str.id + "__Hub4": "SIDE" + str(instance) + "-BOTTOM",
-                        current + "__Flange": "TOP-SIDE"
+                        wing_inst.id: "BOTTOM",
+                        current + "__Flange": "BOTTOM-SIDE"
                     },
                     "PARAMETERS": {
                         "Tube__END_ROT": 0.0,
@@ -110,12 +228,55 @@ class AbstractDesign:
                     }
                 }
             }
-            tubes.append((new_tube))
-            # Connect it based on connection.relative_position
-        return tubes
-
-
-
+        elif other.base_name == "Connector":
+            current = "Hub6_instance_" + str(other.instance_n)
+            new_tube = {tube_instance:
+                {
+                    "CONNECTIONS": {
+                        wing_inst.id: "BOTTOM",
+                        current: "SIDE" + str(hub_counter[other.instance_n - 1]) + "-BOTTOM",
+                    },
+                    "PARAMETERS": {
+                        "Tube__END_ROT": 0.0,
+                        "Tube__Length": length,
+                        "Tube__Offset1": 0.0
+                    }
+                }
+            }
+        elif other.base_name == "Fuselage":
+            current = "Hub6_instance_" + str(other.instance_n)
+            new_tube = {tube_instance:
+                {
+                    "CONNECTIONS": {
+                        wing_inst.id: "BOTTOM",
+                        other.id + "__Hub4": "SIDE" + str(other.instance_n) + "-BOTTOM",
+                    },
+                    "PARAMETERS": {
+                        "Tube__END_ROT": 0.0,
+                        "Tube__Length": length,
+                        "Tube__Offset1": 0.0
+                    }
+                }
+            }
+        return new_tube
+    def get_tube_for_fuselage(self, fuselage_str, other, length, instance, hub_counter):
+        current = propeller_str.base_name + "_top_instance_" + str(propeller_str.instance_n)
+        # Add Tube
+        tube_instance = "Tube_instance_" + str(instance)
+        new_tube = {tube_instance:
+            {
+                "CONNECTIONS": {
+                    fuselage_str.id + "__Hub4": "SIDE" + str(propeller_str.instance_n) + "-BOTTOM",
+                    current + "__Flange": "TOP-SIDE"
+                },
+                "PARAMETERS": {
+                    "Tube__END_ROT": 0.0,
+                    "Tube__Length": length,
+                    "Tube__Offset1": 0.0
+                }
+            }
+        }
+        return new_tube
     @property
     def grid_size(self) -> tuple[int, int, int]:
         max_x = 0
