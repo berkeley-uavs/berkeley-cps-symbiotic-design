@@ -99,23 +99,6 @@ class AbstractDesign:
         tubes = []
         instance = 1
         for connection in self.connections:
-            # if connection.component_a.base_name == "Propeller_str":
-            #     current = connection.component_a
-            #     other = connection.component_b
-            #     new_tube = self.get_tube_for_propeller(current, other, length, instance, hub_counter)
-            # elif connection.component_a.base_name == "Fuselage_str":
-            #     other = connection.component_b
-            #     current = connection.component_a
-            #     new_tube = self.get_tube_for_fuselage(current, other, length, instance, hub_counter)
-            # elif connection.component_a.base_name == "Wing":
-            #     current = connection.component_a
-            #     other = connection.component_b
-            #     new_tube = self.get_tube_for_wing(current, other, length, instance, hub_counter)
-            # elif connection.component_a.base_name == "Connector":
-            #     current = connection.component_a
-            #     other = connection.component_b
-            #     new_tube = self.get_tube_for_hubs(current, other, length, instance, hub_counter)
-            #     hub_counter[connection.component_a.instance_n - 1] += 1
             if connection.component_a.base_name == "Fuselage_str":
                 if not connection.component_a.instance_n in fuselage_counter.keys():
                     fuselage_counter[connection.component_a.instance_n] = 1
