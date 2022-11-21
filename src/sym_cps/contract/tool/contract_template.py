@@ -1,15 +1,18 @@
-from sym_cps.contract.tool.component_interface import ComponentInterface
 from typing import Callable
+
+from sym_cps.contract.tool.component_interface import ComponentInterface
+
 
 class ContractTemplate(object):
     """Class for a Contract Template, Now using function as assumption/guarantee but should also be done with parser/ast"""
+
     def __init__(
-        self, 
-        name: str, 
-        port_list: list[ComponentInterface], 
-        property_list: list[ComponentInterface], 
-        guarantee: Callable, 
-        assumption: Callable
+        self,
+        name: str,
+        port_list: list[ComponentInterface],
+        property_list: list[ComponentInterface],
+        guarantee: Callable,
+        assumption: Callable,
     ):
         self._port_list: list[ComponentInterface] = port_list
         self._property_list: list[ComponentInterface] = property_list

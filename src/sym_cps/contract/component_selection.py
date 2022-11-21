@@ -102,7 +102,7 @@ class ComponentSelectionContract:
             for comp, lib in zip(comps, libs):
                 comp.library_component = lib
 
-    def select_hackathon(self, design_concrete: DConcrete, max_iter = 10, timeout_millisecond = 100000, body_weight = 0):
+    def select_hackathon(self, design_concrete: DConcrete, max_iter=10, timeout_millisecond=100000, body_weight=0):
         print(" ")
 
         """Instantiate the contract"""

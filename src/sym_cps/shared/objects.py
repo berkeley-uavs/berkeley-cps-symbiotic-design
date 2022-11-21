@@ -5,8 +5,12 @@ from enum import Enum, auto
 
 from sym_cps.optimizers import Optimizer
 from sym_cps.shared.library import c_library
-from sym_cps.shared.paths import connectors_components_path, learned_default_params_path, reverse_engineering_folder, \
-    grammar_rules_path
+from sym_cps.shared.paths import (
+    connectors_components_path,
+    grammar_rules_path,
+    learned_default_params_path,
+    reverse_engineering_folder,
+)
 
 
 class ExportType(Enum):

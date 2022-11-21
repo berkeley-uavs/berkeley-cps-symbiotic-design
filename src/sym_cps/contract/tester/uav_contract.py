@@ -4,15 +4,16 @@ from sym_cps.contract.tool.component_interface import ComponentInterface
 from sym_cps.contract.tool.contract_template import ContractTemplate
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 
+
 class UAVContract(object):
-    def __init__(self, table_dict: dict, num_motor = None, num_battery = None):
+    def __init__(self, table_dict: dict, num_motor=None, num_battery=None):
         self._contracts = {}
         self._table_dict = table_dict
         self.set_num(num_motor=num_motor, num_battery=num_battery)
         # self.set_contract()
         self._rpm_static = 10000
 
-    def get_contract(self, contract_name:str) -> ContractTemplate:
+    def get_contract(self, contract_name: str) -> ContractTemplate:
         return self._contracts[contract_name]
 
     def set_num(self, num_motor, num_battery):
@@ -28,15 +29,13 @@ class UAVContract(object):
         return ret_components
 
     def add_battery(self):
-        battery_port_list = [
-            ComponentInterface(name="I_batt", sort="real")
-            ]
+        battery_port_list = [ComponentInterface(name="I_batt", sort="real")]
         battery_property_list = [
-            ComponentInterface(name="capacity", sort="real"), 
-            ComponentInterface(name="W_batt", sort="real"), 
-            ComponentInterface(name="I_max", sort="real"), 
-            ComponentInterface(name="V_battery", sort="real")
-            ]
+            ComponentInterface(name="capacity", sort="real"),
+            ComponentInterface(name="W_batt", sort="real"),
+            ComponentInterface(name="I_max", sort="real"),
+            ComponentInterface(name="V_battery", sort="real"),
+        ]
 
         def battery_assumption(vs):
             return [vs["I_batt"] <= vs["I_max"]]
@@ -53,13 +52,12 @@ class UAVContract(object):
         )
         self._contracts["Battery"] = battery_contract
 
-
     def add_motor(self):
         motor_port_list = [
-            ComponentInterface(name="torque_motor", sort="real"), 
+            ComponentInterface(name="torque_motor", sort="real"),
             ComponentInterface(name="omega_motor", sort="real"),
             ComponentInterface(name="I_motor", sort="real"),
-            ComponentInterface(name="V_motor", sort="real")
+            ComponentInterface(name="V_motor", sort="real"),
         ]
         motor_property_list = [
             ComponentInterface(name="I_max_motor", sort="real"),
@@ -69,7 +67,7 @@ class UAVContract(object):
             ComponentInterface(name="W_motor", sort="real"),
             ComponentInterface(name="R_w", sort="real"),
             ComponentInterface(name="I_idle", sort="real"),
-            ComponentInterface(name="shaft_motor", sort="real")
+            ComponentInterface(name="shaft_motor", sort="real"),
         ]
 
         def motor_assumption(vs):
@@ -93,19 +91,19 @@ class UAVContract(object):
 
     def add_propeller_simplified(self):
         propeller_port_list = [
-            ComponentInterface(name="rho", sort="real") ,
+            ComponentInterface(name="rho", sort="real"),
             ComponentInterface(name="omega_prop", sort="real"),
             ComponentInterface(name="torque_prop", sort="real"),
             ComponentInterface(name="thrust", sort="real"),
-            ComponentInterface(name="shaft_motor", sort="real")
-            ]
+            ComponentInterface(name="shaft_motor", sort="real"),
+        ]
         propeller_property_list = [
-            ComponentInterface(name="C_p", sort="real"), 
-            ComponentInterface(name="C_t", sort="real"), 
+            ComponentInterface(name="C_p", sort="real"),
+            ComponentInterface(name="C_t", sort="real"),
             ComponentInterface(name="diameter", sort="real"),
             ComponentInterface(name="shaft_prop", sort="real"),
-            ComponentInterface(name="W_prop", sort="real")
-            ]
+            ComponentInterface(name="W_prop", sort="real"),
+        ]
 
         def propeller_assumption(vs):
             return [vs["shaft_prop"] >= vs["shaft_motor"], vs["C_p"] >= 0]
@@ -115,7 +113,7 @@ class UAVContract(object):
                 vs["torque_prop"]
                 == vs["C_p"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 5 / (2 * 3.14159265) ** 3,
                 vs["thrust"]
-                == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2) 
+                == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2)
                 * self._num_motor,
                 vs["omega_prop"] >= 0,
             ]
@@ -131,19 +129,19 @@ class UAVContract(object):
 
     def add_propeller(self):
         propeller_port_list = [
-            ComponentInterface(name="rho", sort="real") ,
+            ComponentInterface(name="rho", sort="real"),
             ComponentInterface(name="omega_prop", sort="real"),
             ComponentInterface(name="torque_prop", sort="real"),
             ComponentInterface(name="thrust", sort="real"),
-            ComponentInterface(name="shaft_motor", sort="real")
-            ]
+            ComponentInterface(name="shaft_motor", sort="real"),
+        ]
         propeller_property_list = [
-            ComponentInterface(name="C_p", sort="real"), 
-            ComponentInterface(name="C_t", sort="real"), 
+            ComponentInterface(name="C_p", sort="real"),
+            ComponentInterface(name="C_t", sort="real"),
             ComponentInterface(name="diameter", sort="real"),
             ComponentInterface(name="shaft_prop", sort="real"),
-            ComponentInterface(name="W_prop", sort="real")
-            ]
+            ComponentInterface(name="W_prop", sort="real"),
+        ]
 
         def propeller_assumption(vs):
             return [vs["shaft_prop"] >= vs["shaft_motor"], vs["C_p"] >= 0]
@@ -168,11 +166,11 @@ class UAVContract(object):
 
     def add_battery_controller_simplified(self):
         battery_controller_port_list = [
-            ComponentInterface(name="V_battery", sort="real"), 
+            ComponentInterface(name="V_battery", sort="real"),
             ComponentInterface(name="I_battery", sort="real"),
             ComponentInterface(name="V_motor", sort="real"),
-            ComponentInterface(name="I_motor", sort="real")
-            ]
+            ComponentInterface(name="I_motor", sort="real"),
+        ]
         battery_controller_property_list = []
 
         def battery_controller_assumption(vs):
@@ -191,14 +189,11 @@ class UAVContract(object):
         self._contracts["BatteryController"] = battery_controller_contract
 
     def add_battery_controller(self):
-        battery_controller_port_list = [
-            ComponentInterface(name="V_battery", sort="real"), 
-            ComponentInterface(name="I_battery", sort="real")
-            ] + [
-            ComponentInterface(name=f"I_motor_{i}", sort="real") for i in range(self._num_motor)
-            ] + [ 
-            ComponentInterface(name=f"V_motor_{i}", sort="real") for i in range(self._num_motor)
-            ]
+        battery_controller_port_list = (
+            [ComponentInterface(name="V_battery", sort="real"), ComponentInterface(name="I_battery", sort="real")]
+            + [ComponentInterface(name=f"I_motor_{i}", sort="real") for i in range(self._num_motor)]
+            + [ComponentInterface(name=f"V_motor_{i}", sort="real") for i in range(self._num_motor)]
+        )
 
         battery_controller_property_list = []
 
@@ -230,17 +225,13 @@ class UAVContract(object):
         self.add_battery_controller_simplified()
         self.add_propeller_simplified()
 
-
-
-
-
-
         # system contract
-
 
     def hackathon_property_interface_fn(self, component: LibraryComponent):
         if component.comp_type.id == "Propeller":
-            return self.hackthon_get_propeller_property(propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, num_motor=1)
+            return self.hackthon_get_propeller_property(
+                propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, num_motor=1
+            )
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
         elif component.comp_type.id == "Motor":
@@ -250,7 +241,9 @@ class UAVContract(object):
 
     def hackathon_property_interface_fn_aggregated(self, component: LibraryComponent):
         if component.comp_type.id == "Propeller":
-            return self.hackthon_get_propeller_property(propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, num_motor=self._num_motor)
+            return self.hackthon_get_propeller_property(
+                propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, num_motor=self._num_motor
+            )
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
         elif component.comp_type.id == "Motor":
@@ -278,7 +271,6 @@ class UAVContract(object):
             "name": propeller.id,
         }
 
-
     def hackthon_get_motor_property(self, motor, num_motor):
         R_w: float = motor.properties["INTERNAL_RESISTANCE"].value / 1000  # Ohm
         K_t: float = motor.properties["KT"].value
@@ -299,7 +291,6 @@ class UAVContract(object):
             "shaft_motor": shaft__motor,
             "name": motor.id,
         }
-
 
     def hackthon_get_battery_property(self, battery, num_battery):
         capacity: float = battery.properties["CAPACITY"].value * num_battery / 1000  # mAh -> Ah

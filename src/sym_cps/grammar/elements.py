@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import abc
 import json
 from dataclasses import dataclass, field
 
 import numpy as np
-from sym_cps.grammar.rules import generate_random_topology, Grid
+
 from sym_cps.shared.paths import grammar_rules_path
 
 rule_dict = json.load(open(grammar_rules_path))
@@ -29,11 +28,7 @@ class AbstractComponent:
 
     @property
     def export(self) -> dict:
-        return {
-            self.id: {
-                "position": self.grid_position,
-                "connections": [e.component_b.id for e in self.connections]
-            }}
+        return {self.id: {"position": self.grid_position, "connections": [e.component_b.id for e in self.connections]}}
 
 
 @dataclass

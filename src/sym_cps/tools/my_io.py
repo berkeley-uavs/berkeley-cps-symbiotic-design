@@ -1,11 +1,12 @@
 # type: ignore
 import json
 import os
+import pickle
 from pathlib import Path
 from typing import OrderedDict
-import pickle
 
 from matplotlib.figure import Figure
+
 from sym_cps.tools.strings import sort_dictionary
 
 
@@ -20,7 +21,6 @@ def save_to_file(
         file_name += ".txt"
     elif Path(file_name).suffix == "":
         file_name += ".dat"
-
 
     if absolute_path is not None:
         if absolute_path.suffix == "txt" or absolute_path.suffix == "json":

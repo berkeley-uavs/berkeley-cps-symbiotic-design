@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-import numpy as np
-
-import networkx as nx
 
 import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
 
-from sym_cps.grammar.elements import AbstractComponent, AbstractConnection, Fuselage, Wing, Propeller, Connector, Tube
-from sym_cps.grammar.rules import generate_random_topology, Grid, get_seed_design_topo
+from sym_cps.grammar.elements import AbstractComponent, AbstractConnection, Connector, Fuselage, Propeller, Wing
+from sym_cps.grammar.rules import Grid, generate_random_topology, get_seed_design_topo
 from sym_cps.tools.my_io import save_to_file
 
 
@@ -18,9 +17,7 @@ class AbstractDesign:
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
     connections: set[AbstractConnection] = field(default_factory=set)
 
-    def add_abstract_component(self,
-                               position: tuple[int, int, int],
-                               component: AbstractComponent):
+    def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1
         for e in self.grid.values():
             if isinstance(e, component.__class__):
@@ -58,15 +55,9 @@ class AbstractDesign:
         hubs = []
         for component in self.grid.values():
             if component.base_name == "Connector":
-                new_hub = {"Hub6_instance_" + str(component.instance_n):
-                    {
-                        "CONNECTIONS": {},
-                        "PARAMETERS": {}
-                    }
-                }
+                new_hub = {"Hub6_instance_" + str(component.instance_n): {"CONNECTIONS": {}, "PARAMETERS": {}}}
                 hubs.append(new_hub)
         return hubs
-
 
     def instantiate_tubes(self, num_hubs) -> dict:
         """TODO"""
@@ -128,7 +119,9 @@ class AbstractDesign:
                     fuselage_counter[connection.component_b.instance_n] += 1
 
             length = 400 * connection.euclid_distance
-            new_tube = self.get_tube(connection.component_a, connection.component_b, length, instance, hub_counter, fuselage_counter)
+            new_tube = self.get_tube(
+                connection.component_a, connection.component_b, length, instance, hub_counter, fuselage_counter
+            )
 
             if connection.component_a.base_name == "Connector":
                 hub_counter[connection.component_a.instance_n - 1] += 1
@@ -145,22 +138,19 @@ class AbstractDesign:
             "Propeller_str": component.base_name + "_top_instance_" + str(component.instance_n),
             "Fuselage_str": component.id,
             "Wing": component.id,
-            "Connector": "Hub6_instance_" + str(component.instance_n)
+            "Connector": "Hub6_instance_" + str(component.instance_n),
         }
         return mapping[component.base_name]
+
     def get_tube(self, current, other, length, instance, hub_counter, fuselage_counter):
         comp_a = self.get_mapping(current)
         comp_b = self.get_mapping(other)
         tube_instance = "Tube_instance_" + str(instance)
 
-        new_tube = {tube_instance:
-            {
+        new_tube = {
+            tube_instance: {
                 "CONNECTIONS": {},
-                "PARAMETERS": {
-                    "Tube__END_ROT": 0.0,
-                    "Tube__Length": length,
-                    "Tube__Offset1": 0.0
-                }
+                "PARAMETERS": {"Tube__END_ROT": 0.0, "Tube__Length": length, "Tube__Offset1": 0.0},
             }
         }
 
@@ -172,7 +162,9 @@ class AbstractDesign:
         elif current.base_name == "Propeller_str":
             new_tube[tube_instance]["CONNECTIONS"][comp_a + "__Flange"] = "TOP-SIDE"
         elif current.base_name == "Connector":
-            new_tube[tube_instance]["CONNECTIONS"][comp_a] = "SIDE" + str(hub_counter[current.instance_n - 1]) + "-BOTTOM"
+            new_tube[tube_instance]["CONNECTIONS"][comp_a] = (
+                "SIDE" + str(hub_counter[current.instance_n - 1]) + "-BOTTOM"
+            )
 
         if other.base_name == "Fuselage_str":
             side = fuselage_counter[other.instance_n]
@@ -210,16 +202,11 @@ class AbstractDesign:
         nodes = {}
 
         for i, (position, node) in enumerate(self.grid.items()):
-            graph.add_node(i,
-                           position=np.array(position),
-                           id=node.id,
-                           color=node.color,
-                           component=node)
+            graph.add_node(i, position=np.array(position), id=node.id, color=node.color, component=node)
             nodes[node.id] = i
 
         for connection in self.connections:
-            graph.add_edge(nodes[connection.component_a.id],
-                           nodes[connection.component_b.id])
+            graph.add_edge(nodes[connection.component_a.id], nodes[connection.component_b.id])
 
         return graph
 
@@ -235,7 +222,6 @@ class AbstractDesign:
         print(plot.__class__)
         save_to_file(self.plot, file_name=self.name, folder_name="grammar")
         save_to_file(self, file_name=self.name, folder_name="grammar")
-
 
     @property
     def plot(self):
@@ -274,7 +260,7 @@ class AbstractDesign:
         return fig
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
 
     new_design = AbstractDesign(f"TestQuad_Cargo")
@@ -282,8 +268,7 @@ if __name__ == '__main__':
     new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
     new_design.save()
 
-
-    for i in range(0,100):
+    for i in range(0, 100):
         new_design = AbstractDesign(f"random_{i}")
         new_design.parse_grid(generate_random_topology())
         new_design.save()

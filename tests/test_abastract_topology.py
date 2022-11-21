@@ -1,12 +1,9 @@
-import json
-from sym_cps.grammar.tools import main
-
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
 from sym_cps.shared.objects import ExportType
 
-designs_to_check = [ "TestQuad_Cargo", "NewAxe_Cargo", "PickAxe"]
+designs_to_check = ["TestQuad_Cargo", "NewAxe_Cargo", "PickAxe"]
 
 
 def assert_topology_from_and_to_json(topology_level: ExportType):

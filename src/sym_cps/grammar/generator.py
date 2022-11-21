@@ -1,5 +1,5 @@
 from sym_cps.grammar.abstract_design import AbstractDesign
-from sym_cps.grammar.rules import get_seed_design_topo, generate_random_topology
+from sym_cps.grammar.rules import generate_random_topology, get_seed_design_topo
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.shared.paths import designs_folder
 
@@ -14,11 +14,13 @@ def design_test_quad():
     abstract_topology = AbstractTopology.from_abstract_design(new_design)
     return abstract_topology
 
+
 def random_designs():
     for i in range(0, 100):
         new_design = AbstractDesign(f"random_{i}")
         new_design.parse_grid(generate_random_topology())
         new_design.save()
+
 
 def abstract_topo_from_random():
     res = []
@@ -30,5 +32,6 @@ def abstract_topo_from_random():
         res.append(abstract_topology)
     return res
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     design_test_quad()

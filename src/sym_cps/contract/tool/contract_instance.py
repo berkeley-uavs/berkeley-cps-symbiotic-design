@@ -1,16 +1,22 @@
-from sym_cps.contract.tool.contract_template import ContractTemplate
-from sym_cps.contract.tool.component_interface import ComponentInterface
-from sym_cps.contract.tool.solver.solver_interface import SolverInterface
 from typing import Callable
+
+from sym_cps.contract.tool.component_interface import ComponentInterface
+from sym_cps.contract.tool.contract_template import ContractTemplate
+from sym_cps.contract.tool.solver.solver_interface import SolverInterface
+
 
 class ContractInstance(object):
     """Class for a Contract Instance
-        The component_properties set an antual property value to the contract, making the contract non-selectable
+    The component_properties set an antual property value to the contract, making the contract non-selectable
     """
-    def __init__(self,  template: ContractTemplate, 
-                        instance_name: str, 
-                        component_properties: dict = None, 
-                        solver_interface: SolverInterface = None):
+
+    def __init__(
+        self,
+        template: ContractTemplate,
+        instance_name: str,
+        component_properties: dict = None,
+        solver_interface: SolverInterface = None,
+    ):
 
         self._port_list: list[ComponentInterface] = template.port_list
         self._property_list: list[ComponentInterface] = template.property_list
@@ -37,6 +43,7 @@ class ContractInstance(object):
     @property
     def assumption_clauses(self):
         return self._assumption_clauses
+
     @property
     def guarantee_clauses(self):
         return self._guarantee_clauses
@@ -97,11 +104,15 @@ class ContractInstance(object):
         self.set_solver(solver_interface)
         self.reset_clauses()
         self._build_port_vars(solver_interface=self.solver_interface)
-        self._build_property_vars(solver_interface=self.solver_interface, component_properties=self._component_properties)
-        self._assumption_clauses = self._instantiate_clauses_from_function(solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.assumption)
-        self._guarantee_clauses = self._instantiate_clauses_from_function(solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.guarantee)
-
-
+        self._build_property_vars(
+            solver_interface=self.solver_interface, component_properties=self._component_properties
+        )
+        self._assumption_clauses = self._instantiate_clauses_from_function(
+            solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.assumption
+        )
+        self._guarantee_clauses = self._instantiate_clauses_from_function(
+            solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.guarantee
+        )
 
     def _instantiate_clauses_from_function(self, solver_interface: SolverInterface, vs, clause_fn: Callable):
         clauses = solver_interface.generate_clause_from_function(sym_clause_fn=clause_fn, vs=vs)
@@ -112,24 +123,27 @@ class ContractInstance(object):
 
     def _build_port_vars(self, solver_interface: SolverInterface):
         v_ports = {
-                    port.name: port.produce_fresh_variable(solver_interface=solver_interface ,
-                                                            var_name=self._build_var_name(interface_name=port.name)) 
-                                                            for port in self.port_list}
+            port.name: port.produce_fresh_variable(
+                solver_interface=solver_interface, var_name=self._build_var_name(interface_name=port.name)
+            )
+            for port in self.port_list
+        }
         self._var_dict.update(v_ports)
 
     def _build_property_vars(self, solver_interface: SolverInterface, component_properties: dict):
         v_properties = None
         if component_properties is not None:
-            v_properties = {prop.name: 
-                                prop.produce_constant(solver_interface=solver_interface, 
-                                                      value=component_properties[prop.name]) 
-                            for prop in self.property_list}
+            v_properties = {
+                prop.name: prop.produce_constant(
+                    solver_interface=solver_interface, value=component_properties[prop.name]
+                )
+                for prop in self.property_list
+            }
         else:
-            v_properties = {prop.name: 
-                                prop.produce_fresh_variable(solver_interface=solver_interface, 
-                                                            var_name=self._build_var_name(interface_name=prop.name)) 
-                            for prop in self.property_list}
+            v_properties = {
+                prop.name: prop.produce_fresh_variable(
+                    solver_interface=solver_interface, var_name=self._build_var_name(interface_name=prop.name)
+                )
+                for prop in self.property_list
+            }
         self._var_dict.update(v_properties)
-
-
-
