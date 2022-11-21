@@ -1,6 +1,7 @@
 from sym_cps.grammar.abstract_design import AbstractDesign
 from sym_cps.grammar.rules import generate_random_topology, get_seed_design_topo
 from sym_cps.grammar.topology import AbstractTopology
+from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.paths import designs_folder
 
 
@@ -10,9 +11,18 @@ def design_test_quad():
     # new_design.parse_grid(generate_random_topology())
     new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
     new_design.save()
-
     abstract_topology = AbstractTopology.from_abstract_design(new_design)
+
     return abstract_topology
+
+
+def random_designs_to_d_concrete():
+    new_design = AbstractDesign(f"random_design_test")
+    new_design.parse_grid(generate_random_topology())
+    new_design.save()
+    abstract_topology = AbstractTopology.from_abstract_design(new_design)
+    d_concrete = DConcrete.from_abstract_topology(abstract_topology)
+    d_concrete.export_all()
 
 
 def random_designs():
