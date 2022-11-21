@@ -16,7 +16,7 @@ def save_to_file(
     if Path(file_name).suffix == "" and isinstance(file_content, dict):
         file_name += ".json"
     elif Path(file_name).suffix == "" and isinstance(file_content, Figure):
-        file_name += ".svg"
+        file_name += ".pdf"
     elif Path(file_name).suffix == "" and isinstance(file_content, str):
         file_name += ".txt"
     elif Path(file_name).suffix == "":
