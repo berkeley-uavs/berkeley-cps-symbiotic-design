@@ -4,13 +4,9 @@ from sym_cps.contract.tool.contract_instance import ContractInstance
 from sym_cps.contract.tool.contract_system import ContractSystem
 from sym_cps.contract.tool.contract_template import ContractTemplate
 from sym_cps.contract.tool.solver.z3_interface import Z3Interface
-from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.representation.library import Library, LibraryComponent
-from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
-from sym_cps.representation.tools.parsers.parsing_prop_table import parsing_prop_table
 
-
-class SimplifiedSelector:
+from sym_cps.shared.objects import ExportType
+class SimplifiedSelector():
     def __init__(self):
         pass
 
@@ -43,10 +39,10 @@ class SimplifiedSelector:
 
         comps = []
         best_comp = None
-        best_diff = 0  # float("inf")
-        for comp in list(self._c_library.components_in_type[comp_type]):
-            # for batt in [self._c_library.components["TurnigyGraphene1000mAh2S75C"]]:
-            # for batt in [self._c_library.components["TurnigyGraphene1000mAh4S75C"]]:
+        best_diff = 0#float("inf")
+        #for comp in list(self._c_library.components_in_type[comp_type]):
+        #for batt in [self._c_library.components["TurnigyGraphene1000mAh2S75C"]]:
+        for comp in [self._c_library.components["Tattu25C10000mAh4S1P"]]:
             self._uav_contract.set_rpm(rpm=18000)
             component_list[comp_type]["lib"] = [comp] * len(component_list[comp_type]["lib"])
             contract_system = self.build_contract_system(verbose=verbose, component_list=component_list)
@@ -58,7 +54,7 @@ class SimplifiedSelector:
                 comps.append(comp)
 
         for comp in comps:
-            self._uav_contract.set_rpm(rpm=6000)
+            self._uav_contract.set_rpm(rpm=10000)
             component_list[comp_type]["lib"] = [comp] * len(component_list[comp_type]["lib"])
             contract_system = self.build_contract_system(verbose=verbose, component_list=component_list)
             sys_inst, sys_connection = self._set_check_balance_system_contract(body_weight=body_weight)
@@ -345,6 +341,9 @@ class SimplifiedSelector:
         self.set_library(library=self._c_library)
 
         self._testquad_design, _ = self._seed_designs["TestQuad"]
+
+        for comp in self._testquad_design.components:
+            print(comp.id, comp.library_component.id)
         self._testquad_design.name += "_comp_opt"
         # self.check(d_concrete=self._testquad_design)
         for i in range(1):
@@ -352,12 +351,14 @@ class SimplifiedSelector:
                 d_concrete=self._testquad_design, comp_type="Battery", body_weight=1.0, verbose=True
             )
             self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
+            self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
             # propeller = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Propeller", body_weight=1.0, verbose=False)
             # self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
             # motor = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Motor", body_weight=1.0, verbose=False)
             # self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
 
-        self._testquad_design.evaluate()
+        self._testquad_design.export(ExportType.JSON)
+
 
 
 if __name__ == "__main__":
