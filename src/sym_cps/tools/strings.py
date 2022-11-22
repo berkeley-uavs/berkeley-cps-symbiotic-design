@@ -34,7 +34,7 @@ def rename_component_types(component_type: str) -> str:
     return component_type
 
 
-def get_instance_name(component_type_name: str, instance_id: str) -> str:
+def get_instance_name(component_type_name: str, instance_id: int) -> str:
     if component_type_name == "Orient":
         return "Orient"
     return f"{component_type_name}_instance_{instance_id}"

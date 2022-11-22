@@ -7,6 +7,8 @@ import numpy as np
 
 from sym_cps.shared.paths import grammar_rules_path
 
+from sym_cps.tools.strings import get_instance_name
+
 rule_dict = json.load(open(grammar_rules_path))
 
 
@@ -24,7 +26,7 @@ class AbstractComponent:
 
     @property
     def id(self) -> str:
-        return f"{self.base_name}_instance_{self.instance_n}"
+        return get_instance_name(self.base_name, self.instance_n)
 
     @property
     def export(self) -> dict:
