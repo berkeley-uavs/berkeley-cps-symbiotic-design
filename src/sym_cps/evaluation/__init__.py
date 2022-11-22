@@ -53,5 +53,5 @@ def evaluate_design(
 if __name__ == "__main__":
     "Testing evaluation data"
     design_json_path = designs_folder / "NewAxe_Cargo" / "design_swri.json"
-    design_json_path = "/Users/pier/Projects/challenge_data/output/designs/_random/random_design_99/random/design_swri.json"
+    design_json_path = "/Users/pier/Projects/challenge_data/output/designs/random_design_0/design_swri.json"
     evaluate_design(design_json_path)
