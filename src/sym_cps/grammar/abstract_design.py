@@ -211,7 +211,7 @@ class AbstractDesign:
 
         return graph
 
-    def save(self, folder_name: str | None):
+    def save(self, folder_name: str | None = None):
         export: dict = {"NODES": {}, "EDGES": []}
         for position, component in self.grid.items():
             export["NODES"][component.id] = position

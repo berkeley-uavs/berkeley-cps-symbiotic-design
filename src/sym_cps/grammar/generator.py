@@ -19,10 +19,20 @@ def design_test_quad():
 def random_designs_to_d_concrete():
     new_design = AbstractDesign(f"random_design_test")
     new_design.parse_grid(generate_random_topology())
-    new_design.save(folder_name=f"designs/{new_design.name}")
+    new_design.save(folder_name=f"designs/generated/{new_design.name}")
     abstract_topology = AbstractTopology.from_abstract_design(new_design)
     d_concrete = DConcrete.from_abstract_topology(abstract_topology)
     d_concrete.export_all()
+
+
+def random_designs_to_d_concrete_n(n: int = 100):
+    for i in range(0, n):
+        new_design = AbstractDesign(f"random_design_{i}")
+        new_design.parse_grid(generate_random_topology())
+        new_design.save(folder_name=f"designs/{new_design.name}")
+        abstract_topology = AbstractTopology.from_abstract_design(new_design)
+        d_concrete = DConcrete.from_abstract_topology(abstract_topology)
+        d_concrete.export_all()
 
 
 def random_designs():
@@ -44,4 +54,4 @@ def abstract_topo_from_random():
 
 
 if __name__ == "__main__":
-    random_designs_to_d_concrete()
+    random_designs_to_d_concrete_n()
