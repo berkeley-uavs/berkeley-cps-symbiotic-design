@@ -33,6 +33,7 @@ def random_designs_to_d_concrete_n(n: int = 100):
         abstract_topology = AbstractTopology.from_abstract_design(new_design)
         d_concrete = DConcrete.from_abstract_topology(abstract_topology)
         d_concrete.export_all()
+        d_concrete.evaluate()
 
 
 def random_designs():

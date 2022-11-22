@@ -13,7 +13,10 @@ from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import (
     get_component_and_instance_type_from_instance_name,
     get_component_type_from_instance_name,
+    get_instance_name
 )
+
+"""TODO REFACTOR"""
 
 
 class AbstractionFeatures(Enum):
@@ -57,6 +60,7 @@ class AbstractTopology:
     connections: dict[str, dict[str, str]]
     parameters: dict[str, dict[str, float]]
     abstract_design: AbstractDesign | None = None
+
 
     @classmethod
     def from_abstract_design(cls, abstract_design: AbstractDesign) -> AbstractTopology:
@@ -134,6 +138,8 @@ class AbstractTopology:
             prop = -1
             for component_a, categories in topo["TOPOLOGY"].items():
                 # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
+                if "Orient" in component_a:
+                    component_a = "Orient"
                 struct, instance_n = get_component_and_instance_type_from_instance_name(component_a)
                 if struct in structures.keys():
                     paramters = [
@@ -150,16 +156,17 @@ class AbstractTopology:
                             if comp_a == "Battery":
                                 first_instance = 2 * int(instance_n) - 1
                                 second_instance = 2 * int(instance_n)
-                                topo_instance[comp_a + "_instance_" + str(first_instance)] = {
+                                topo_instance[get_instance_name(comp_a, first_instance)] = {
                                     "CONNECTIONS": {},
                                     "PARAMETERS": {},
                                 }
-                                topo_instance[comp_a + "_instance_" + str(second_instance)] = {
+                                topo_instance[get_instance_name(comp_a, second_instance)] = {
                                     "CONNECTIONS": {},
                                     "PARAMETERS": {},
                                 }
                             else:
-                                topo_instance[comp_a + "_instance_" + str(instance_n)] = {
+                                """TODO REFACTOR"""
+                                topo_instance[get_instance_name(comp_a, instance_n)] = {
                                     "CONNECTIONS": {},
                                     "PARAMETERS": {},
                                 }
@@ -193,8 +200,14 @@ class AbstractTopology:
                                                     comp_b + "_instance_" + str(second_instance)
                                                 ] = "INSIDE-1"
                                             else:
-                                                topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
-                                                    comp_b + "_instance_" + str(instance_n)
+                                                key_a = comp_a + "_instance_" + str(instance_n)
+                                                key_b = comp_b + "_instance_" + str(instance_n)
+                                                if "Orient" in comp_a:
+                                                    key_a = "Orient"
+                                                if "Orient" in comp_b:
+                                                    key_b = "Orient"
+                                                topo_instance[key_a]["CONNECTIONS"][
+                                                    key_b
                                                 ] = struct_component[comp_a][struct_category][comp_b]
                                 elif struct_category == "PARAMETERS":
                                     # if paramter in specified at the structural level, then include that value in
@@ -228,7 +241,12 @@ class AbstractTopology:
                                                 "PARAMETERS"
                                             ] = struct_component[comp_a][struct_category]
                                         else:
-                                            topo_instance[comp_a + "_instance_" + str(instance_n)][
+                                            """TODO REFACTOR"""
+
+                                            key = comp_a + "_instance_" + str(instance_n)
+                                            if "Orient" in comp_a:
+                                                key = "Orient"
+                                            topo_instance[key][
                                                 "PARAMETERS"
                                             ] = struct_component[comp_a][struct_category]
 
@@ -242,8 +260,12 @@ class AbstractTopology:
                                     comp_a + "_instance_" + str(second_instance)
                                 ]
                             else:
-                                to_add_topo["TOPOLOGY"][comp_a + "_instance_" + str(instance_n)] = topo_instance[
-                                    comp_a + "_instance_" + str(instance_n)
+                                """TODO REFACTOR"""
+                                key = comp_a + "_instance_" + str(instance_n)
+                                if "Orient" in comp_a:
+                                    key = "Orient"
+                                to_add_topo["TOPOLOGY"][key] = topo_instance[
+                                    key
                                 ]
                             # remove structure key from topo
                     to_delete.add(component_a)
