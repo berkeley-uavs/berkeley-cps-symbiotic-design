@@ -36,14 +36,15 @@ def rename_component_types(component_type: str) -> str:
 
 def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, instances_created: dict):
     instances_renaming[instance] = instance
-    if "Orient" in c_type_id:
-        return
-    if c_type_id not in instances_created.keys():
-        instances_created[c_type_id] = 1
-    else:
-        instances_created[c_type_id] = instances_created[c_type_id] + 1
-    new_name = f"{c_type_id}_instance_{instances_created[c_type_id]}"
-    instances_renaming[instance] = new_name
+    return
+    # if "Orient" in c_type_id:
+    #     return
+    # if c_type_id not in instances_created.keys():
+    #     instances_created[c_type_id] = 1
+    # else:
+    #     instances_created[c_type_id] = instances_created[c_type_id] + 1
+    # new_name = f"{c_type_id}_instance_{instances_created[c_type_id]}"
+    # instances_renaming[instance] = new_name
 
 
 # def sort_dictionary(element: dict):
