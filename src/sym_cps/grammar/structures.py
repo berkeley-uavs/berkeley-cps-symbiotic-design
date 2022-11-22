@@ -1,3 +1,6 @@
+from __future__ import annotations
+from dataclasses import dataclass
+
 from sym_cps.grammar.elements import AbstractComponent, AbstractConnection, Connector, Fuselage, Propeller, Wing
 
 
