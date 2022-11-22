@@ -54,4 +54,4 @@ def abstract_topo_from_random():
 
 
 if __name__ == "__main__":
-    random_designs_to_d_concrete_n()
+    random_designs_to_d_concrete_n(1)
