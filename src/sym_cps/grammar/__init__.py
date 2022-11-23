@@ -35,7 +35,7 @@ class Grammar:
 @dataclass
 class Rule:
     conditions: Condition
-    production: set[AbstractComponent]
+    production: Production
 
     """TODO"""
 
