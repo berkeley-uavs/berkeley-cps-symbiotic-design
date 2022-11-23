@@ -4,7 +4,6 @@ import json
 from dataclasses import dataclass, field
 
 import numpy as np
-from sym_cps.grammar import Symbol
 
 from sym_cps.representation.design.abstract.elements.structures import GenericComponent, Structure
 from sym_cps.shared.paths import grammar_rules_path
@@ -14,7 +13,7 @@ rule_dict = json.load(open(grammar_rules_path))
 
 
 @dataclass
-class AbstractComponent(Symbol):
+class AbstractComponent:
     grid_position: tuple[int, int, int]
     structure_elements: Structure
     base_name: str = ""
