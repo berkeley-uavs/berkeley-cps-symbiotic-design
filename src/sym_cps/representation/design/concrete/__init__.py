@@ -341,7 +341,7 @@ class DConcrete:
             edges.add(edge)
         return edges
 
-    def to_abstract_topology(self) -> AbstractTopology:
+    def to_abstract_topology(self) -> HumanDesign:
         name = self.name
         description = self.description
         connections: dict[str, dict[str, str]] = {}
@@ -369,7 +369,7 @@ class DConcrete:
                 # print(node["component"])
                 parameters[node_id][parameter_id] = float(parameter.value)
 
-        return AbstractTopology(name, description, connections, parameters)
+        return HumanDesign(name, description, connections, parameters)
 
     @property
     def pydot(self) -> pydot.Dot:
