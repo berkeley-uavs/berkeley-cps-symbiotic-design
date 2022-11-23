@@ -19,17 +19,6 @@ class Direction(Enum):
     INSIDE = auto()
 
 
-def get_opposing_direction_from_components(comp_a_type, comp_b_type, direction, library):
-    ctype_a = library.component_types[comp_a_type]
-    ctype_b = library.component_types[comp_b_type]
-    connectors = library.get_connectors(ctype_b, ctype_a, direction)
-    connector_id_a = connectors[0].id
-    connector_id_b = connectors[1].id
-    return get_direction_from_components_and_connections(
-        ctype_a.id, ctype_b.id, connector_id_b, connector_id_a
-    )
-
-
 def get_direction_from_components_and_connections(
     comp_type_a: str, comp_type_b: str, connector_id_a: str, connector_id_b: str
 ) -> str:

@@ -22,7 +22,7 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
         file_str = str(file)
         file_str += ".json"
         file = Path(file_str)
-    from sym_cps.grammar.topology import AbstractTopology
+    from sym_cps.representation.design.human.topology import AbstractTopology
     from sym_cps.representation.design.concrete import DConcrete
 
     abstract_topology = AbstractTopology.from_json(file)
