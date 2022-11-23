@@ -4,6 +4,7 @@ import json
 from dataclasses import dataclass, field
 
 import numpy as np
+from sym_cps.representation.design.abstract.elements.structures import GenericComponent, Structure
 
 from sym_cps.shared.paths import grammar_rules_path
 
@@ -15,10 +16,10 @@ rule_dict = json.load(open(grammar_rules_path))
 @dataclass
 class AbstractComponent:
     grid_position: tuple[int, int, int]
+    structure_elements: Structure
     base_name: str = ""
     instance_n: int = 1
     connections: set[AbstractConnection] = field(default_factory=set)
-    parameters: {} = field(default_factory=dict)
     color: str = "black"
 
     def add_connection(self, abstract_connection: AbstractConnection):

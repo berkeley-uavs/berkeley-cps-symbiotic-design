@@ -5,30 +5,25 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from sym_cps.representation.design.abstract.elements import AbstractComponent
+from sym_cps.representation.library import LibraryComponent, CParameter
 
 
 @dataclass
-class Structures:
-    elements: set[Structure]
+class GenericConnection:
+    component_a: LibraryComponent
+    component_b: LibraryComponent
+    direction: str
 
-    def add_structure(self, structure: Structure):
-        self.elements.add(structure)
 
-    def learn_structures(self):
-        """TODO by Pier"""
-        pass
+@dataclass
+class GenericComponent:
+    library_component: LibraryComponent
+    connections: set[GenericConnection]
+    parameters: dict[CParameter, float]
 
 
 @dataclass
 class Structure:
     name: str
-    components: set[AbstractComponent]
+    components: set[GenericComponent]
 
-    @classmethod
-    def from_json(cls, structure_json_path: Path) -> Structure:
-        return Structure.from_dict(json.load(open(structure_json_path)))
-
-    @classmethod
-    def from_dict(cls, topo: dict) -> Structure:
-        """"TODO"""
-        pass
