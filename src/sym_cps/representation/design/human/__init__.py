@@ -6,14 +6,14 @@ from pathlib import Path
 
 from aenum import Enum, auto
 
-from sym_cps.representation.design.abstract.abstract_design import AbstractDesign
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
+from sym_cps.representation.design.abstract.abstract_design import AbstractDesign
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import (
     get_component_and_instance_type_from_instance_name,
     get_component_type_from_instance_name,
-    get_instance_name
+    get_instance_name,
 )
 
 """TODO REFACTOR"""
@@ -60,7 +60,6 @@ class HumanDesign:
     connections: dict[str, dict[str, str]]
     parameters: dict[str, dict[str, float]]
     abstract_design: AbstractDesign | None = None
-
 
     @classmethod
     def from_abstract_design(cls, abstract_design: AbstractDesign) -> HumanDesign:
@@ -206,9 +205,9 @@ class HumanDesign:
                                                     key_a = "Orient"
                                                 if "Orient" in comp_b:
                                                     key_b = "Orient"
-                                                topo_instance[key_a]["CONNECTIONS"][
-                                                    key_b
-                                                ] = struct_component[comp_a][struct_category][comp_b]
+                                                topo_instance[key_a]["CONNECTIONS"][key_b] = struct_component[comp_a][
+                                                    struct_category
+                                                ][comp_b]
                                 elif struct_category == "PARAMETERS":
                                     # if paramter in specified at the structural level, then include that value in
                                     # their respective component
@@ -246,9 +245,7 @@ class HumanDesign:
                                             key = comp_a + "_instance_" + str(instance_n)
                                             if "Orient" in comp_a:
                                                 key = "Orient"
-                                            topo_instance[key][
-                                                "PARAMETERS"
-                                            ] = struct_component[comp_a][struct_category]
+                                            topo_instance[key]["PARAMETERS"] = struct_component[comp_a][struct_category]
 
                                 else:
                                     raise Exception("Unknown category")
@@ -264,9 +261,7 @@ class HumanDesign:
                                 key = comp_a + "_instance_" + str(instance_n)
                                 if "Orient" in comp_a:
                                     key = "Orient"
-                                to_add_topo["TOPOLOGY"][key] = topo_instance[
-                                    key
-                                ]
+                                to_add_topo["TOPOLOGY"][key] = topo_instance[key]
                             # remove structure key from topo
                     to_delete.add(component_a)
                 else:
@@ -351,10 +346,7 @@ class HumanDesign:
                     for component_b, direction in infos.items():
                         connections[component_a][component_b] = direction
 
-                        if (
-                            HumanFeatures.AVOID_REDUNDANT_CONNECTIONS
-                            in abstraction_levels_features[abstraction_level]
-                        ):
+                        if HumanFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]:
                             ctype_a_str = get_component_type_from_instance_name(component_a)
                             ctype_a = c_library.component_types[ctype_a_str]
                             ctype_b_str = get_component_type_from_instance_name(component_b)

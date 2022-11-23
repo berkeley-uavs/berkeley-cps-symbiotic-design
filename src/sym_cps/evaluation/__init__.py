@@ -5,9 +5,9 @@ https://github.com/LOGiCS-Project/swri-simple-uam-example
 import json
 from pathlib import Path
 
+from simple_uam.client.inputs import load_study_params
 from simple_uam.client.watch import poll_results_backend
 from simple_uam.direct2cad.actions.actors import gen_info_files, process_design
-from simple_uam.client.inputs import load_study_params
 
 from sym_cps.evaluation.tools import extract_results, load_design, load_metadata, polling_results
 from sym_cps.shared.paths import designs_folder
@@ -15,7 +15,7 @@ from sym_cps.shared.paths import designs_folder
 
 def evaluate_design(
     design_json_path: Path,
-    study_params: Path | None | list[dict[str, str]] =  None,
+    study_params: Path | None | list[dict[str, str]] = None,
     metadata: Path | dict | None = None,
     timeout: int = 800,
     info_only: bool = False,

@@ -6,8 +6,15 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
-from sym_cps.representation.design.abstract.elements import AbstractComponent, AbstractConnection, Connector, Fuselage, Propeller, Wing
 from sym_cps.grammar.rules import Grid, generate_random_topology, get_seed_design_topo
+from sym_cps.representation.design.abstract.elements import (
+    AbstractComponent,
+    AbstractConnection,
+    Connector,
+    Fuselage,
+    Propeller,
+    Wing,
+)
 from sym_cps.tools.my_io import save_to_file
 
 

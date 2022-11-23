@@ -1,5 +1,5 @@
-from sym_cps.representation.design.human.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.design.human.topology import AbstractTopology
 from sym_cps.shared.designs import designs
 from sym_cps.shared.objects import ExportType
 

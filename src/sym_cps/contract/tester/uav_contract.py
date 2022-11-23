@@ -243,8 +243,11 @@ class UAVContract(object):
     def hackathon_property_interface_fn_aggregated(self, component: LibraryComponent):
         if component.comp_type.id == "Propeller":
             return self.hackthon_get_propeller_property(
-                propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, v=self._speed, 
-                num_motor=self._num_motor
+                propeller=component,
+                table_dict=self._table_dict,
+                rpm=self._rpm_static,
+                v=self._speed,
+                num_motor=self._num_motor,
             )
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)

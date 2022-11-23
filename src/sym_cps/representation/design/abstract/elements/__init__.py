@@ -4,10 +4,9 @@ import json
 from dataclasses import dataclass, field
 
 import numpy as np
+
 from sym_cps.representation.design.abstract.elements.structures import GenericComponent, Structure
-
 from sym_cps.shared.paths import grammar_rules_path
-
 from sym_cps.tools.strings import get_instance_name
 
 rule_dict = json.load(open(grammar_rules_path))

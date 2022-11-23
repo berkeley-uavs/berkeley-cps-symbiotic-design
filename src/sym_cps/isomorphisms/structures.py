@@ -4,8 +4,8 @@ import json
 import random
 from itertools import product
 
-from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.isomorphisms.tools import find_isomorphisms, get_subgraph, is_isomorphism_present
+from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.designs import designs
 from sym_cps.shared.paths import output_folder, popular_nodes_keys_path
 from sym_cps.tools.graphs import graph_to_pdf

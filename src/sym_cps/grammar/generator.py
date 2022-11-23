@@ -1,7 +1,7 @@
-from sym_cps.representation.design.abstract.abstract_design import AbstractDesign
 from sym_cps.grammar.rules import generate_random_topology, get_seed_design_topo
-from sym_cps.representation.design.human.topology import AbstractTopology
+from sym_cps.representation.design.abstract.abstract_design import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.design.human.topology import AbstractTopology
 from sym_cps.shared.paths import designs_folder
 
 

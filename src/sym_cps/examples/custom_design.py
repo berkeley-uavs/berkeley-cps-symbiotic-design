@@ -1,5 +1,5 @@
-from sym_cps.representation.design.human.topology import AbstractTopology
 from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.design.human.topology import AbstractTopology
 from sym_cps.shared.paths import data_folder
 
 custom_design_file = data_folder / "custom_designs" / "cliff.json"

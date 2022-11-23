@@ -19,7 +19,7 @@ class Grammar:
 
     @classmethod
     def from_dict(cls, grammar: dict) -> Grammar:
-        """"TODO"""
+        """ "TODO"""
         rules = set()
         """"e.g.."""
         for rule in grammar["RULES"]:
@@ -28,8 +28,7 @@ class Grammar:
         return cls(rules=rules)
 
     def learn_from_isomorphisms(self):
-        """"TODO by Pier"""
-        pass
+        """ "TODO by Pier"""
 
 
 @dataclass
@@ -41,12 +40,10 @@ class Rule:
 
     @classmethod
     def from_dict(cls, topo: dict) -> Rule:
-        """"TODO"""
-        pass
+        """ "TODO"""
 
     def to_contract(self):
         """TODO by Pier"""
-        pass
 
 
 @dataclass
