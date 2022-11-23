@@ -19,7 +19,7 @@ from sym_cps.tools.strings import (
 """TODO REFACTOR"""
 
 
-class AbstractionFeatures(Enum):
+class HumanFeatures(Enum):
     AVOID_REDUNDANT_CONNECTIONS = auto()
     USE_DEFAULT_PARAMETERS = auto()
     USE_STRUCTURES = auto()
@@ -28,16 +28,16 @@ class AbstractionFeatures(Enum):
 
 abstraction_levels_features = {
     1: {},
-    2: {AbstractionFeatures.USE_DEFAULT_PARAMETERS},
-    3: {AbstractionFeatures.USE_DEFAULT_PARAMETERS, AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS},
+    2: {HumanFeatures.USE_DEFAULT_PARAMETERS},
+    3: {HumanFeatures.USE_DEFAULT_PARAMETERS, HumanFeatures.AVOID_REDUNDANT_CONNECTIONS},
     4: {
-        AbstractionFeatures.USE_DEFAULT_PARAMETERS,
-        AbstractionFeatures.USE_STRUCTURES,
+        HumanFeatures.USE_DEFAULT_PARAMETERS,
+        HumanFeatures.USE_STRUCTURES,
     },
     5: {
-        AbstractionFeatures.USE_DEFAULT_PARAMETERS,
-        AbstractionFeatures.USE_STRUCTURES,
-        AbstractionFeatures.HIDE_TUBE_CONNECTIONS,
+        HumanFeatures.USE_DEFAULT_PARAMETERS,
+        HumanFeatures.USE_STRUCTURES,
+        HumanFeatures.HIDE_TUBE_CONNECTIONS,
     },
 }
 
@@ -54,7 +54,7 @@ Since they always go together they can be grouped in a strucutre
 
 
 @dataclass
-class AbstractTopology:
+class HumanDesign:
     name: str
     description: str
     connections: dict[str, dict[str, str]]
@@ -63,7 +63,7 @@ class AbstractTopology:
 
 
     @classmethod
-    def from_abstract_design(cls, abstract_design: AbstractDesign) -> AbstractTopology:
+    def from_abstract_design(cls, abstract_design: AbstractDesign) -> HumanDesign:
 
         # goal_example = topo_example.to_dict(4)
 
@@ -115,15 +115,15 @@ class AbstractTopology:
         if len(export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"].values()) == 0:
             del export["TOPOLOGY"]["BatteryController_instance_1"]
 
-        abTop = AbstractTopology.from_dict(export)
+        abTop = HumanDesign.from_dict(export)
         return abTop
 
     @classmethod
-    def from_json(cls, topology_json_path: Path) -> AbstractTopology:
-        return AbstractTopology.from_dict(json.load(open(topology_json_path)))
+    def from_json(cls, topology_json_path: Path) -> HumanDesign:
+        return HumanDesign.from_dict(json.load(open(topology_json_path)))
 
     @classmethod
-    def from_dict(cls, topo: dict) -> AbstractTopology:
+    def from_dict(cls, topo: dict) -> HumanDesign:
         name = topo["NAME"]
         description = topo["DESCRIPTION"]
         abstraction_level = topo["ABSTRACTION_LEVEL"]
@@ -134,7 +134,7 @@ class AbstractTopology:
         to_delete = set()
         to_add_topo = {"TOPOLOGY": {}}
         edit_connections = {}
-        if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
+        if HumanFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
             prop = -1
             for component_a, categories in topo["TOPOLOGY"].items():
                 # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1"
@@ -352,7 +352,7 @@ class AbstractTopology:
                         connections[component_a][component_b] = direction
 
                         if (
-                            AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS
+                            HumanFeatures.AVOID_REDUNDANT_CONNECTIONS
                             in abstraction_levels_features[abstraction_level]
                         ):
                             ctype_a_str = get_component_type_from_instance_name(component_a)
@@ -372,7 +372,7 @@ class AbstractTopology:
                 if category == "PARAMETERS":
                     if component_a not in parameters:
                         parameters[component_a] = {}
-                    if AbstractionFeatures.USE_DEFAULT_PARAMETERS in abstraction_levels_features[abstraction_level]:
+                    if HumanFeatures.USE_DEFAULT_PARAMETERS in abstraction_levels_features[abstraction_level]:
                         c_type: str = get_component_type_from_instance_name(component_a)
                         for parameter in c_library.component_types[c_type].parameters.values():
                             if parameter.id in default_parameters.keys():
@@ -390,7 +390,7 @@ class AbstractTopology:
         export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": abstraction_level, "TOPOLOGY": {}}
         # if level 4 abstraction, we should group the structures during the looping process and remove extraneous
         # components at the end
-        if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
+        if HumanFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
             to_delete = set()
             structure_components = {}
             for struct in structures.keys():
@@ -401,7 +401,7 @@ class AbstractTopology:
             # use this to keep track of which structure a component belongs to
         tracker = {}
         for component_a, connections in self.connections.items():
-            if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
+            if HumanFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
                 c_type_a, instance = get_component_and_instance_type_from_instance_name(component_a)
                 for key, items in structure_components.items():
                     if c_type_a == key:
@@ -416,25 +416,25 @@ class AbstractTopology:
             """Parameters"""
             if component_a in self.parameters.keys():
                 for param, value in self.parameters[component_a].items():
-                    if AbstractionFeatures.USE_DEFAULT_PARAMETERS in abstraction_levels_features[abstraction_level]:
+                    if HumanFeatures.USE_DEFAULT_PARAMETERS in abstraction_levels_features[abstraction_level]:
                         if param in default_parameters.keys():
                             continue
                     export["TOPOLOGY"][component_a]["PARAMETERS"][param] = value
             """Connections"""
             for component_b, direction in connections.items():
                 # print(export["TOPOLOGY"][component_a])
-                if AbstractionFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]:
+                if HumanFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]:
                     if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(
                         export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()
                     ):
                         continue
-                if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
+                if HumanFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
                     if component_b in tracker.keys():
                         export["TOPOLOGY"][component_a]["CONNECTIONS"][tracker[component_b]] = direction
                 export["TOPOLOGY"][component_a]["CONNECTIONS"][component_b] = direction
 
         # if to_delete is not updated that's when we know we've visited every component in our structures
-        if AbstractionFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
+        if HumanFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
             prev = -1
             while prev < len(to_delete):
                 prev = len(to_delete)

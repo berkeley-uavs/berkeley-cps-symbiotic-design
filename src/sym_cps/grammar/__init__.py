@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from sym_cps.representation.design.abstract.elements.elements import AbstractComponent
+from sym_cps.representation.design.abstract.elements import AbstractComponent
 
 
 @dataclass
