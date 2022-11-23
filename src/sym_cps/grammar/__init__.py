@@ -56,6 +56,19 @@ class Condition:
     top: set[Symbol]
     rear: set[Symbol]
 
+    def matches(self,
+                ego: Symbol,
+                front: Symbol,
+                bottom: Symbol,
+                left: Symbol,
+                right: Symbol,
+                top: Symbol,
+                rear: Symbol):
+        return ego in self.ego \
+               and front in self.front \
+               and bottom in self.bottom \
+               and left in self.left and right in self.right and top in self.top and rear in self.rear
+
 
 @dataclass
 class Production:
@@ -65,10 +78,4 @@ class Production:
 
 @dataclass
 class Symbol:
-    terminal: bool
-    element: AbstractComponent | NonTerminal
-
-
-@dataclass
-class NonTerminal:
-    name: str
+    terminal: bool = False
