@@ -76,14 +76,15 @@ class Production:
     connections: set[Symbol]
 
 
-
 @dataclass
 class Symbol:
     terminal: bool = False
 
+
 @dataclass
 class Group(Symbol):
     terminal: bool = False
+
 
 @dataclass
 class A(Group):

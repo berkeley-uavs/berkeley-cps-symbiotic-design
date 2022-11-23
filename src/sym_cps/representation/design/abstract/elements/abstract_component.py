@@ -3,8 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from sym_cps.representation.design.abstract import AbstractConnection
-from sym_cps.representation.design.abstract.elements.structures import Structure
-
 from sym_cps.representation.design.concrete import Component
 from sym_cps.tools.strings import get_instance_name
 
@@ -14,6 +12,7 @@ class AbstractComponent:
     """
     Element of a 3D grid. A structure of multiple 'Component'
     """
+
     grid_position: tuple[int, int, int]
     base_name: str = ""
     instance_n: int = 1
@@ -41,9 +40,6 @@ class Fuselage(AbstractComponent):
         self.base_name = "Fuselage_str"
         self.color = "red"
         """TODO: add Components in the fuselage structure with their parameters"""
-
-
-
 
     def __hash__(self):
         return hash(self.id)

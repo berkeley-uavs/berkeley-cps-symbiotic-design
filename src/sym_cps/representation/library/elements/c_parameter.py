@@ -69,6 +69,7 @@ class CParameter:
     @property
     def default(self) -> float:
         from sym_cps.shared.objects import default_parameters
+
         """learned from seed designs"""
         if self.id in default_parameters:
             return float(default_parameters[self.id])
