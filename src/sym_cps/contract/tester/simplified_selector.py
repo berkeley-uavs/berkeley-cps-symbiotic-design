@@ -23,6 +23,7 @@ class SimplifiedSelector:
         self._uav_contract = UAVContract(table_dict=self._table_dict, num_motor=num_motors, num_battery=num_batteries)
         self._uav_contract.set_contract_simplified()
         contract_system = self.build_contract_system(verbose=verbose, component_list=None)
+        #TODO make a selection
 
     def check(self, d_concrete: DConcrete, verbose=True, body_weight=0):
         num_batteries, num_propellers, num_motors, num_batt_controllers = self.count_components(d_concrete=d_concrete)
@@ -375,9 +376,11 @@ class SimplifiedSelector:
         #     motor = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Motor", body_weight=1.5, verbose=False)
         #     self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
 
-        # #self._testquad_design.export(ExportType.JSON)
-        # self._testquad_design.evaluate(study_params= designs_folder / self._testquad_design.name / "study_params.csv")
-        self._testquad_design.evaluate()
+        #self._testquad_design.export(ExportType.JSON)
+        # from pathlib import Path
+        # from sym_cps.shared.paths import designs_folder
+        #self._testquad_design.evaluate(study_params= designs_folder / self._testquad_design.name / "study_params.csv")
+
 
 
 if __name__ == "__main__":
