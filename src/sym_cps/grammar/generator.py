@@ -32,8 +32,7 @@ def random_designs_to_d_concrete_n(n: int = 100):
         new_design = AbstractDesign(f"random_design_{i}")
         new_design.parse_grid(generate_random_topology())
         new_design.save(folder_name=f"designs/{new_design.name}")
-        abstract_topology = AbstractTopology.from_abstract_design(new_design)
-        d_concrete = DConcrete.from_abstract_topology(abstract_topology)
+        d_concrete = DConcrete.from_abstract_design(new_design)
         d_concrete.export_all()
         d_concrete.evaluate()
 
@@ -51,8 +50,7 @@ def abstract_topo_from_random():
         new_design = AbstractDesign(f"random_{i}")
         new_design.parse_grid(generate_random_topology())
         new_design.save()
-        abstract_topology = AbstractTopology.from_abstract_design(new_design)
-        design_loaded = DConcrete.from_abstract_topology(abstract_topology)
+        design_loaded = DConcrete.from_abstract_design(new_design)
         design_loaded.export(ExportType.TOPOLOGY_1)
         # res.append(abstract_topology)
     # return res

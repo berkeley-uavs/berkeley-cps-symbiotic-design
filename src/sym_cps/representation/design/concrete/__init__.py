@@ -15,6 +15,7 @@ import pydot
 from igraph import Edge, EdgeSeq, Graph, Vertex
 
 from sym_cps.evaluation import evaluate_design
+from sym_cps.grammar.abstract_design import AbstractDesign
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.grammar.topology import AbstractTopology
 from sym_cps.representation.design.concrete.elements.component import Component
@@ -72,6 +73,59 @@ class DConcrete:
                 d_concrete.add_edge(vertex_a, vertex_b, connection)
 
         return d_concrete
+
+    @classmethod
+    def from_abstract_design(cls, abstract_design: AbstractDesign) -> DConcrete:
+        export: dict = {"NAME": abstract_design.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": 4, "TOPOLOGY": {}}
+
+        export["TOPOLOGY"] = {}
+
+        hubs = abstract_design.instantiate_hubs()
+        for hub in hubs:
+            key = list(hub.keys())[0]
+            value = hub[key]
+            export["TOPOLOGY"][key] = value
+
+        # instantiate BatteryController
+        export["TOPOLOGY"]["BatteryController_instance_1"] = {"CONNECTIONS": {}, "PARAMETERS": {}}
+
+        for position, abstract_component in abstract_design.grid.items():
+            if abstract_component.base_name == "Connector":
+                continue
+            elif abstract_component.base_name == "Propeller_str":
+                current = abstract_component.base_name + "_top_instance_" + str(abstract_component.instance_n)
+                export["TOPOLOGY"][current] = {}
+                export["TOPOLOGY"][current]["CONNECTIONS"] = {}
+                export["TOPOLOGY"][current]["PARAMETERS"] = {}
+                export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][current + "__Motor"] = "ANY"
+            elif abstract_component.base_name == "Fuselage_str":
+                export["TOPOLOGY"][abstract_component.id] = {}
+                export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
+                export["TOPOLOGY"][abstract_component.id]["PARAMETERS"] = {}
+                export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
+                    abstract_component.id + "__Battery"
+                    ] = "ANY"
+            elif abstract_component.base_name == "Wingr":
+                export["TOPOLOGY"][abstract_component.id] = {}
+                export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
+                export["TOPOLOGY"][abstract_component.id]["PARAMETERS"] = {}
+
+        tubes = abstract_design.instantiate_tubes(len(hubs))
+        for tube in tubes:
+            key = list(tube.keys())[0]
+            value = tube[key]
+            export["TOPOLOGY"][key] = value
+            for component_b, connection in value["CONNECTIONS"].items():
+                if get_component_type_from_instance_name(component_b) == "Hub6":
+                    a, b = connection.split("-")
+                    export["TOPOLOGY"][component_b]["CONNECTIONS"][key] = b + "-" + a
+
+        # if we don't need a batterController just delete it
+        if len(export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"].values()) == 0:
+            del export["TOPOLOGY"]["BatteryController_instance_1"]
+
+        abstract_topology = AbstractTopology.from_dict(export)
+        return DConcrete.from_abstract_topology(abstract_topology)
 
     @property
     def graph(self) -> Graph:
