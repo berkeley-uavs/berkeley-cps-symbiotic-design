@@ -6,9 +6,10 @@ from pathlib import Path
 
 from aenum import Enum, auto
 
-from sym_cps.grammar.abstract_design import AbstractDesign
 # from sym_cps.grammar.structures import Structure
 from sym_cps.grammar.tools import get_direction_from_components_and_connections, get_opposing_direction_from_components
+from sym_cps.representation.design.abstract.abstract_design import AbstractDesign
+from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import (

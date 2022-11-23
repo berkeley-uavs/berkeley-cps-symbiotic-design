@@ -505,7 +505,7 @@ class DConcrete:
         self.export(ExportType.TOPOLOGY_4)
 
     def __eq__(self, other: object):
-        from sym_cps.representation.design.concrete.tools import edge_comparison, node_comparison
+        from sym_cps.isomorphisms.tools import edge_comparison, node_comparison
 
         if isinstance(other, DConcrete):
             mappings = self._graph.get_isomorphisms_vf2(
