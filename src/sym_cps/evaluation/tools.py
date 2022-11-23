@@ -207,17 +207,8 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
         if not fdm_folder.exists() or not fdm_folder.is_dir():
             print(f"FDM Results folder (Results/) does not exist in the result archive!")
             return fdm_extract_info
-        # # Extracting score from control optimization
-        # design_score_path = fdm_folder / "control_opt_result.out"
-        # if design_score_path.exists() and design_score_path.is_file():
-        #     with design_score_path.open("r") as fdm_input_file:
-        #         # TODO: Read the files to get the scores and their corresponding control parameters
-        #         pass
         # Check the Results folder
         folders = [fdm_test for fdm_test in fdm_folder.iterdir()]
-        if len(folders) != 4:
-            print(f"Not 4 folders in fdm results, meaning that the design is problematic or pipeline had problem.")
-            return fdm_extract_info  # return failure
 
         extract_folder = fdm_extract_folder
         # extract stl file
@@ -254,7 +245,7 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
                 #
                 fdm_ret_path = extract_folder / info.filename
                 ret = FDMResult(file_path=fdm_ret_path)
-                score = ret.metrics["Score"]
+                score = ret.metrics["Path_traverse_score_based_on_requirements"]
                 fdm_extract_info[fdm_test.name] = score
         fdm_extract_info["status"] = "SUCCESS"
     if control_opt:

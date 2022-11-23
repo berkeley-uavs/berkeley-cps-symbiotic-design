@@ -248,11 +248,11 @@ class DConcrete:
         """Validates the Parameters of the Design"""
         raise NotImplementedError
 
-    def evaluate(self):
+    def evaluate(self, study_params = None):
         """Sends the Design for evaluation"""
         json_path = self.export(ExportType.JSON)
         self.evaluation_results = evaluate_design(
-            design_json_path=json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
+            design_json_path=json_path, metadata={"extra_info": "full evaluation example"}, timeout=800, study_params=study_params
         )
         print(self.evaluation_results["status"])
         self.export(ExportType.EVALUATION)
