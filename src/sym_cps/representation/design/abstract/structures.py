@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from sym_cps.grammar.elements import AbstractComponent, AbstractConnection, Connector, Fuselage, Propeller, Wing
+from sym_cps.representation.design.abstract.elements.elements import AbstractComponent
 
 
 @dataclass
