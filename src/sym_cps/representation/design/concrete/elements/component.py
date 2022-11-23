@@ -14,7 +14,9 @@ from sym_cps.shared.objects import default_parameters
 class Component:
     id: str
 
-    library_component: LibraryComponent
+    c_type: CType
+
+    library_component: LibraryComponent | None
 
     parameters: dict[str, Parameter] = field(default_factory=dict)
 
@@ -22,49 +24,35 @@ class Component:
         """Fill up all the parameters with the assigned_value, or default_value"""
         for parameter_accepted in self.configurable_parameters:
             if parameter_accepted.id not in self.parameters.keys():
-                if "assigned_val" in parameter_accepted.values.keys():
-                    new_parameter = Parameter(
-                        value=float(parameter_accepted.values["assigned_val"]),
-                        c_parameter=parameter_accepted,
-                        component=self,
-                    )
-                elif "default_val" in parameter_accepted.values.keys():
-                    new_parameter = Parameter(
-                        value=float(parameter_accepted.values["default_val"]),
-                        c_parameter=parameter_accepted,
-                        component=self,
-                    )
-                else:
-                    # raise Exception(
-                    #     f"Parameter {parameter_accepted.id} does not have assigned_val nor default_val"
-                    # )
-                    new_parameter = Parameter(
-                        value=float(parameter_accepted.values["min_val"]),
-                        c_parameter=parameter_accepted,
-                        component=self,
-                    )
+                new_parameter = Parameter(
+                    value=float(parameter_accepted.default),
+                    c_parameter=parameter_accepted,
+                    component=self,
+                )
                 self.parameters[parameter_accepted.id] = new_parameter
             for parameter in self.parameters.values():
                 parameter.component = self
-        # Set the parameters to the value learned from the seed designs
-        self.set_shared_parameters()
 
     @property
-    def model(self) -> str:
-        return self.library_component.id
+    def model(self) -> str | None:
+        if self.library_component is not None:
+            return self.library_component.id
+        return None
 
     @property
     def c_type(self) -> CType:
-        return self.library_component.comp_type
+        return self.c_type
 
     @property
-    def properties(self) -> dict[str, CProperty]:
-        return self.library_component.properties
+    def properties(self) -> dict[str, CProperty] | None:
+        if self.library_component is not None:
+            return self.library_component.properties
+        return None
 
     @property
     def configurable_parameters(self) -> set[CParameter]:
         """Returns the set of all ParameterType that can be configured in the Component"""
-        return set(self.library_component.parameters.values())
+        return set(self.c_type.parameters.values())
 
     @property
     def params_props_values(self) -> dict[str, float | str]:

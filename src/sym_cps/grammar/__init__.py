@@ -33,7 +33,7 @@ class Grammar:
 
 @dataclass
 class Rule:
-    conditions: Condition
+    conditions: set[Condition]
     production: Production
 
     """TODO"""
@@ -56,26 +56,45 @@ class Condition:
     top: set[Symbol]
     rear: set[Symbol]
 
-    def matches(self,
-                ego: Symbol,
-                front: Symbol,
-                bottom: Symbol,
-                left: Symbol,
-                right: Symbol,
-                top: Symbol,
-                rear: Symbol):
-        return ego in self.ego \
-               and front in self.front \
-               and bottom in self.bottom \
-               and left in self.left and right in self.right and top in self.top and rear in self.rear
+    def matches(
+        self, ego: Symbol, front: Symbol, bottom: Symbol, left: Symbol, right: Symbol, top: Symbol, rear: Symbol
+    ):
+        return (
+            ego in self.ego
+            and front in self.front
+            and bottom in self.bottom
+            and left in self.left
+            and right in self.right
+            and top in self.top
+            and rear in self.rear
+        )
 
 
 @dataclass
 class Production:
-    ego: set[Symbol]
+    ego: Symbol
     connections: set[Symbol]
+
 
 
 @dataclass
 class Symbol:
+    terminal: bool = False
+
+@dataclass
+class Group(Symbol):
+    terminal: bool = False
+
+@dataclass
+class A(Group):
+    terminal: bool = False
+
+
+@dataclass
+class A(Group):
+    terminal: bool = False
+
+
+@dataclass
+class G(Group):
     terminal: bool = False
