@@ -12,6 +12,7 @@ class UAVContract(object):
         self.set_num(num_motor=num_motor, num_battery=num_battery)
         # self.set_contract()
         self._rpm_static = 10000
+        self._speed = 1
 
     def get_contract(self, contract_name: str) -> ContractTemplate:
         return self._contracts[contract_name]
@@ -242,7 +243,8 @@ class UAVContract(object):
     def hackathon_property_interface_fn_aggregated(self, component: LibraryComponent):
         if component.comp_type.id == "Propeller":
             return self.hackthon_get_propeller_property(
-                propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, num_motor=self._num_motor
+                propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, v=self._speed, 
+                num_motor=self._num_motor
             )
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
@@ -251,15 +253,15 @@ class UAVContract(object):
         elif component.comp_type.id == "BatteryController":
             return {}
 
-    def hackthon_get_propeller_property(self, propeller, table_dict, rpm, num_motor):
+    def hackthon_get_propeller_property(self, propeller, table_dict, rpm, v, num_motor):
         # ports get value
 
         diameter: float = propeller.properties["DIAMETER"].value / 1000
         shaft_prop: float = propeller.properties["SHAFT_DIAMETER"].value
         # print(table.get_value(rpm = 13000, v = 90, label="Cp"))
         table = table_dict[propeller]
-        C_p: float = table.get_value(rpm=rpm, v=1, label="Cp")  # 0.0659
-        C_t: float = table.get_value(rpm=rpm, v=1, label="Ct")  # 0.1319
+        C_p: float = table.get_value(rpm=rpm, v=v, label="Cp")  # 0.0659
+        C_t: float = table.get_value(rpm=rpm, v=v, label="Ct")  # 0.1319
 
         W_prop = propeller.properties["WEIGHT"].value * num_motor
         return {
@@ -301,3 +303,6 @@ class UAVContract(object):
 
     def set_rpm(self, rpm):
         self._rpm_static = rpm
+
+    def set_speed(self, v):
+        self._speed = v
