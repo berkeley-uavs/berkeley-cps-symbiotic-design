@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from sym_cps.representation.design.abstract import AbstractConnection
 from sym_cps.representation.design.concrete import Component
+from sym_cps.shared.library import c_library
 from sym_cps.tools.strings import get_instance_name
 
 
@@ -40,7 +41,7 @@ class Fuselage(AbstractComponent):
         self.base_name = "Fuselage_str"
         self.color = "red"
         """TODO: add Components in the fuselage structure with their parameters"""
-
+        self.structure.add(Component(c_type=c_library.component_types["Cargo"]))
     def __hash__(self):
         return hash(self.id)
 

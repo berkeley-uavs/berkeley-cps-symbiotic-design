@@ -12,9 +12,9 @@ from sym_cps.shared.objects import default_parameters
 
 @dataclass(frozen=False)
 class Component:
-    id: str
-
     c_type: CType
+
+    id: str | None
 
     library_component: LibraryComponent | None
 
