@@ -14,9 +14,9 @@ from sym_cps.shared.objects import default_parameters
 class Component:
     c_type: CType
 
-    id: str | None
+    id: str | None = None
 
-    library_component: LibraryComponent | None
+    library_component: LibraryComponent | None = None
 
     parameters: dict[str, Parameter] = field(default_factory=dict)
 
