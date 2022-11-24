@@ -42,6 +42,7 @@ class Fuselage(AbstractComponent):
         self.color = "red"
         """TODO: add Components in the fuselage structure with their parameters"""
         self.structure.add(Component(c_type=c_library.component_types["Cargo"]))
+
     def __hash__(self):
         return hash(self.id)
 

@@ -42,7 +42,7 @@ def evaluate_design(
             if isinstance(study_params, Path):
                 study_params = load_study_params(study_params=study_params)
         msg = process_design.send(design, metadata=metadata, compile_args={"srcs": None}, study_params=study_params)
-        #print(json.dumps(msg.asdict(), indent=2, sort_keys=True))
+        # print(json.dumps(msg.asdict(), indent=2, sort_keys=True))
     print("Waiting for results...")
     result_path = polling_results(msg, timeout)  # poll_results_backend(msg, timeout)  #
     print(f"Command completed. Results can be found at:{result_path}")

@@ -188,7 +188,7 @@ def polling_results(msg, timeout: int = 800):
     result_archive = watch_results_dir(msg, results_dir=aws_folder / "d2c_results", timeout=timeout)
     result = get_zip_metadata(result_archive)
     print("Result archive found in results dir w/ metadata:")
-    #print(json.dumps(result, indent="  "))
+    # print(json.dumps(result, indent="  "))
     print(f"Command completed. Results can be found at:{result_archive}")
     return result_archive
 

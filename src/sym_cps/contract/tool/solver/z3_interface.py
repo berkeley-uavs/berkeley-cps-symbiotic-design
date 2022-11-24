@@ -27,7 +27,6 @@ class Z3Interface(SolverInterface):
             return z3.BitVec(var_name, bv_size)
         else:
             print("Error, Not supported type")
-            
 
     def get_constant_value(self, sort: str, value, **kwargs):
         if sort == "real":
@@ -75,7 +74,7 @@ class Z3Interface(SolverInterface):
 
     def check(self) -> bool:
         ret = self._solver.check()
-        #print(self._solver.assertions())
+        # print(self._solver.assertions())
         if ret == z3.sat:
             self._model = self._solver.model()
             return True

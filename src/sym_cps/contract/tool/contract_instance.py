@@ -121,7 +121,9 @@ class ContractInstance(object):
         return clauses
 
     def instantiate_clauses_from_function(self, solver_interface: SolverInterface, clause_fn: Callable):
-        return self._instantiate_clauses_from_function(solver_interface=solver_interface, vs=self._var_dict, clause_fn=clause_fn)
+        return self._instantiate_clauses_from_function(
+            solver_interface=solver_interface, vs=self._var_dict, clause_fn=clause_fn
+        )
 
     def _build_var_name(self, interface_name: str):
         return f"{self.template_name}_{self.index}_{self.instance_name}_{interface_name}"

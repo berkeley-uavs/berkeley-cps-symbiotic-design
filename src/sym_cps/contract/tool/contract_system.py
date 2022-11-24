@@ -93,7 +93,9 @@ class ContractSystem(object):
         self._clear_clauses()
         # build system
         sys_inst.build_clauses(solver_interface=self._solver)
-        objective_clause = sys_inst.instantiate_clauses_from_function(solver_interface=self._solver, clause_fn=self._objective_expr)[0]
+        objective_clause = sys_inst.instantiate_clauses_from_function(
+            solver_interface=self._solver, clause_fn=self._objective_expr
+        )[0]
         self._build_find_behavior_system(sys_inst=sys_inst)
         self._build_connection_one_to_multi(sys_inst, sys_connection_map=sys_connection_map)
         # add clause to solver
@@ -187,7 +189,9 @@ class ContractSystem(object):
         # set property
         for candidate in candidate_list:
             candidate_name = candidate["name"]
-            use_v = self._solver.get_fresh_variable(var_name=f"{inst.instance_name}_use_{candidate_name}", sort="boolean")
+            use_v = self._solver.get_fresh_variable(
+                var_name=f"{inst.instance_name}_use_{candidate_name}", sort="boolean"
+            )
             assignment_constraint = [
                 self._solver.clause_equal(inst.get_property_var(prop.name), candidate[prop.name])
                 for prop in inst.property_list
@@ -211,7 +215,7 @@ class ContractSystem(object):
         self._objective_expr = expr
         self._objective_val = value
         self._objective_fn = evaluate_fn
-        #self._solver.add_conjunction_clause(self._solver.clause_ge(self._objective_expr, self._objective_val))
+        # self._solver.add_conjunction_clause(self._solver.clause_ge(self._objective_expr, self._objective_val))
 
     def calculate_objective(self):
         return self._objective_fn()
