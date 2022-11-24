@@ -12,7 +12,7 @@ from sym_cps.shared.objects import default_parameters
 
 @dataclass(frozen=False)
 class Component:
-    c_type: CType
+    c_type: CType | None = None
 
     id: str | None = None
 
@@ -22,6 +22,10 @@ class Component:
 
     def __post_init__(self):
         """Fill up all the parameters with the assigned_value, or default_value"""
+        if self.c_type is None and self.library_component is None:
+            raise AttributeError
+        if self.c_type is None:
+            self.c_type = self.library_component.comp_type
         for parameter_accepted in self.configurable_parameters:
             if parameter_accepted.id not in self.parameters.keys():
                 new_parameter = Parameter(
@@ -38,10 +42,6 @@ class Component:
         if self.library_component is not None:
             return self.library_component.id
         return None
-
-    @property
-    def c_type(self) -> CType:
-        return self.c_type
 
     @property
     def properties(self) -> dict[str, CProperty] | None:

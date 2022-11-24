@@ -16,12 +16,14 @@ from igraph import Edge, EdgeSeq, Graph, Vertex
 
 from sym_cps.evaluation import evaluate_design
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
-from sym_cps.representation.design.abstract import AbstractDesign
+
+# from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
-from sym_cps.representation.design.human import HumanDesign
+
+# from sym_cps.representation.design.human import HumanDesign
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level, optimizer
@@ -341,35 +343,35 @@ class DConcrete:
             edges.add(edge)
         return edges
 
-    def to_abstract_topology(self) -> HumanDesign:
-        name = self.name
-        description = self.description
-        connections: dict[str, dict[str, str]] = {}
-        parameters: dict[str, dict[str, float]] = {}
-
-        """Connections"""
-        for edge in self.edges:
-            node_id_s = self._graph.vs[edge.source]["instance"]
-            node_id_t = self._graph.vs[edge.target]["instance"]
-            direction = edge["connection"].direction_b_respect_to_a
-            if node_id_s not in connections:
-                connections[node_id_s] = {}
-            connections[node_id_s][node_id_t] = direction
-
-        """Parameters"""
-        for node in self.nodes:
-            node_id = node["instance"]
-            if node_id not in connections.keys():
-                """Adding nodes with no connections"""
-                connections[node_id] = {}
-            if node_id not in parameters.keys():
-                """Adding nodes with no connections"""
-                parameters[node_id] = {}
-            for parameter_id, parameter in node["component"].parameters.items():
-                # print(node["component"])
-                parameters[node_id][parameter_id] = float(parameter.value)
-
-        return HumanDesign(name, description, connections, parameters)
+    # def to_abstract_topology(self) -> HumanDesign:
+    #     name = self.name
+    #     description = self.description
+    #     connections: dict[str, dict[str, str]] = {}
+    #     parameters: dict[str, dict[str, float]] = {}
+    #
+    #     """Connections"""
+    #     for edge in self.edges:
+    #         node_id_s = self._graph.vs[edge.source]["instance"]
+    #         node_id_t = self._graph.vs[edge.target]["instance"]
+    #         direction = edge["connection"].direction_b_respect_to_a
+    #         if node_id_s not in connections:
+    #             connections[node_id_s] = {}
+    #         connections[node_id_s][node_id_t] = direction
+    #
+    #     """Parameters"""
+    #     for node in self.nodes:
+    #         node_id = node["instance"]
+    #         if node_id not in connections.keys():
+    #             """Adding nodes with no connections"""
+    #             connections[node_id] = {}
+    #         if node_id not in parameters.keys():
+    #             """Adding nodes with no connections"""
+    #             parameters[node_id] = {}
+    #         for parameter_id, parameter in node["component"].parameters.items():
+    #             # print(node["component"])
+    #             parameters[node_id][parameter_id] = float(parameter.value)
+    #     from sym_cps.representation.design.human import HumanDesign
+    #     return HumanDesign(name, description, connections, parameters)
 
     @property
     def pydot(self) -> pydot.Dot:
@@ -395,6 +397,8 @@ class DConcrete:
                 absolute_path=absolute_folder,
             )
         elif "TOPOLOGY" in file_type.name:
+            return absolute_folder
+            """TODO: FIX"""
             ab_topo = self.to_abstract_topology()
             ab_level = export_type_to_topology_level(file_type)
             return save_to_file(
