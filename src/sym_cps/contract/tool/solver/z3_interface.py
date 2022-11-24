@@ -69,6 +69,9 @@ class Z3Interface(SolverInterface):
     def clause_ge(self, arg1, arg2):
         return arg1 >= arg2
 
+    def clause_gt(self, arg1, arg2):
+        return arg1 > arg2
+
     def add_conjunction_clause(self, *args):
         self._solver.add(*args)
 

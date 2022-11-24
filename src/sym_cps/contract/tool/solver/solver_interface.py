@@ -53,6 +53,10 @@ class SolverInterface(ABC):
         pass
 
     @abstractmethod
+    def clause_gt(self, arg1, arg2):
+        pass
+
+    @abstractmethod
     def add_conjunction_clause(self, *args):
         pass
 

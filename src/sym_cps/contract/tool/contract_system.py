@@ -102,7 +102,7 @@ class ContractSystem(object):
         self._solver.add_conjunction_clause(self._guarantee_clauses)
         self._solver.add_conjunction_clause(self._constraint_clauses)
         self._solver.add_conjunction_clause(self._system_clauses)
-        self._solver.add_conjunction_clause(self._solver.clause_ge(objective_clause, self._objective_val))
+        self._solver.add_conjunction_clause(self._solver.clause_gt(objective_clause, self._objective_val))
         # set timeout
         self._solver.set_timeout(timeout_millisecond=timeout_milliseconds)
         is_sat = self._solver.check()
@@ -122,7 +122,7 @@ class ContractSystem(object):
             # set for next iteration
             new_value = self.calculate_objective()
             self.print_debug(f"new value: {new_value}")
-            self._solver.add_conjunction_clause(self._solver.clause_ge(objective_clause, new_value))
+            self._solver.add_conjunction_clause(self._solver.clause_gt(objective_clause, new_value))
             is_sat = self._solver.check()
 
         if selection_result is None:

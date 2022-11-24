@@ -56,7 +56,7 @@ class SimplifiedSelector:
     def set_selection(self, contract_system: ContractSystem, sys_inst: ContractInstance):
         selection_list = ["Battery", "Propeller", "Motor"]
         for type_str in selection_list:
-            selection_cand_library = self._c_library.components_in_type[type_str]
+            selection_cand_library = list(self._c_library.components_in_type[type_str])
 
             # if type_str == "Battery":
             #    selection_cand_library = [self._c_library.components["TurnigyGraphene6000mAh6S75C"],
@@ -76,7 +76,7 @@ class SimplifiedSelector:
 
         def obj_expr(vs):
             return [
-                1 * (vs["thrust_sum"] - vs["weight_sum"]) + 100 * vs["batt_capacity"] / (vs["V_motor"] * vs["I_motor"])
+                1 * (vs["thrust_sum"] - vs["weight_sum"]) + 20 * vs["batt_capacity"] * vs["V_battery"] / (vs["V_motor"] * vs["I_motor"])
             ]
 
         def obj_fn():
@@ -84,8 +84,9 @@ class SimplifiedSelector:
             weight_sum = contract_system.get_metric_inst(inst=sys_inst, port_property_name="weight_sum")
             capacity = contract_system.get_metric_inst(inst=sys_inst, port_property_name="batt_capacity")
             V_motor = contract_system.get_metric_inst(inst=sys_inst, port_property_name="V_motor")
+            V_battery = contract_system.get_metric_inst(inst=sys_inst, port_property_name="V_battery")
             I_motor = contract_system.get_metric_inst(inst=sys_inst, port_property_name="I_motor")
-            return 1 * (thrust_sum - weight_sum) + 100 * capacity / V_motor / I_motor
+            return 1 * (thrust_sum - weight_sum) + 20 * capacity * V_battery / V_motor / I_motor
 
         obj_val = 0
         contract_system.set_objective(expr=obj_expr, value=obj_val, evaluate_fn=obj_fn)
@@ -133,7 +134,7 @@ class SimplifiedSelector:
                 I = contract_system.get_metric(inst_name="Motor", port_property_name="I_motor")
                 C = contract_system.get_metric(inst_name="Battery", port_property_name="capacity")
                 v_batt = contract_system.get_metric(inst_name="Battery", port_property_name="V_battery")
-                obj = 100 * C / (V * I) + 1 * val
+                obj = 20 * C * v_batt / (V * I) + 1 * val
                 # obj = C / (V * I)
                 print(": ", obj, v_batt / V, end="")
                 if obj > best_diff and v_batt * 0.95 >= V:
@@ -141,7 +142,7 @@ class SimplifiedSelector:
                     best_comp = comp
             print("")
         print("Best: ", best_comp.id, best_diff)
-        return best_comp
+        return best_comp, best_diff
 
     def _set_check_max_voltage_system_contract(self, body_weight: float):
         system_port_name_list = [
@@ -397,6 +398,38 @@ class SimplifiedSelector:
 
         return component_dict
 
+    def random_local_search(self, d_concrete: DConcrete):
+        best_score = 0
+        best_prop = None
+        best_batt = None
+        best_motor = None
+        batteries = [self._c_library.components_in_type["Battery"]]
+        propellers = [self._c_library.components_in_type["Propeller"]]
+        motors = [self._c_library.components_in_type["Motor"]]
+        for j in range(20):
+            for i in range(3):
+                battery, _ = self.select_single_iterate(
+                    d_concrete=self._testquad_design, comp_type="Battery", body_weight=2.0, verbose=False
+                )
+                self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
+                # self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
+                propeller, _ = self.select_single_iterate(
+                    d_concrete=self._testquad_design, comp_type="Propeller", body_weight=2.0, verbose=False
+                )
+                self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
+                motor, score = self.select_single_iterate(
+                    d_concrete=self._testquad_design, comp_type="Motor", body_weight=2.0, verbose=False
+                )
+                self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
+
+                if score > best_score:
+                    best_prop = propeller
+                    best_motor = motor
+                    best_batt = battery    
+            # get random components
+
+
+
     def runTest(self):
         self._c_library, self._seed_designs = parse_library_and_seed_designs()
         self.set_library(library=self._c_library)
@@ -412,18 +445,18 @@ class SimplifiedSelector:
         self.replace_with_component(
             design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller
         )
-        # self.check(d_concrete=self._testquad_design)
+        #self.check(d_concrete=self._testquad_design)
         for i in range(3):
-            battery = self.select_single_iterate(
+            battery, _ = self.select_single_iterate(
                 d_concrete=self._testquad_design, comp_type="Battery", body_weight=2.0, verbose=False
             )
             self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
             # self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
-            propeller = self.select_single_iterate(
+            propeller, _ = self.select_single_iterate(
                 d_concrete=self._testquad_design, comp_type="Propeller", body_weight=2.0, verbose=False
             )
             self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
-            motor = self.select_single_iterate(
+            motor, _ = self.select_single_iterate(
                 d_concrete=self._testquad_design, comp_type="Motor", body_weight=2.0, verbose=False
             )
             self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
