@@ -25,6 +25,9 @@ class Z3Interface(SolverInterface):
             else:
                 print("Error, no bit vector size provided")
             return z3.BitVec(var_name, bv_size)
+        else:
+            print("Error, Not supported type")
+            
 
     def get_constant_value(self, sort: str, value, **kwargs):
         if sort == "real":
@@ -39,6 +42,8 @@ class Z3Interface(SolverInterface):
             else:
                 print("Error, no bit vector size provided")
             return z3.BitVec(value, bv_size)
+        else:
+            print("Error, Not supported type")
 
     def generate_clause_from_function(self, sym_clause_fn: Callable, vs: dict):
         return sym_clause_fn(vs)
@@ -70,7 +75,7 @@ class Z3Interface(SolverInterface):
 
     def check(self) -> bool:
         ret = self._solver.check()
-        # print(self._solver.assertions())
+        #print(self._solver.assertions())
         if ret == z3.sat:
             self._model = self._solver.model()
             return True

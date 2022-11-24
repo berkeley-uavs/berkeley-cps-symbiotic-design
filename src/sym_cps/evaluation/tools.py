@@ -188,7 +188,7 @@ def polling_results(msg, timeout: int = 800):
     result_archive = watch_results_dir(msg, results_dir=aws_folder / "d2c_results", timeout=timeout)
     result = get_zip_metadata(result_archive)
     print("Result archive found in results dir w/ metadata:")
-    print(json.dumps(result, indent="  "))
+    #print(json.dumps(result, indent="  "))
     print(f"Command completed. Results can be found at:{result_archive}")
     return result_archive
 
@@ -222,6 +222,7 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
             result_zip_file.extract(member=info, path=str(extract_folder))
 
         fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
+        output_file_names = []
         for fdm_test in folders:
             fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
             fdm_output = fdm_test / "fdmTB" / "flightDynFastOut.out"
@@ -241,12 +242,16 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
                 info = result_zip_file.getinfo(str(fdm_output_member))
                 info.filename = f"{fdm_test.name}_flightDynFastOut.out"
                 result_zip_file.extract(member=info, path=str(extract_folder))
+                output_file_names.append((fdm_test.name, info.filename))
 
-                #
-                fdm_ret_path = extract_folder / info.filename
-                ret = FDMResult(file_path=fdm_ret_path)
-                score = ret.metrics["Path_traverse_score_based_on_requirements"]
-                fdm_extract_info[fdm_test.name] = score
+        for fdm_test_name, file_name in output_file_names:
+            fdm_ret_path = extract_folder / file_name
+            ret = FDMResult(file_path=fdm_ret_path)
+            try:
+                score = ret.get_metrics("Path_traverse_score_based_on_requirements")
+            except:
+                score = None
+            fdm_extract_info[fdm_test_name] = score
         fdm_extract_info["status"] = "SUCCESS"
     if control_opt:
         from sym_cps.optimizers.control_opt.optimizer import ControlOptimizer

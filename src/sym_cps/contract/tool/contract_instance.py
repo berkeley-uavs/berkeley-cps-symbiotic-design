@@ -55,6 +55,8 @@ class ContractInstance(object):
         return self._var_dict[port_name]
 
     def get_property_var(self, property_name: str):
+        if property_name not in self._var_dict:
+            print(f"Error, name {property_name} not found")
         return self._var_dict[property_name]
 
     @property
@@ -117,6 +119,9 @@ class ContractInstance(object):
     def _instantiate_clauses_from_function(self, solver_interface: SolverInterface, vs, clause_fn: Callable):
         clauses = solver_interface.generate_clause_from_function(sym_clause_fn=clause_fn, vs=vs)
         return clauses
+
+    def instantiate_clauses_from_function(self, solver_interface: SolverInterface, clause_fn: Callable):
+        return self._instantiate_clauses_from_function(solver_interface=solver_interface, vs=self._var_dict, clause_fn=clause_fn)
 
     def _build_var_name(self, interface_name: str):
         return f"{self.template_name}_{self.index}_{self.instance_name}_{interface_name}"
