@@ -18,14 +18,30 @@ class SimplifiedSelector:
         self._c_library = library
         self._table_dict = parsing_prop_table(library=self._c_library)
 
-    def select_all(self, d_concrete: DConcrete, verbose=True, body_weight=0):
-        num_batteries, num_propellers, num_motors, num_batt_controllers = self.count_components()
+    def select_all(self, d_concrete: DConcrete, verbose: bool = True, body_weight: float = 0):
+        num_batteries, num_propellers, num_motors, num_batt_controllers = self.count_components(d_concrete=d_concrete)
         self._uav_contract = UAVContract(table_dict=self._table_dict, num_motor=num_motors, num_battery=num_batteries)
+        self._uav_contract.set_rpm(rpm=18000)
+        self._uav_contract.set_speed(v=19)
         self._uav_contract.set_contract_simplified()
         contract_system = self.build_contract_system(verbose=verbose, component_list=None)
         #TODO make a selection
+        sys_inst, sys_connection = self._set_check_max_voltage_system_contract(body_weight=body_weight)
+        self.set_selection(contract_system = contract_system, sys_inst = sys_inst)
+        ret = contract_system.select(sys_inst=sys_inst, sys_connection_map=sys_connection,
+                                max_iter=10, timeout_milliseconds=100000
+        )
+        contract_system.print_selection_result(ret=ret)
+        # collect actual result
+        battery = ret[contract_system.get_instance("Battery")]
+        motor = ret[contract_system.get_instance("Motor")]
+        propeller = ret[contract_system.get_instance("Propeller")]
+        battery = self._c_library.components[battery["name"]]
+        motor = self._c_library.components[motor["name"]]
+        propeller = self._c_library.components[propeller["name"]]
+        return battery, motor, propeller
 
-    def check(self, d_concrete: DConcrete, verbose=True, body_weight=0):
+    def check(self, d_concrete: DConcrete, verbose: bool=True, body_weight: float=0):
         num_batteries, num_propellers, num_motors, num_batt_controllers = self.count_components(d_concrete=d_concrete)
         component_list = self.dconcrete_component_lists(d_concrete=d_concrete)
         self._uav_contract = UAVContract(table_dict=self._table_dict, num_motor=num_motors, num_battery=num_batteries)
@@ -36,6 +52,40 @@ class SimplifiedSelector:
 
         sys_inst, sys_connection = self._set_check_system_contract(body_weight=body_weight)
         contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
+
+    def set_selection(self, contract_system: ContractSystem, sys_inst: ContractInstance):
+        selection_list = ["Battery", "Propeller", "Motor"]
+        for type_str in selection_list:
+            selection_cand_library = self._c_library.components_in_type[type_str] 
+           
+            # if type_str == "Battery":
+            #    selection_cand_library = [self._c_library.components["TurnigyGraphene6000mAh6S75C"],
+            #                              self._c_library.components["Tattu25C11000mAh6S1PHV"]
+            #                             ]
+            # if type_str == "Motor":
+            #     selection_cand_library = [self._c_library.components["t_motor_AT4130KV300"],
+            #                               self._c_library.components["t_motor_AT4130KV300"]]
+            # if type_str == "Propeller":
+            #     selection_cand_library = [self._c_library.components["apc_propellers_17x6"],
+            #                                 self._c_library.components["apc_propellers_18x5_5MR"]]
+            selection_cand_list = [self._uav_contract.hackathon_property_interface_fn_aggregated(cand) for cand in selection_cand_library]
+            # TODO insert debug code
+            contract_system.set_selection(
+                contract_system.get_instance(type_str), 
+                   candidate_list=selection_cand_list
+            )
+
+        def obj_expr(vs):
+            return [1 * (vs["thrust_sum"] - vs["weight_sum"]) + 100 * vs["batt_capacity"] / (vs["V_motor"] * vs["I_motor"])]
+        def obj_fn():
+            thrust_sum = contract_system.get_metric_inst(inst=sys_inst, port_property_name="thrust_sum")
+            weight_sum = contract_system.get_metric_inst(inst=sys_inst, port_property_name="weight_sum")
+            capacity = contract_system.get_metric_inst(inst=sys_inst, port_property_name="batt_capacity")
+            V_motor = contract_system.get_metric_inst(inst=sys_inst, port_property_name="V_motor")
+            I_motor = contract_system.get_metric_inst(inst=sys_inst, port_property_name="I_motor")
+            return 1 * (thrust_sum - weight_sum) + 100 * capacity/V_motor/I_motor
+        obj_val = 0
+        contract_system.set_objective(expr=obj_expr, value=obj_val, evaluate_fn=obj_fn)
 
     def select_single_iterate(self, d_concrete: DConcrete, comp_type: str, verbose=True, body_weight=0):
         # for a battery, we want to check if the largest voltage is OK for the system
@@ -101,6 +151,7 @@ class SimplifiedSelector:
             ComponentInterface(name="W_batt", sort="real"),
             ComponentInterface(name="thrust_sum", sort="real"),
             ComponentInterface(name="V_motor", sort="real"),
+            ComponentInterface(name="I_motor", sort="real"),
             ComponentInterface(name="V_battery", sort="real"),
         ]
         system_property_name_list = []
@@ -129,7 +180,7 @@ class SimplifiedSelector:
         )
         sys_connection_map = {
             "Propeller": [("thrust_sum", "thrust"), ("W_prop", "W_prop"), ("rho", "rho")],
-            "Motor": [("W_motor", "W_motor"), ("V_motor", "V_motor")],
+            "Motor": [("W_motor", "W_motor"), ("V_motor", "V_motor"), ("I_motor", "I_motor")],
             "Battery": [
                 ("W_batt", "W_batt"),
                 ("batt_capacity", "capacity"),
@@ -202,7 +253,7 @@ class SimplifiedSelector:
         def system_assumption(vs):
             weight_sum = (vs["W_batt"] + body_weight + vs[f"W_prop"] + vs[f"W_motor"]) * 9.81
             return [
-                vs["I_battery"] <= vs["batt_capacity"] * 3600 / 400,
+                #vs["I_battery"] <= vs["batt_capacity"] * 3600 / 400,
                 vs["rho"] == 1.225,
                 vs["weight_sum"] == weight_sum,
             ]
@@ -229,46 +280,24 @@ class SimplifiedSelector:
         return system_instance, sys_connection_map
 
     def build_contract_system(self, verbose, component_list):
-
         contract_system = ContractSystem(verbose=verbose)
         contract_system.set_solver(Z3Interface())
         # Propeller
-        contract_prop = ContractInstance(
-            template=self._uav_contract.get_contract("Propeller"),
-            instance_name="Propeller",
-            component_properties=self._uav_contract.hackathon_property_interface_fn_aggregated(
-                component_list["Propeller"]["lib"][0]
-            ),
-        )
-        # Motor
-        contract_motor = ContractInstance(
-            template=self._uav_contract.get_contract("Motor"),
-            instance_name="Motor",
-            component_properties=self._uav_contract.hackathon_property_interface_fn_aggregated(
-                component_list["Motor"]["lib"][0]
-            ),
-        )
-        # Battery
-        contract_batt = ContractInstance(
-            template=self._uav_contract.get_contract("Battery"),
-            instance_name="Battery",
-            component_properties=self._uav_contract.hackathon_property_interface_fn_aggregated(
-                component_list["Battery"]["lib"][0]
-            ),
-        )
-        # Controller
-        contract_controller = ContractInstance(
-            template=self._uav_contract.get_contract("BatteryController"),
-            instance_name="BatteryController",
-            component_properties=self._uav_contract.hackathon_property_interface_fn_aggregated(
-                component_list["BatteryController"]["lib"][0]
-            ),
-        )
+        contract_type_list = ["Propeller", "Motor", "Battery", "BatteryController"]
+        contract_insts = {}
+        for type_str in contract_type_list:
+            properties = None
+            if component_list is not None:
+                properties = self._uav_contract.hackathon_property_interface_fn_aggregated(
+                    component_list[type_str]["lib"][0]
+                )
+            contract_inst = ContractInstance(
+                template=self._uav_contract.get_contract(type_str),
+                instance_name=type_str,
+                component_properties=properties
+            )
+            contract_system.add_instance(contract_inst)
 
-        contract_system.add_instance(contract_prop)
-        contract_system.add_instance(contract_motor)
-        contract_system.add_instance(contract_batt)
-        contract_system.add_instance(contract_controller)
         # connect
         propeller_motor_connection = [
             ("torque_prop", "torque_motor"),
@@ -277,9 +306,9 @@ class SimplifiedSelector:
         ]
         motor_batt_contr_connection = [("I_motor", "I_motor"), ("V_motor", "V_motor")]
         batt_contr_connection = [("I_battery", "I_batt"), ("V_battery", "V_battery")]
-        contract_system.compose(contract_prop, contract_motor, propeller_motor_connection)
-        contract_system.compose(contract_motor, contract_controller, motor_batt_contr_connection)
-        contract_system.compose(contract_controller, contract_batt, batt_contr_connection)
+        contract_system.compose(contract_system.get_instance("Propeller"), contract_system.get_instance("Motor"), propeller_motor_connection)
+        contract_system.compose(contract_system.get_instance("Motor"), contract_system.get_instance("BatteryController"), motor_batt_contr_connection)
+        contract_system.compose(contract_system.get_instance("BatteryController"), contract_system.get_instance("Battery"), batt_contr_connection)
 
         return contract_system
 
@@ -364,22 +393,26 @@ class SimplifiedSelector:
         for comp in self._testquad_design.components:
             print(comp.id, comp.library_component.id)
         self._testquad_design.name += "_comp_opt"
-        # self.check(d_concrete=self._testquad_design)
-        # for i in range(3):
-        #     battery = self.select_single_iterate(
-        #         d_concrete=self._testquad_design, comp_type="Battery", body_weight=1.5, verbose=False
-        #     )
-        #     self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
-        #     # self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
-        #     propeller = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Propeller", body_weight=1.5, verbose=False)
-        #     self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
-        #     motor = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Motor", body_weight=1.5, verbose=False)
-        #     self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
 
-        #self._testquad_design.export(ExportType.JSON)
-        # from pathlib import Path
-        # from sym_cps.shared.paths import designs_folder
-        #self._testquad_design.evaluate(study_params= designs_folder / self._testquad_design.name / "study_params.csv")
+        battery, motor, propeller = self.select_all(d_concrete=self._testquad_design, verbose=True, body_weight=2.0)
+
+        self.replace_with_component(design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller)
+        # self.check(d_concrete=self._testquad_design)
+        for i in range(3):
+            battery = self.select_single_iterate(
+                d_concrete=self._testquad_design, comp_type="Battery", body_weight=2.0, verbose=False
+            )
+            self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
+            # self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
+            propeller = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Propeller", body_weight=2.0, verbose=False)
+            self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
+            motor = self.select_single_iterate(d_concrete=self._testquad_design, comp_type="Motor", body_weight=2.0, verbose=False)
+            self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
+        from sym_cps.shared.objects import ExportType
+        self._testquad_design.export(ExportType.JSON)
+        from pathlib import Path
+        from sym_cps.shared.paths import designs_folder
+        self._testquad_design.evaluate(study_params= designs_folder / self._testquad_design.name / "study_params.csv")
 
 
 

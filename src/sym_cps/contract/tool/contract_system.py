@@ -30,6 +30,11 @@ class ContractSystem(object):
         """
         return NotImplementedError
 
+    def get_instance(self, inst_name) -> ContractInstance:
+        if inst_name not in self._c_instance:
+            print(f"Error, there is no instance called {inst_name}")
+        return self._c_instance[inst_name]
+
     def is_concrete(self):
         """Check whether the whole system is concrete, meaning that all component has been selected"""
         for inst in self._c_instance.values():
@@ -86,12 +91,17 @@ class ContractSystem(object):
     ):
         self.print_debug("Select Component!")
         self._clear_clauses()
+        # build system
         sys_inst.build_clauses(solver_interface=self._solver)
+        objective_clause = sys_inst.instantiate_clauses_from_function(solver_interface=self._solver, clause_fn=self._objective_expr)[0]
         self._build_find_behavior_system(sys_inst=sys_inst)
         self._build_connection_one_to_multi(sys_inst, sys_connection_map=sys_connection_map)
+        # add clause to solver
         self._solver.add_conjunction_clause(self._guarantee_clauses)
         self._solver.add_conjunction_clause(self._constraint_clauses)
         self._solver.add_conjunction_clause(self._system_clauses)
+        self._solver.add_conjunction_clause(self._solver.clause_ge(objective_clause, self._objective_val))
+        # set timeout
         self._solver.set_timeout(timeout_millisecond=timeout_milliseconds)
         is_sat = self._solver.check()
         num_iter = 0
@@ -102,15 +112,16 @@ class ContractSystem(object):
                 self.print_debug(f"Iteration: {num_iter}")
                 self.print_selection_result(selection_result)
                 self.print_metric()
+                self.print_instance_metric(sys_inst)
             # count progress
+            num_iter += 1
             if num_iter >= max_iter:
                 break
-            else:
-                num_iter += 1
             # set for next iteration
             new_value = self.calculate_objective()
-            self._solver.add_conjunction_clause(self._solver.clause_ge(self._objective_expr, new_value))
-            ret = self._solver.check()
+            self.print_debug(f"new value: {new_value}")
+            self._solver.add_conjunction_clause(self._solver.clause_ge(objective_clause, new_value))
+            is_sat = self._solver.check()
 
         if selection_result is None:
             self.print_debug("Fail.....")
@@ -175,10 +186,11 @@ class ContractSystem(object):
         selection_dict = {}
         # set property
         for candidate in candidate_list:
-            use_v = self._solver.get_fresh_variable(var_name=f"{inst.instance_name}_use_{candidate.id}", sort="bool")
+            candidate_name = candidate["name"]
+            use_v = self._solver.get_fresh_variable(var_name=f"{inst.instance_name}_use_{candidate_name}", sort="boolean")
             assignment_constraint = [
-                self._solver.clause_equal(inst.get_property_var(prop_name), candidate[prop_name])
-                for prop_name in inst.property_name_list
+                self._solver.clause_equal(inst.get_property_var(prop.name), candidate[prop.name])
+                for prop in inst.property_list
             ]
             self._system_clauses.append(
                 self._solver.clause_implication(use_v, self._solver.clause_and(*assignment_constraint))
@@ -193,13 +205,13 @@ class ContractSystem(object):
             self._system_clauses.append(self._solver.clause_implication(v, self._solver.clause_and(*not_v2s)))
 
         # select one
-        self._guarantee_clauses.append(self._solver.clause_or(*(selection_dict.keys())))
+        self._system_clauses.append(self._solver.clause_or(*(selection_dict.keys())))
 
     def set_objective(self, expr, value, evaluate_fn):
         self._objective_expr = expr
         self._objective_val = value
         self._objective_fn = evaluate_fn
-        self._solver.add_conjunction_clause(self._solver.clause_ge(self._objective_expr, self._objective_val))
+        #self._solver.add_conjunction_clause(self._solver.clause_ge(self._objective_expr, self._objective_val))
 
     def calculate_objective(self):
         return self._objective_fn()
