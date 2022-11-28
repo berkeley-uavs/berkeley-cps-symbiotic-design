@@ -16,10 +16,10 @@ def random_designs_n(n: int = 100):
         new_design.parse_grid(generate_random_topology())
         new_design.save(folder_name=f"designs/{new_design.name}")
         d_concrete = new_design.to_concrete()
-        d_concrete.export_all()
+        # d_concrete.export_all()
         # d_concrete.evaluate()
 
 
 if __name__ == "__main__":
-    random_designs_n(1)
+    random_designs_n(100)
     # design_test_quad()

@@ -39,6 +39,7 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
         with open(file, 'rb') as pickle_file:
             abstract_grid: AbstractGrid = pickle.load(pickle_file)
             new_design = AbstractDesign(abstract_grid.name)
+            new_design.parse_grid(abstract_grid)
             return new_design.to_concrete()
 
     raise AttributeError

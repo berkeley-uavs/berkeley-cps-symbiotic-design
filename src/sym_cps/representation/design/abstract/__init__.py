@@ -217,9 +217,9 @@ class AbstractDesign:
         if folder_name is None:
             folder_name = "grammar"
 
-        save_to_file(export, file_name=self.name, folder_name=folder_name)
-        save_to_file(self.abstract_grid, file_name=self.name, folder_name=folder_name)
-        save_to_file(self.plot, file_name=self.name, folder_name=folder_name)
+        save_to_file(export, file_name="grid", folder_name=folder_name)
+        save_to_file(self.abstract_grid, file_name="grid", folder_name=folder_name)
+        save_to_file(self.plot, file_name="grid", folder_name=folder_name)
 
     @property
     def plot(self):
