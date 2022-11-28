@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from sym_cps.representation.design.concrete import Component
+from sym_cps.representation.design.concrete import Component, Connection
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import structures
 from sym_cps.tools.strings import get_instance_name
@@ -21,21 +21,24 @@ class AbstractComponent:
     grid_position: tuple[int, int, int]
     base_name: str = ""
     instance_n: int = 1
-    connections: set[AbstractConnection] = field(default_factory=set)
+    abstract_connections: set[AbstractConnection] = field(default_factory=set)
     color: str = "black"
     structure: set[Component] = field(default_factory=set)
-
+    connections: set[Connection] = field(default_factory=set)
+    interface_component: Component | None = None
     def add_connection(self, abstract_connection: AbstractConnection):
-        self.connections.add(abstract_connection)
+        self.abstract_connections.add(abstract_connection)
 
     def add_structure_components(self):
         for component in structures[self.base_name]["Components"]:
             c_type = list(component.keys())[0]
             instance = get_instance_name(c_type, self.instance_n)
             lib_component = c_library.get_default_component(c_type)
-            self.structure.add(
-                Component(c_type=c_library.component_types[c_type], id=instance, library_component=lib_component)
-            )
+            component = Component(c_type=c_library.component_types[c_type], id=instance, library_component=lib_component)
+            self.structure.add(component)
+            if condition:
+                self.interface_component = component
+
 
     @property
     def id(self) -> str:
@@ -43,7 +46,7 @@ class AbstractComponent:
 
     @property
     def export(self) -> dict:
-        return {self.id: {"position": self.grid_position, "connections": [e.component_b.id for e in self.connections]}}
+        return {self.id: {"position": self.grid_position, "connections": [e.component_b.id for e in self.abstract_connections]}}
 
 
 @dataclass
@@ -105,6 +108,11 @@ class Connector(AbstractComponent):
                 id=instance,
                 library_component=lib_component
             ))
+
+
+    def refine(self):
+        for connection in self.abstract_connections:
+            pass
 
     def __hash__(self):
         return hash(self.id)

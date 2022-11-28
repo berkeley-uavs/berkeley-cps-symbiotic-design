@@ -55,7 +55,7 @@ def modified_design():
     connections_original = test_quad_original.connections
     print(f"{len(connections_original)} original connections")
 
-    connections_mods = test_quad_from_topology.connections
+    connections_mods = test_quad_from_topology.abstract_connections
     print(f"{len(connections_mods)} mod connections")
 
     test_quad_from_topology.evaluate()
