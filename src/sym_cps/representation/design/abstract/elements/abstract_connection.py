@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from sym_cps.representation.design.abstract import AbstractComponent
+# from sym_cps.representation.design.abstract import AbstractComponent
 
 
 @dataclass
