@@ -4,7 +4,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
-# from sym_cps.representation.design.abstract import AbstractComponent
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sym_cps.representation.design.abstract import AbstractComponent
 
 
 @dataclass

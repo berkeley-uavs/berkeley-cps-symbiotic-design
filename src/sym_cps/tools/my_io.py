@@ -11,7 +11,7 @@ from sym_cps.tools.strings import sort_dictionary
 
 
 def save_to_file(
-    file_content: str | dict | Figure, file_name: str, folder_name: str | None = None, absolute_path: Path | None = None
+    file_content: str | dict | Figure | object, file_name: str, folder_name: str | None = None, absolute_path: Path | None = None
 ) -> Path:
     if Path(file_name).suffix == "" and isinstance(file_content, dict):
         file_name += ".json"

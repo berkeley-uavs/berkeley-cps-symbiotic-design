@@ -11,9 +11,10 @@ rule_dict_path_constant = data_folder / "reverse_engineering" / "grammar_rules.j
 
 
 @dataclass
-class Grid:
+class AbstractGrid:
     nodes: list[list[list[str]]]
     adjacencies: dict[tuple, list[tuple]]
+    name: str = ""
 
 
 def node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
@@ -145,13 +146,13 @@ def node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, r
 
 def node_matches_rule(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
     return (
-        node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-        and node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-        and node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-        and node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-        and node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-        and node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-        and node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+            node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+            and node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+            and node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+            and node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+            and node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+            and node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+            and node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
     )
 
 
@@ -323,13 +324,13 @@ def components_count(design):
 
 
 def generate_random_topology(
-    right_width=None,
-    length=None,
-    depth=None,
-    origin=None,
-    max_right_num_rotors=None,
-    max_right_num_wings=None,
-    rule_dict_path=rule_dict_path_constant,
+        right_width=None,
+        length=None,
+        depth=None,
+        origin=None,
+        max_right_num_rotors=None,
+        max_right_num_wings=None,
+        rule_dict_path=rule_dict_path_constant,
 ):
     symbol_groups = {
         "BODY": ["FUSELAGE", "HUB", "TUBE"],
@@ -397,7 +398,7 @@ def generate_random_topology(
         )
         num_fuselage, num_rotors, num_wings = components_count(design)
         if num_fuselage and num_rotors:  # and num_wings
-            return Grid(nodes=design, adjacencies=joint_adjacency_dict)
+            return AbstractGrid(nodes=design, adjacencies=joint_adjacency_dict)
 
 
 def get_seed_design_topo(design_name: str):
@@ -405,7 +406,7 @@ def get_seed_design_topo(design_name: str):
         state = [[[""], ["ROTOR"], [""]], [["ROTOR"], ["FUSELAGE"], ["ROTOR"]], [[""], ["ROTOR"], [""]]]
         adjacency_dict = {}
         adjacency_dict[(1, 1, 0)] = [(1, 0, 0), (0, 1, 0), (2, 1, 0), (1, 2, 0)]
-        return Grid(nodes=state, adjacencies=adjacency_dict)
+        return AbstractGrid(nodes=state, adjacencies=adjacency_dict)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
-from sym_cps.grammar.rules import Grid, generate_random_topology, get_seed_design_topo
+from sym_cps.grammar.rules import AbstractGrid, generate_random_topology, get_seed_design_topo
 from sym_cps.representation.design.abstract.elements import (
     AbstractComponent,
     AbstractConnection,
@@ -22,6 +22,7 @@ from sym_cps.tools.my_io import save_to_file
 @dataclass
 class AbstractDesign:
     name: str
+    abstract_grid: AbstractGrid | None = None
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
     connections: set[AbstractConnection] = field(default_factory=set)
 
@@ -39,9 +40,10 @@ class AbstractDesign:
         abstract_connection = AbstractConnection(abstract_component_a, abstract_component_b)
         self.connections.add(abstract_connection)
 
-    def parse_grid(self, grid: Grid):
-        nodes = grid.nodes
-
+    def parse_grid(self, abstract_grid: AbstractGrid):
+        self.abstract_grid = abstract_grid
+        self.abstract_grid.name = self.name
+        nodes = abstract_grid.nodes
         for x_pos, x_axis in enumerate(nodes):
             for y_pos, y_axis in enumerate(x_axis):
                 for z_pos, node_element in enumerate(y_axis):
@@ -55,14 +57,13 @@ class AbstractDesign:
                     if "CONNECTOR" in node_element:
                         self.add_abstract_component(position, Connector(grid_position=position))
 
-        for position_a, connections in grid.adjacencies.items():
+        for position_a, connections in abstract_grid.adjacencies.items():
             for position_b in connections:
                 self.add_connection(position_a, position_b)
 
     def to_concrete(self) -> DConcrete:
         """TODO"""
         pass
-
 
     # def instantiate_hubs(self) -> dict:
     #     hubs = []
@@ -217,8 +218,8 @@ class AbstractDesign:
             folder_name = "grammar"
 
         save_to_file(export, file_name=self.name, folder_name=folder_name)
+        save_to_file(self.abstract_grid, file_name=self.name, folder_name=folder_name)
         save_to_file(self.plot, file_name=self.name, folder_name=folder_name)
-        save_to_file(self, file_name=self.name, folder_name=folder_name)
 
     @property
     def plot(self):

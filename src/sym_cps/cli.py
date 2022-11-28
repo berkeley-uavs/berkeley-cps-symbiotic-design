@@ -1,11 +1,12 @@
 """Module that contains the command line application."""
 import argparse
+import pickle
 from pathlib import Path
 from typing import List, Optional
 
-from dill import load
 from sym_cps.evaluation import evaluate_design
 from sym_cps.examples.library import export_library
+from sym_cps.grammar.rules import AbstractGrid
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
@@ -35,8 +36,10 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
             file_str = str(file)
             file_str += ".dat"
             file = Path(file_str)
-        abstract_topology: AbstractDesign = load(file)
-        return abstract_topology.to_concrete()
+        with open(file, 'rb') as pickle_file:
+            abstract_grid: AbstractGrid = pickle.load(pickle_file)
+            new_design = AbstractDesign(abstract_grid.name)
+            return new_design.to_concrete()
 
     raise AttributeError
 
@@ -92,5 +95,6 @@ def evaluate_design_swri(args: Optional[List[str]] = None) -> int:
 
 
 if __name__ == '__main__':
-    dconcrete = _parse_design(["--abstract_json=grid/test_quad_cargo_test"])
+    # dconcrete = _parse_design(["--abstract_json=grid/test_quad_cargo_test"])
+    dconcrete = _parse_design(["--grid=grid/test_quad_cargo_grid.dat"])
     dconcrete.export_all()
