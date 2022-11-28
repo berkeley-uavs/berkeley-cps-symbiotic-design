@@ -149,7 +149,7 @@ class AbstractDesign:
             new_tube[tube_instance]["CONNECTIONS"][comp_a + "__Hub4"] = "SIDE" + str(side) + "-BOTTOM"
         elif current.base_name == "Wing":
             new_tube[tube_instance]["CONNECTIONS"][comp_a] = "BOTTOM"
-        elif current.base_name == "Propeller_str":
+        elif current.base_name == "Propeller_str_top":
             new_tube[tube_instance]["CONNECTIONS"][comp_a + "__Flange"] = "TOP-SIDE"
         elif current.base_name == "Connector":
             new_tube[tube_instance]["CONNECTIONS"][comp_a] = (
@@ -158,13 +158,13 @@ class AbstractDesign:
 
         if other.base_name == "Fuselage_str":
             side = fuselage_counter[other.instance_n]
-            new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Hub4"] = "SIDE" + str(side) + "-BOTTOM"
+            new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Hub4"] = "SIDE" + str(side) + "-TOP"
         elif other.base_name == "Wing":
-            new_tube[tube_instance]["CONNECTIONS"][comp_b] = "BOTTOM"
-        elif other.base_name == "Propeller_str":
-            new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Flange"] = "TOP-SIDE"
+            new_tube[tube_instance]["CONNECTIONS"][comp_b] = "TOP"
+        elif other.base_name == "Propeller_str_top":
+            new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Flange"] = "BOTTOM-SIDE"
         elif other.base_name == "Connector":
-            new_tube[tube_instance]["CONNECTIONS"][comp_b] = "SIDE" + str(hub_counter[other.instance_n - 1]) + "-BOTTOM"
+            new_tube[tube_instance]["CONNECTIONS"][comp_b] = "SIDE" + str(hub_counter[other.instance_n - 1]) + "-TOP"
 
         return new_tube
 

@@ -82,23 +82,19 @@ class HumanDesign:
         for position, abstract_component in abstract_design.grid.items():
             if abstract_component.base_name == "Connector":
                 continue
-            elif abstract_component.base_name == "Propeller_str":
-                current = abstract_component.base_name + "_top_instance_" + str(abstract_component.instance_n)
-                export["TOPOLOGY"][current] = {}
-                export["TOPOLOGY"][current]["CONNECTIONS"] = {}
-                export["TOPOLOGY"][current]["PARAMETERS"] = {}
-                export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][current + "__Motor"] = "ANY"
-            elif abstract_component.base_name == "Fuselage_str":
+            else:
                 export["TOPOLOGY"][abstract_component.id] = {}
                 export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
                 export["TOPOLOGY"][abstract_component.id]["PARAMETERS"] = {}
-                export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
-                    abstract_component.id + "__Battery"
-                ] = "ANY"
-            elif abstract_component.base_name == "Wingr":
-                export["TOPOLOGY"][abstract_component.id] = {}
-                export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
-                export["TOPOLOGY"][abstract_component.id]["PARAMETERS"] = {}
+                if abstract_component.base_name == "Propeller_str_top":
+                    export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
+                        abstract_component.id + "__Motor"
+                    ] = "ANY"
+                if abstract_component.base_name == "Fuselage_str":
+                    export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
+                        abstract_component.id + "__Battery"
+                    ] = "ANY"
+
 
         tubes = abstract_design.instantiate_tubes(len(hubs))
         for tube in tubes:
