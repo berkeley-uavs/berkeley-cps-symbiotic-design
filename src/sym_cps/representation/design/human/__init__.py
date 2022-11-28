@@ -90,7 +90,7 @@ class HumanDesign:
                     export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
                         abstract_component.id + "__Motor"
                     ] = "ANY"
-                if abstract_component.base_name == "Fuselage_str":
+                elif abstract_component.base_name == "Fuselage_str":
                     export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
                         abstract_component.id + "__Battery"
                     ] = "ANY"
@@ -102,7 +102,7 @@ class HumanDesign:
             value = tube[key]
             export["TOPOLOGY"][key] = value
             for component_b, connection in value["CONNECTIONS"].items():
-                if get_component_type_from_instance_name(component_b) == "Hub6":
+                if get_component_type_from_instance_name(component_b) == "Hub4":
                     a, b = connection.split("-")
                     export["TOPOLOGY"][component_b]["CONNECTIONS"][key] = b + "-" + a
 

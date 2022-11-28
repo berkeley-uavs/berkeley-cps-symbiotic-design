@@ -100,11 +100,11 @@ class Connector(AbstractComponent):
     def __post_init__(self):
         self.base_name = "Connector"
         self.color = "gray"
-        instance = get_instance_name("Hub6", self.instance_n)
-        lib_component = c_library.get_default_component("Hub6")
+        instance = get_instance_name("Hub4", self.instance_n)
+        lib_component = c_library.get_default_component("Hub4")
         self.structure.add(
             Component(
-                c_type=c_library.component_types["Hub6"],
+                c_type=c_library.component_types["Hub4"],
                 id=instance,
                 library_component=lib_component
             ))

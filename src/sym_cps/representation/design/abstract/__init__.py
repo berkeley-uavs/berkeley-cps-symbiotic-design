@@ -62,7 +62,7 @@ class AbstractDesign:
         hubs = []
         for component in self.grid.values():
             if component.base_name == "Connector":
-                new_hub = {"Hub6_instance_" + str(component.instance_n): {"CONNECTIONS": {}, "PARAMETERS": {}}}
+                new_hub = {"Hub4_instance_" + str(component.instance_n): {"CONNECTIONS": {}, "PARAMETERS": {}}}
                 hubs.append(new_hub)
         return hubs
 
@@ -128,7 +128,7 @@ class AbstractDesign:
             "Propeller_str_top": component.id,
             "Fuselage_str": component.id,
             "Wing": component.id,
-            "Connector": "Hub6_instance_" + str(component.instance_n),
+            "Connector": "Hub4_instance_" + str(component.instance_n),
         }
         return mapping[component.base_name]
 
