@@ -16,12 +16,10 @@ from igraph import Edge, EdgeSeq, Graph, Vertex
 
 from sym_cps.evaluation import evaluate_design
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
-
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
-
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level
@@ -147,11 +145,11 @@ class DConcrete:
         raise Exception
 
     def select(
-            self,
-            library_component: LibraryComponent | None = None,
-            component_type: CType | None = None,
+        self,
+        library_component: LibraryComponent | None = None,
+        component_type: CType | None = None,
     ) -> set[Component]:
-        """"Returns set of 'Component' belonging to the same LibraryComponent or to the same CType"""
+        """ "Returns set of 'Component' belonging to the same LibraryComponent or to the same CType"""
         components = set()
         if library_component is not None:
             return set(self.graph.vs.select(library_component=library_component)["component"])
@@ -161,7 +159,7 @@ class DConcrete:
 
     @property
     def all_library_components_in_type(
-            self,
+        self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -174,7 +172,7 @@ class DConcrete:
 
     @property
     def all_comp_types_ids(
-            self,
+        self,
     ) -> set[str]:
         comp_types_ds = set()
         for component in self.components:
@@ -184,7 +182,7 @@ class DConcrete:
 
     @property
     def all_components_by_library_components(
-            self,
+        self,
     ) -> dict[LibraryComponent, set[Component]]:
         """Returns all Components for each LibraryComponent in the design"""
         comp_types_n: dict[LibraryComponent, set[Component]] = {}
@@ -306,6 +304,7 @@ class DConcrete:
             )
         elif "TOPOLOGY" in file_type.name:
             from sym_cps.representation.design.human import HumanDesign
+
             ab_topo = HumanDesign.from_concrete(self)
             ab_level = export_type_to_topology_level(file_type)
             return save_to_file(
@@ -413,8 +412,8 @@ class DConcrete:
 
         connection_dict = {}
         for (
-                components_class,
-                library_components,
+            components_class,
+            library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
@@ -429,8 +428,8 @@ class DConcrete:
                         )
                         if component.id == connection.component_a.id:
                             if (
-                                    connection.component_b.library_component.id
-                                    in connection_dict[library_component.id].keys()
+                                connection.component_b.library_component.id
+                                in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id
@@ -442,8 +441,8 @@ class DConcrete:
 
                         if component.id == connection.component_b.id:
                             if (
-                                    connection.component_a.library_component.id
-                                    in connection_dict[library_component.id].keys()
+                                connection.component_a.library_component.id
+                                in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id
@@ -520,8 +519,8 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-                components_class,
-                library_components,
+            components_class,
+            library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:

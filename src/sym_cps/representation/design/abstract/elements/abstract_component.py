@@ -5,8 +5,8 @@ from dataclasses import dataclass, field
 # from sym_cps.representation.design.abstract import AbstractConnection
 from sym_cps.representation.design.concrete import Component
 from sym_cps.shared.library import c_library
-from sym_cps.tools.strings import get_instance_name
 from sym_cps.shared.objects import structures
+from sym_cps.tools.strings import get_instance_name
 
 
 @dataclass
@@ -31,11 +31,8 @@ class AbstractComponent:
             instance = get_instance_name(c_type, self.instance_n)
             lib_component = c_library.get_default_component(c_type)
             self.structure.add(
-                Component(
-                    c_type=c_library.component_types[c_type],
-                    id=instance,
-                    library_component=lib_component
-                ))
+                Component(c_type=c_library.component_types[c_type], id=instance, library_component=lib_component)
+            )
 
     @property
     def id(self) -> str:
@@ -83,11 +80,8 @@ class Wing(AbstractComponent):
         instance = get_instance_name("Wing", self.instance_n)
         lib_component = c_library.get_default_component("Wing")
         self.structure.add(
-            Component(
-                c_type=c_library.component_types["Wing"],
-                id=instance,
-                library_component=lib_component
-            ))
+            Component(c_type=c_library.component_types["Wing"], id=instance, library_component=lib_component)
+        )
 
     def __hash__(self):
         return hash(self.id)
@@ -103,11 +97,8 @@ class Connector(AbstractComponent):
         instance = get_instance_name("Hub6", self.instance_n)
         lib_component = c_library.get_default_component("Hub6")
         self.structure.add(
-            Component(
-                c_type=c_library.component_types["Hub6"],
-                id=instance,
-                library_component=lib_component
-            ))
+            Component(c_type=c_library.component_types["Hub6"], id=instance, library_component=lib_component)
+        )
 
     def __hash__(self):
         return hash(self.id)

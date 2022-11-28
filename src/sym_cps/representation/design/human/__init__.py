@@ -8,7 +8,7 @@ from aenum import Enum, auto
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.design.abstract import AbstractDesign
-from sym_cps.representation.design.concrete import DConcrete, Connection, Component
+from sym_cps.representation.design.concrete import Component, Connection, DConcrete
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import (
@@ -99,8 +99,9 @@ class HumanDesign:
             vertex_a = d_concrete.get_node_by_instance(component_id_a)
             if vertex_a is None:
                 component_type_id = get_component_type_from_instance_name(component_id_a)
-                vertex_a = d_concrete.add_node(Component(c_type=c_library.component_types[component_type_id],
-                                                         id=component_id_a))
+                vertex_a = d_concrete.add_node(
+                    Component(c_type=c_library.component_types[component_type_id], id=component_id_a)
+                )
             """Parameters"""
             if component_id_a in self.parameters.keys():
                 vertex_a["component"].update_parameters(self.parameters[component_id_a])
@@ -109,8 +110,9 @@ class HumanDesign:
                 vertex_b = d_concrete.get_node_by_instance(component_id_b)
                 if vertex_a is None:
                     component_type_id = get_component_type_from_instance_name(component_id_b)
-                    vertex_b = d_concrete.add_node(Component(c_type=c_library.component_types[component_type_id],
-                                                             id=component_id_b))
+                    vertex_b = d_concrete.add_node(
+                        Component(c_type=c_library.component_types[component_type_id], id=component_id_b)
+                    )
                 connection = Connection.from_direction(
                     component_a=vertex_a["component"],
                     component_b=vertex_b["component"],
@@ -238,7 +240,7 @@ class HumanDesign:
                                             if comp_b == "BatteryController":
                                                 topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
                                                     comp_b + "_instance_1"
-                                                    ] = struct_component[comp_a][struct_category][comp_b]
+                                                ] = struct_component[comp_a][struct_category][comp_b]
                                             elif comp_a == "Battery":
                                                 topo_instance[comp_a + "_instance_" + str(first_instance)][
                                                     "CONNECTIONS"
@@ -249,10 +251,10 @@ class HumanDesign:
                                             elif comp_b == "Battery":
                                                 topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
                                                     comp_b + "_instance_" + str(first_instance)
-                                                    ] = "INSIDE-2"
+                                                ] = "INSIDE-2"
                                                 topo_instance[comp_a + "_instance_" + str(instance_n)]["CONNECTIONS"][
                                                     comp_b + "_instance_" + str(second_instance)
-                                                    ] = "INSIDE-1"
+                                                ] = "INSIDE-1"
                                             else:
                                                 key_a = comp_a + "_instance_" + str(instance_n)
                                                 key_b = comp_b + "_instance_" + str(instance_n)
@@ -307,10 +309,10 @@ class HumanDesign:
                             if comp_a == "Battery":
                                 to_add_topo["TOPOLOGY"][comp_a + "_instance_" + str(first_instance)] = topo_instance[
                                     comp_a + "_instance_" + str(first_instance)
-                                    ]
+                                ]
                                 to_add_topo["TOPOLOGY"][comp_a + "_instance_" + str(second_instance)] = topo_instance[
                                     comp_a + "_instance_" + str(second_instance)
-                                    ]
+                                ]
                             else:
                                 """TODO REFACTOR"""
                                 key = comp_a + "_instance_" + str(instance_n)
@@ -472,7 +474,7 @@ class HumanDesign:
                 # print(export["TOPOLOGY"][component_a])
                 if HumanFeatures.AVOID_REDUNDANT_CONNECTIONS in abstraction_levels_features[abstraction_level]:
                     if component_b in list(export["TOPOLOGY"].keys()) and component_a in list(
-                            export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()
+                        export["TOPOLOGY"][component_b]["CONNECTIONS"].keys()
                     ):
                         continue
                 if HumanFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
