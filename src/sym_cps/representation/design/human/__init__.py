@@ -8,6 +8,7 @@ from aenum import Enum, auto
 
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.design.abstract import AbstractDesign
+from sym_cps.representation.design.concrete import Component, Connection, DConcrete
 from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import default_parameters, structures
 from sym_cps.tools.strings import (
@@ -62,56 +63,116 @@ class HumanDesign:
     abstract_design: AbstractDesign | None = None
 
     @classmethod
-    def from_abstract_design(cls, abstract_design: AbstractDesign) -> HumanDesign:
+    def from_concrete(cls, d_concrete: DConcrete) -> HumanDesign:
+        name = d_concrete.name
+        description = d_concrete.description
+        connections: dict[str, dict[str, str]] = {}
+        parameters: dict[str, dict[str, float]] = {}
 
-        # goal_example = topo_example.to_dict(4)
+        """Connections"""
+        for edge in d_concrete.edges:
+            node_id_s = d_concrete.graph.vs[edge.source]["instance"]
+            node_id_t = d_concrete.graph.vs[edge.target]["instance"]
+            direction = edge["connection"].direction_b_respect_to_a
+            if node_id_s not in connections:
+                connections[node_id_s] = {}
+            connections[node_id_s][node_id_t] = direction
 
-        export: dict = {"NAME": abstract_design.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": 4, "TOPOLOGY": {}}
+        """Parameters"""
+        for node in d_concrete.nodes:
+            node_id = node["instance"]
+            if node_id not in connections.keys():
+                """Adding nodes with no connections"""
+                connections[node_id] = {}
+            if node_id not in parameters.keys():
+                """Adding nodes with no connections"""
+                parameters[node_id] = {}
+            for parameter_id, parameter in node["component"].parameters.items():
+                # print(node["component"])
+                parameters[node_id][parameter_id] = float(parameter.value)
 
-        export["TOPOLOGY"] = {}
+        return cls(name, description, connections, parameters)
 
-        hubs = abstract_design.instantiate_hubs()
-        for hub in hubs:
-            key = list(hub.keys())[0]
-            value = hub[key]
-            export["TOPOLOGY"][key] = value
+    def to_concrete(self) -> DConcrete:
+        d_concrete = DConcrete(name=self.name)
+        for component_id_a, connections in self.connections.items():
+            vertex_a = d_concrete.get_node_by_instance(component_id_a)
+            if vertex_a is None:
+                component_type_id = get_component_type_from_instance_name(component_id_a)
+                vertex_a = d_concrete.add_node(
+                    Component(c_type=c_library.component_types[component_type_id], id=component_id_a)
+                )
+            """Parameters"""
+            if component_id_a in self.parameters.keys():
+                vertex_a["component"].update_parameters(self.parameters[component_id_a])
+            """Connections"""
+            for component_id_b, direction in connections.items():
+                vertex_b = d_concrete.get_node_by_instance(component_id_b)
+                if vertex_b is None:
+                    component_type_id = get_component_type_from_instance_name(component_id_b)
+                    vertex_b = d_concrete.add_node(
+                        Component(c_type=c_library.component_types[component_type_id], id=component_id_b)
+                    )
+                connection = Connection.from_direction(
+                    component_a=vertex_a["component"],
+                    component_b=vertex_b["component"],
+                    direction=direction,
+                )
+                d_concrete.add_edge(vertex_a, vertex_b, connection)
 
-        # instantiate BatteryController
-        export["TOPOLOGY"]["BatteryController_instance_1"] = {"CONNECTIONS": {}, "PARAMETERS": {}}
+        return d_concrete
 
-        for position, abstract_component in abstract_design.grid.items():
-            if abstract_component.base_name == "Connector":
-                continue
-            else:
-                export["TOPOLOGY"][abstract_component.id] = {}
-                export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
-                export["TOPOLOGY"][abstract_component.id]["PARAMETERS"] = {}
-                if abstract_component.base_name == "Propeller_str_top":
-                    export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
-                        abstract_component.id + "__Motor"
-                    ] = "ANY"
-                elif abstract_component.base_name == "Fuselage_str":
-                    export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
-                        abstract_component.id + "__Battery"
-                    ] = "ANY"
-
-
-        tubes = abstract_design.instantiate_tubes(len(hubs))
-        for tube in tubes:
-            key = list(tube.keys())[0]
-            value = tube[key]
-            export["TOPOLOGY"][key] = value
-            for component_b, connection in value["CONNECTIONS"].items():
-                if get_component_type_from_instance_name(component_b) == "Hub4":
-                    a, b = connection.split("-")
-                    export["TOPOLOGY"][component_b]["CONNECTIONS"][key] = b + "-" + a
-
-        # if we don't need a batterController just delete it
-        if len(export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"].values()) == 0:
-            del export["TOPOLOGY"]["BatteryController_instance_1"]
-
-        abTop = HumanDesign.from_dict(export)
-        return abTop
+    #
+    # @classmethod
+    # def from_abstract_design(cls, abstract_design: AbstractDesign) -> HumanDesign:
+    #
+    #     # goal_example = topo_example.to_dict(4)
+    #
+    #     export: dict = {"NAME": abstract_design.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": 4, "TOPOLOGY": {}}
+    #
+    #     export["TOPOLOGY"] = {}
+    #
+    #     hubs = abstract_design.instantiate_hubs()
+    #     for hub in hubs:
+    #         key = list(hub.keys())[0]
+    #         value = hub[key]
+    #         export["TOPOLOGY"][key] = value
+    #
+    #     # instantiate BatteryController
+    #     export["TOPOLOGY"]["BatteryController_instance_1"] = {"CONNECTIONS": {}, "PARAMETERS": {}}
+    #
+    #     for position, abstract_component in abstract_design.grid.items():
+    #         if abstract_component.base_name == "Connector":
+    #             continue
+    #         else:
+    #             export["TOPOLOGY"][abstract_component.id] = {}
+    #             export["TOPOLOGY"][abstract_component.id]["CONNECTIONS"] = {}
+    #             export["TOPOLOGY"][abstract_component.id]["PARAMETERS"] = {}
+    #             if abstract_component.base_name == "Propeller_str_top":
+    #                 export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
+    #                     abstract_component.id + "__Motor"
+    #                     ] = "ANY"
+    #             if abstract_component.base_name == "Fuselage_str":
+    #                 export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"][
+    #                     abstract_component.id + "__Battery"
+    #                     ] = "ANY"
+    #
+    #     tubes = abstract_design.instantiate_tubes(len(hubs))
+    #     for tube in tubes:
+    #         key = list(tube.keys())[0]
+    #         value = tube[key]
+    #         export["TOPOLOGY"][key] = value
+    #         for component_b, connection in value["CONNECTIONS"].items():
+    #             if get_component_type_from_instance_name(component_b) == "Hub6":
+    #                 a, b = connection.split("-")
+    #                 export["TOPOLOGY"][component_b]["CONNECTIONS"][key] = b + "-" + a
+    #
+    #     # if we don't need a batterController just delete it
+    #     if len(export["TOPOLOGY"]["BatteryController_instance_1"]["CONNECTIONS"].values()) == 0:
+    #         del export["TOPOLOGY"]["BatteryController_instance_1"]
+    #
+    #     abTop = HumanDesign.from_dict(export)
+    #     return abTop
 
     @classmethod
     def from_json(cls, topology_json_path: Path) -> HumanDesign:

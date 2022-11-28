@@ -1,32 +1,48 @@
 """Module that contains the command line application."""
 import argparse
+import pickle
 from pathlib import Path
 from typing import List, Optional
 
 from sym_cps.evaluation import evaluate_design
 from sym_cps.examples.library import export_library
+from sym_cps.grammar.rules import AbstractGrid
+from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.design.human import HumanDesign
 from sym_cps.shared.paths import aws_folder, data_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
 
 
 def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
     parser = argparse.ArgumentParser(prog="sym-cps")
-    parser.add_argument("design_file", type=str, help="Specify the design json to parse")
+    parser.add_argument("--abstract_json", type=str, help="Specify the abstract json to parse")
+    parser.add_argument("--grid", type=str, help="Specify the grid dat file")
     opts = parser.parse_args(args=args)
     print(f"args: {opts}")
-    print(opts.design_file)
-    file = data_folder / "custom_designs" / opts.design_file
-    print(f"Parsing file {file}")
-    if file.suffix == "":
-        file_str = str(file)
-        file_str += ".json"
-        file = Path(file_str)
-    from sym_cps.representation.design.concrete import DConcrete
-    from sym_cps.representation.design.human.topology import AbstractTopology
+    if opts.abstract_json is not None:
+        file = data_folder / "custom_designs" / opts.abstract_json
+        print(f"Parsing file {file}")
+        if file.suffix == "":
+            file_str = str(file)
+            file_str += ".json"
+            file = Path(file_str)
+        human_topology = HumanDesign.from_json(file)
+        return human_topology.to_concrete()
+    elif opts.grid is not None:
+        file = data_folder / "custom_designs" / opts.grid
+        print(f"Parsing file {file}")
+        if file.suffix == "":
+            file_str = str(file)
+            file_str += ".dat"
+            file = Path(file_str)
+        with open(file, 'rb') as pickle_file:
+            abstract_grid: AbstractGrid = pickle.load(pickle_file)
+            new_design = AbstractDesign(abstract_grid.name)
+            new_design.parse_grid(abstract_grid)
+            return new_design.to_concrete()
 
-    abstract_topology = AbstractTopology.from_json(file)
-    return DConcrete.from_abstract_topology(abstract_topology)
+    raise AttributeError
 
 
 def update_all() -> int:
@@ -77,3 +93,9 @@ def evaluate_design_swri(args: Optional[List[str]] = None) -> int:
     )
     print(ret)
     return 0
+
+
+if __name__ == '__main__':
+    # dconcrete = _parse_design(["--abstract_json=grid/test_quad_cargo_test"])
+    dconcrete = _parse_design(["--grid=grid/test_quad_cargo_grid.dat"])
+    dconcrete.export_all()

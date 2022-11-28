@@ -131,7 +131,7 @@ class Component:
         for para in self.parameters.values():
             _parameters_hash += str(para.value)
         # return hash(self.library_component.id + _parameters_hash)
-        return hash(self.id + self.library_component.id + _parameters_hash)
+        return hash(self.id + _parameters_hash)
 
     def __str__(self):
         s1 = f"name: {self.model}\n" f"type: {self.c_type}\n"

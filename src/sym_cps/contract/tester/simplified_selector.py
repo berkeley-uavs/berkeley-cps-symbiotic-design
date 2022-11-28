@@ -76,7 +76,8 @@ class SimplifiedSelector:
 
         def obj_expr(vs):
             return [
-                1 * (vs["thrust_sum"] - vs["weight_sum"]) + 20 * vs["batt_capacity"] * vs["V_battery"] / (vs["V_motor"] * vs["I_motor"])
+                1 * (vs["thrust_sum"] - vs["weight_sum"])
+                + 20 * vs["batt_capacity"] * vs["V_battery"] / (vs["V_motor"] * vs["I_motor"])
             ]
 
         def obj_fn():
@@ -425,10 +426,8 @@ class SimplifiedSelector:
                 if score > best_score:
                     best_prop = propeller
                     best_motor = motor
-                    best_batt = battery    
+                    best_batt = battery
             # get random components
-
-
 
     def runTest(self):
         self._c_library, self._seed_designs = parse_library_and_seed_designs()
@@ -445,7 +444,7 @@ class SimplifiedSelector:
         self.replace_with_component(
             design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller
         )
-        #self.check(d_concrete=self._testquad_design)
+        # self.check(d_concrete=self._testquad_design)
         for i in range(3):
             battery, _ = self.select_single_iterate(
                 d_concrete=self._testquad_design, comp_type="Battery", body_weight=2.0, verbose=False
