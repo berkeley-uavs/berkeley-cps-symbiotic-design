@@ -15,7 +15,8 @@ from sym_cps.representation.design.abstract.elements import (
     Propeller,
     Wing,
 )
-from sym_cps.representation.design.concrete import DConcrete
+from sym_cps.representation.design.concrete import DConcrete, Connection, Component
+from sym_cps.shared.library import c_library
 from sym_cps.tools.my_io import save_to_file
 
 
@@ -24,7 +25,8 @@ class AbstractDesign:
     name: str
     abstract_grid: AbstractGrid | None = None
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
-    connections: set[AbstractConnection] = field(default_factory=set)
+    abstract_connections: set[AbstractConnection] = field(default_factory=set)
+    connections: set[Connection] = field(default_factory=set)
 
     def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1
@@ -38,7 +40,7 @@ class AbstractDesign:
         abstract_component_a = self.grid[position_a]
         abstract_component_b = self.grid[position_b]
         abstract_connection = AbstractConnection(abstract_component_a, abstract_component_b)
-        self.connections.add(abstract_connection)
+        self.abstract_connections.add(abstract_connection)
 
     def parse_grid(self, abstract_grid: AbstractGrid):
         self.abstract_grid = abstract_grid
@@ -63,6 +65,15 @@ class AbstractDesign:
 
     def to_concrete(self) -> DConcrete:
         """TODO"""
+        for abstract_connection in self.abstract_connections:
+            component_a = abstract_connection.component_a.interface_component
+            tube_a = Component(c_type=c_library.component_types["Tube"])
+            direction = todo
+            new_connection = Connection.from_direction(component_a=component_a, component_b=tube_a, direction=direction)
+            component_b = abstract_connection.component_b.interface_component
+            direction = todo
+            new_connection = Connection.from_direction(component_a=tube_a, component_b=component_b,
+                                                       direction=direction)
         pass
 
     # def instantiate_hubs(self) -> dict:
@@ -202,7 +213,7 @@ class AbstractDesign:
             graph.add_node(i, position=np.array(position), id=node.id, color=node.color, component=node)
             nodes[node.id] = i
 
-        for connection in self.connections:
+        for connection in self.abstract_connections:
             graph.add_edge(nodes[connection.component_a.id], nodes[connection.component_b.id])
 
         return graph
@@ -211,7 +222,7 @@ class AbstractDesign:
         export: dict = {"NODES": {}, "EDGES": []}
         for position, component in self.grid.items():
             export["NODES"][component.id] = position
-        for connection in self.connections:
+        for connection in self.abstract_connections:
             export["EDGES"].append((connection.component_a.id, connection.component_b.id))
 
         if folder_name is None:
