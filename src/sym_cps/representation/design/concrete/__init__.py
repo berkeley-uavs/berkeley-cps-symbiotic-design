@@ -17,19 +17,17 @@ from igraph import Edge, EdgeSeq, Graph, Vertex
 from sym_cps.evaluation import evaluate_design
 from sym_cps.grammar.tools import get_direction_from_components_and_connections
 
-# from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete.elements.component import Component
 from sym_cps.representation.design.concrete.elements.connection import Connection
 from sym_cps.representation.design.concrete.elements.design_parameters import DesignParameter
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 
-# from sym_cps.representation.design.human import HumanDesign
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
-from sym_cps.shared.objects import ExportType, export_type_to_topology_level, optimizer
+from sym_cps.shared.objects import ExportType, export_type_to_topology_level
 from sym_cps.shared.paths import designs_folder, output_folder
 from sym_cps.tools.my_io import save_to_file
-from sym_cps.tools.strings import get_component_type_from_instance_name, repr_dictionary, tab
+from sym_cps.tools.strings import repr_dictionary, tab
 
 
 @dataclass
@@ -56,30 +54,6 @@ class DConcrete:
         self._graph = Graph(directed=True)
         self.description = "empty_description"
 
-    @classmethod
-    def from_abstract_topology(cls, design: AbstractDesign) -> DConcrete:
-        """TODO:"""
-
-    @classmethod
-    def from_human_design(cls, topo: HumanDesign) -> DConcrete:
-        d_concrete = cls(name=topo.name)
-        for component_id_a, connections in topo.connections.items():
-            vertex_a = d_concrete.add_component_from_id(component_id_a)
-            """Parameters"""
-            if component_id_a in topo.parameters.keys():
-                vertex_a["component"].update_parameters(topo.parameters[component_id_a])
-            """Connections"""
-            for component_id_b, direction in connections.items():
-                vertex_b = d_concrete.add_component_from_id(component_id_b)
-                connection = Connection.from_direction(
-                    component_a=vertex_a["component"],
-                    component_b=vertex_b["component"],
-                    direction=direction,
-                )
-                d_concrete.add_edge(vertex_a, vertex_b, connection)
-
-        return d_concrete
-
     @property
     def graph(self) -> Graph:
         return self._graph
@@ -102,23 +76,6 @@ class DConcrete:
     @property
     def n_edges(self) -> int:
         return len(self.graph.es)
-
-    def export_parameters(self) -> dict[str, dict[str, Parameter]]:
-        pass
-
-    def add_component_from_id(self, abstract_component_id: str) -> Vertex:
-        vertex = self.get_node_by_instance(abstract_component_id)
-        if vertex is not None:
-            return vertex
-        component_type_id = get_component_type_from_instance_name(abstract_component_id)
-        lib_comp_a = optimizer.choose_component(component_type_id, design_name=self.name)
-        if not isinstance(lib_comp_a, LibraryComponent):
-            raise Exception
-        instance_a = Component(id=abstract_component_id, library_component=lib_comp_a)
-        if not isinstance(instance_a, Component):
-            raise Exception
-        vertex_a = self.add_node(instance_a)
-        return vertex_a
 
     def add_node(self, component: Component) -> Vertex:
         if component in self.components:
@@ -150,14 +107,6 @@ class DConcrete:
         b = self.get_node_by_instance(connection.component_b.id).index
         self.add_edge(a, b, connection)
         # print(f"Edge: {a}: {connection.component_a.id} -> {b}: {connection.component_b.id}")
-
-    def remove_edge(self):
-        """TODO. Tip: self.graph.delete_edges"""
-        raise NotImplementedError
-
-    def disconnect(self, connection: Connection):
-        """TODO. Might want to remove a Connection, retrieve the node_id from the Connection"""
-        raise NotImplementedError
 
     @property
     def components(self) -> set[Component | None]:
@@ -198,10 +147,11 @@ class DConcrete:
         raise Exception
 
     def select(
-        self,
-        library_component: LibraryComponent | None = None,
-        component_type: CType | None = None,
+            self,
+            library_component: LibraryComponent | None = None,
+            component_type: CType | None = None,
     ) -> set[Component]:
+        """"Returns set of 'Component' belonging to the same LibraryComponent or to the same CType"""
         components = set()
         if library_component is not None:
             return set(self.graph.vs.select(library_component=library_component)["component"])
@@ -211,7 +161,7 @@ class DConcrete:
 
     @property
     def all_library_components_in_type(
-        self,
+            self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -224,7 +174,7 @@ class DConcrete:
 
     @property
     def all_comp_types_ids(
-        self,
+            self,
     ) -> set[str]:
         comp_types_ds = set()
         for component in self.components:
@@ -234,7 +184,7 @@ class DConcrete:
 
     @property
     def all_components_by_library_components(
-        self,
+            self,
     ) -> dict[LibraryComponent, set[Component]]:
         """Returns all Components for each LibraryComponent in the design"""
         comp_types_n: dict[LibraryComponent, set[Component]] = {}
@@ -244,10 +194,6 @@ class DConcrete:
             else:
                 comp_types_n[component.library_component] = {component}
         return comp_types_n
-
-    def validate(self):
-        """Validates the Parameters of the Design"""
-        raise NotImplementedError
 
     def evaluate(self, study_params=None):
         """Sends the Design for evaluation"""
@@ -261,14 +207,6 @@ class DConcrete:
         print(self.evaluation_results["status"])
         self.export(ExportType.EVALUATION)
         print("Evaluation Completed")
-
-    def evaluation(self, evaluation_results_json: str):
-        """Parse and update the evaluation of the Design"""
-        raise NotImplementedError
-
-    def export_to_cad(self):
-        """Generates a CAD representation of the Design"""
-        raise NotImplementedError
 
     @property
     def to_design_swri(self) -> dict[str, str]:
@@ -343,36 +281,6 @@ class DConcrete:
             edges.add(edge)
         return edges
 
-    # def to_abstract_topology(self) -> HumanDesign:
-    #     name = self.name
-    #     description = self.description
-    #     connections: dict[str, dict[str, str]] = {}
-    #     parameters: dict[str, dict[str, float]] = {}
-    #
-    #     """Connections"""
-    #     for edge in self.edges:
-    #         node_id_s = self._graph.vs[edge.source]["instance"]
-    #         node_id_t = self._graph.vs[edge.target]["instance"]
-    #         direction = edge["connection"].direction_b_respect_to_a
-    #         if node_id_s not in connections:
-    #             connections[node_id_s] = {}
-    #         connections[node_id_s][node_id_t] = direction
-    #
-    #     """Parameters"""
-    #     for node in self.nodes:
-    #         node_id = node["instance"]
-    #         if node_id not in connections.keys():
-    #             """Adding nodes with no connections"""
-    #             connections[node_id] = {}
-    #         if node_id not in parameters.keys():
-    #             """Adding nodes with no connections"""
-    #             parameters[node_id] = {}
-    #         for parameter_id, parameter in node["component"].parameters.items():
-    #             # print(node["component"])
-    #             parameters[node_id][parameter_id] = float(parameter.value)
-    #     from sym_cps.representation.design.human import HumanDesign
-    #     return HumanDesign(name, description, connections, parameters)
-
     @property
     def pydot(self) -> pydot.Dot:
         absolute_folder = designs_folder / self.name
@@ -397,9 +305,8 @@ class DConcrete:
                 absolute_path=absolute_folder,
             )
         elif "TOPOLOGY" in file_type.name:
-            return absolute_folder
-            """TODO: FIX"""
-            ab_topo = self.to_abstract_topology()
+            from sym_cps.representation.design.human import HumanDesign
+            ab_topo = HumanDesign.from_concrete(self)
             ab_level = export_type_to_topology_level(file_type)
             return save_to_file(
                 ab_topo.to_json(ab_level),
@@ -506,8 +413,8 @@ class DConcrete:
 
         connection_dict = {}
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
@@ -522,8 +429,8 @@ class DConcrete:
                         )
                         if component.id == connection.component_a.id:
                             if (
-                                connection.component_b.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_b.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id
@@ -535,8 +442,8 @@ class DConcrete:
 
                         if component.id == connection.component_b.id:
                             if (
-                                connection.component_a.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_a.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id
@@ -586,9 +493,9 @@ class DConcrete:
         for node in self.nodes:
             node_id = f"{node.index} - {node['instance']}::{node['label']}::{node['c_type']}"
             connections_map[node_id] = []
-            print(f"SOURCE NODE:\t{node['instance']}")
+            # print(f"SOURCE NODE:\t{node['instance']}")
             for edge in self.get_edges_from(node):
-                print(edge["connection"])
+                # print(edge["connection"])
                 t_node = self._graph.vs[edge.target]
                 dir = edge["connection"].direction_b_respect_to_a
                 c_a = edge["connection"].component_a.id
@@ -600,7 +507,6 @@ class DConcrete:
                     f"\t\t{c_a}:{conn_a} -> {c_b}:{conn_b}"
                 )
                 connections_map[node_id].append(t_node_id)
-            print("\n\n")
         ret += repr_dictionary(connections_map)
         ret += "\n\n"
         ret += str(self._graph)
@@ -614,8 +520,8 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:
