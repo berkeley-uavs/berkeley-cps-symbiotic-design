@@ -108,7 +108,7 @@ class HumanDesign:
             """Connections"""
             for component_id_b, direction in connections.items():
                 vertex_b = d_concrete.get_node_by_instance(component_id_b)
-                if vertex_a is None:
+                if vertex_b is None:
                     component_type_id = get_component_type_from_instance_name(component_id_b)
                     vertex_b = d_concrete.add_node(
                         Component(c_type=c_library.component_types[component_type_id], id=component_id_b)

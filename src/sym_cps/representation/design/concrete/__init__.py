@@ -524,6 +524,8 @@ class DConcrete:
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:
+                if library_component is None:
+                    continue
                 components_list.append(tab(tab(f"LIBRARY COMPONENT: {library_component.id}")))
                 components = self.select(library_component=library_component)
                 for component in components:
