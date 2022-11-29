@@ -11,7 +11,7 @@ from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
 from sym_cps.shared.paths import aws_folder, data_folder
-from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export
+from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export, update_dat_files_library
 
 
 def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
@@ -46,17 +46,19 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
 
 
 def update_all() -> int:
-    update_dat_files_and_export()
+    update_dat_files_library()
+
+    from sym_cps.reverse_engineering.components_analysis import components_analysis
+    from sym_cps.reverse_engineering.parameters_analysis import common_parameters_across_all_designs
+
+    print("Updating default parameters")
+    common_parameters_across_all_designs()
+    print("Updating default components")
+    components_analysis()
+
     export_library()
+    export_all_designs()
 
-    from sym_cps.reverse_engineering.parameters_analysis import library_analysis, parameter_analysis
-
-    library_analysis()
-    parameter_analysis()
-    # TODO: FIX BUG IN fix_connecotrs_mapping, chaning the order of connectors
-    # fix_connectors_mapping()
-    # generate_tables()
-    # analysis()
     return 0
 
 
@@ -73,6 +75,11 @@ def load_custom_design(args: Optional[List[str]] = None) -> int:
 
 def evaluate_abstract_design(args: Optional[List[str]] = None) -> int:
     dconcrete = _parse_design(args)
+    dconcrete.choose_default_components_for_empty_ones()
+    for component in dconcrete.components:
+        print(component.library_component.id)
+        if component.library_component is None:
+                print(f"{component} HAS NONE")
     dconcrete.export_all()
     dconcrete.evaluate()
     return 0
@@ -81,13 +88,13 @@ def evaluate_abstract_design(args: Optional[List[str]] = None) -> int:
 def evaluate_design_swri(args: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(prog="sym-cps")
     parser.add_argument(
-        "design_name", type=str, help="Specify the design name to evaluate the existing design_swri.json"
+        "design_name", type=str, help="Specify the design name to evaluate the existing design_swri_orog.json"
     )
     opts = parser.parse_args(args=args)
     print(f"args: {opts}")
     print(opts.design_name)
-    design_json_path = aws_folder / "examples" / opts.design_name / "design_swri.json"
-    # output_folder / "designs" / opts.design_name / "design_swri.json"
+    design_json_path = aws_folder / "examples" / opts.design_name / "design_swri_orog.json"
+    # output_folder / "designs" / opts.design_name / "design_swri_orog.json"
     ret = evaluate_design(
         design_json_path=design_json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
     )
@@ -97,5 +104,6 @@ def evaluate_design_swri(args: Optional[List[str]] = None) -> int:
 
 if __name__ == '__main__':
     # dconcrete = _parse_design(["--abstract_json=grid/test_quad_cargo_test"])
-    dconcrete = _parse_design(["--grid=grid/test_quad_cargo_grid.dat"])
-    dconcrete.export_all()
+    # dconcrete = _parse_design(["--grid=grid/test_quad_cargo_grid.dat"])
+    # dconcrete.export_all()
+    evaluate_abstract_design(["--abstract_json=custom_test_quad_cargo"])

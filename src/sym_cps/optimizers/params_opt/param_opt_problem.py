@@ -57,7 +57,7 @@ class ParameterOptimizationProblem(ProblemBase):
         # export to design_swri
         self._d_concrete.export(ExportType.JSON)
         # call the pipeline for evaluation
-        design_json_path = designs_folder / self._d_concrete.name / "design_swri.json"
+        design_json_path = designs_folder / self._d_concrete.name / "design_swri_orog.json"
 
         # obj_vals, con_vals = evaluate_design(
         #     design_json_path=design_json_path,

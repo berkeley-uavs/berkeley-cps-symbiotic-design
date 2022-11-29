@@ -3,6 +3,7 @@ from copy import deepcopy
 from itertools import combinations
 
 from sym_cps.shared.designs import designs
+from sym_cps.shared.paths import component_selection_path
 from sym_cps.tools.my_io import save_to_file
 
 designs_to_analyze = [d[0] for d in designs.values()]
@@ -181,7 +182,7 @@ def components_analysis():
     for design_name, info in data.items():
         component_choice["SEED_DESIGNS"][design_name] = info
 
-    save_to_file(component_choice, f"component_choice.json", folder_name=f"analysis")
+    save_to_file(component_choice, absolute_path=component_selection_path)
 
 
 if __name__ == "__main__":

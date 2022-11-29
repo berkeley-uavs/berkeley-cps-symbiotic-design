@@ -3,7 +3,7 @@
 from sym_cps.evaluation import evaluate_design
 from sym_cps.shared.paths import designs_folder
 
-design_json_path = designs_folder / "TestQuad/design_swri.json"
+design_json_path = designs_folder / "TestQuad/design_swri_orog.json"
 
 if __name__ == "__main__":
 

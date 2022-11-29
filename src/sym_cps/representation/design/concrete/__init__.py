@@ -145,9 +145,9 @@ class DConcrete:
         raise Exception
 
     def select(
-        self,
-        library_component: LibraryComponent | None = None,
-        component_type: CType | None = None,
+            self,
+            library_component: LibraryComponent | None = None,
+            component_type: CType | None = None,
     ) -> set[Component]:
         """ "Returns set of 'Component' belonging to the same LibraryComponent or to the same CType"""
         components = set()
@@ -159,7 +159,7 @@ class DConcrete:
 
     @property
     def all_library_components_in_type(
-        self,
+            self,
     ) -> dict[CType, set[LibraryComponent]]:
         """Returns all LibraryComponent for each Component class in the design"""
         comp_types_n: dict[CType, set[LibraryComponent]] = {}
@@ -172,7 +172,7 @@ class DConcrete:
 
     @property
     def all_comp_types_ids(
-        self,
+            self,
     ) -> set[str]:
         comp_types_ds = set()
         for component in self.components:
@@ -182,7 +182,7 @@ class DConcrete:
 
     @property
     def all_components_by_library_components(
-        self,
+            self,
     ) -> dict[LibraryComponent, set[Component]]:
         """Returns all Components for each LibraryComponent in the design"""
         comp_types_n: dict[LibraryComponent, set[Component]] = {}
@@ -193,8 +193,14 @@ class DConcrete:
                 comp_types_n[component.library_component] = {component}
         return comp_types_n
 
+    def choose_default_components_for_empty_ones(self):
+        for component in self.components:
+            if component.library_component is None:
+                component.choose_default()
+
     def evaluate(self, study_params=None):
         """Sends the Design for evaluation"""
+        self.choose_default_components_for_empty_ones()
         json_path = self.export(ExportType.JSON)
         self.evaluation_results = evaluate_design(
             design_json_path=json_path,
@@ -208,8 +214,8 @@ class DConcrete:
 
     @property
     def to_design_swri(self) -> dict[str, str]:
-        """Generate design_swri.json format file from a concrete design
-        design: the concrete design exporting to design_swri.json file
+        """Generate design_swri_orog.json format file from a concrete design
+        design: the concrete design exporting to design_swri_orog.json file
         output_path: file path for the export file.
         """
         design_swri_data = {}
@@ -314,7 +320,7 @@ class DConcrete:
             )
         elif file_type == ExportType.JSON:
             return save_to_file(
-                str(json.dumps(self.to_design_swri, indent=4, sort_keys=True)),
+                self.to_design_swri,
                 file_name=f"design_swri{tag}.json",
                 absolute_path=absolute_folder,
             )
@@ -361,8 +367,9 @@ class DConcrete:
     def export_all(self):
         self.export(ExportType.DOT)
         self.export(ExportType.PDF)
-        self.export(ExportType.TXT)
+        # self.export(ExportType.TXT)
         self.export(ExportType.JSON)
+        self.export(ExportType.SUMMARY)
         self.export(ExportType.TOPOLOGY_1)
         self.export(ExportType.TOPOLOGY_2)
         self.export(ExportType.TOPOLOGY_3)
@@ -412,8 +419,8 @@ class DConcrete:
 
         connection_dict = {}
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             for library_component in library_components:
                 connection_dict[library_component.id] = {}
@@ -428,8 +435,8 @@ class DConcrete:
                         )
                         if component.id == connection.component_a.id:
                             if (
-                                connection.component_b.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_b.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_b.library_component.id
@@ -441,8 +448,8 @@ class DConcrete:
 
                         if component.id == connection.component_b.id:
                             if (
-                                connection.component_a.library_component.id
-                                in connection_dict[library_component.id].keys()
+                                    connection.component_a.library_component.id
+                                    in connection_dict[library_component.id].keys()
                             ):
                                 connection_dict[library_component.id][
                                     connection.component_a.library_component.id
@@ -519,8 +526,8 @@ class DConcrete:
         # connections_by_components = {}
 
         for (
-            components_class,
-            library_components,
+                components_class,
+                library_components,
         ) in self.all_library_components_in_type.items():
             components_list.append(tab(f"COMPONENT type: {components_class}"))
             for library_component in library_components:

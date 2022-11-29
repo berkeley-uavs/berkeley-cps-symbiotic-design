@@ -21,7 +21,7 @@ def evaluate_design(
     info_only: bool = False,
     control_opt: bool = False,
 ) -> dict:
-    """Evaluate a design_swri.json provided at location 'design_json_path'
+    """Evaluate a design_swri_orog.json provided at location 'design_json_path'
     Metadata to include with the operation, becomes part of metadata.json in the result.
     """
     print(f"Input file: {design_json_path}")
@@ -56,6 +56,7 @@ def evaluate_design(
 
 if __name__ == "__main__":
     "Testing evaluation data"
+    # design_json_path = designs_folder / "NewAxe_Cargo" / "design_swri_orog.json"
+    # design_json_path = "/Users/pier/Projects/challenge_data/output/designs/random_design_0/design_swri.json"
     design_json_path = designs_folder / "NewAxe_Cargo" / "design_swri.json"
-    design_json_path = "/Users/pier/Projects/challenge_data/output/designs/random_design_0/design_swri.json"
     evaluate_design(design_json_path)

@@ -47,11 +47,13 @@ reverse_engineering_folder = data_folder / "reverse_engineering"
 connectors_components_path = reverse_engineering_folder / "connectors_components_backup.json"
 manual_connectors_components_path = reverse_engineering_folder / "manual_connections_learned.json"
 
-learned_default_params_path = reverse_engineering_folder / "analysis" / "shared_parameters.json"
 
 grammar_rules_path = reverse_engineering_folder / "grammar_rules.json"
 
-component_selection_path = data_folder / "reverse_engineering" / "component_choice.json"
+structures_path = reverse_engineering_folder / "analysis" / "structure.json"
+learned_default_params_path = output_folder / "reverse_engineering" / "shared_parameters.json"
+component_selection_path = output_folder / "reverse_engineering" / "component_choice.json"
+
 summary_structure_path = output_folder / "analysis" / "isomorphisms" / "structure_summary.json"
 isomorphisms_data_path = output_folder / "analysis" / "isomorphisms" / "isomorphisms_data.json"
 

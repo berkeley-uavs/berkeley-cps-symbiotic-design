@@ -256,7 +256,7 @@ sudo pdm run suam-client direct2cad.process-design --design=<design-file> --resu
 For example:
 
 ```bash
-pdm run suam-client direct2cad.process-design --design=../challenge_data/output/designs/TestQuad/design_swri.json --results=../challenge_data/aws/results
+pdm run suam-client direct2cad.process-design --design=../challenge_data/output/designs/TestQuad/design_swri_orog.json --results=../challenge_data/aws/results
 ```
 
 Evaluate designs from python

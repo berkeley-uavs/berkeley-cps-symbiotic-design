@@ -11,8 +11,11 @@ from sym_cps.tools.strings import sort_dictionary
 
 
 def save_to_file(
-    file_content: str | dict | Figure | object, file_name: str, folder_name: str | None = None, absolute_path: Path | None = None
+    file_content: str | dict | Figure | object, file_name: str | None = None, folder_name: str | None = None, absolute_path: Path | None = None
 ) -> Path:
+    if absolute_path is not None:
+        file_name = absolute_path.name
+
     if Path(file_name).suffix == "" and isinstance(file_content, dict):
         file_name += ".json"
     elif Path(file_name).suffix == "" and isinstance(file_content, Figure):
@@ -22,9 +25,6 @@ def save_to_file(
     elif Path(file_name).suffix == "":
         file_name += ".dat"
 
-    if absolute_path is not None:
-        if absolute_path.suffix == "txt" or absolute_path.suffix == "json":
-            file_name = absolute_path.name
 
     if folder_name is not None and absolute_path is not None:
         raise AttributeError
@@ -35,7 +35,7 @@ def save_to_file(
         file_folder = output_folder / folder_name
     else:
         if absolute_path is not None:
-            file_folder = absolute_path
+            file_folder = absolute_path.parent
         else:
             file_folder = f"{output_folder}"
 
