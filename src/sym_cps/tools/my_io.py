@@ -60,7 +60,7 @@ def _write_file(file_content: str | dict | Figure | object, absolute_path: Path)
             json.dump(json.loads(file_content), f, indent=4, sort_keys=False)
         f.close()
     elif isinstance(file_content, dict):
-        # file_content = {key: value for key, value in sorted(file_content.items())}
+        # file_content_origin = file_content
         file_content = sort_dictionary(file_content)
         file_content = json.dumps(file_content, indent=4)
         if Path(absolute_path).suffix != ".json":
