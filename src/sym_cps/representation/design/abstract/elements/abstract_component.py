@@ -43,6 +43,7 @@ class AbstractComponent:
                 self.interface_component = component
 
     def add_structure_connections(self):
+        structures: dict = json.load(open(structures_path))
         for component in structures[self.base_name]["Components"]:
             c_type = list(component.keys())[0]
             for comp, direction in component[c_type]["CONNECTIONS"].items():
