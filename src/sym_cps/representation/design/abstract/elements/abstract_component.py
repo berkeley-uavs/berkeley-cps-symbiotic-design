@@ -33,8 +33,7 @@ class AbstractComponent:
         for component in structures[self.base_name]["Components"]:
             c_type = list(component.keys())[0]
             instance = get_instance_name(c_type, self.instance_n)
-            lib_component = c_library.get_default_component(c_type)
-            component = Component(c_type=c_library.component_types[c_type], id=instance, library_component=lib_component)
+            component = Component(c_type=c_library.component_types[c_type], id=instance)
             self.structure.add(component)
             if condition:
                 self.interface_component = component
@@ -84,9 +83,9 @@ class Wing(AbstractComponent):
         self.base_name = "Wing"
         self.color = "blue"
         instance = get_instance_name("Wing", self.instance_n)
-        lib_component = c_library.get_default_component("Wing")
+        # lib_component = c_library.get_default_component("Wing")
         self.structure.add(
-            Component(c_type=c_library.component_types["Wing"], id=instance, library_component=lib_component)
+            Component(c_type=c_library.component_types["Wing"], id=instance)
         )
 
     def __hash__(self):
@@ -101,9 +100,8 @@ class Connector(AbstractComponent):
         self.base_name = "Connector"
         self.color = "gray"
         instance = get_instance_name("Hub4", self.instance_n)
-        lib_component = c_library.get_default_component("Hub4")
         self.structure.add(
-            Component(c_type=c_library.component_types["Hub4"], id=instance, library_component=lib_component)
+            Component(c_type=c_library.component_types["Hub4"], id=instance)
         )
 
 
