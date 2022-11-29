@@ -13,8 +13,19 @@ from sym_cps.tools.strings import sort_dictionary
 def save_to_file(
     file_content: str | dict | Figure | object, file_name: str | None = None, folder_name: str | None = None, absolute_path: Path | None = None
 ) -> Path:
-    if absolute_path is not None:
-        file_name = absolute_path.name
+
+    from sym_cps.shared.paths import output_folder
+
+    if folder_name is not None:
+        file_folder = output_folder / folder_name
+    elif absolute_path is not None:
+        if absolute_path.suffix == "":
+            file_folder = absolute_path
+        else:
+            file_folder = absolute_path.parent
+            file_name = absolute_path.name
+    else:
+        file_folder = f"{output_folder}"
 
     if Path(file_name).suffix == "" and isinstance(file_content, dict):
         file_name += ".json"
@@ -28,16 +39,6 @@ def save_to_file(
 
     if folder_name is not None and absolute_path is not None:
         raise AttributeError
-
-    from sym_cps.shared.paths import output_folder
-
-    if folder_name is not None:
-        file_folder = output_folder / folder_name
-    else:
-        if absolute_path is not None:
-            file_folder = absolute_path.parent
-        else:
-            file_folder = f"{output_folder}"
 
     if not os.path.exists(file_folder):
         os.makedirs(file_folder)
