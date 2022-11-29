@@ -26,9 +26,12 @@ class Connection:
     @classmethod
     def from_direction(cls, component_a: Component, component_b: Component, direction: str):
         connections_map: dict = json.load(open(connectors_components_path))
-        # print(f"connecting {component_a.c_type.id} to {component_b.c_type.id}, direction: {direction}")
-        connector_a = connections_map[component_a.c_type.id][component_b.c_type.id][direction][0]
-        connector_b = connections_map[component_a.c_type.id][component_b.c_type.id][direction][1]
+        try:
+            connector_a = connections_map[component_a.c_type.id][component_b.c_type.id][direction][0]
+            connector_b = connections_map[component_a.c_type.id][component_b.c_type.id][direction][1]
+        except Exception as e:
+            print(f"FAILED\nconnecting {component_a.c_type.id} to {component_b.c_type.id}, direction: {direction}")
+            raise e
         from sym_cps.shared.library import c_library
 
         # print(f"use {connector_a} - {connector_b}")
