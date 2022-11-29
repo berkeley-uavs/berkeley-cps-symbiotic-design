@@ -18,6 +18,12 @@ from sym_cps.representation.design.abstract.elements import (
 from sym_cps.representation.design.concrete import DConcrete, Connection, Component
 from sym_cps.shared.library import c_library
 from sym_cps.tools.my_io import save_to_file
+from sym_cps.grammar.tools import get_direction_of_tube
+from sym_cps.tools.strings import (
+    get_instance_name,
+    get_component_type_from_instance_name,
+    get_component_and_instance_type_from_instance_name
+)
 
 
 @dataclass
@@ -46,18 +52,26 @@ class AbstractDesign:
         self.abstract_grid = abstract_grid
         self.abstract_grid.name = self.name
         nodes = abstract_grid.nodes
+        fuselage_inst = 1
+        rotor_inst = 1
+        wing_inst = 1
+        connecter_inst = 1
         for x_pos, x_axis in enumerate(nodes):
             for y_pos, y_axis in enumerate(x_axis):
                 for z_pos, node_element in enumerate(y_axis):
                     position = (x_pos, y_pos, z_pos)
                     if node_element == "FUSELAGE":
-                        self.add_abstract_component(position, Fuselage(grid_position=position))
+                        self.add_abstract_component(position, Fuselage(grid_position=position, instance_n=connecter_inst))
+                        connecter_inst += 1
                     if "WING" in node_element:
-                        self.add_abstract_component(position, Wing(grid_position=position))
+                        self.add_abstract_component(position, Wing(grid_position=position,  instance_n=wing_inst))
+                        wing_inst += 1
                     if "ROTOR" in node_element:
-                        self.add_abstract_component(position, Propeller(grid_position=position))
+                        self.add_abstract_component(position, Propeller(grid_position=position, instance_n=rotor_inst))
+                        rotor_inst += 1
                     if "CONNECTOR" in node_element:
-                        self.add_abstract_component(position, Connector(grid_position=position))
+                        self.add_abstract_component(position, Connector(grid_position=position, instance_n=connecter_inst))
+                        connecter_inst += 1
 
         for position_a, connections in abstract_grid.adjacencies.items():
             for position_b in connections:
@@ -73,16 +87,110 @@ class AbstractDesign:
 
     def to_concrete(self) -> DConcrete:
         """TODO"""
+        d_concrete = DConcrete(name=self.name)
+        tube_id = 1
+        tube_library = c_library.get_default_component("Tube")
+
+        """Connect Tubes to Hubs and Flanges"""
         for abstract_connection in self.abstract_connections:
+            tube = Component(
+                c_type=c_library.component_types["Tube"], id=get_instance_name("Tube", tube_id), library_component=tube_library
+            )
+            d_concrete.add_node(tube)
             component_a = abstract_connection.component_a.interface_component
-            tube_a = Component(c_type=c_library.component_types["Tube"])
-            direction = todo
-            new_connection = Connection.from_direction(component_a=component_a, component_b=tube_a, direction=direction)
+            direction = get_direction_of_tube(component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP")
+            new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
+
+            vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
+            if vertex_a is None:
+                d_concrete.add_node(component_a)
+
+            self.connections.add(new_connection)
+            d_concrete.connect(new_connection)
+
             component_b = abstract_connection.component_b.interface_component
-            direction = todo
-            new_connection = Connection.from_direction(component_a=tube_a, component_b=component_b,
+            direction = get_direction_of_tube(component_b.c_type.id, abstract_connection.relative_position_from_b_to_a, "BOTTOM")
+            new_connection = Connection.from_direction(component_a=tube, component_b=component_b,
                                                        direction=direction)
-        pass
+
+            vertex_b = d_concrete.get_node_by_instance(component_b.c_type.id)
+            if vertex_b is None:
+                d_concrete.add_node(component_b)
+
+            self.connections.add(new_connection)
+            d_concrete.connect(new_connection)
+            tube_id += 1
+
+        """Connect Structures to themselves"""
+        battery_controller = False
+        battery_controller_component = None
+        for abstract_component in self.grid.values():
+            if abstract_component.base_name == "Fuselage_str" or abstract_component.base_name == "Propeller_str_top":
+                if not battery_controller:
+                    battery_controller_component = Component(
+                        c_type=c_library.component_types["BatteryController"],
+                        id=get_instance_name("BatteryController", 1),
+                        library_component=c_library.get_default_component("BatteryController")
+                    )
+                    d_concrete.add_node(battery_controller_component)
+                    battery_controller = True
+
+                for comp in abstract_component.structure:
+                    if comp.c_type.id == "Motor":
+                        new_connection = Connection.from_direction(
+                            component_a=battery_controller_component,
+                            component_b=comp,
+                            direction="ANY"
+                        )
+                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
+                        if vertex is None:
+                            d_concrete.add_node(comp)
+                        d_concrete.connect(new_connection)
+                    elif comp.c_type.id == "Battery":
+                        """First Battery"""
+                        new_connection = Connection.from_direction(
+                            component_a=battery_controller_component,
+                            component_b=comp,
+                            direction="ANY"
+                        )
+                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
+                        if vertex is None:
+                            d_concrete.add_node(comp)
+                        d_concrete.connect(new_connection)
+
+                        """Second Battery"""
+                        instance = int(get_component_and_instance_type_from_instance_name(comp.id)[1]) + 1
+                        battery_component_2 = Component(
+                            c_type=c_library.component_types["Battery"],
+                            id=get_instance_name("Battery", instance),
+                            library_component=c_library.get_default_component("Battery")
+                        )
+                        new_connection = Connection.from_direction(
+                            component_a=battery_controller_component,
+                            component_b=battery_component_2,
+                            direction="ANY"
+                        )
+                        vertex = d_concrete.get_node_by_instance(battery_component_2.c_type.id)
+                        if vertex is None:
+                            d_concrete.add_node(battery_component_2)
+                        d_concrete.connect(new_connection)
+
+                for connections in abstract_component.connections:
+                    component_a = connections.component_a
+                    component_b = connections.component_b
+
+                    vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
+                    if vertex_a is None:
+                        d_concrete.add_node(component_a)
+
+                    vertex_b = d_concrete.get_node_by_instance(component_b.c_type.id)
+                    if vertex_b is None:
+                        d_concrete.add_node(component_b)
+
+                    self.connections.add(connections)
+                    d_concrete.connect(connections)
+
+        return d_concrete
 
     # def instantiate_hubs(self) -> dict:
     #     hubs = []

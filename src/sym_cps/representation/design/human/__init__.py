@@ -203,7 +203,6 @@ class HumanDesign:
                     ]
                     instance_n = instance_n[0]
                     topo_instance = {}
-                    component_interface = structures[struct]["InterfaceComponent"]
                     for struct_component in structures[struct]["Components"]:
                         # instantiate set of components and connect to one another
                         # ex. component_a == "PROPELLER_STRUCTURE_TOP_instance_1" and comp_a == "Motor"

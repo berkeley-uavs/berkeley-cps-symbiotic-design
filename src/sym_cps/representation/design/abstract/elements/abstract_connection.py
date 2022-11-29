@@ -54,16 +54,17 @@ class AbstractConnection:
         # position_b.x - position_a.x
         # position_b.z - position_a.z
 
-        rel_right = position_b[0] - position_a[0]
+        rel_x = position_b[0] - position_a[0]
+        rel_y = position_b[1] - position_a[1]
         rel_top = position_b[2] - position_a[2]
 
-        return rel_right, rel_top
+        return (rel_x, rel_y, rel_top)
 
     @property
     def relative_position_from_b_to_a(self) -> tuple[int, int]:
         """returns the steps  (right(pos)/left(neg), top(pos)/bottom(neg))
         from component_b to _component_a"""
 
-        (rel_right, rel_top) = self.relative_position_from_a_to_b
+        (rel_x, rel_y, rel_top) = self.relative_position_from_a_to_b
 
-        return -rel_right, -rel_top
+        return -rel_x,-rel_y, -rel_top

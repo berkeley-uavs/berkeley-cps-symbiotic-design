@@ -5,6 +5,7 @@ import os
 from enum import Enum, auto
 from pathlib import Path
 
+# from sym_cps.representation.design.concrete import Component
 from sym_cps.representation.library import Library
 from sym_cps.shared.paths import connectors_components_path
 from sym_cps.tools.my_io import save_to_file
@@ -20,7 +21,7 @@ class Direction(Enum):
 
 
 def get_direction_from_components_and_connections(
-    comp_type_a: str, comp_type_b: str, connector_id_a: str, connector_id_b: str
+        comp_type_a: str, comp_type_b: str, connector_id_a: str, connector_id_b: str
 ) -> str:
     try:
         connections = connections_map[comp_type_a][comp_type_b]
@@ -34,6 +35,39 @@ def get_direction_from_components_and_connections(
     raise Exception(
         f"Unknown Direction:\n{comp_type_a}  ->  {connector_id_a} \t-o-o- \t {connector_id_b}  <-  {comp_type_b}"
     )
+
+
+def get_direction_of_tube(
+        current: str, relative_pos_a_to_b: tuple, tube_side: str
+) -> str:
+    result = ""
+    side = 0
+    if relative_pos_a_to_b[0] > 0:
+        side = 1
+    elif relative_pos_a_to_b[0] < 0:
+        side = 3
+    elif relative_pos_a_to_b[1] > 0:
+        side = 2
+    elif relative_pos_a_to_b[1] < 0:
+        side = 4
+    elif relative_pos_a_to_b[2] > 0:
+        side = 5
+    elif relative_pos_a_to_b[2] < 0:
+        side = 6
+
+    if current == "Hub4":
+        if side == 5:
+            result = "TOP-" + tube_side
+        if side == 6:
+            result = "CENTER-" + tube_side
+        else:
+            result = "SIDE" + str(side) + "-" + tube_side
+    elif current == "Wing":
+        result = "MID-" + tube_side
+    elif current == "Flange":
+        result = tube_side + "-SIDE"
+
+    return result
 
 
 def merge_connection_rules(folder: Path, library: Library):
@@ -146,7 +180,6 @@ def export_connection_rules(connection_dict: dict):
 
 
 def main():
-
     concrete_connection_dict, abstract_connection_dict = merge_connection_rules(connections_folder, c_library)
     connection_concrete_json = json.dumps(concrete_connection_dict, indent=4)
     save_to_file(

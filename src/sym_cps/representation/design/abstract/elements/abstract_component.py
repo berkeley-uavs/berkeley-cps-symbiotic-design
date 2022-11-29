@@ -26,6 +26,7 @@ class AbstractComponent:
     structure: set[Component] = field(default_factory=set)
     connections: set[Connection] = field(default_factory=set)
     interface_component: Component | None = None
+    
     def add_connection(self, abstract_connection: AbstractConnection):
         self.abstract_connections.add(abstract_connection)
 
@@ -36,9 +37,21 @@ class AbstractComponent:
             lib_component = c_library.get_default_component(c_type)
             component = Component(c_type=c_library.component_types[c_type], id=instance, library_component=lib_component)
             self.structure.add(component)
-            if condition:
+
+            if structures[self.base_name]["InterfaceComponent"] == c_type:
                 self.interface_component = component
 
+    def add_structure_connections(self):
+        for component in structures[self.base_name]["Components"]:
+            c_type = list(component.keys())[0]
+            for comp, direction in component[c_type]["CONNECTIONS"].items():
+                for comp_a in self.structure:
+                    if comp_a.c_type.id == c_type:
+                        for comp_b in self.structure:
+                            if comp_b.c_type.id == comp:
+                                new_connection = Connection.from_direction(component_a=comp_a, component_b=comp_b,
+                                                                           direction=direction)
+                                self.connections.add(new_connection)
 
     @property
     def id(self) -> str:
@@ -55,9 +68,11 @@ class Fuselage(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Fuselage_str"
-        self.color = "red"
-        """TODO: add Components in the fuselage structure with their parameters"""
         self.add_structure_components()
+        self.add_structure_connections()
+        self.color = "red"
+        """TODO: add connections to components in structure"""
+
 
     def __hash__(self):
         return hash(self.id)
@@ -70,11 +85,23 @@ class Propeller(AbstractComponent):
     def __post_init__(self):
         self.base_name = "Propeller_str_top"
         self.add_structure_components()
+        self.add_structure_connections()
         self.color = "green"
 
     def __hash__(self):
         return hash(self.id)
 
+@dataclass
+class BatteryController(AbstractComponent):
+    instance_n: int = 1
+
+    def __post_init__(self):
+        self.base_name = "BatteryController"
+        instance = get_instance_name("BatteryController", self.instance_n)
+        lib_component = c_library.get_default_component("BatteryController")
+        component = Component(c_type=c_library.component_types["BatteryController"], id=instance, library_component=lib_component)
+        self.structure.add(component)
+        self.interface_component = component
 
 @dataclass
 class Wing(AbstractComponent):
@@ -85,9 +112,10 @@ class Wing(AbstractComponent):
         self.color = "blue"
         instance = get_instance_name("Wing", self.instance_n)
         lib_component = c_library.get_default_component("Wing")
-        self.structure.add(
-            Component(c_type=c_library.component_types["Wing"], id=instance, library_component=lib_component)
-        )
+        component = Component(c_type=c_library.component_types["Wing"], id=instance, library_component=lib_component)
+        self.structure.add(component)
+        self.interface_component = component
+
 
     def __hash__(self):
         return hash(self.id)
@@ -102,12 +130,13 @@ class Connector(AbstractComponent):
         self.color = "gray"
         instance = get_instance_name("Hub4", self.instance_n)
         lib_component = c_library.get_default_component("Hub4")
-        self.structure.add(
-            Component(
+        component = Component(
                 c_type=c_library.component_types["Hub4"],
                 id=instance,
                 library_component=lib_component
-            ))
+            )
+        self.structure.add(component)
+        self.interface_component = component
 
 
     def refine(self):
