@@ -1,6 +1,7 @@
-from sym_cps.shared.objects import connections_map
+import json
+
 from sym_cps.shared.paths import connectors_components_path
-from sym_cps.tools.io import save_to_file
+from sym_cps.tools.my_io import save_to_file
 
 
 def add_connection_with_direction(
@@ -11,6 +12,7 @@ def add_connection_with_direction(
     direction_a_to_b: str = "ANY",
     direction_b_to_a: str = "ANY",
 ):
+    connections_map: dict = json.load(open(connectors_components_path))
     connections_map[comp_type_a] = {}
     connections_map[comp_type_b] = {}
     connections_map[comp_type_a][comp_type_b] = {direction_b_to_a: [connector_id_a, connector_id_b]}

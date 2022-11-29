@@ -18,7 +18,7 @@ def export_design_json(design_name: str = "Trowel", designs_dat_file: str = "des
 
     save_to_file(
         str(json.dumps(d_concrete.to_design_swri)),
-        file_name=f"design_swri.json",
+        file_name=f"design_swri_orog.json",
         absolute_path=designs_folder / d_concrete.name,
     )
     print(f"{design_name} exported to json")
@@ -30,7 +30,7 @@ def load_design_json(design_name: str = "Trowel", library_dat_file: str = "libra
 
     c_library: Library = load(library_dat_file)  # type: ignore
 
-    design_swri_path = designs_folder / design_name / "design_swri.json"
+    design_swri_path = designs_folder / design_name / "design_swri_orog.json"
 
     d_concrete: DConcrete = parse_design_from_design_swri(path=design_swri_path, library=c_library)
     d_topology: DTopology = DTopology.from_concrete(d_concrete)

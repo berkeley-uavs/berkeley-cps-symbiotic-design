@@ -10,7 +10,7 @@ from sym_cps.grammar.tools import get_direction_from_components_and_connections
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import Component, Connection, DConcrete
 from sym_cps.shared.library import c_library
-from sym_cps.shared.objects import default_parameters, structures
+from sym_cps.shared.paths import learned_default_params_path, structures_path
 from sym_cps.tools.strings import (
     get_component_and_instance_type_from_instance_name,
     get_component_type_from_instance_name,
@@ -186,6 +186,8 @@ class HumanDesign:
         connections: dict[str, dict[str, str]] = {}
         parameters: dict[str, dict[str, str]] = {}
 
+        default_parameters: dict = json.load(open(learned_default_params_path))
+        structures: dict = json.load(open(structures_path))
         # unravel structure prior to looping through topology then proceed as normal
         to_delete = set()
         to_add_topo = {"TOPOLOGY": {}}
@@ -438,6 +440,8 @@ class HumanDesign:
         export: dict = {"NAME": self.name, "DESCRIPTION": "", "ABSTRACTION_LEVEL": abstraction_level, "TOPOLOGY": {}}
         # if level 4 abstraction, we should group the structures during the looping process and remove extraneous
         # components at the end
+        default_parameters = json.load(open(learned_default_params_path))
+        structures: dict = json.load(open(structures_path))
         if HumanFeatures.USE_STRUCTURES in abstraction_levels_features[abstraction_level]:
             to_delete = set()
             structure_components = {}

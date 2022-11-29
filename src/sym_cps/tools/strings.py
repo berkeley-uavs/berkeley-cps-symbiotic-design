@@ -41,16 +41,16 @@ def get_instance_name(component_type_name: str, instance_id: int) -> str:
 
 
 def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, instances_created: dict):
-    instances_renaming[instance] = instance
-    return
+    # instances_renaming[instance] = instance
+    # return
     # if "Orient" in c_type_id:
     #     return
-    # if c_type_id not in instances_created.keys():
-    #     instances_created[c_type_id] = 1
-    # else:
-    #     instances_created[c_type_id] = instances_created[c_type_id] + 1
-    # new_name = get_instance_name(c_type_id, c_type_id)
-    # instances_renaming[instance] = new_name
+    if c_type_id not in instances_created.keys():
+        instances_created[c_type_id] = 1
+    else:
+        instances_created[c_type_id] = instances_created[c_type_id] + 1
+    new_name = get_instance_name(c_type_id, instances_created[c_type_id])
+    instances_renaming[instance] = new_name
 
 
 # def sort_dictionary(element: dict):
@@ -67,9 +67,15 @@ def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, ins
 def sort_dictionary(d):
     try:
         if isinstance(d, list):
-            return sorted(sort_dictionary(v) for v in d)
+            for v in d:
+                sort_dictionary(v)
+            # return sorted(sort_dictionary(v) for v in d)
         if isinstance(d, dict):
-            return {k: sort_dictionary(d[k]) for k in sorted(d)}
+            new_dict = {}
+            for k in sorted(list(d.keys())):
+                new_dict[k] = sort_dictionary(d[k])
+            return new_dict
+            # return {k: sort_dictionary(d[k]) for k in sorted(list(d.keys()))}
         return d
     except Exception as e:
         print(e)

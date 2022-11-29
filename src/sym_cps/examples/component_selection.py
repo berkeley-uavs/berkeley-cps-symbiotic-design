@@ -65,7 +65,7 @@ class Test_Selection:
         design_concrete.name += "_comp_opt"
         design_concrete.evaluate()
         # # call the pipeline for evaluation
-        # design_json_path = designs_folder / design_concrete.name / "design_swri.json"
+        # design_json_path = designs_folder / design_concrete.name / "design_swri_orog.json"
         # ret = evaluate_design(
         #     design_json_path=design_json_path, metadata={"extra_info": "full evaluation example"}, timeout=800
         # )

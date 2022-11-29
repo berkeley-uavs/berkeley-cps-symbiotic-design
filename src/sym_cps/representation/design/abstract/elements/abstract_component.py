@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 
 from sym_cps.representation.design.concrete import Component, Connection
 from sym_cps.shared.library import c_library
-from sym_cps.shared.objects import structures
+from sym_cps.shared.paths import structures_path
 from sym_cps.tools.strings import get_instance_name
 from typing import TYPE_CHECKING
 
@@ -31,11 +32,11 @@ class AbstractComponent:
         self.abstract_connections.add(abstract_connection)
 
     def add_structure_components(self):
+        structures: dict = json.load(open(structures_path))
         for component in structures[self.base_name]["Components"]:
             c_type = list(component.keys())[0]
             instance = get_instance_name(c_type, self.instance_n)
-            lib_component = c_library.get_default_component(c_type)
-            component = Component(c_type=c_library.component_types[c_type], id=instance, library_component=lib_component)
+            component = Component(c_type=c_library.component_types[c_type], id=instance)
             self.structure.add(component)
 
             if structures[self.base_name]["InterfaceComponent"] == c_type:

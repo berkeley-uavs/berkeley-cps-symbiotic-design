@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from sym_cps.representation.tools.ids import parameter_id
+from sym_cps.shared.paths import learned_default_params_path
 
 if TYPE_CHECKING:
     from sym_cps.representation.library.elements.library_component import CType
@@ -68,11 +70,14 @@ class CParameter:
 
     @property
     def default(self) -> float:
-        from sym_cps.shared.objects import default_parameters
+        try:
+            default_parameters = json.load(open(learned_default_params_path))
+            """learned from seed designs"""
+            if self.id in default_parameters:
+                return float(default_parameters[self.id])
+        except:
+            pass
 
-        """learned from seed designs"""
-        if self.id in default_parameters:
-            return float(default_parameters[self.id])
         """from the library"""
         if self._values["default_val"] is not None:
             return float(self._values["default_val"])

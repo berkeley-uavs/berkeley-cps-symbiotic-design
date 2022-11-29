@@ -3,8 +3,8 @@ import json
 from sym_cps.shared.paths import output_folder
 
 # def generate_design_swri_file(design: DConcrete) -> dict[str, str]:
-#     """ Generate design_swri.json format file from a concrete design
-#         design: the concrete design exporting to design_swri.json file
+#     """ Generate design_swri_orog.json format file from a concrete design
+#         design: the concrete design exporting to design_swri_orog.json file
 #         output_path: file path for the export file.
 #     """
 #     design_swri_data = {}

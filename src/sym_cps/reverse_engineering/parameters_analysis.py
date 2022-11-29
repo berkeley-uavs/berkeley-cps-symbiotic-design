@@ -3,6 +3,7 @@ from copy import deepcopy
 from itertools import combinations
 
 from sym_cps.shared.designs import designs
+from sym_cps.shared.paths import learned_default_params_path
 from sym_cps.tools.my_io import save_to_file
 
 designs_to_analyze = [d[0] for d in designs.values()]
@@ -31,7 +32,8 @@ def common_parameters_across_all_designs():
             else:
                 if parameter.lib_id not in deleted_keys:
                     shared_parameters[parameter.lib_id] = parameter.value
-    save_to_file(shared_parameters, "shared_parameters.json")
+    save_to_file(shared_parameters,
+                 absolute_path=learned_default_params_path)
 
 
 def parse_designs():
@@ -216,7 +218,7 @@ def parameter_analysis():
 
     learned_parameters = learn_swri_parameters(data)
     save_to_file(
-        str(json.dumps(learned_parameters, sort_keys=True, indent=4)),
+        learned_parameters,
         f"learned_parameters.json",
         folder_name=f"analysis",
     )
