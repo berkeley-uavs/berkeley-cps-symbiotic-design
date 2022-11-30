@@ -9,7 +9,7 @@ from sym_cps.representation.library.elements.c_property import CProperty
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.library import c_library
-from sym_cps.shared.paths import learned_default_params_path
+from sym_cps.shared.paths import manual_default_parameters_path
 
 
 @dataclass(frozen=False)
@@ -83,7 +83,7 @@ class Component:
     @property
     def params_values_not_default(self) -> dict[str, float]:
         params_values: dict[str, float] = {}
-        default_parameters: dict = json.load(open(learned_default_params_path))
+        default_parameters: dict = json.load(open(manual_default_parameters_path))
         for param_id, parameter in self.parameters.items():
             if param_id in default_parameters.keys():
                 if default_parameters[param_id] == parameter.value:
@@ -99,7 +99,7 @@ class Component:
     def set_shared_parameters(self):
         # print("Setting default parameters...")
         for param_id, parameter in self.parameters.items():
-            default_parameters: dict = json.load(open(learned_default_params_path))
+            default_parameters: dict = json.load(open(manual_default_parameters_path))
 
             if param_id in default_parameters:
                 self.parameters[param_id].value = float(default_parameters[param_id])

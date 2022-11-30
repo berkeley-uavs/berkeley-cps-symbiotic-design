@@ -8,7 +8,7 @@ from sym_cps.shared.library import c_library
 from sym_cps.shared.paths import (
     connectors_components_path,
     grammar_rules_path,
-    learned_default_params_path,
+    manual_default_parameters_path,
     reverse_engineering_folder, structures_path,
 )
 

@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from sym_cps.representation.tools.ids import parameter_id
-from sym_cps.shared.paths import learned_default_params_path
+from sym_cps.shared.paths import manual_default_parameters_path
 
 if TYPE_CHECKING:
     from sym_cps.representation.library.elements.library_component import CType
@@ -71,7 +71,7 @@ class CParameter:
     @property
     def default(self) -> float:
         try:
-            default_parameters = json.load(open(learned_default_params_path))
+            default_parameters = json.load(open(manual_default_parameters_path))
             """learned from seed designs"""
             if self.id in default_parameters:
                 return float(default_parameters[self.id])
