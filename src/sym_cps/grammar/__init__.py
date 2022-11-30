@@ -1,11 +1,22 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from sym_cps.grammar.symbols import Symbol
+from aenum import Enum, auto
+from sym_cps.grammar.symbols import Symbol, Unoccupied
 from sym_cps.shared.paths import grammar_rules_path
+
+
+class Direction(Enum):
+    ego = auto()
+    front = auto()
+    bottom = auto()
+    left = auto()
+    right = auto()
+    top = auto()
+    rear = auto()
 
 
 @dataclass
@@ -34,10 +45,16 @@ class Grammar:
 
 @dataclass
 class Rule:
-    conditions: set[Condition]
+    conditions: set[ConditionSet]
     production: Production
 
     """TODO"""
+
+    def matches(self, state: State) -> State | None:
+        for condition in self.conditions:
+            if condition.matches(state):
+                return self.production.apply(state)
+        return None
 
     @classmethod
     def from_dict(cls, topo: dict) -> Rule:
@@ -48,8 +65,8 @@ class Rule:
 
 
 @dataclass
-class Condition:
-    ego: set[Symbol]
+class ConditionSet:
+    ego: Unoccupied
     front: set[Symbol]
     bottom: set[Symbol]
     left: set[Symbol]
@@ -57,26 +74,49 @@ class Condition:
     top: set[Symbol]
     rear: set[Symbol]
 
-    def matches(
-            self, ego: Symbol, front: Symbol, bottom: Symbol, left: Symbol, right: Symbol, top: Symbol, rear: Symbol
-    ):
+    def matches(self, state: State
+                ):
         return (
-                ego in self.ego
-                and front in self.front
-                and bottom in self.bottom
-                and left in self.left
-                and right in self.right
-                and top in self.top
-                and rear in self.rear
+                state.ego in self.ego
+                and state.front in self.front
+                and state.bottom in self.bottom
+                and state.left in self.left
+                and state.right in self.right
+                and state.top in self.top
+                and state.rear in self.rear
         )
+
+
+@dataclass
+class SymbolConnection:
+    symbol_a: Symbol
+    symbol_b: Symbol
+
+
+@dataclass
+class State:
+    ego: Symbol
+    front: Symbol
+    bottom: Symbol
+    left: Symbol
+    right: Symbol
+    top: Symbol
+    rear: Symbol
+
+    connections: set[SymbolConnection] = field(default_factory=set)
 
 
 @dataclass
 class Production:
     ego: Symbol
-    connections: set[Symbol]
+    edge: Direction | None
 
-
+    def apply(self, state: State) -> State:
+        state.ego = self.ego
+        if self.edge is not None:
+            connection = SymbolConnection(self.ego, getattr(state, self.edge.name))
+            state.connections.add(connection)
+        return state
 
 
 if __name__ == '__main__':
