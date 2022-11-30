@@ -4,6 +4,9 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from sym_cps.grammar.symbols import Symbol
+from sym_cps.shared.paths import grammar_rules_path
+
 
 @dataclass
 class Grammar:
@@ -55,16 +58,16 @@ class Condition:
     rear: set[Symbol]
 
     def matches(
-        self, ego: Symbol, front: Symbol, bottom: Symbol, left: Symbol, right: Symbol, top: Symbol, rear: Symbol
+            self, ego: Symbol, front: Symbol, bottom: Symbol, left: Symbol, right: Symbol, top: Symbol, rear: Symbol
     ):
         return (
-            ego in self.ego
-            and front in self.front
-            and bottom in self.bottom
-            and left in self.left
-            and right in self.right
-            and top in self.top
-            and rear in self.rear
+                ego in self.ego
+                and front in self.front
+                and bottom in self.bottom
+                and left in self.left
+                and right in self.right
+                and top in self.top
+                and rear in self.rear
         )
 
 
@@ -74,26 +77,7 @@ class Production:
     connections: set[Symbol]
 
 
-@dataclass
-class Symbol:
-    terminal: bool = False
 
 
-@dataclass
-class Group(Symbol):
-    terminal: bool = False
-
-
-@dataclass
-class A(Group):
-    terminal: bool = False
-
-
-@dataclass
-class A(Group):
-    terminal: bool = False
-
-
-@dataclass
-class G(Group):
-    terminal: bool = False
+if __name__ == '__main__':
+    grammar = Grammar.from_json(grammar_json_path=grammar_rules_path)
