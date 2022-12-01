@@ -5,8 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from aenum import Enum, auto
-from eventlet.hubs.epolls import Hub
-from sym_cps.grammar.symbols import Symbol, Unoccupied, Fuselage, Empty, Rotor, Tube, Connector, SymbolType, Wing
+from sym_cps.grammar.symbols import Symbol, Unoccupied, Fuselage, Empty, Rotor, Connector, SymbolType, Wing
 from sym_cps.shared.paths import grammar_rules_processed_path
 
 
@@ -71,10 +70,6 @@ class Rule:
             symbol = Fuselage()
         elif symbol_name == "EMPTY":
             symbol = Empty()
-        elif symbol_name == "HUB":
-            symbol = Hub()
-        elif symbol_name == "TUBE":
-            symbol = Tube()
         elif symbol_name == "ROTOR":
             symbol = Rotor()
         elif symbol_name == "CONNECTOR":

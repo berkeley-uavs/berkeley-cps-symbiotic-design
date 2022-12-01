@@ -4,10 +4,10 @@ from sym_cps.shared.paths import data_folder, grammar_rules_processed_path
 from sym_cps.tools.my_io import save_to_file
 
 symbol_groups = {
-    "BODY": ["FUSELAGE", "HUB", "TUBE"],
-    "CONNECTOR": ["HUB", "TUBE"],
-    "ANYTHING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR"],
-    "NON-WING": ["FUSELAGE", "HUB", "TUBE", "WING", "ROTOR", "CONNECTOR", "EMPTY", "UNOCCUPIED", "BOUNDARY"],
+    "BODY": ["FUSELAGE"],
+    "CONNECTOR": ["CONNECTOR"],
+    "ANYTHING": ["FUSELAGE", "WING", "ROTOR", "CONNECTOR"],
+    "NON-WING": ["FUSELAGE", "WING", "ROTOR", "CONNECTOR", "EMPTY", "UNOCCUPIED", "BOUNDARY"],
     "FREE": ["UNOCCUPIED", "EMPTY", ""],
     "WING-LEFT": ["FUSELAGE", "CONNECTOR", "ROTOR", "WING"],
     "WING-RIGHT": ["EMPTY", "UNOCCUPIED", "CONNECTOR", "ROTOR", "BOUNDARY"],
@@ -26,6 +26,10 @@ for i, (rule_key, items) in enumerate(rule_dict.items()):
         new_conds = []
         for cond in conds:
             if cond == "BOUNDARY":
+                continue
+            if cond == "HUB":
+                continue
+            if cond == "TUBE":
                 continue
             if cond in symbol_groups.keys():
                 new_conds.extend(symbol_groups[cond])

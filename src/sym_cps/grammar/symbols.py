@@ -10,8 +10,6 @@ class SymbolType(Enum):
     UNOCCUPIED = auto()
     FUSELAGE = auto()
     EMPTY = auto()
-    HUB = auto()
-    TUBE = auto()
     ROTOR = auto()
     WING = auto()
     CONNECTOR = auto()
@@ -63,10 +61,6 @@ class Fuselage(TSymbol):
 class Rotor(TSymbol):
     symbol_type = SymbolType.ROTOR
 
-
-@dataclass(frozen=True)
-class Tube(TSymbol):
-    symbol_type = SymbolType.TUBE
 
 
 @dataclass(frozen=True)
