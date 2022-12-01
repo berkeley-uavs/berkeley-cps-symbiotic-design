@@ -3,12 +3,14 @@ from __future__ import annotations
 from abc import abstractmethod
 from dataclasses import dataclass
 
+from sym_cps.grammar import SymbolType
 from sym_cps.shared.paths import grammar_rules_path
 
 
 @dataclass(frozen=True)
 class Symbol:
-    pass
+
+    symbol_type = SymbolType.UNOCCUPIED
 
     @property
     @abstractmethod
@@ -40,24 +42,28 @@ class NTSymbol(Symbol):
 
 @dataclass(frozen=True)
 class Unoccupied(NTSymbol):
-    pass
+    symbol_type = SymbolType.UNOCCUPIED
 
 
 @dataclass(frozen=True)
 class Fuselage(TSymbol):
-    pass
+    symbol_type = SymbolType.FUSELAGE
 
 
 @dataclass(frozen=True)
 class Rotor(TSymbol):
-    pass
+    symbol_type = SymbolType.ROTOR
 
 
 @dataclass(frozen=True)
+class Wing(TSymbol):
+    symbol_type = SymbolType.WING
+
+@dataclass(frozen=True)
 class Connector(TSymbol):
-    pass
+    symbol_type = SymbolType.CONNECTOR
 
 
 @dataclass(frozen=True)
 class Empty(TSymbol):
-    pass
+    symbol_type = SymbolType.EMPTY

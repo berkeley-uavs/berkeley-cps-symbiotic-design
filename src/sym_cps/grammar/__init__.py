@@ -5,7 +5,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from aenum import Enum, auto
-from sym_cps.grammar.symbols import Symbol, Unoccupied
+from eventlet.hubs.epolls import Hub
+from sym_cps.grammar.symbols import Symbol, Unoccupied, Fuselage, Empty, Rotor, Tube, Connector
 from sym_cps.shared.paths import grammar_rules_path_new, grammar_rules_processed_path
 
 
@@ -19,6 +20,17 @@ class Direction(Enum):
     rear = auto()
 
 
+class SymbolType(Enum):
+    UNOCCUPIED = auto()
+    FUSELAGE = auto()
+    EMPTY = auto()
+    HUB = auto()
+    TUBE = auto()
+    ROTOR = auto()
+    WING = auto()
+    CONNECTOR = auto()
+
+
 @dataclass
 class Grammar:
     rules: set[Rule]
@@ -26,16 +38,16 @@ class Grammar:
     """TODO"""
 
     @classmethod
-    def from_json(cls, grammar_json_path: Path) -> Grammar:
-        return Grammar.from_dict(json.load(open(grammar_json_path)))
+    def from_json(cls, rules_json_path: Path) -> Grammar:
+        return Grammar.from_dict(json.load(open(rules_json_path)))
 
     @classmethod
-    def from_dict(cls, grammar: dict) -> Grammar:
+    def from_dict(cls, rules_dict: dict) -> Grammar:
         """ "TODO"""
         rules = set()
         """"e.g.."""
-        for rule in grammar["RULES"]:
-            new_rule = Rule.from_dict(rule)
+        for rule_id, elements in rules_dict.items():
+            new_rule = Rule.from_dict(elements)
 
         return cls(rules=rules)
 
@@ -57,30 +69,72 @@ class Rule:
         return None
 
     @classmethod
-    def from_dict(cls, topo: dict) -> Rule:
-        """ "TODO"""
+    def from_dict(cls, rule_dict: dict) -> Rule:
+        for direction, elements in rule_dict["conditions"]:
+            cs = ConditionSet.from_dict(elements)
+        connection = None
+        if "connection" in rule_dict["production"].keys():
+            connection = Direction[rule_dict["production"]["connection"]]
+        symbol_name = rule_dict["production"]["ego"]
+
+        if symbol_name == "UNOCCUPIED":
+            symbol = Unoccupied()
+        elif symbol_name == "FUSELAGE":
+            symbol = Fuselage()
+        elif symbol_name == "EMPTY":
+            symbol = Empty()
+        elif symbol_name == "HUB":
+            symbol = Hub()
+        elif symbol_name == "TUBE":
+            symbol = Tube()
+        elif symbol_name == "ROTOR":
+            symbol = Rotor()
+        elif symbol_name == "CONNECTOR":
+            symbol = Connector()
+        else:
+            raise AttributeError
+
+        pr = Production(ego=symbol, connection=connection)
+
+        return Rule(conditions=cs, production=pr)
 
 
 @dataclass
 class ConditionSet:
-    ego: Unoccupied
-    front: set[Symbol]
-    bottom: set[Symbol]
-    left: set[Symbol]
-    right: set[Symbol]
-    top: set[Symbol]
-    rear: set[Symbol]
+    front: set[SymbolType]
+    bottom: set[SymbolType]
+    left: set[SymbolType]
+    right: set[SymbolType]
+    top: set[SymbolType]
+    rear: set[SymbolType]
+    ego: SymbolType = SymbolType.UNOCCUPIED
+
+    @classmethod
+    def from_dict(cls, conditions):
+        all_dirs = {}
+        for direction, symbol_types in conditions.items():
+            all_dirs[direction] = set()
+            for symbol_type in symbol_types:
+                all_dirs[direction].add(SymbolType[symbol_type])
+        return cls(
+            front=all_dirs["front"],
+            bottom=all_dirs["bottom"],
+            left=all_dirs["left"],
+            right=all_dirs["right"],
+            top=all_dirs["top"],
+            rear=all_dirs["rear"],
+        )
 
     def matches(self, state: LocalState
                 ):
         return (
-                state.ego in self.ego
-                and state.front in self.front
-                and state.bottom in self.bottom
-                and state.left in self.left
-                and state.right in self.right
-                and state.top in self.top
-                and state.rear in self.rear
+                state.ego.symbol_type in self.ego
+                and state.front.symbol_type in self.front
+                and state.bottom.symbol_type in self.bottom
+                and state.left.symbol_type in self.left
+                and state.right.symbol_type in self.right
+                and state.top.symbol_type in self.top
+                and state.rear.symbol_type in self.rear
         )
 
 
@@ -111,15 +165,15 @@ class LocalState:
 @dataclass
 class Production:
     ego: Symbol
-    edge: Direction | None
+    connection: Direction | None
 
     def apply(self, state: LocalState) -> LocalState:
         state.ego = self.ego
-        if self.edge is not None:
-            connection = SymbolConnection(self.ego, getattr(state, self.edge.name))
+        if self.connection is not None:
+            connection = SymbolConnection(self.ego, getattr(state, self.connection.name))
             state.connections.add(connection)
         return state
 
 
 if __name__ == '__main__':
-    grammar = Grammar.from_json(grammar_json_path=grammar_rules_processed_path)
+    grammar = Grammar.from_json(rules_json_path=grammar_rules_processed_path)
