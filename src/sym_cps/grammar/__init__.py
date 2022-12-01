@@ -6,8 +6,8 @@ from pathlib import Path
 
 from aenum import Enum, auto
 from eventlet.hubs.epolls import Hub
-from sym_cps.grammar.symbols import Symbol, Unoccupied, Fuselage, Empty, Rotor, Tube, Connector
-from sym_cps.shared.paths import grammar_rules_path_new, grammar_rules_processed_path
+from sym_cps.grammar.symbols import Symbol, Unoccupied, Fuselage, Empty, Rotor, Tube, Connector, SymbolType, Wing
+from sym_cps.shared.paths import grammar_rules_processed_path
 
 
 class Direction(Enum):
@@ -20,20 +20,10 @@ class Direction(Enum):
     rear = auto()
 
 
-class SymbolType(Enum):
-    UNOCCUPIED = auto()
-    FUSELAGE = auto()
-    EMPTY = auto()
-    HUB = auto()
-    TUBE = auto()
-    ROTOR = auto()
-    WING = auto()
-    CONNECTOR = auto()
-
 
 @dataclass
 class Grammar:
-    rules: set[Rule]
+    rules: list[Rule]
 
     """TODO"""
 
@@ -44,10 +34,10 @@ class Grammar:
     @classmethod
     def from_dict(cls, rules_dict: dict) -> Grammar:
         """ "TODO"""
-        rules = set()
+        rules = []
         """"e.g.."""
         for rule_id, elements in rules_dict.items():
-            new_rule = Rule.from_dict(elements)
+            rules.append(Rule.from_dict(elements))
 
         return cls(rules=rules)
 
@@ -70,8 +60,7 @@ class Rule:
 
     @classmethod
     def from_dict(cls, rule_dict: dict) -> Rule:
-        for direction, elements in rule_dict["conditions"]:
-            cs = ConditionSet.from_dict(elements)
+        cs = ConditionSet.from_dict(rule_dict["conditions"])
         connection = None
         if "connection" in rule_dict["production"].keys():
             connection = Direction[rule_dict["production"]["connection"]]
@@ -91,12 +80,16 @@ class Rule:
             symbol = Rotor()
         elif symbol_name == "CONNECTOR":
             symbol = Connector()
+        elif symbol_name == "WING":
+            symbol = Wing()
         else:
+            print(f"{symbol_name} not present")
             raise AttributeError
 
         pr = Production(ego=symbol, connection=connection)
 
         return Rule(conditions=cs, production=pr)
+
 
 
 @dataclass
@@ -177,3 +170,4 @@ class Production:
 
 if __name__ == '__main__':
     grammar = Grammar.from_json(rules_json_path=grammar_rules_processed_path)
+    print(grammar)

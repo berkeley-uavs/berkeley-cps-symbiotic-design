@@ -3,13 +3,22 @@ from __future__ import annotations
 from abc import abstractmethod
 from dataclasses import dataclass
 
-from sym_cps.grammar import SymbolType
-from sym_cps.shared.paths import grammar_rules_path
+from aenum import Enum, auto
+
+
+class SymbolType(Enum):
+    UNOCCUPIED = auto()
+    FUSELAGE = auto()
+    EMPTY = auto()
+    HUB = auto()
+    TUBE = auto()
+    ROTOR = auto()
+    WING = auto()
+    CONNECTOR = auto()
 
 
 @dataclass(frozen=True)
 class Symbol:
-
     symbol_type = SymbolType.UNOCCUPIED
 
     @property
@@ -56,8 +65,14 @@ class Rotor(TSymbol):
 
 
 @dataclass(frozen=True)
+class Tube(TSymbol):
+    symbol_type = SymbolType.TUBE
+
+
+@dataclass(frozen=True)
 class Wing(TSymbol):
     symbol_type = SymbolType.WING
+
 
 @dataclass(frozen=True)
 class Connector(TSymbol):

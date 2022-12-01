@@ -13,5 +13,7 @@ class Contract:
     guarantees: dict[tuple, list[tuple]]
     name: str = ""
 
+    def fr
+
 
 
