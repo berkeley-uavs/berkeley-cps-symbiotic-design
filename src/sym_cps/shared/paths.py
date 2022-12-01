@@ -51,6 +51,7 @@ manual_connectors_components_path = reverse_engineering_folder / "manual_connect
 grammar_rules_path = reverse_engineering_folder / "grammar_rules.json"
 grammar_rules_path_new = reverse_engineering_folder / "grammar_rules_new.json"
 grammar_rules_processed_path = reverse_engineering_folder / "grammar_rules_processed.json"
+grammar_statistics = reverse_engineering_folder / "grammar_statistics.txt"
 
 
 structures_path = reverse_engineering_folder / "analysis" / "structure.json"

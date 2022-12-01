@@ -10,13 +10,13 @@ from sym_cps.shared.paths import grammar_rules_processed_path
 
 
 class Direction(Enum):
-    ego = auto()
-    front = auto()
-    bottom = auto()
-    left = auto()
-    right = auto()
-    top = auto()
-    rear = auto()
+    ego = 0
+    front = 1
+    bottom = 2
+    left = 3
+    right = 4
+    top = 5
+    rear = 6
 
 
 @dataclass
