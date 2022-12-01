@@ -49,6 +49,7 @@ manual_connectors_components_path = reverse_engineering_folder / "manual_connect
 
 
 grammar_rules_path = reverse_engineering_folder / "grammar_rules.json"
+grammar_rules_path_new = reverse_engineering_folder / "grammar_rules_new.json"
 
 structures_path = reverse_engineering_folder / "analysis" / "structure.json"
 manual_default_parameters_path = output_folder / "reverse_engineering" / "shared_parameters_manual.json"

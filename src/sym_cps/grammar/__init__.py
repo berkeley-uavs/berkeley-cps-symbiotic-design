@@ -6,7 +6,7 @@ from pathlib import Path
 
 from aenum import Enum, auto
 from sym_cps.grammar.symbols import Symbol, Unoccupied
-from sym_cps.shared.paths import grammar_rules_path
+from sym_cps.shared.paths import grammar_rules_path_new
 
 
 class Direction(Enum):
@@ -50,7 +50,7 @@ class Rule:
 
     """TODO"""
 
-    def matches(self, state: State) -> State | None:
+    def matches(self, state: LocalState) -> LocalState | None:
         for condition in self.conditions:
             if condition.matches(state):
                 return self.production.apply(state)
@@ -62,6 +62,7 @@ class Rule:
 
     def to_contract(self):
         """TODO by Pier"""
+        "1 <= wing <= 1"
 
 
 @dataclass
@@ -74,7 +75,7 @@ class ConditionSet:
     top: set[Symbol]
     rear: set[Symbol]
 
-    def matches(self, state: State
+    def matches(self, state: LocalState
                 ):
         return (
                 state.ego in self.ego
@@ -88,13 +89,22 @@ class ConditionSet:
 
 
 @dataclass
+class Grid:
+    nodes: list[list[list[Symbol]]]
+    connections: set[SymbolConnection] = field(default_factory=set)
+    name: str = ""
+
+
+
+
+@dataclass
 class SymbolConnection:
     symbol_a: Symbol
     symbol_b: Symbol
 
 
 @dataclass
-class State:
+class LocalState:
     ego: Symbol
     front: Symbol
     bottom: Symbol
@@ -103,15 +113,12 @@ class State:
     top: Symbol
     rear: Symbol
 
-    connections: set[SymbolConnection] = field(default_factory=set)
-
-
 @dataclass
 class Production:
     ego: Symbol
     edge: Direction | None
 
-    def apply(self, state: State) -> State:
+    def apply(self, state: LocalState) -> LocalState:
         state.ego = self.ego
         if self.edge is not None:
             connection = SymbolConnection(self.ego, getattr(state, self.edge.name))
@@ -120,4 +127,4 @@ class Production:
 
 
 if __name__ == '__main__':
-    grammar = Grammar.from_json(grammar_json_path=grammar_rules_path)
+    grammar = Grammar.from_json(grammar_json_path=grammar_rules_path_new)
