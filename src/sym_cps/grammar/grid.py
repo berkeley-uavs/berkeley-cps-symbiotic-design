@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
 
 from sym_cps.grammar import Symbol, SymbolConnection, Grammar
@@ -10,5 +11,5 @@ class Grid:
     name: str = ""
 
     @classmethod
-    def generate_from_grammar(cls, grammar: Grammar):
+    def generate_from_grammar(cls, grammar: Grammar) -> Grid:
         """TODO:"""
