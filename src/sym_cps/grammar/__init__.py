@@ -6,7 +6,7 @@ from pathlib import Path
 
 from aenum import Enum, auto
 from sym_cps.grammar.symbols import Symbol, Unoccupied
-from sym_cps.shared.paths import grammar_rules_path_new
+from sym_cps.shared.paths import grammar_rules_path_new, grammar_rules_processed_path
 
 
 class Direction(Enum):
@@ -47,6 +47,7 @@ class Grammar:
 class Rule:
     conditions: ConditionSet
     production: Production
+    name: str = ""
 
     """TODO"""
 
@@ -121,4 +122,4 @@ class Production:
 
 
 if __name__ == '__main__':
-    grammar = Grammar.from_json(grammar_json_path=grammar_rules_path_new)
+    grammar = Grammar.from_json(grammar_json_path=grammar_rules_processed_path)
