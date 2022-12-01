@@ -45,24 +45,19 @@ class Grammar:
 
 @dataclass
 class Rule:
-    conditions: set[ConditionSet]
+    conditions: ConditionSet
     production: Production
 
     """TODO"""
 
     def matches(self, state: LocalState) -> LocalState | None:
-        for condition in self.conditions:
-            if condition.matches(state):
-                return self.production.apply(state)
+        if self.conditions.matches(state):
+            return self.production.apply(state)
         return None
 
     @classmethod
     def from_dict(cls, topo: dict) -> Rule:
         """ "TODO"""
-
-    def to_contract(self):
-        """TODO by Pier"""
-        "1 <= wing <= 1"
 
 
 @dataclass
@@ -95,8 +90,6 @@ class Grid:
     name: str = ""
 
 
-
-
 @dataclass
 class SymbolConnection:
     symbol_a: Symbol
@@ -112,6 +105,7 @@ class LocalState:
     right: Symbol
     top: Symbol
     rear: Symbol
+
 
 @dataclass
 class Production:
