@@ -142,7 +142,8 @@ class SimplifiedSelector:
                     best_diff = obj
                     best_comp = comp
             print("")
-        print("Best: ", best_comp.id, best_diff)
+        if best_comp is not None:
+            print("Best: ", best_comp.id, best_diff)
         return best_comp, best_diff
 
     def _set_check_max_voltage_system_contract(self, body_weight: float):
@@ -400,35 +401,55 @@ class SimplifiedSelector:
         return component_dict
 
     def random_local_search(self, d_concrete: DConcrete):
+        import random
+        random.seed(5)
+
         best_score = 0
         best_prop = None
         best_batt = None
         best_motor = None
-        batteries = [self._c_library.components_in_type["Battery"]]
-        propellers = [self._c_library.components_in_type["Propeller"]]
-        motors = [self._c_library.components_in_type["Motor"]]
+        batteries = list(self._c_library.components_in_type["Battery"])
+        propellers = list(self._c_library.components_in_type["Propeller"])
+        motors = list(self._c_library.components_in_type["Motor"])
         for j in range(20):
             for i in range(3):
-                battery, _ = self.select_single_iterate(
-                    d_concrete=self._testquad_design, comp_type="Battery", body_weight=2.0, verbose=False
-                )
-                self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
-                # self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
                 propeller, _ = self.select_single_iterate(
-                    d_concrete=self._testquad_design, comp_type="Propeller", body_weight=2.0, verbose=False
+                    d_concrete=d_concrete, comp_type="Propeller", body_weight=2.0, verbose=False
                 )
-                self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
+                self.replace_with_component(design_concrete=d_concrete, propeller=propeller)
                 motor, score = self.select_single_iterate(
-                    d_concrete=self._testquad_design, comp_type="Motor", body_weight=2.0, verbose=False
+                    d_concrete=d_concrete, comp_type="Motor", body_weight=2.0, verbose=False
                 )
-                self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
+                self.replace_with_component(design_concrete=d_concrete, motor=motor)
+                battery, _ = self.select_single_iterate(
+                    d_concrete=d_concrete, comp_type="Battery", body_weight=2.0, verbose=False
+                )
+                self.replace_with_component(design_concrete=d_concrete, battery=battery)
+                # self.check(d_concrete=d_concrete, verbose=True, body_weight=1.0)
+
+
 
                 if score > best_score:
                     best_prop = propeller
                     best_motor = motor
-                    best_batt = battery
+                    best_batt = battery  
+                    best_score = score  
             # get random components
-
+            battery = random.choice(batteries)
+            print(type(battery))
+            motor = random.choice(motors)
+            propeller = random.choice(propellers)
+            self.replace_with_component(
+                design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller
+            )
+        print("Best:")
+        print(best_prop.id)
+        print(best_motor.id)
+        print(best_batt.id)
+        print("Best score: ", best_score)
+        self.replace_with_component(
+            design_concrete=self._testquad_design, motor=best_motor, battery=best_batt, propeller=best_prop
+        )
     def runTest(self):
         self._c_library, self._seed_designs = parse_library_and_seed_designs()
         self.set_library(library=self._c_library)
@@ -439,26 +460,27 @@ class SimplifiedSelector:
             print(comp.id, comp.library_component.id)
         self._testquad_design.name += "_comp_opt"
 
-        battery, motor, propeller = self.select_all(d_concrete=self._testquad_design, verbose=True, body_weight=2.0)
+        # battery, motor, propeller = self.select_all(d_concrete=self._testquad_design, verbose=True, body_weight=2.0)
 
-        self.replace_with_component(
-            design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller
-        )
-        # self.check(d_concrete=self._testquad_design)
-        for i in range(3):
-            battery, _ = self.select_single_iterate(
-                d_concrete=self._testquad_design, comp_type="Battery", body_weight=2.0, verbose=False
-            )
-            self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
-            # self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
-            propeller, _ = self.select_single_iterate(
-                d_concrete=self._testquad_design, comp_type="Propeller", body_weight=2.0, verbose=False
-            )
-            self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
-            motor, _ = self.select_single_iterate(
-                d_concrete=self._testquad_design, comp_type="Motor", body_weight=2.0, verbose=False
-            )
-            self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
+        # self.replace_with_component(
+        #     design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller
+        # )
+        #self.check(d_concrete=self._testquad_design)
+        self.random_local_search(d_concrete=self._testquad_design)
+        # for i in range(3):
+        #     battery, _ = self.select_single_iterate(
+        #         d_concrete=self._testquad_design, comp_type="Battery", body_weight=2.0, verbose=False
+        #     )
+        #     self.replace_with_component(design_concrete=self._testquad_design, battery=battery)
+        #     # self.check(d_concrete=self._testquad_design, verbose=True, body_weight=1.0)
+        #     propeller, _ = self.select_single_iterate(
+        #         d_concrete=self._testquad_design, comp_type="Propeller", body_weight=2.0, verbose=False
+        #     )
+        #     self.replace_with_component(design_concrete=self._testquad_design, propeller=propeller)
+        #     motor, _ = self.select_single_iterate(
+        #         d_concrete=self._testquad_design, comp_type="Motor", body_weight=2.0, verbose=False
+        #     )
+        #     self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
         from sym_cps.shared.objects import ExportType
 
         self._testquad_design.export(ExportType.JSON)
