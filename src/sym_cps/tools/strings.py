@@ -37,13 +37,17 @@ def rename_component_types(component_type: str) -> str:
 def get_instance_name(component_type_name: str, instance_id: int) -> str:
     if component_type_name == "Orient":
         return "Orient"
+    if "Wing" in component_type_name:
+        return f"wing_instance_{instance_id}"
     return f"{component_type_name}_instance_{instance_id}"
 
 
 def rename_instance(instance: str, c_type_id: str, instances_renaming: dict, instances_created: dict):
-    # instances_renaming[instance] = instance
+    instances_renaming[instance] = instance
     # return
-    # if "Orient" in c_type_id:
+    if "Orient" in c_type_id:
+        return
+    # if "Wing" in c_type_id:
     #     return
     if c_type_id not in instances_created.keys():
         instances_created[c_type_id] = 1
