@@ -1,5 +1,6 @@
 from sym_cps.grammar.rules import generate_random_topology, get_seed_design_topo
 from sym_cps.representation.design.abstract import AbstractDesign
+from sym_cps.tools.my_io import save_to_file
 
 
 def design_test_quad():
@@ -16,7 +17,7 @@ def random_designs_n(n: int = 100):
         new_design.parse_grid(generate_random_topology(max_right_num_wings=0))
         new_design.save(folder_name=f"designs/{new_design.name}")
         d_concrete = new_design.to_concrete()
-        # d_concrete.export_all()
+        save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{new_design.name}")
         # d_concrete.evaluate()
 
 
