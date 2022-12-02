@@ -33,6 +33,7 @@ prop_table_folder: Path = fdm_root_folder / "Tables" / "PropData"
 
 
 component_library_root_path_default: Path = data_folder / "ComponentLibrary" / "results_json"
+default_study_params_path = data_folder / "default_study_params"/ "study_params.csv"
 
 # Used to set the bounds to parameters that don't have it. Filled by domain expert (looking at the CAD models)
 lower_bound_file = component_library_root_path_default.parent / "lower_bounds_chosen.txt"
