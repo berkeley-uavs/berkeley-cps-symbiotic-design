@@ -150,6 +150,7 @@ class SimplifiedSelector:
                     best_comp = comp
             print("")
         print(history)
+        draw_result(history)
         if best_comp is not None:
             print("Best: ", best_comp.id, best_diff)
         return best_comp, best_diff
@@ -423,7 +424,7 @@ class SimplifiedSelector:
         for j in range(20):
             for i in range(3):
                 propeller, _ = self.select_single_iterate(
-                    d_concrete=d_concrete, comp_type="Propeller", body_weight=2.0, verbose=False
+                    d_concrete=d_concrete, comp_type="Battery", body_weight=2.0, verbose=False
                 )
                 self.replace_with_component(design_concrete=d_concrete, propeller=propeller)
                 motor, score = self.select_single_iterate(
@@ -496,7 +497,39 @@ class SimplifiedSelector:
         self._testquad_design.export(ExportType.JSON)
         from sym_cps.shared.paths import designs_folder
 
-        self._testquad_design.evaluate(study_params=designs_folder / self._testquad_design.name / "study_params.csv")
+        self._testquad_design.evaluate()
+
+def draw_result(history: dict):
+    from matplotlib import pyplot as plt
+    xs = []
+    ys = []
+    names = []
+    pareto_fronts = []
+    for name, (obj1, obj2) in history.items():
+        # find pareto front
+        add_new = True
+        for front in pareto_fronts:
+            if obj1 > front[1] and obj2 > front[2]:
+                pareto_fronts.remove(front)
+            if obj1 < front[1] and obj2 < front[2]:
+                add_new = False
+                break
+            pass
+        if add_new:
+            pareto_fronts.append((name, obj1, obj2))
+
+    for (name, obj1, obj2) in pareto_fronts:
+        names.append(name)
+        xs.append(obj1)
+        ys.append(obj2)
+        plt.text(obj1 - 0.4, obj2 - 1, name)
+
+    plt.scatter(xs, ys, c="red")
+    plt.xlabel("Force Margin")
+    plt.ylabel("Time of Flying")
+    plt.title("Battery Selection")
+    plt.show()
+        
 
 
 if __name__ == "__main__":
