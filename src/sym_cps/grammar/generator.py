@@ -13,7 +13,7 @@ def design_test_quad():
 def random_designs_n(n: int = 100):
     for i in range(0, n):
         new_design = AbstractDesign(f"_random_design_{i}")
-        new_design.parse_grid(generate_random_topology())
+        new_design.parse_grid(generate_random_topology(max_right_num_wings=0))
         new_design.save(folder_name=f"designs/{new_design.name}")
         d_concrete = new_design.to_concrete()
         # d_concrete.export_all()
