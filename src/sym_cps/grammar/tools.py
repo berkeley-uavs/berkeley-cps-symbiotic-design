@@ -58,7 +58,7 @@ def get_direction_of_tube(
     if current == "Hub4":
         if side == 5:
             result = "TOP-" + tube_side
-        if side == 6:
+        elif side == 6:
             result = "CENTER-" + tube_side
         else:
             result = "SIDE" + str(side) + "-" + tube_side

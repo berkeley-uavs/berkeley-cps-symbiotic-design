@@ -115,6 +115,7 @@ class Wing(AbstractComponent):
         instance = get_instance_name("Wing", self.instance_n)
         lib_component = c_library.get_default_component("Wing")
         component = Component(c_type=c_library.component_types["Wing"], id=instance, library_component=lib_component)
+        component.parameters["Wing__TUBE_ROTATION"].value = 90.0
         self.structure.add(component)
         self.interface_component = component
 
