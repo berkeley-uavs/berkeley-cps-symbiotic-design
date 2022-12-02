@@ -60,5 +60,5 @@ if __name__ == "__main__":
     "Testing evaluation data"
     # design_json_path = designs_folder / "NewAxe_Cargo" / "design_swri_orog.json"
     # design_json_path = "/Users/pier/Projects/challenge_data/output/designs/random_design_0/design_swri.json"
-    design_json_path = designs_folder / "NewAxe_Cargo" / "design_swri_renaming_mod.json"
+    design_json_path = designs_folder / "NewAxe_Cargo" / "design_swri_hor_hole.json"
     print(evaluate_design(design_json_path))
