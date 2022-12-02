@@ -10,7 +10,7 @@ from simple_uam.client.watch import poll_results_backend
 from simple_uam.direct2cad.actions.actors import gen_info_files, process_design
 
 from sym_cps.evaluation.tools import extract_results, load_design, load_metadata, polling_results
-from sym_cps.shared.paths import designs_folder
+from sym_cps.shared.paths import designs_folder, default_study_params_path
 
 
 def evaluate_design(
@@ -41,6 +41,8 @@ def evaluate_design(
         if study_params is not None:
             if isinstance(study_params, Path):
                 study_params = load_study_params(study_params=study_params)
+        else:
+            study_params = load_study_params(study_params=default_study_params_path)
         msg = process_design.send(design, metadata=metadata, compile_args={"srcs": None}, study_params=study_params)
         # print(json.dumps(msg.asdict(), indent=2, sort_keys=True))
     print("Waiting for results...")

@@ -99,8 +99,8 @@ class ContractInstance(object):
 
     def reset_clauses(self):
         self._var_dict = {}
-        self._assumption_clauses = None
-        self._guarantee_clauses = None
+        self._assumption_clauses = []
+        self._guarantee_clauses = []
 
     def build_clauses(self, solver_interface: SolverInterface):
         self.set_solver(solver_interface)
@@ -109,11 +109,15 @@ class ContractInstance(object):
         self._build_property_vars(
             solver_interface=self.solver_interface, component_properties=self._component_properties
         )
-        self._assumption_clauses = self._instantiate_clauses_from_function(
-            solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.assumption
+        self._assumption_clauses.extend(
+            self._instantiate_clauses_from_function(
+                solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.assumption
+            )
         )
-        self._guarantee_clauses = self._instantiate_clauses_from_function(
-            solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.guarantee
+        self._guarantee_clauses.extend(
+            self._instantiate_clauses_from_function(
+                solver_interface=solver_interface, vs=self._var_dict, clause_fn=self.guarantee
+            )
         )
 
     def _instantiate_clauses_from_function(self, solver_interface: SolverInterface, vs, clause_fn: Callable):
@@ -140,12 +144,24 @@ class ContractInstance(object):
     def _build_property_vars(self, solver_interface: SolverInterface, component_properties: dict):
         v_properties = None
         if component_properties is not None:
-            v_properties = {
-                prop.name: prop.produce_constant(
-                    solver_interface=solver_interface, value=component_properties[prop.name]
-                )
-                for prop in self.property_list
-            }
+            v_properties = {}
+            for prop in self.property_list:
+                if isinstance(component_properties[prop.name], tuple):
+                    range_tuple = component_properties[prop.name]
+                    new_v = prop.produce_fresh_variable(
+                        solver_interface=solver_interface, var_name=self._build_var_name(interface_name=prop.name)
+                    )
+                    v_properties[prop.name] = new_v
+                    self._guarantee_clauses.extend(
+                        self._build_range_property(solver_interface=solver_interface, range_tuple=range_tuple, prop_var=new_v)
+                    )
+                    # Use tuple to enclose the property
+                #elif isinsance(component_properties[prop.name], Clause):
+                #TODO Let user insert clause as constraint on the property itself
+                else:
+                    v_properties[prop.name] = prop.produce_constant(
+                        solver_interface=solver_interface, value=component_properties[prop.name]
+                    )
         else:
             v_properties = {
                 prop.name: prop.produce_fresh_variable(
@@ -154,3 +170,10 @@ class ContractInstance(object):
                 for prop in self.property_list
             }
         self._var_dict.update(v_properties)
+
+    def _build_range_property(self, solver_interface: SolverInterface, range_tuple: tuple, prop_var):
+        upper_bound = range_tuple[1]
+        lower_bound = range_tuple[0]
+        return [solver_interface.clause_ge(prop_var, lower_bound),
+                solver_interface.clause_ge(upper_bound, prop_var)]
+        

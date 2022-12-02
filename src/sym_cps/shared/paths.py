@@ -33,6 +33,7 @@ prop_table_folder: Path = fdm_root_folder / "Tables" / "PropData"
 
 
 component_library_root_path_default: Path = data_folder / "ComponentLibrary" / "results_json"
+default_study_params_path = data_folder / "default_study_params"/ "study_params.csv"
 
 # Used to set the bounds to parameters that don't have it. Filled by domain expert (looking at the CAD models)
 lower_bound_file = component_library_root_path_default.parent / "lower_bounds_chosen.txt"
@@ -49,6 +50,10 @@ manual_connectors_components_path = reverse_engineering_folder / "manual_connect
 
 
 grammar_rules_path = reverse_engineering_folder / "grammar_rules.json"
+grammar_rules_path_new = reverse_engineering_folder / "grammar_rules_new.json"
+grammar_rules_processed_path = reverse_engineering_folder / "grammar_rules_processed.json"
+grammar_statistics = reverse_engineering_folder / "grammar_statistics.txt"
+
 
 structures_path = reverse_engineering_folder / "analysis" / "structure.json"
 manual_default_parameters_path = output_folder / "reverse_engineering" / "shared_parameters_manual.json"
