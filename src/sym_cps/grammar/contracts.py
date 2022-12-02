@@ -24,7 +24,7 @@ class Contract:
             all_dirs[direction]: list[str] = []
             if isinstance(symbol_types, set):
                 for symbol_type in symbol_types:
-                    term_str = f"{Direction[direction].value}<= {symbol_type.name} <{Direction[direction].value}"
+                    term_str = f"{Direction[direction].value} <= {symbol_type.name} <= {Direction[direction].value}"
                     print(term_str)
                     polyhedra_term = PolyhedralTerm.from_string(term_str)
                     all_dirs[direction].append(polyhedra_term)
