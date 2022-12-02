@@ -24,7 +24,7 @@ class SimplifiedSelector:
         self._uav_contract.set_rpm(rpm=18000)
         self._uav_contract.set_speed(v=19)
         self._uav_contract.set_contract_simplified()
-        contract_system = self.build_contract_system(verbose=verbose, component_list=None)
+        contract_system = self.build_contract_system(verbose=verbose, component_list=None, use_range=False)
         # TODO make a selection
         sys_inst, sys_connection = self._set_check_max_voltage_system_contract(body_weight=body_weight)
         self.set_selection(contract_system=contract_system, sys_inst=sys_inst)
@@ -48,7 +48,7 @@ class SimplifiedSelector:
         self._uav_contract.set_rpm(rpm=10000)
         self._uav_contract.set_speed(v=19)
         self._uav_contract.set_contract_simplified()
-        contract_system = self.build_contract_system(verbose=verbose, component_list=component_list)
+        contract_system = self.build_contract_system(verbose=verbose, component_list=component_list, use_range=False)
 
         sys_inst, sys_connection = self._set_check_system_contract(body_weight=body_weight)
         contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
@@ -102,13 +102,19 @@ class SimplifiedSelector:
         comps = []
         best_comp = None
         best_diff = 0  # float("inf")
+        history = {}
         for comp in list(self._c_library.components_in_type[comp_type]):
-            # for batt in [self._c_library.components["TurnigyGraphene1000mAh2S75C"]]:
+            #for batt in [self._c_library.components["TurnigyGraphene1000mAh2S75C"]]:
             # for comp in [self._c_library.components["Tattu25C10000mAh4S1P"]]:
-            self._uav_contract.set_rpm(rpm=18000)
-            self._uav_contract.set_speed(v=19)
+            # self._uav_contract.set_rpm(rpm=18000)
+            # self._uav_contract.set_speed(v=19)
+
+            self._uav_contract.set_rpm(rpm=5000)
+            self._uav_contract.set_rpm_upper(rpm=18000)
+            self._uav_contract.set_speed(v=1)
+            self._uav_contract.set_speed_upper(v=25)
             component_list[comp_type]["lib"] = [comp] * len(component_list[comp_type]["lib"])
-            contract_system = self.build_contract_system(verbose=verbose, component_list=component_list)
+            contract_system = self.build_contract_system(verbose=verbose, component_list=component_list, use_range=True)
             sys_inst, sys_connection = self._set_check_max_voltage_system_contract(body_weight=body_weight)
             is_refine = contract_system.check_refinement(sys_inst=sys_inst, sys_connection_map=sys_connection)
             # is_refine = contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
@@ -116,7 +122,7 @@ class SimplifiedSelector:
 
             if is_refine:
                 contract_system.set_solver(Z3Interface())
-                contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
+                is_find = contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
                 thrust = contract_system.get_metric_inst(inst=sys_inst, port_property_name="thrust_sum")
                 weight = contract_system.get_metric_inst(inst=sys_inst, port_property_name="weight_sum")
                 obj = thrust - weight
@@ -127,7 +133,7 @@ class SimplifiedSelector:
             self._uav_contract.set_rpm(rpm=10000)
             self._uav_contract.set_speed(v=19)
             component_list[comp_type]["lib"] = [comp] * len(component_list[comp_type]["lib"])
-            contract_system = self.build_contract_system(verbose=verbose, component_list=component_list)
+            contract_system = self.build_contract_system(verbose=verbose, component_list=component_list, use_range=False)
             sys_inst, sys_connection = self._set_check_balance_system_contract(body_weight=body_weight)
             is_find = contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
             if is_find:
@@ -138,10 +144,12 @@ class SimplifiedSelector:
                 obj = 20 * C * v_batt / (V * I) + 1 * val
                 # obj = C / (V * I)
                 print(": ", obj, v_batt / V, end="")
+                history[comp.id] = (C * v_batt / (V * I), val)
                 if obj > best_diff and v_batt * 0.95 >= V:
                     best_diff = obj
                     best_comp = comp
             print("")
+        print(history)
         if best_comp is not None:
             print("Best: ", best_comp.id, best_diff)
         return best_comp, best_diff
@@ -285,7 +293,7 @@ class SimplifiedSelector:
         system_instance = ContractInstance(template=system_contract, instance_name="System")
         return system_instance, sys_connection_map
 
-    def build_contract_system(self, verbose, component_list):
+    def build_contract_system(self, verbose, component_list, use_range):
         contract_system = ContractSystem(verbose=verbose)
         contract_system.set_solver(Z3Interface())
         # Propeller
@@ -295,7 +303,8 @@ class SimplifiedSelector:
             properties = None
             if component_list is not None:
                 properties = self._uav_contract.hackathon_property_interface_fn_aggregated(
-                    component_list[type_str]["lib"][0]
+                    component_list[type_str]["lib"][0],
+                    use_rpm_v_range=use_range
                 )
             contract_inst = ContractInstance(
                 template=self._uav_contract.get_contract(type_str),
@@ -481,6 +490,7 @@ class SimplifiedSelector:
         #         d_concrete=self._testquad_design, comp_type="Motor", body_weight=2.0, verbose=False
         #     )
         #     self.replace_with_component(design_concrete=self._testquad_design, motor=motor)
+
         from sym_cps.shared.objects import ExportType
 
         self._testquad_design.export(ExportType.JSON)
