@@ -101,7 +101,9 @@ class AbstractDesign:
             direction = get_direction_of_tube(component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP")
             new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
 
-            vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
+            # TODO: I think there is a bug here?
+            # vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
+            vertex_a = d_concrete.get_node_by_instance(component_a.id)
             if vertex_a is None:
                 d_concrete.add_node(component_a)
 
@@ -113,7 +115,10 @@ class AbstractDesign:
             new_connection = Connection.from_direction(component_a=tube, component_b=component_b,
                                                        direction=direction)
 
-            vertex_b = d_concrete.get_node_by_instance(component_b.c_type.id)
+
+            # TODO: I think there is a bug here?
+            # vertex_b = d_concrete.get_node_by_instance(component_b.id)
+            vertex_b = d_concrete.get_node_by_instance(component_b.id)
             if vertex_b is None:
                 d_concrete.add_node(component_b)
 
@@ -183,11 +188,13 @@ class AbstractDesign:
                     if vertex_a is None:
                         d_concrete.add_node(component_a)
 
-                    vertex_b = d_concrete.get_node_by_instance(component_b.c_type.id)
+                    vertex_b = d_concrete.get_node_by_instance(component_b.id)
                     if vertex_b is None:
                         d_concrete.add_node(component_b)
 
                     self.connections.add(connections)
+                    # TODO: bug, connecting something weird to d_concrete
+                    print(f"Connecting {connections.component_a} to {connections.component_b}")
                     d_concrete.connect(connections)
 
         return d_concrete
