@@ -150,7 +150,7 @@ class SimplifiedSelector:
                     best_comp = comp
             print("")
         print(history)
-        draw_result(history)
+        #draw_result(history)
         if best_comp is not None:
             print("Best: ", best_comp.id, best_diff)
         return best_comp, best_diff
@@ -360,6 +360,7 @@ class SimplifiedSelector:
                 num_motors += 1
             elif c_type.id == "BatteryController":
                 num_batt_controllers += 1
+        print(num_batteries, num_propellers, num_motors, num_batt_controllers)
         return num_batteries, num_propellers, num_motors, num_batt_controllers
 
     @staticmethod
@@ -422,9 +423,11 @@ class SimplifiedSelector:
         propellers = list(self._c_library.components_in_type["Propeller"])
         motors = list(self._c_library.components_in_type["Motor"])
         for j in range(20):
+            print(j)
             for i in range(3):
+                print(i)
                 propeller, _ = self.select_single_iterate(
-                    d_concrete=d_concrete, comp_type="Battery", body_weight=2.0, verbose=False
+                    d_concrete=d_concrete, comp_type="Propeller", body_weight=2.0, verbose=False
                 )
                 self.replace_with_component(design_concrete=d_concrete, propeller=propeller)
                 motor, score = self.select_single_iterate(
@@ -450,7 +453,7 @@ class SimplifiedSelector:
             motor = random.choice(motors)
             propeller = random.choice(propellers)
             self.replace_with_component(
-                design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller
+                design_concrete=d_concrete, motor=motor, battery=battery, propeller=propeller
             )
         print("Best:")
         print(best_prop.id)
@@ -458,7 +461,7 @@ class SimplifiedSelector:
         print(best_batt.id)
         print("Best score: ", best_score)
         self.replace_with_component(
-            design_concrete=self._testquad_design, motor=best_motor, battery=best_batt, propeller=best_prop
+            design_concrete=d_concrete, motor=best_motor, battery=best_batt, propeller=best_prop
         )
     def runTest(self):
         self._c_library, self._seed_designs = parse_library_and_seed_designs()
