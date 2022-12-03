@@ -101,8 +101,6 @@ class AbstractDesign:
             direction = get_direction_of_tube(component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP")
             new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
 
-            # TODO: I think there is a bug here?
-            # vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
             vertex_a = d_concrete.get_node_by_instance(component_a.id)
             if vertex_a is None:
                 d_concrete.add_node(component_a)
@@ -116,8 +114,6 @@ class AbstractDesign:
                                                        direction=direction)
 
 
-            # TODO: I think there is a bug here?
-            # vertex_b = d_concrete.get_node_by_instance(component_b.id)
             vertex_b = d_concrete.get_node_by_instance(component_b.id)
             if vertex_b is None:
                 d_concrete.add_node(component_b)
@@ -126,10 +122,11 @@ class AbstractDesign:
             d_concrete.connect(new_connection)
             tube_id += 1
 
-        """Connect Structures to themselves"""
+        """Connect Structures to themselves and to BatteryController"""
         battery_controller = False
         battery_controller_component = None
         for abstract_component in self.grid.values():
+            """Connect structures to battery controller"""
             if abstract_component.base_name == "Fuselage_str" or abstract_component.base_name == "Propeller_str_top":
                 if not battery_controller:
                     battery_controller_component = Component(
@@ -141,13 +138,14 @@ class AbstractDesign:
                     battery_controller = True
 
                 for comp in abstract_component.structure:
+                    """Fuselage str has 2 batteries that connect to battery controller and propeller has motor"""
                     if comp.c_type.id == "Motor":
                         new_connection = Connection.from_direction(
                             component_a=battery_controller_component,
                             component_b=comp,
                             direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
+                        vertex = d_concrete.get_node_by_instance(comp.id)
                         if vertex is None:
                             d_concrete.add_node(comp)
                         d_concrete.connect(new_connection)
@@ -158,7 +156,7 @@ class AbstractDesign:
                             component_b=comp,
                             direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
+                        vertex = d_concrete.get_node_by_instance(comp.id)
                         if vertex is None:
                             d_concrete.add_node(comp)
                         d_concrete.connect(new_connection)
@@ -175,16 +173,17 @@ class AbstractDesign:
                             component_b=battery_component_2,
                             direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(battery_component_2.c_type.id)
+                        vertex = d_concrete.get_node_by_instance(battery_component_2.id)
                         if vertex is None:
                             d_concrete.add_node(battery_component_2)
                         d_concrete.connect(new_connection)
 
+                """Connect Structures to themselves (ie propeller -> motor -> flange)"""
                 for connections in abstract_component.connections:
                     component_a = connections.component_a
                     component_b = connections.component_b
 
-                    vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
+                    vertex_a = d_concrete.get_node_by_instance(component_a.id)
                     if vertex_a is None:
                         d_concrete.add_node(component_a)
 
@@ -193,7 +192,6 @@ class AbstractDesign:
                         d_concrete.add_node(component_b)
 
                     self.connections.add(connections)
-                    # TODO: bug, connecting something weird to d_concrete
                     print(f"Connecting {connections.component_a} to {connections.component_b}")
                     d_concrete.connect(connections)
 

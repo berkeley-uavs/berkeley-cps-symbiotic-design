@@ -41,13 +41,14 @@ def get_direction_of_tube(
         current: str, relative_pos_a_to_b: tuple, tube_side: str
 ) -> str:
     result = ""
+    """TODO: adjust side and see it impacts hub direction"""
     side = 0
     if relative_pos_a_to_b[0] > 0:
         side = 1
     elif relative_pos_a_to_b[0] < 0:
-        side = 3
-    elif relative_pos_a_to_b[1] > 0:
         side = 2
+    elif relative_pos_a_to_b[1] > 0:
+        side = 3
     elif relative_pos_a_to_b[1] < 0:
         side = 4
     elif relative_pos_a_to_b[2] > 0:
@@ -59,13 +60,16 @@ def get_direction_of_tube(
         if side == 5:
             result = "TOP-" + tube_side
         elif side == 6:
-            result = "CENTER-" + tube_side
+            result = "BOTTOM-" + tube_side
         else:
             result = "SIDE" + str(side) + "-" + tube_side
     elif current == "Wing":
         result = "MID-" + tube_side
     elif current == "Flange":
-        result = tube_side + "-SIDE"
+        if side >= 5:
+            result = tube_side + "-BOTTOM"
+        else:
+            result = tube_side + "-SIDE"
 
     return result
 
