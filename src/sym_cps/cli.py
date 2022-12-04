@@ -2,6 +2,8 @@
 import argparse
 import json
 import pickle
+import random
+import string
 from pathlib import Path
 from typing import List, Optional
 
@@ -77,13 +79,17 @@ def generate_random(args: Optional[List[str]] = None):
                 except:
                     continue
 
+    random_call_id = ''.join(
+        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4))
+
     for i in range((index + 1), (index + opts.n)):
         print(f"Random iteration {i}")
-        design_tag = f"_grammar"
+        design_tag = f"_grammar_{random_call_id}"
         design_index = i
 
         new_design: AbstractDesign = generate_random_new_topology(
-            design_tag=design_tag, design_index=design_index, max_right_num_wings=opts.n_wings_max, max_right_num_rotors=opts.n_props_max
+            design_tag=design_tag, design_index=design_index, max_right_num_wings=opts.n_wings_max,
+            max_right_num_rotors=opts.n_props_max
         )
 
         new_design.save(folder_name=f"designs/{new_design.name}")
@@ -99,7 +105,6 @@ def generate_random(args: Optional[List[str]] = None):
         designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
         designs_generated_stats[d_concrete.name] = d_concrete.evaluation_results
         print(f"Evaluation completed\n")
-
 
 
 def update_all() -> int:
