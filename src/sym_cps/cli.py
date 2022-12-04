@@ -59,12 +59,14 @@ def generate_random(args: Optional[List[str]] = None):
     index = 0
     for path in Path(designs_folder).iterdir():
         if path.is_dir():
-            path_split = str(path).split("_")
-            if len(path_split) > 0:
+            path_split = str(path).split("__")
+            print(path_split)
+            if len(path_split) > 1:
                 try:
-                    last_n = int(path_split[-1])
-                    if last_n > index:
-                        index = last_n
+                    path_split_2 = str(path_split[0]).split("challenge_data/output/designs/")
+                    first_n = int(path_split_2[1])
+                    if first_n > index:
+                        index = first_n
                 except:
                     continue
 
@@ -74,7 +76,7 @@ def generate_random(args: Optional[List[str]] = None):
 
     for i in range((index + 1), (index + opts.n)):
         print(f"Random iteration {i}")
-        design_tag = f"_grammar_{random_call_id}"
+        design_tag = f"grammar_{random_call_id}"
         design_index = i
 
         new_design: AbstractDesign = generate_random_new_topology(
