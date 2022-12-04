@@ -35,13 +35,13 @@ resolve_relative_path() (
 
 cleanup() {
   echo "Checking if container already exists.."
-  if [[ $(docker ps -a --filter="name=$container" | grep -w "$container") ]]; then
+  if [[ $(docker ps -a --filter="name=$container" --filter "status=running" | grep -w "$container") ]]; then
     docker stop $container
     docker rm $container
-    echo "Cleaning up 1..."
+    echo "Cleaning up..."
   elif [[ $(docker ps -a --filter="name=$container") ]]; then
     docker rm $container || true
-    echo "Cleaning up 2..."
+    echo "Cleaning up..."
   else
     echo "No existing container found"
   fi
@@ -67,15 +67,14 @@ main() {
   cleanup
 
   docker run \
-    -it \
+    -d \
     --name $container \
     --privileged \
     --workdir /root/host \
     --platform ${my_platform} \
     ${mount_arg} \
     ${port_arg} \
-    --rm \
-    $image bash
+    $image
 
 }
 
