@@ -5,8 +5,8 @@ from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+from sym_cps.grammar import AbstractGrid
 
-from sym_cps.grammar.rules import AbstractGrid, generate_random_topology, get_seed_design_topo
 from sym_cps.representation.design.abstract.elements import (
     AbstractComponent,
     AbstractConnection,
@@ -33,6 +33,9 @@ class AbstractDesign:
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
     abstract_connections: set[AbstractConnection] = field(default_factory=set)
     connections: set[Connection] = field(default_factory=set)
+
+    def __hash__(self):
+        return hash(self.abstract_grid)
 
     def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1
@@ -193,8 +196,7 @@ class AbstractDesign:
                         d_concrete.add_node(component_b)
 
                     self.connections.add(connections)
-                    # TODO: bug, connecting something weird to d_concrete
-                    print(f"Connecting {connections.component_a} to {connections.component_b}")
+                    # print(f"Connecting {connections.component_a.id} to {connections.component_b.id}")
                     d_concrete.connect(connections)
 
         return d_concrete
@@ -391,16 +393,3 @@ class AbstractDesign:
         # fig.show()
         return fig
 
-
-if __name__ == "__main__":
-    # new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
-
-    new_design = AbstractDesign(f"TestQuad_Cargo")
-    # new_design.parse_grid(generate_random_topology())
-    new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
-    new_design.save()
-
-    for i in range(0, 100):
-        new_design = AbstractDesign(f"random_{i}")
-        new_design.parse_grid(generate_random_topology())
-        new_design.save()

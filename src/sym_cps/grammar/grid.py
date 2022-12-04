@@ -1,7 +1,24 @@
 from __future__ import annotations
+
+import base64
+import hashlib
 from dataclasses import dataclass, field
 
 from sym_cps.grammar import Symbol, SymbolConnection, Grammar
+
+
+@dataclass
+class AbstractGrid:
+    nodes: list[list[list[str]]]
+    adjacencies: dict[tuple, list[tuple]]
+    name: str = ""
+
+    def __hash__(self):
+        return hashlib.sha1((str(self.nodes) + str(self.adjacencies)).encode('utf-8'))
+
+    @property
+    def id(self):
+        return str(self.__hash__())[:10]
 
 
 @dataclass

@@ -55,6 +55,10 @@ grammar_rules_processed_path = reverse_engineering_folder / "grammar_rules_proce
 grammar_statistics = reverse_engineering_folder / "grammar_statistics.txt"
 
 
+designs_generated_stats_path = output_folder / "random_designs_stats.json"
+random_topologies_generated_path = output_folder / "random_topologies_generated.json"
+
+
 structures_path = reverse_engineering_folder / "analysis" / "structure.json"
 manual_default_parameters_path = output_folder / "reverse_engineering" / "shared_parameters_manual.json"
 learned_default_params_path = output_folder / "reverse_engineering" / "shared_parameters.json"

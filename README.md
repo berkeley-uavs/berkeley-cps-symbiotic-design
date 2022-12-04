@@ -123,7 +123,7 @@ If the file exists already on your system, delete it and run the command again.
 
     ```bash
     cd berkeley-cps-symbiotic-design & \
-    ./docker_run.sh bash
+    ./docker_run_old.sh bash
     ```
 
 You can now launch the scripts and the python files. For example:
@@ -153,7 +153,7 @@ The docker image contains an ssh server that you can connect from your IDE and r
 
 Launch:
 ```bash
-  ./docker_run.sh
+  ./docker_run_old.sh
 ```
 to launch the docker image as a new container running in background.
 

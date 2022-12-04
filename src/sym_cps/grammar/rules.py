@@ -1,20 +1,17 @@
 from __future__ import annotations
 
+import base64
 import copy
+import hashlib
 import json
 import random
 from dataclasses import dataclass
 
-from sym_cps.shared.paths import data_folder
+from sym_cps.grammar import AbstractGrid
+from sym_cps.representation.design.abstract import AbstractDesign
+from sym_cps.shared.paths import data_folder, designs_generated_stats_path, random_topologies_generated_path
 
 rule_dict_path_constant = data_folder / "reverse_engineering" / "grammar_rules.json"
-
-
-@dataclass
-class AbstractGrid:
-    nodes: list[list[list[str]]]
-    adjacencies: dict[tuple, list[tuple]]
-    name: str = ""
 
 
 def node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
@@ -323,13 +320,31 @@ def components_count(design):
     return num_fuselage, num_rotors, num_wings
 
 
+def generate_random_new_topology(
+        design_id: str,
+        max_right_num_rotors: int = -1,
+        max_right_num_wings: int = -1) -> AbstractDesign:
+    random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
+
+    while True:
+        grid: AbstractGrid = generate_random_topology(max_right_num_rotors=max_right_num_rotors, max_right_num_wings=max_right_num_wings)
+        if grid.id not in random_topologies_generated.keys():
+            break
+
+    random_topologies_generated[grid.id] = design_id
+    abstract_design: AbstractDesign = AbstractDesign(design_id)
+    abstract_design.parse_grid(grid)
+
+    return abstract_design
+
+
 def generate_random_topology(
         right_width=None,
         length=None,
         depth=None,
         origin=None,
-        max_right_num_rotors=None,
-        max_right_num_wings=None,
+        max_right_num_rotors: int = -1,
+        max_right_num_wings: int = -1,
         rule_dict_path=rule_dict_path_constant,
 ):
     symbol_groups = {
@@ -351,9 +366,9 @@ def generate_random_topology(
             length = random.randint(2, 5)
         if depth is None:
             depth = random.randint(1, 4)
-        if max_right_num_rotors is None:
-            max_right_num_rotors = random.randint(1, 3)
-        if max_right_num_wings is None:
+        if max_right_num_rotors == -1:
+            max_right_num_rotors = random.randint(1, 5)
+        if max_right_num_wings == -1:
             max_right_num_wings = random.randint(1, 3)
         if origin is None:
             fuselage_position_y = random.choice(range(length))

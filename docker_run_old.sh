@@ -1,7 +1,6 @@
 #!/bin/bash
 
 port_ssh=9922
-repo_dir="$(pwd)"
 container=dev_env_base_310
 image=pmallozzi/devenvs:base-310-symcps
 challenge_data_relative_path=../challenge_data/
@@ -13,6 +12,7 @@ case $(uname -m) in
 esac
 echo ${my_platform}
 
+docker pull ${image}
 
 
 resolve_relative_path() (
@@ -36,6 +36,7 @@ resolve_relative_path() (
 )
 
 
+
 cleanup() {
   echo "Checking if container already exists.."
   if [[ $(docker ps -a --filter="name=$container" --filter "status=running" | grep -w "$container") ]]; then
@@ -51,20 +52,11 @@ cleanup() {
 }
 
 main() {
-
-  container=${version}
-  image=pmallozzi/devenvs:${version}
-
-  docker pull ${image}
-
-
   repo_dir="$(pwd)"
   challenge_data_dir=$(readlink -f ${challenge_data_relative_path})
-  mount_arg=" -v ${repo_dir}:/root/host -v ${challenge_data_dir}:/root/challenge_data -v /root/host/__pypackages__"
-  port_arg="-p ${port_ssh}:22"
-
-
   echo $challenge_data_dir
+  mount_local=" -v ${repo_dir}:/root/host -v ${challenge_data_dir}:/root/challenge_data -v /root/host/__pypackages__"
+  port_arg="-p ${port_ssh}:22"
 
   which docker 2>&1 >/dev/null
   if [ $? -ne 0 ]; then
@@ -74,17 +66,35 @@ main() {
 
   cleanup
 
+  case "${1}" in
+    bash )
+      echo "Entering docker environment..."
+      docker run \
+        -it \
+        --name $container \
+        --privileged \
+        --workdir /root/host \
+        --platform ${my_platform} \
+        ${mount_local} \
+        $port_arg \
+        $image ${1}
+      ;;
+    * )
+      echo "Launching docker environment in background..."
+      docker run \
+        -d \
+        --name $container \
+        --privileged \
+        --workdir /root/host \
+        --platform ${my_platform} \
+        ${mount_local} \
+        $port_arg \
+        $image
+      ;;
 
-  docker run \
-    -d \
-    --name $container \
-    --privileged \
-    --workdir /root/host \
-    --platform ${my_platform} \
-    ${mount_arg} \
-    ${port_arg} \
-    $image
+  esac
 
 }
 
 main "$@"
+
