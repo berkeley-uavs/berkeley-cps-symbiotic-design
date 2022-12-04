@@ -47,8 +47,10 @@ def set_direction(design: DConcrete):
     # assign the propeller in the same pair with different direction/proptype
     # if the propeller is facing up: one with 1/1 another with -1/-1
     # if the propeller is facing down: one with -1/1 another with direction 1/-1
+    pass
 
 if __name__ == '__main__':
+
     for number in designs_numbers:
         folder_name = f"_random_design_{number}"
         #
