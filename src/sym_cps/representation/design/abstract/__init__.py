@@ -51,7 +51,10 @@ class AbstractDesign:
     def evaluate(self):
         self.save(folder_name=f"designs/{self.name}")
 
+        print(f"Engering")
         d_concrete = self.to_concrete()
+        print(f"asdasd")
+
         d_concrete.choose_default_components_for_empty_ones()
         d_concrete.export_all()
         save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
@@ -118,47 +121,55 @@ class AbstractDesign:
     def to_concrete(self) -> DConcrete:
         """TODO"""
         d_concrete = DConcrete(name=self.name)
-        tube_id = 1
-        tube_library = c_library.get_default_component("Tube")
+        #
+        # tube_id = 1
+        # tube_library = c_library.get_default_component("Tube")
 
         """Connect Tubes to Hubs and Flanges"""
         for abstract_connection in self.abstract_connections:
-            tube = Component(
-                c_type=c_library.component_types["Tube"],
-                id=get_instance_name("Tube", tube_id),
-                library_component=tube_library,
-            )
-            d_concrete.add_node(tube)
-            component_a = abstract_connection.component_a.interface_component
-            direction = get_direction_of_tube(
-                component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP"
-            )
-            new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
 
-            # TODO: I think there is a bug here?
-            # vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
-            vertex_a = d_concrete.get_node_by_instance(component_a.id)
-            if vertex_a is None:
-                d_concrete.add_node(component_a)
+            concrete_connection_a, concrete_connection_b = abstract_connection.to_concrete_connection()
+            
+            d_concrete.connect(concrete_connection_a)
+            d_concrete.connect(concrete_connection_b)
 
-            self.connections.add(new_connection)
-            d_concrete.connect(new_connection)
-
-            component_b = abstract_connection.component_b.interface_component
-            direction = get_direction_of_tube(
-                component_b.c_type.id, abstract_connection.relative_position_from_b_to_a, "BOTTOM"
-            )
-            new_connection = Connection.from_direction(component_a=tube, component_b=component_b, direction=direction)
-
-            # TODO: I think there is a bug here?
+            # tube = Component(
+            #     id=get_instance_name("Tube", tube_id),
+            #     library_component=tube_library,
+            # )
+            # d_concrete.add_node(tube)
+            #
+            # component_a = abstract_connection.component_a.interface_component
+            #
+            # direction = get_direction_of_tube(
+            #     component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP"
+            # )
+            # new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
+            #
+            # # TODO: I think there is a bug here?
+            # # vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
+            # vertex_a = d_concrete.get_node_by_instance(component_a.id)
+            # if vertex_a is None:
+            #     d_concrete.add_node(component_a)
+            #
+            # self.connections.add(new_connection)
+            # d_concrete.connect(new_connection)
+            #
+            # component_b = abstract_connection.component_b.interface_component
+            # direction = get_direction_of_tube(
+            #     component_b.c_type.id, abstract_connection.relative_position_from_b_to_a, "BOTTOM"
+            # )
+            # new_connection = Connection.from_direction(component_a=tube, component_b=component_b, direction=direction)
+            #
+            # # TODO: I think there is a bug here?
+            # # vertex_b = d_concrete.get_node_by_instance(component_b.id)
             # vertex_b = d_concrete.get_node_by_instance(component_b.id)
-            vertex_b = d_concrete.get_node_by_instance(component_b.id)
-            if vertex_b is None:
-                d_concrete.add_node(component_b)
-
-            self.connections.add(new_connection)
-            d_concrete.connect(new_connection)
-            tube_id += 1
+            # if vertex_b is None:
+            #     d_concrete.add_node(component_b)
+            #
+            # self.connections.add(new_connection)
+            # d_concrete.connect(new_connection)
+            # tube_id += 1
 
         """Connect Structures to themselves"""
         battery_controller = False

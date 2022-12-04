@@ -117,6 +117,7 @@ def generate_random(args: Optional[List[str]] = None):
 def _evaluate_grid_path(grid_file_path: Path):
     with open(grid_file_path, "rb") as pickle_file:
         abstract_grid: AbstractGrid = pickle.load(pickle_file)
+        print(f"Building AbstractDesign")
         new_design = AbstractDesign(abstract_grid.name)
         new_design.parse_grid(abstract_grid)
         new_design.evaluate()
@@ -217,4 +218,4 @@ if __name__ == "__main__":
     # evaluate_abstract_design(["--abstract_json=custom_test_quad_cargo"])
     # _stats_cleanup()
     # generate_random(["--n=10", "--n_wings_max=0"])
-    evaluate_random([])
+    evaluate_random(["--n=4"])
