@@ -49,17 +49,6 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
 
     raise AttributeError
 
-
-def random_designs_n(n: int = 100):
-    for i in range(0, n):
-        new_design = AbstractDesign(f"_random_design_{i}")
-        new_design.parse_grid(generate_random_topology(max_right_num_wings=0))
-        new_design.save(folder_name=f"designs/{new_design.name}")
-        d_concrete = new_design.to_concrete()
-        save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{new_design.name}")
-        # d_concrete.evaluate()
-
-
 def generate_random(args: Optional[List[str]] = None):
     parser = argparse.ArgumentParser(prog="sym-cps")
     parser.add_argument("--n", type=int, default=1, help="Specify the number of  random designs")
