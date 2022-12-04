@@ -17,7 +17,7 @@ class AbstractGrid:
 
     @property
     def id(self):
-        return str(self.__hash__())[:10]
+        return str(self.__hash__())
 
     @property
     def n_wings(self):

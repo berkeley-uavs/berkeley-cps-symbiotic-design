@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import hashlib
 from dataclasses import dataclass, field
 
@@ -43,8 +44,9 @@ class AbstractDesign:
         connections_ids = ""
         for connection in self.abstract_connections:
             connections_ids += connection.type_id
-            hashlib.sha1(connections_ids.encode("utf-8"))
-            return str(hashlib.sha1(connections_ids.encode("utf-8")))[:10]
+            d = hashlib.md5(connections_ids.encode("utf-8")).digest()
+            d = base64.urlsafe_b64encode(d).decode('ascii')
+            return str(d[:-2])
 
     def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1

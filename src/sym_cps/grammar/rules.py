@@ -7,6 +7,7 @@ import random
 from sym_cps.grammar import AbstractGrid
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.shared.paths import data_folder, random_topologies_generated_path
+from sym_cps.tools.my_io import save_to_file
 
 rule_dict_path_constant = data_folder / "reverse_engineering" / "grammar_rules.json"
 
@@ -326,12 +327,15 @@ def generate_random_new_topology(
         grid: AbstractGrid = generate_random_topology(
             max_right_num_rotors=max_right_num_rotors, max_right_num_wings=max_right_num_wings
         )
-        if grid.id not in random_topologies_generated.keys():
+        abstract_design: AbstractDesign = AbstractDesign("")
+        abstract_design.parse_grid(grid)
+        print(f"{abstract_design.id}")
+        if abstract_design.id not in random_topologies_generated.keys():
             break
     design_id = f"{design_tag}_w{grid.n_wings}_p{grid.n_props}_{design_index}"
-    random_topologies_generated[grid.id] = design_id
-    abstract_design: AbstractDesign = AbstractDesign(design_id)
-    abstract_design.parse_grid(grid)
+    abstract_design.name = design_id
+    random_topologies_generated[abstract_design.id] = design_id
+    save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path)
 
     return abstract_design
 
