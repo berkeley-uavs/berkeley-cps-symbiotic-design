@@ -44,6 +44,7 @@ evaluate = "sym_cps.cli:evaluate_abstract_design"
 evaluate_design_swri = "sym_cps.cli:evaluate_design_swri"
 isomorphisms = "sym_cps.representation.design.concrete.structures:random_sampling_for_n"
 generate_random = "sym_cps.cli:generate_random"
+evaluate_random = "sym_cps.cli:evaluate_random"
 
 [tool.pdm]
 version = {source = "scm"}

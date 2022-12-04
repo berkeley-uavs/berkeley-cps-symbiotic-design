@@ -14,7 +14,8 @@ from sym_cps.grammar.rules import generate_random_new_topology, generate_random_
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
-from sym_cps.shared.paths import aws_folder, data_folder, designs_folder, designs_generated_stats_path
+from sym_cps.shared.paths import aws_folder, data_folder, designs_folder, designs_generated_stats_path, \
+    random_topologies_generated_path
 from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_library
 
@@ -49,7 +50,31 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
 
     raise AttributeError
 
+
+def _stats_cleanup():
+    designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
+    random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
+    designs_in_folder = [f.name for f in list(Path(designs_folder).iterdir())]
+    to_delete_stats = []
+    to_delete_generated = []
+    for k in designs_generated_stats.keys():
+        if k not in designs_in_folder:
+            to_delete_stats.append(k)
+    for k2, v2 in random_topologies_generated.items():
+        if v2 not in designs_in_folder:
+            to_delete_generated.append(k2)
+    for k in to_delete_stats:
+        del designs_generated_stats[k]
+
+    for k in to_delete_generated:
+        del random_topologies_generated[k]
+
+    save_to_file(designs_generated_stats, absolute_path=designs_generated_stats_path)
+    save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path)
+
+
 def generate_random(args: Optional[List[str]] = None):
+    _stats_cleanup()
     parser = argparse.ArgumentParser(prog="sym-cps")
     parser.add_argument("--n", type=int, default=1, help="Specify the number of  random designs")
     parser.add_argument("--n_wings_max", type=int, default=-1, help="Specify the max number of wings")
@@ -59,22 +84,24 @@ def generate_random(args: Optional[List[str]] = None):
     index = 0
     for path in Path(designs_folder).iterdir():
         if path.is_dir():
-            path_split = str(path).split("_")
-            if len(path_split) > 0:
+            path_split = str(path).split("__")
+            print(path_split)
+            if len(path_split) > 1:
                 try:
-                    last_n = int(path_split[-1])
-                    if last_n > index:
-                        index = last_n
+                    path_split_2 = str(path_split[0]).split("challenge_data/output/designs/")
+                    first_n = int(path_split_2[1])
+                    if first_n > index:
+                        index = first_n
                 except:
                     continue
 
     random_call_id = "".join(
-        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4)
+        random.choice(string.ascii_lowercase + string.digits) for _ in range(4)
     )
 
     for i in range((index + 1), (index + opts.n)):
         print(f"Random iteration {i}")
-        design_tag = f"_grammar_{random_call_id}"
+        design_tag = f"grammar_{random_call_id}"
         design_index = i
 
         new_design: AbstractDesign = generate_random_new_topology(
@@ -84,19 +111,46 @@ def generate_random(args: Optional[List[str]] = None):
             max_right_num_rotors=opts.n_props_max,
         )
 
-        new_design.save(folder_name=f"designs/{new_design.name}")
+        new_design.evaluate()
 
-        d_concrete = new_design.to_concrete()
-        d_concrete.choose_default_components_for_empty_ones()
-        d_concrete.export_all()
-        save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{new_design.name}")
 
-        print(f"Design {d_concrete.name} generated")
-        print(f"Evaluating..")
-        d_concrete.evaluate()
-        designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
-        designs_generated_stats[d_concrete.name] = d_concrete.evaluation_results
-        print(f"Evaluation completed\n")
+def _evaluate_grid_path(grid_file_path: Path):
+    with open(grid_file_path, "rb") as pickle_file:
+        abstract_grid: AbstractGrid = pickle.load(pickle_file)
+        new_design = AbstractDesign(abstract_grid.name)
+        new_design.parse_grid(abstract_grid)
+        new_design.evaluate()
+
+
+def evaluate_random(args: Optional[List[str]] = None):
+    parser = argparse.ArgumentParser(prog="sym-cps")
+    parser.add_argument("--n", type=int, default=-1, help="Specify the number (ID) of design to evaluate")
+    opts = parser.parse_args(args=args)
+    print(f"args: {opts}")
+    if opts.n == -1:
+        print("Evaluating all randomly generated designs in the designs folder")
+        """Evaluate all"""
+        for path in Path(designs_folder).iterdir():
+            if path.is_dir():
+                if "__grammar_" in str(path):
+                    grid_file = path / "grid.dat"
+                    print(f"Parsing file {grid_file}")
+                    _evaluate_grid_path(grid_file)
+    else:
+        for path in Path(designs_folder).iterdir():
+            if path.is_dir():
+                path_split = str(path).split("__")
+                print(path_split)
+                if len(path_split) > 1:
+                    try:
+                        path_split_2 = str(path_split[0]).split("challenge_data/output/designs/")
+                        n = int(path_split_2[1])
+                        if n == opts.n:
+                            grid_file = path / "grid.dat"
+                            print(f"Parsing file {grid_file}")
+                            _evaluate_grid_path(grid_file)
+                    except:
+                        continue
 
 
 def update_all() -> int:
@@ -161,4 +215,6 @@ if __name__ == "__main__":
     # dconcrete = _parse_design(["--grid=grid/test_quad_cargo_grid.dat"])
     # dconcrete.export_all()
     # evaluate_abstract_design(["--abstract_json=custom_test_quad_cargo"])
-    generate_random(["--n=10", "--n_wings_max=0"])
+    # _stats_cleanup()
+    # generate_random(["--n=10", "--n_wings_max=0"])
+    evaluate_random([])

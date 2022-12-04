@@ -332,8 +332,9 @@ def generate_random_new_topology(
         print(f"{abstract_design.id}")
         if abstract_design.id not in random_topologies_generated.keys():
             break
-    design_id = f"{design_tag}_w{grid.n_wings}_p{grid.n_props}_{design_index}"
+    design_id = f"{design_index}__{design_tag}_w{grid.n_wings}_p{grid.n_props}"
     abstract_design.name = design_id
+    abstract_design.abstract_grid.name = design_id
     random_topologies_generated[abstract_design.id] = design_id
     save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path)
 

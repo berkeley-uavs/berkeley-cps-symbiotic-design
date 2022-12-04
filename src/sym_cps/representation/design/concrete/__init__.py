@@ -211,7 +211,10 @@ class DConcrete:
         )
         print(self.evaluation_results["status"])
         self.export(ExportType.EVALUATION)
-        print("Evaluation Completed")
+        print("Evaluation completed")
+        designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
+        designs_generated_stats[self.name] = self.evaluation_results
+        print(f"Result saved\n")
 
     @property
     def to_design_swri(self) -> dict[str, str]:
