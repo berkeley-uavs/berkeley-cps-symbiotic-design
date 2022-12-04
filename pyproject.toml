@@ -43,6 +43,7 @@ custom-design = "sym_cps.cli:load_custom_design"
 evaluate = "sym_cps.cli:evaluate_abstract_design"
 evaluate_design_swri = "sym_cps.cli:evaluate_design_swri"
 isomorphisms = "sym_cps.representation.design.concrete.structures:random_sampling_for_n"
+generate_random = "sym_cps.cli:generate_random"
 
 [tool.pdm]
 version = {source = "scm"}
@@ -77,19 +78,19 @@ maintain = [
 ]
 quality = [
     "darglint>=1.8",
-    "flake8<4",  # TODO: remove once importlib-metadata version conflict is resolved
-    "flake8-bandit>=2.1",
-    "flake8-black>=0.2",
-    "flake8-bugbear>=21.9",
-    "flake8-builtins>=1.5",
-    "flake8-comprehensions>=3.7",
-    "flake8-docstrings>=1.6",
-    "flake8-pytest-style>=1.5",
-    "flake8-string-format>=0.3",
-    "flake8-tidy-imports>=4.5",
-    "flake8-variables-names>=0.0",
-    "pep8-naming>=0.12",
-    "wps-light>=0.15",
+#    "flake8<4",  # TODO: remove once importlib-metadata version conflict is resolved
+#    "flake8-bandit>=2.1",
+#    "flake8-black>=0.2",
+#    "flake8-bugbear>=21.9",
+#    "flake8-builtins>=1.5",
+#    "flake8-comprehensions>=3.7",
+#    "flake8-docstrings>=1.6",
+#    "flake8-pytest-style>=1.5",
+#    "flake8-string-format>=0.3",
+#    "flake8-tidy-imports>=4.5",
+#    "flake8-variables-names>=0.0",
+#    "pep8-naming>=0.12",
+#    "wps-light>=0.15",
 ]
 tests = [
     "pytest>=6.2",

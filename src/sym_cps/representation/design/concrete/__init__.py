@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+from copy import deepcopy
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -23,7 +24,7 @@ from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level
-from sym_cps.shared.paths import designs_folder, output_folder
+from sym_cps.shared.paths import designs_folder, output_folder, designs_generated_stats_path
 from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.strings import repr_dictionary, tab
 
@@ -349,14 +350,23 @@ class DConcrete:
             )
 
         elif file_type == ExportType.EVALUATION:
+            results = deepcopy(self.evaluation_results)
+            del results["stl_file_path"]
             file_path = absolute_folder / "evaluation_results.json"
             save_to_file(
-                str(str(json.dumps(self.evaluation_results))),
+                results,
                 file_name=f"evaluation_results.json",
                 absolute_path=absolute_folder,
             )
             print(f"Copying {self.evaluation_results['stl_file_path']} to {absolute_folder}")
             shutil.copy(self.evaluation_results["stl_file_path"], absolute_folder)
+            print(f"Saving statistics")
+            designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
+            designs_generated_stats[self.name] = results
+            save_to_file(
+                designs_generated_stats,
+                absolute_path=designs_generated_stats_path,
+            )
 
         else:
             raise Exception("File type not supported")

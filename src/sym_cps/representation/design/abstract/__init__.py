@@ -5,8 +5,8 @@ from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+from sym_cps.grammar import AbstractGrid
 
-from sym_cps.grammar.rules import AbstractGrid, generate_random_topology, get_seed_design_topo
 from sym_cps.representation.design.abstract.elements import (
     AbstractComponent,
     AbstractConnection,
@@ -33,6 +33,9 @@ class AbstractDesign:
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
     abstract_connections: set[AbstractConnection] = field(default_factory=set)
     connections: set[Connection] = field(default_factory=set)
+
+    def __hash__(self):
+        return hash(self.abstract_grid)
 
     def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1
@@ -101,6 +104,8 @@ class AbstractDesign:
             direction = get_direction_of_tube(component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP")
             new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
 
+            # TODO: I think there is a bug here?
+            # vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
             vertex_a = d_concrete.get_node_by_instance(component_a.id)
             if vertex_a is None:
                 d_concrete.add_node(component_a)
@@ -114,6 +119,8 @@ class AbstractDesign:
                                                        direction=direction)
 
 
+            # TODO: I think there is a bug here?
+            # vertex_b = d_concrete.get_node_by_instance(component_b.id)
             vertex_b = d_concrete.get_node_by_instance(component_b.id)
             if vertex_b is None:
                 d_concrete.add_node(component_b)
@@ -122,11 +129,10 @@ class AbstractDesign:
             d_concrete.connect(new_connection)
             tube_id += 1
 
-        """Connect Structures to themselves and to BatteryController"""
+        """Connect Structures to themselves"""
         battery_controller = False
         battery_controller_component = None
         for abstract_component in self.grid.values():
-            """Connect structures to battery controller"""
             if abstract_component.base_name == "Fuselage_str" or abstract_component.base_name == "Propeller_str_top":
                 if not battery_controller:
                     battery_controller_component = Component(
@@ -138,14 +144,13 @@ class AbstractDesign:
                     battery_controller = True
 
                 for comp in abstract_component.structure:
-                    """Fuselage str has 2 batteries that connect to battery controller and propeller has motor"""
                     if comp.c_type.id == "Motor":
                         new_connection = Connection.from_direction(
                             component_a=battery_controller_component,
                             component_b=comp,
                             direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(comp.id)
+                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
                         if vertex is None:
                             d_concrete.add_node(comp)
                         d_concrete.connect(new_connection)
@@ -156,7 +161,7 @@ class AbstractDesign:
                             component_b=comp,
                             direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(comp.id)
+                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
                         if vertex is None:
                             d_concrete.add_node(comp)
                         d_concrete.connect(new_connection)
@@ -173,17 +178,16 @@ class AbstractDesign:
                             component_b=battery_component_2,
                             direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(battery_component_2.id)
+                        vertex = d_concrete.get_node_by_instance(battery_component_2.c_type.id)
                         if vertex is None:
                             d_concrete.add_node(battery_component_2)
                         d_concrete.connect(new_connection)
 
-                """Connect Structures to themselves (ie propeller -> motor -> flange)"""
                 for connections in abstract_component.connections:
                     component_a = connections.component_a
                     component_b = connections.component_b
 
-                    vertex_a = d_concrete.get_node_by_instance(component_a.id)
+                    vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
                     if vertex_a is None:
                         d_concrete.add_node(component_a)
 
@@ -192,7 +196,7 @@ class AbstractDesign:
                         d_concrete.add_node(component_b)
 
                     self.connections.add(connections)
-                    print(f"Connecting {connections.component_a} to {connections.component_b}")
+                    # print(f"Connecting {connections.component_a.id} to {connections.component_b.id}")
                     d_concrete.connect(connections)
 
         return d_concrete
@@ -389,16 +393,3 @@ class AbstractDesign:
         # fig.show()
         return fig
 
-
-if __name__ == "__main__":
-    # new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
-
-    new_design = AbstractDesign(f"TestQuad_Cargo")
-    # new_design.parse_grid(generate_random_topology())
-    new_design.parse_grid(get_seed_design_topo("TestQuad_Cargo"))
-    new_design.save()
-
-    for i in range(0, 100):
-        new_design = AbstractDesign(f"random_{i}")
-        new_design.parse_grid(generate_random_topology())
-        new_design.save()
