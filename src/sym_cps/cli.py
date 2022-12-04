@@ -76,12 +76,14 @@ def generate_random(args: Optional[List[str]] = None):
                         index = last_n
                 except:
                     continue
-    for i in range(index, (index + opts.n)):
+
+    for i in range((index + 1), (index + opts.n)):
         print(f"Random iteration {i}")
-        design_id = f"_grammar_w_{opts.n_wings_max}_p_{opts.n_props_max}_{i}"
+        design_tag = f"_grammar"
+        design_index = i
 
         new_design: AbstractDesign = generate_random_new_topology(
-            design_id, max_right_num_wings=opts.n_wings_max, max_right_num_rotors=opts.n_props_max
+            design_tag=design_tag, design_index=design_index, max_right_num_wings=opts.n_wings_max, max_right_num_rotors=opts.n_props_max
         )
 
         new_design.save(folder_name=f"designs/{new_design.name}")

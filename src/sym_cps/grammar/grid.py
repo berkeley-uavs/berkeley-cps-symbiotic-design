@@ -20,6 +20,13 @@ class AbstractGrid:
     def id(self):
         return str(self.__hash__())[:10]
 
+    @property
+    def n_wings(self):
+        return str(self.nodes).count("WING")
+
+    @property
+    def n_props(self):
+        return str(self.nodes).count("ROTOR")
 
 @dataclass
 class Grid:

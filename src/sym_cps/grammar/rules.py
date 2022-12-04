@@ -321,7 +321,8 @@ def components_count(design):
 
 
 def generate_random_new_topology(
-        design_id: str,
+        design_tag: str,
+        design_index: int,
         max_right_num_rotors: int = -1,
         max_right_num_wings: int = -1) -> AbstractDesign:
     random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
@@ -330,7 +331,7 @@ def generate_random_new_topology(
         grid: AbstractGrid = generate_random_topology(max_right_num_rotors=max_right_num_rotors, max_right_num_wings=max_right_num_wings)
         if grid.id not in random_topologies_generated.keys():
             break
-
+    design_id = f"{design_tag}_w{grid.n_wings}_p{grid.n_props}_{design_index}"
     random_topologies_generated[grid.id] = design_id
     abstract_design: AbstractDesign = AbstractDesign(design_id)
     abstract_design.parse_grid(grid)
