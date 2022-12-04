@@ -334,6 +334,7 @@ def generate_random_new_topology(
             break
     design_id = f"{design_index}__{design_tag}_w{grid.n_wings}_p{grid.n_props}"
     abstract_design.name = design_id
+    abstract_design.abstract_grid.name = design_id
     random_topologies_generated[abstract_design.id] = design_id
     save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path)
 

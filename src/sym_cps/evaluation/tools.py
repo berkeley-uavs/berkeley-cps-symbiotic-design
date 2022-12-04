@@ -109,17 +109,21 @@ def get_zip_metadata(zip_file: Path) -> Optional[object]:
     """
 
     # Open Zip file
-    with zipfile.ZipFile(zip_file) as zip:
-        meta_file = zipfile.Path(zip) / "metadata.json"
+    try:
+        with zipfile.ZipFile(zip_file) as zip:
+            meta_file = zipfile.Path(zip) / "metadata.json"
 
-        # Check if `metadata.json` exists
-        if not meta_file.exists() and meta_file.is_file():
-            print(f"Zip '{str(zip_file)}' has no metadata.json")
-            return None
+            # Check if `metadata.json` exists
+            if not meta_file.exists() and meta_file.is_file():
+                print(f"Zip '{str(zip_file)}' has no metadata.json")
+                return None
 
-        # If yes, decode its contents
-        with meta_file.open("r") as meta:
-            return json.load(meta)
+            # If yes, decode its contents
+            with meta_file.open("r") as meta:
+                return json.load(meta)
+    except zipfile.BadZipFile as e:
+        print(e)
+
 
 
 def match_msg_to_zip(msg: dramatiq.Message, zip_file: Path) -> bool:

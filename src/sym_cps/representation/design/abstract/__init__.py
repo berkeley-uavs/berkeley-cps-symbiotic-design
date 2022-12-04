@@ -38,7 +38,6 @@ class AbstractDesign:
 
     def __hash__(self):
         return hash(self.abstract_grid)
-
     @property
     def id(self):
         connections_ids = ""
@@ -47,6 +46,19 @@ class AbstractDesign:
             d = hashlib.md5(connections_ids.encode("utf-8")).digest()
             d = base64.urlsafe_b64encode(d).decode('ascii')
             return str(d[:-2])
+
+
+    def evaluate(self):
+        self.save(folder_name=f"designs/{self.name}")
+
+        d_concrete = self.to_concrete()
+        d_concrete.choose_default_components_for_empty_ones()
+        d_concrete.export_all()
+        save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
+
+        print(f"Design {d_concrete.name} generated")
+        print(f"Evaluating..")
+        d_concrete.evaluate()
 
     def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1
