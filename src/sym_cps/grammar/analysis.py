@@ -1,7 +1,5 @@
-import json
 import math
 from collections import Counter
-from os import truncate
 
 from sym_cps.grammar import Grammar
 from sym_cps.shared.paths import grammar_rules_processed_path, grammar_statistics
@@ -60,7 +58,7 @@ best_assigment = {}
 
 for i, key in enumerate(most_common_keys):
     even = (i % 2) == 0
-    distance = math.floor((i+1) / 2)
+    distance = math.floor((i + 1) / 2)
     if even:
         best_assigment[key] = center + distance
     else:

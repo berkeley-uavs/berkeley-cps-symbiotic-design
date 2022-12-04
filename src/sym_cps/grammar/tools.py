@@ -21,7 +21,7 @@ class Direction(Enum):
 
 
 def get_direction_from_components_and_connections(
-        comp_type_a: str, comp_type_b: str, connector_id_a: str, connector_id_b: str
+    comp_type_a: str, comp_type_b: str, connector_id_a: str, connector_id_b: str
 ) -> str:
     try:
         connections = connections_map[comp_type_a][comp_type_b]
@@ -37,9 +37,7 @@ def get_direction_from_components_and_connections(
     )
 
 
-def get_direction_of_tube(
-        current: str, relative_pos_a_to_b: tuple, tube_side: str
-) -> str:
+def get_direction_of_tube(current: str, relative_pos_a_to_b: tuple, tube_side: str) -> str:
     result = ""
     """TODO: adjust side and see it impacts hub direction"""
     side = 0

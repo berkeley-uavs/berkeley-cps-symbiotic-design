@@ -1,11 +1,11 @@
 import pickle
 
+from sym_cps.contract.tester.simplified_selector import SimplifiedSelector
 from sym_cps.grammar import AbstractGrid
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
-from sym_cps.shared.paths import designs_folder
-from sym_cps.contract.tester.simplified_selector import SimplifiedSelector
 from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
+from sym_cps.shared.paths import designs_folder
 
 grid_test = 0
 

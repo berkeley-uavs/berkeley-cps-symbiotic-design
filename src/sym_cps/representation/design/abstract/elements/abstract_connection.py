@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from sym_cps.representation.design.abstract import AbstractComponent
@@ -14,6 +13,13 @@ if TYPE_CHECKING:
 class AbstractConnection:
     component_a: AbstractComponent
     component_b: AbstractComponent
+
+    @property
+    def type_id(self) -> str:
+        ax, ay, az = self.component_a.grid_position
+        bx, by, bz = self.component_b.grid_position
+        connection_str = f"{ax}{ay}{az}{self.component_a.type_short_id}{bx}{by}{bz}{self.component_b.type_short_id}"
+        return connection_str
 
     @property
     def key(self) -> str:
@@ -67,4 +73,4 @@ class AbstractConnection:
 
         (rel_x, rel_y, rel_top) = self.relative_position_from_a_to_b
 
-        return -rel_x,-rel_y, -rel_top
+        return -rel_x, -rel_y, -rel_top

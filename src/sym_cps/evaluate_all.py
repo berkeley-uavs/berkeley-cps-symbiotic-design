@@ -12,14 +12,14 @@ designs_numbers = range(0, 99)
 
 def get_dconcrete(design_folder_name: str) -> DConcrete:
     file = designs_folder / design_folder_name / "d_concrete.dat"
-    with open(file, 'rb') as pickle_file:
+    with open(file, "rb") as pickle_file:
         dconcrete: DConcrete = pickle.load(pickle_file)
         return dconcrete
 
 
 def get_abstract_design(design_folder_name: str) -> AbstractDesign:
     file = designs_folder / design_folder_name / "grid.dat"
-    with open(file, 'rb') as pickle_file:
+    with open(file, "rb") as pickle_file:
         grid: AbstractGrid = pickle.load(pickle_file)
         new_design = AbstractDesign(design_folder_name)
         new_design.parse_grid(grid)
@@ -28,7 +28,7 @@ def get_abstract_design(design_folder_name: str) -> AbstractDesign:
 
 processed_designs: list[AbstractDesign] = []
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     for number in designs_numbers:
         folder_name = f"_random_design_{number}"
 

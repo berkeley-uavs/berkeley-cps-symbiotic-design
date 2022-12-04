@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import base64
 import hashlib
 from dataclasses import dataclass, field
 
-from sym_cps.grammar import Symbol, SymbolConnection, Grammar
+from sym_cps.grammar import Grammar, Symbol, SymbolConnection
 
 
 @dataclass
@@ -14,11 +13,11 @@ class AbstractGrid:
     name: str = ""
 
     def __hash__(self):
-        return hashlib.sha1((str(self.nodes) + str(self.adjacencies)).encode('utf-8'))
+        return hashlib.sha1((str(self.nodes) + str(self.adjacencies)).encode("utf-8"))
 
     @property
     def id(self):
-        return str(self.__hash__())[:10]
+        return str(self.__hash__())
 
     @property
     def n_wings(self):
@@ -27,6 +26,7 @@ class AbstractGrid:
     @property
     def n_props(self):
         return str(self.nodes).count("ROTOR")
+
 
 @dataclass
 class Grid:

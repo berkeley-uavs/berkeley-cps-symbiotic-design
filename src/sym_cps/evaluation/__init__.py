@@ -10,7 +10,7 @@ from simple_uam.client.watch import poll_results_backend
 from simple_uam.direct2cad.actions.actors import gen_info_files, process_design
 
 from sym_cps.evaluation.tools import extract_results, load_design, load_metadata, polling_results
-from sym_cps.shared.paths import designs_folder, default_study_params_path
+from sym_cps.shared.paths import default_study_params_path, designs_folder
 
 
 def evaluate_design(

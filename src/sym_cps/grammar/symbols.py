@@ -62,7 +62,6 @@ class Rotor(TSymbol):
     symbol_type = SymbolType.ROTOR
 
 
-
 @dataclass(frozen=True)
 class Wing(TSymbol):
     symbol_type = SymbolType.WING

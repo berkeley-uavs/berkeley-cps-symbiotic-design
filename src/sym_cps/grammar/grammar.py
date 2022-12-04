@@ -4,8 +4,9 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from aenum import Enum, auto
-from sym_cps.grammar.symbols import Symbol, Unoccupied, Fuselage, Empty, Rotor, Connector, SymbolType, Wing
+from aenum import Enum
+
+from sym_cps.grammar.symbols import Connector, Empty, Fuselage, Rotor, Symbol, SymbolType, Unoccupied, Wing
 from sym_cps.shared.paths import grammar_rules_processed_path
 
 
@@ -111,16 +112,15 @@ class ConditionSet:
             rear=all_dirs["rear"],
         )
 
-    def matches(self, state: LocalState
-                ):
+    def matches(self, state: LocalState):
         return (
-                state.ego.symbol_type in self.ego
-                and state.front.symbol_type in self.front
-                and state.bottom.symbol_type in self.bottom
-                and state.left.symbol_type in self.left
-                and state.right.symbol_type in self.right
-                and state.top.symbol_type in self.top
-                and state.rear.symbol_type in self.rear
+            state.ego.symbol_type in self.ego
+            and state.front.symbol_type in self.front
+            and state.bottom.symbol_type in self.bottom
+            and state.left.symbol_type in self.left
+            and state.right.symbol_type in self.right
+            and state.top.symbol_type in self.top
+            and state.rear.symbol_type in self.rear
         )
 
 
@@ -154,6 +154,6 @@ class Production:
         return state
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     grammar = Grammar.from_json(rules_json_path=grammar_rules_processed_path)
     print(grammar)

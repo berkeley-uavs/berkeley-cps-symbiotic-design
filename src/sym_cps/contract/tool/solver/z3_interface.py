@@ -77,7 +77,7 @@ class Z3Interface(SolverInterface):
 
     def check(self) -> bool:
         ret = self._solver.check()
-        #print(self._solver.assertions())
+        # print(self._solver.assertions())
         if ret == z3.sat:
             self._model = self._solver.model()
             return True

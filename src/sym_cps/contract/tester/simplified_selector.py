@@ -104,7 +104,7 @@ class SimplifiedSelector:
         best_diff = 0  # float("inf")
         history = {}
         for comp in list(self._c_library.components_in_type[comp_type]):
-            #for batt in [self._c_library.components["TurnigyGraphene1000mAh2S75C"]]:
+            # for batt in [self._c_library.components["TurnigyGraphene1000mAh2S75C"]]:
             # for comp in [self._c_library.components["Tattu25C10000mAh4S1P"]]:
             # self._uav_contract.set_rpm(rpm=18000)
             # self._uav_contract.set_speed(v=19)
@@ -133,7 +133,9 @@ class SimplifiedSelector:
             self._uav_contract.set_rpm(rpm=10000)
             self._uav_contract.set_speed(v=19)
             component_list[comp_type]["lib"] = [comp] * len(component_list[comp_type]["lib"])
-            contract_system = self.build_contract_system(verbose=verbose, component_list=component_list, use_range=False)
+            contract_system = self.build_contract_system(
+                verbose=verbose, component_list=component_list, use_range=False
+            )
             sys_inst, sys_connection = self._set_check_balance_system_contract(body_weight=body_weight)
             is_find = contract_system.find_behavior(sys_inst=sys_inst, sys_connection_map=sys_connection)
             if is_find:
@@ -150,7 +152,7 @@ class SimplifiedSelector:
                     best_comp = comp
             print("")
         print(history)
-        #draw_result(history)
+        # draw_result(history)
         if best_comp is not None:
             print("Best: ", best_comp.id, best_diff)
         return best_comp, best_diff
@@ -304,8 +306,7 @@ class SimplifiedSelector:
             properties = None
             if component_list is not None:
                 properties = self._uav_contract.hackathon_property_interface_fn_aggregated(
-                    component_list[type_str]["lib"][0],
-                    use_rpm_v_range=use_range
+                    component_list[type_str]["lib"][0], use_rpm_v_range=use_range
                 )
             contract_inst = ContractInstance(
                 template=self._uav_contract.get_contract(type_str),
@@ -413,6 +414,7 @@ class SimplifiedSelector:
 
     def random_local_search(self, d_concrete: DConcrete):
         import random
+
         random.seed(5)
 
         best_score = 0
@@ -440,21 +442,17 @@ class SimplifiedSelector:
                 self.replace_with_component(design_concrete=d_concrete, battery=battery)
                 # self.check(d_concrete=d_concrete, verbose=True, body_weight=1.0)
 
-
-
                 if score > best_score:
                     best_prop = propeller
                     best_motor = motor
-                    best_batt = battery  
-                    best_score = score  
+                    best_batt = battery
+                    best_score = score
             # get random components
             battery = random.choice(batteries)
             print(type(battery))
             motor = random.choice(motors)
             propeller = random.choice(propellers)
-            self.replace_with_component(
-                design_concrete=d_concrete, motor=motor, battery=battery, propeller=propeller
-            )
+            self.replace_with_component(design_concrete=d_concrete, motor=motor, battery=battery, propeller=propeller)
         print("Best:")
         print(best_prop.id)
         print(best_motor.id)
@@ -463,6 +461,7 @@ class SimplifiedSelector:
         self.replace_with_component(
             design_concrete=d_concrete, motor=best_motor, battery=best_batt, propeller=best_prop
         )
+
     def runTest(self):
         self._c_library, self._seed_designs = parse_library_and_seed_designs()
         self.set_library(library=self._c_library)
@@ -478,7 +477,7 @@ class SimplifiedSelector:
         # self.replace_with_component(
         #     design_concrete=self._testquad_design, motor=motor, battery=battery, propeller=propeller
         # )
-        #self.check(d_concrete=self._testquad_design)
+        # self.check(d_concrete=self._testquad_design)
         self.random_local_search(d_concrete=self._testquad_design)
         # for i in range(3):
         #     battery, _ = self.select_single_iterate(
@@ -498,12 +497,13 @@ class SimplifiedSelector:
         from sym_cps.shared.objects import ExportType
 
         self._testquad_design.export(ExportType.JSON)
-        from sym_cps.shared.paths import designs_folder
 
         self._testquad_design.evaluate()
 
+
 def draw_result(history: dict):
     from matplotlib import pyplot as plt
+
     xs = []
     ys = []
     names = []
@@ -517,7 +517,6 @@ def draw_result(history: dict):
             if obj1 < front[1] and obj2 < front[2]:
                 add_new = False
                 break
-            pass
         if add_new:
             pareto_fronts.append((name, obj1, obj2))
 
@@ -532,7 +531,6 @@ def draw_result(history: dict):
     plt.ylabel("Time of Flying")
     plt.title("Battery Selection")
     plt.show()
-        
 
 
 if __name__ == "__main__":
