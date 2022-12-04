@@ -27,6 +27,8 @@ class AbstractComponent:
     structure: set[Component] = field(default_factory=set)
     connections: set[Connection] = field(default_factory=set)
     interface_component: Component | None = None
+    type_short_id: str = ""
+
     
     def add_connection(self, abstract_connection: AbstractConnection):
         self.abstract_connections.add(abstract_connection)
@@ -73,6 +75,7 @@ class Fuselage(AbstractComponent):
         self.add_structure_components()
         self.add_structure_connections()
         self.color = "red"
+        self.type_short_id = "F"
         """TODO: add connections to components in structure"""
 
 
@@ -89,6 +92,7 @@ class Propeller(AbstractComponent):
         self.add_structure_components()
         self.add_structure_connections()
         self.color = "green"
+        self.type_short_id = "P"
 
     def __hash__(self):
         return hash(self.id)
@@ -104,6 +108,8 @@ class BatteryController(AbstractComponent):
         component = Component(c_type=c_library.component_types["BatteryController"], id=instance, library_component=lib_component)
         self.structure.add(component)
         self.interface_component = component
+        self.type_short_id = "B"
+
 
 @dataclass
 class Wing(AbstractComponent):
@@ -118,6 +124,8 @@ class Wing(AbstractComponent):
         component.parameters["Wing__TUBE_ROTATION"].value = 90.0
         self.structure.add(component)
         self.interface_component = component
+        self.type_short_id = "W"
+
 
 
     def __hash__(self):
@@ -140,6 +148,8 @@ class Connector(AbstractComponent):
             )
         self.structure.add(component)
         self.interface_component = component
+        self.type_short_id = "C"
+
 
 
     def refine(self):
@@ -158,6 +168,8 @@ class Tube(AbstractComponent):
     def __post_init__(self):
         self.base_name = "Tube"
         self.structure.add(Component(c_type=c_library.component_types["Tube"]))
+        self.type_short_id = "T"
+
 
     def __hash__(self):
         return hash(self.id)
@@ -169,6 +181,8 @@ class Hub(AbstractComponent):
 
     def __post_init__(self):
         self.base_name = "Hub"
+        self.type_short_id = "H"
+
 
     def __hash__(self):
         return hash(self.id)

@@ -15,6 +15,14 @@ class AbstractConnection:
     component_a: AbstractComponent
     component_b: AbstractComponent
 
+
+    @property
+    def type_id(self) -> str:
+        ax, ay, az = self.component_a.grid_position
+        bx, by, bz = self.component_b.grid_position
+        connection_str = f"{ax}{ay}{az}{self.component_a.type_short_id}{bx}{by}{bz}{self.component_b.type_short_id}"
+        return connection_str
+
     @property
     def key(self) -> str:
         a1 = self.component_a.id

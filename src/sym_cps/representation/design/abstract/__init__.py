@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field
 
 import matplotlib.pyplot as plt
@@ -37,6 +38,14 @@ class AbstractDesign:
     def __hash__(self):
         return hash(self.abstract_grid)
 
+    @property
+    def id(self):
+        connections_ids = ""
+        for connection in self.abstract_connections:
+            connections_ids += connection.type_id
+            hashlib.sha1(connections_ids.encode('utf-8'))
+            return str(hashlib.sha1(connections_ids.encode('utf-8')))[:10]
+
     def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1
         for e in self.grid.values():
@@ -64,16 +73,18 @@ class AbstractDesign:
                 for z_pos, node_element in enumerate(y_axis):
                     position = (x_pos, y_pos, z_pos)
                     if node_element == "FUSELAGE":
-                        self.add_abstract_component(position, Fuselage(grid_position=position, instance_n=connecter_inst))
+                        self.add_abstract_component(position,
+                                                    Fuselage(grid_position=position, instance_n=connecter_inst))
                         connecter_inst += 1
                     if "WING" in node_element:
-                        self.add_abstract_component(position, Wing(grid_position=position,  instance_n=wing_inst))
+                        self.add_abstract_component(position, Wing(grid_position=position, instance_n=wing_inst))
                         wing_inst += 1
                     if "ROTOR" in node_element:
                         self.add_abstract_component(position, Propeller(grid_position=position, instance_n=rotor_inst))
                         rotor_inst += 1
                     if "CONNECTOR" in node_element:
-                        self.add_abstract_component(position, Connector(grid_position=position, instance_n=connecter_inst))
+                        self.add_abstract_component(position,
+                                                    Connector(grid_position=position, instance_n=connecter_inst))
                         connecter_inst += 1
 
         for position_a, connections in abstract_grid.adjacencies.items():
@@ -97,11 +108,13 @@ class AbstractDesign:
         """Connect Tubes to Hubs and Flanges"""
         for abstract_connection in self.abstract_connections:
             tube = Component(
-                c_type=c_library.component_types["Tube"], id=get_instance_name("Tube", tube_id), library_component=tube_library
+                c_type=c_library.component_types["Tube"], id=get_instance_name("Tube", tube_id),
+                library_component=tube_library
             )
             d_concrete.add_node(tube)
             component_a = abstract_connection.component_a.interface_component
-            direction = get_direction_of_tube(component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP")
+            direction = get_direction_of_tube(component_a.c_type.id, abstract_connection.relative_position_from_a_to_b,
+                                              "TOP")
             new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
 
             # TODO: I think there is a bug here?
@@ -114,10 +127,10 @@ class AbstractDesign:
             d_concrete.connect(new_connection)
 
             component_b = abstract_connection.component_b.interface_component
-            direction = get_direction_of_tube(component_b.c_type.id, abstract_connection.relative_position_from_b_to_a, "BOTTOM")
+            direction = get_direction_of_tube(component_b.c_type.id, abstract_connection.relative_position_from_b_to_a,
+                                              "BOTTOM")
             new_connection = Connection.from_direction(component_a=tube, component_b=component_b,
                                                        direction=direction)
-
 
             # TODO: I think there is a bug here?
             # vertex_b = d_concrete.get_node_by_instance(component_b.id)
@@ -392,4 +405,3 @@ class AbstractDesign:
         fig.tight_layout()
         # fig.show()
         return fig
-
