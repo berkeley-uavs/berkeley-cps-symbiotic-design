@@ -203,12 +203,16 @@ class DConcrete:
         """Sends the Design for evaluation"""
         self.choose_default_components_for_empty_ones()
         json_path = self.export(ExportType.JSON)
-        self.evaluation_results = evaluate_design(
-            design_json_path=json_path,
-            metadata={"extra_info": "full evaluation example"},
-            timeout=800,
-            study_params=study_params,
-        )
+        try:
+            self.evaluation_results = evaluate_design(
+                design_json_path=json_path,
+                metadata={"extra_info": "full evaluation example"},
+                timeout=800,
+                study_params=study_params,
+            )
+        except RuntimeError as e:
+            print("TIMEOUT EXCEPTION")
+            return
         print(self.evaluation_results["status"])
         self.export(ExportType.EVALUATION)
         print("Evaluation completed")
