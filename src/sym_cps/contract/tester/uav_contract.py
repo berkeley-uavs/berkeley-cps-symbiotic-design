@@ -252,7 +252,7 @@ class UAVContract(object):
                 v=self._speed,
                 v2=self._speed_upper,
                 num_motor=self._num_motor,
-                use_rpm_v_range = use_rpm_v_range
+                use_rpm_v_range=use_rpm_v_range,
             )
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)

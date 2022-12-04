@@ -88,7 +88,6 @@ class PerfTable(object):
         file_path = prop_table_folder / file_name
         self.parse_from_file(file_path=file_path)
 
-
     def _binary_search_rpm_id(self, rpm) -> int:
         first = 0
         last = len(self.rpm_list) - 1
@@ -117,7 +116,7 @@ class PerfTable(object):
                 last_v = midpoint + 1
         return first_v, last_v
 
-    def get_range(self, rpm1, rpm2, v1, v2, label:str):
+    def get_range(self, rpm1, rpm2, v1, v2, label: str):
         try:
             idx = self.columns.index(label)
         except ValueError:
@@ -129,24 +128,23 @@ class PerfTable(object):
         last_rpm_id = self._binary_search_rpm_id(rpm2)[1]
         max_val = -float("inf")
         min_val = float("inf")
-        for rpm_id in range(first_rpm_id, last_rpm_id+1):
+        for rpm_id in range(first_rpm_id, last_rpm_id + 1):
             if rpm_id >= len(self.rpm_list):
                 break
-            #print("check rpm = ", self.rpm_list[rpm_id])
+            # print("check rpm = ", self.rpm_list[rpm_id])
             first_v_id = self._binary_search_v_id(rpm_id=rpm_id, v=v1)[0]
             last_v_id = self._binary_search_v_id(rpm_id=rpm_id, v=v2)[1]
             for v_id in range(first_v_id, last_v_id + 1):
                 if v_id >= len(self.rpm_table[rpm_id]):
                     break
-                #print("check v = ", self.rpm_table[rpm_id][v_id][0])
+                # print("check v = ", self.rpm_table[rpm_id][v_id][0])
                 val = self.rpm_table[rpm_id][v_id][idx]
-                #print("value =", val)
+                # print("value =", val)
                 if val > max_val:
                     max_val = val
                 if val < min_val:
                     min_val = val
-        return  min_val, max_val
-
+        return min_val, max_val
 
     def get_value(self, rpm: float, v: float, label: str):
         # locate the rpm list, return the smaller one
@@ -169,7 +167,6 @@ class PerfTable(object):
         #     else:
         #         first = midpoint
         #         last = midpoint + 1
-
 
         first, last = self._binary_search_rpm_id(rpm=rpm)
         rpm1 = self.rpm_list[first]
@@ -235,8 +232,8 @@ class PerfTable(object):
 
 if __name__ == "__main__":
     from sym_cps.representation.tools.parsers.parse import parse_library_and_seed_designs
+
     library, designs = parse_library_and_seed_designs()
     table = PerfTable(library.components["apc_propellers_18x5_5MR"])
     print(table.get_value(rpm=5000, v=20, label="Cp"))
-    print(table.get_range(rpm1 = 5000, rpm2 = 18000, v1 = 1, v2=5, label="Cp"))
-    pass
+    print(table.get_range(rpm1=5000, rpm2=18000, v1=1, v2=5, label="Cp"))

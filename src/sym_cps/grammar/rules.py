@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-import base64
 import copy
-import hashlib
 import json
 import random
-from dataclasses import dataclass
 
 from sym_cps.grammar import AbstractGrid
 from sym_cps.representation.design.abstract import AbstractDesign
-from sym_cps.shared.paths import data_folder, designs_generated_stats_path, random_topologies_generated_path
+from sym_cps.shared.paths import data_folder, random_topologies_generated_path
 
 rule_dict_path_constant = data_folder / "reverse_engineering" / "grammar_rules.json"
 
@@ -143,13 +140,13 @@ def node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, r
 
 def node_matches_rule(node, state, rule, symbol_groups, remaining_rotors, remaining_wings):
     return (
-            node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-            and node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-            and node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-            and node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-            and node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-            and node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
-            and node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        node_matches_rule_center(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_right(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_left(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_top(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_bottom(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_front(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
+        and node_matches_rule_rear(node, state, rule, symbol_groups, remaining_rotors, remaining_wings)
     )
 
 
@@ -321,14 +318,14 @@ def components_count(design):
 
 
 def generate_random_new_topology(
-        design_tag: str,
-        design_index: int,
-        max_right_num_rotors: int = -1,
-        max_right_num_wings: int = -1) -> AbstractDesign:
+    design_tag: str, design_index: int, max_right_num_rotors: int = -1, max_right_num_wings: int = -1
+) -> AbstractDesign:
     random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
 
     while True:
-        grid: AbstractGrid = generate_random_topology(max_right_num_rotors=max_right_num_rotors, max_right_num_wings=max_right_num_wings)
+        grid: AbstractGrid = generate_random_topology(
+            max_right_num_rotors=max_right_num_rotors, max_right_num_wings=max_right_num_wings
+        )
         if grid.id not in random_topologies_generated.keys():
             break
     design_id = f"{design_tag}_w{grid.n_wings}_p{grid.n_props}_{design_index}"
@@ -340,13 +337,13 @@ def generate_random_new_topology(
 
 
 def generate_random_topology(
-        right_width=None,
-        length=None,
-        depth=None,
-        origin=None,
-        max_right_num_rotors: int = -1,
-        max_right_num_wings: int = -1,
-        rule_dict_path=rule_dict_path_constant,
+    right_width=None,
+    length=None,
+    depth=None,
+    origin=None,
+    max_right_num_rotors: int = -1,
+    max_right_num_wings: int = -1,
+    rule_dict_path=rule_dict_path_constant,
 ):
     symbol_groups = {
         "BODY": ["FUSELAGE", "HUB", "TUBE"],

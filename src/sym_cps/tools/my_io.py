@@ -11,7 +11,10 @@ from sym_cps.tools.strings import sort_dictionary
 
 
 def save_to_file(
-    file_content: str | dict | Figure | object, file_name: str | None = None, folder_name: str | None = None, absolute_path: Path | None = None
+    file_content: str | dict | Figure | object,
+    file_name: str | None = None,
+    folder_name: str | None = None,
+    absolute_path: Path | None = None,
 ) -> Path:
 
     from sym_cps.shared.paths import output_folder
@@ -35,7 +38,6 @@ def save_to_file(
         file_name += ".txt"
     elif Path(file_name).suffix == "":
         file_name += ".dat"
-
 
     if folder_name is not None and absolute_path is not None:
         raise AttributeError

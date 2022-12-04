@@ -153,11 +153,13 @@ class ContractInstance(object):
                     )
                     v_properties[prop.name] = new_v
                     self._guarantee_clauses.extend(
-                        self._build_range_property(solver_interface=solver_interface, range_tuple=range_tuple, prop_var=new_v)
+                        self._build_range_property(
+                            solver_interface=solver_interface, range_tuple=range_tuple, prop_var=new_v
+                        )
                     )
                     # Use tuple to enclose the property
-                #elif isinsance(component_properties[prop.name], Clause):
-                #TODO Let user insert clause as constraint on the property itself
+                # elif isinsance(component_properties[prop.name], Clause):
+                # TODO Let user insert clause as constraint on the property itself
                 else:
                     v_properties[prop.name] = prop.produce_constant(
                         solver_interface=solver_interface, value=component_properties[prop.name]
@@ -174,6 +176,4 @@ class ContractInstance(object):
     def _build_range_property(self, solver_interface: SolverInterface, range_tuple: tuple, prop_var):
         upper_bound = range_tuple[1]
         lower_bound = range_tuple[0]
-        return [solver_interface.clause_ge(prop_var, lower_bound),
-                solver_interface.clause_ge(upper_bound, prop_var)]
-        
+        return [solver_interface.clause_ge(prop_var, lower_bound), solver_interface.clause_ge(upper_bound, prop_var)]

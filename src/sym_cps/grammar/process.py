@@ -36,11 +36,7 @@ for i, (rule_key, items) in enumerate(rule_dict.items()):
             else:
                 new_conds.append(cond)
         new_conditions[dir] = new_conds
-    new_rule_dict[f"r{i}"] = {
-        "name": rule_key,
-        "conditions": new_conditions,
-        "production": items["production"]
-    }
+    new_rule_dict[f"r{i}"] = {"name": rule_key, "conditions": new_conditions, "production": items["production"]}
 
 
 save_to_file(new_rule_dict, absolute_path=grammar_rules_processed_path)

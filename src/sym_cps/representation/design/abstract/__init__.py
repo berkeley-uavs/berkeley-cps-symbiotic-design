@@ -6,8 +6,9 @@ from dataclasses import dataclass, field
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-from sym_cps.grammar import AbstractGrid
 
+from sym_cps.grammar import AbstractGrid
+from sym_cps.grammar.tools import get_direction_of_tube
 from sym_cps.representation.design.abstract.elements import (
     AbstractComponent,
     AbstractConnection,
@@ -16,14 +17,13 @@ from sym_cps.representation.design.abstract.elements import (
     Propeller,
     Wing,
 )
-from sym_cps.representation.design.concrete import DConcrete, Connection, Component
+from sym_cps.representation.design.concrete import Component, Connection, DConcrete
 from sym_cps.shared.library import c_library
 from sym_cps.tools.my_io import save_to_file
-from sym_cps.grammar.tools import get_direction_of_tube
 from sym_cps.tools.strings import (
-    get_instance_name,
+    get_component_and_instance_type_from_instance_name,
     get_component_type_from_instance_name,
-    get_component_and_instance_type_from_instance_name
+    get_instance_name,
 )
 
 
@@ -43,8 +43,8 @@ class AbstractDesign:
         connections_ids = ""
         for connection in self.abstract_connections:
             connections_ids += connection.type_id
-            hashlib.sha1(connections_ids.encode('utf-8'))
-            return str(hashlib.sha1(connections_ids.encode('utf-8')))[:10]
+            hashlib.sha1(connections_ids.encode("utf-8"))
+            return str(hashlib.sha1(connections_ids.encode("utf-8")))[:10]
 
     def add_abstract_component(self, position: tuple[int, int, int], component: AbstractComponent):
         c_instance_n = 1
@@ -73,8 +73,9 @@ class AbstractDesign:
                 for z_pos, node_element in enumerate(y_axis):
                     position = (x_pos, y_pos, z_pos)
                     if node_element == "FUSELAGE":
-                        self.add_abstract_component(position,
-                                                    Fuselage(grid_position=position, instance_n=connecter_inst))
+                        self.add_abstract_component(
+                            position, Fuselage(grid_position=position, instance_n=connecter_inst)
+                        )
                         connecter_inst += 1
                     if "WING" in node_element:
                         self.add_abstract_component(position, Wing(grid_position=position, instance_n=wing_inst))
@@ -83,8 +84,9 @@ class AbstractDesign:
                         self.add_abstract_component(position, Propeller(grid_position=position, instance_n=rotor_inst))
                         rotor_inst += 1
                     if "CONNECTOR" in node_element:
-                        self.add_abstract_component(position,
-                                                    Connector(grid_position=position, instance_n=connecter_inst))
+                        self.add_abstract_component(
+                            position, Connector(grid_position=position, instance_n=connecter_inst)
+                        )
                         connecter_inst += 1
 
         for position_a, connections in abstract_grid.adjacencies.items():
@@ -108,13 +110,15 @@ class AbstractDesign:
         """Connect Tubes to Hubs and Flanges"""
         for abstract_connection in self.abstract_connections:
             tube = Component(
-                c_type=c_library.component_types["Tube"], id=get_instance_name("Tube", tube_id),
-                library_component=tube_library
+                c_type=c_library.component_types["Tube"],
+                id=get_instance_name("Tube", tube_id),
+                library_component=tube_library,
             )
             d_concrete.add_node(tube)
             component_a = abstract_connection.component_a.interface_component
-            direction = get_direction_of_tube(component_a.c_type.id, abstract_connection.relative_position_from_a_to_b,
-                                              "TOP")
+            direction = get_direction_of_tube(
+                component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP"
+            )
             new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
 
             # TODO: I think there is a bug here?
@@ -127,10 +131,10 @@ class AbstractDesign:
             d_concrete.connect(new_connection)
 
             component_b = abstract_connection.component_b.interface_component
-            direction = get_direction_of_tube(component_b.c_type.id, abstract_connection.relative_position_from_b_to_a,
-                                              "BOTTOM")
-            new_connection = Connection.from_direction(component_a=tube, component_b=component_b,
-                                                       direction=direction)
+            direction = get_direction_of_tube(
+                component_b.c_type.id, abstract_connection.relative_position_from_b_to_a, "BOTTOM"
+            )
+            new_connection = Connection.from_direction(component_a=tube, component_b=component_b, direction=direction)
 
             # TODO: I think there is a bug here?
             # vertex_b = d_concrete.get_node_by_instance(component_b.id)
@@ -151,7 +155,7 @@ class AbstractDesign:
                     battery_controller_component = Component(
                         c_type=c_library.component_types["BatteryController"],
                         id=get_instance_name("BatteryController", 1),
-                        library_component=c_library.get_default_component("BatteryController")
+                        library_component=c_library.get_default_component("BatteryController"),
                     )
                     d_concrete.add_node(battery_controller_component)
                     battery_controller = True
@@ -159,9 +163,7 @@ class AbstractDesign:
                 for comp in abstract_component.structure:
                     if comp.c_type.id == "Motor":
                         new_connection = Connection.from_direction(
-                            component_a=battery_controller_component,
-                            component_b=comp,
-                            direction="ANY"
+                            component_a=battery_controller_component, component_b=comp, direction="ANY"
                         )
                         vertex = d_concrete.get_node_by_instance(comp.c_type.id)
                         if vertex is None:
@@ -170,9 +172,7 @@ class AbstractDesign:
                     elif comp.c_type.id == "Battery":
                         """First Battery"""
                         new_connection = Connection.from_direction(
-                            component_a=battery_controller_component,
-                            component_b=comp,
-                            direction="ANY"
+                            component_a=battery_controller_component, component_b=comp, direction="ANY"
                         )
                         vertex = d_concrete.get_node_by_instance(comp.c_type.id)
                         if vertex is None:
@@ -184,12 +184,10 @@ class AbstractDesign:
                         battery_component_2 = Component(
                             c_type=c_library.component_types["Battery"],
                             id=get_instance_name("Battery", instance),
-                            library_component=c_library.get_default_component("Battery")
+                            library_component=c_library.get_default_component("Battery"),
                         )
                         new_connection = Connection.from_direction(
-                            component_a=battery_controller_component,
-                            component_b=battery_component_2,
-                            direction="ANY"
+                            component_a=battery_controller_component, component_b=battery_component_2, direction="ANY"
                         )
                         vertex = d_concrete.get_node_by_instance(battery_component_2.c_type.id)
                         if vertex is None:

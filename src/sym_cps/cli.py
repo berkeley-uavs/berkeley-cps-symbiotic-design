@@ -10,13 +10,13 @@ from typing import List, Optional
 from sym_cps.evaluation import evaluate_design
 from sym_cps.examples.library import export_library
 from sym_cps.grammar import AbstractGrid
-from sym_cps.grammar.rules import generate_random_topology, generate_random_new_topology
+from sym_cps.grammar.rules import generate_random_new_topology, generate_random_topology
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
 from sym_cps.shared.paths import aws_folder, data_folder, designs_folder, designs_generated_stats_path
 from sym_cps.tools.my_io import save_to_file
-from sym_cps.tools.update_library import export_all_designs, update_dat_files_and_export, update_dat_files_library
+from sym_cps.tools.update_library import export_all_designs, update_dat_files_library
 
 
 def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
@@ -41,7 +41,7 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
             file_str = str(file)
             file_str += ".dat"
             file = Path(file_str)
-        with open(file, 'rb') as pickle_file:
+        with open(file, "rb") as pickle_file:
             abstract_grid: AbstractGrid = pickle.load(pickle_file)
             new_design = AbstractDesign(abstract_grid.name)
             new_design.parse_grid(abstract_grid)
@@ -79,8 +79,9 @@ def generate_random(args: Optional[List[str]] = None):
                 except:
                     continue
 
-    random_call_id = ''.join(
-        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4))
+    random_call_id = "".join(
+        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(4)
+    )
 
     for i in range((index + 1), (index + opts.n)):
         print(f"Random iteration {i}")
@@ -88,8 +89,10 @@ def generate_random(args: Optional[List[str]] = None):
         design_index = i
 
         new_design: AbstractDesign = generate_random_new_topology(
-            design_tag=design_tag, design_index=design_index, max_right_num_wings=opts.n_wings_max,
-            max_right_num_rotors=opts.n_props_max
+            design_tag=design_tag,
+            design_index=design_index,
+            max_right_num_wings=opts.n_wings_max,
+            max_right_num_rotors=opts.n_props_max,
         )
 
         new_design.save(folder_name=f"designs/{new_design.name}")
@@ -164,7 +167,7 @@ def evaluate_design_swri(args: Optional[List[str]] = None) -> int:
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # dconcrete = _parse_design(["--abstract_json=grid/test_quad_cargo_test"])
     # dconcrete = _parse_design(["--grid=grid/test_quad_cargo_grid.dat"])
     # dconcrete.export_all()

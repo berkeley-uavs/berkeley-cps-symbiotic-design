@@ -32,8 +32,7 @@ def common_parameters_across_all_designs():
             else:
                 if parameter.lib_id not in deleted_keys:
                     shared_parameters[parameter.lib_id] = parameter.value
-    save_to_file(shared_parameters,
-                 absolute_path=learned_default_params_path)
+    save_to_file(shared_parameters, absolute_path=learned_default_params_path)
 
 
 def parse_designs():

@@ -3,7 +3,7 @@ from collections import Counter, OrderedDict
 from pathlib import Path
 
 from sym_cps.shared.designs import designs
-from sym_cps.shared.paths import isomorphisms_data_path, summary_structure_path
+from sym_cps.shared.paths import summary_structure_path
 from sym_cps.tools.my_io import save_to_file
 
 designs_to_analyze = [d[0] for d in designs.values()]
