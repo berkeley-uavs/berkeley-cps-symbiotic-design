@@ -60,7 +60,7 @@ def get_direction_of_tube(
         if side == 5:
             result = "TOP-" + tube_side
         elif side == 6:
-            result = "BOTTOM-" + tube_side
+            result = "CENTER-" + tube_side
         else:
             result = "SIDE" + str(side) + "-" + tube_side
     elif current == "Wing":
