@@ -44,9 +44,9 @@ def get_direction_of_tube(current: str, relative_pos_a_to_b: tuple, tube_side: s
     if relative_pos_a_to_b[0] > 0:
         side = 1
     elif relative_pos_a_to_b[0] < 0:
-        side = 2
-    elif relative_pos_a_to_b[1] > 0:
         side = 3
+    elif relative_pos_a_to_b[1] > 0:
+        side = 2
     elif relative_pos_a_to_b[1] < 0:
         side = 4
     elif relative_pos_a_to_b[2] > 0:

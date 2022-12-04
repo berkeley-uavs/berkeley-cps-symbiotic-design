@@ -9,7 +9,7 @@ from sym_cps.shared.paths import designs_folder
 
 grid_test = 0
 
-designs_numbers = [48]
+designs_numbers = [17]
 
 
 def get_dconcrete(design_folder_name: str) -> DConcrete:
@@ -52,8 +52,10 @@ def set_direction(design: DConcrete):
 if __name__ == '__main__':
 
     for number in designs_numbers:
+        # folder_name = f"_random_design_17"
+        # folder_name = f"1__grammar_5l9r_w0_p2"
         folder_name = f"_random_design_{number}"
-        #
+
         # """Get directly DConcrete"""
         # dconcrete: DConcrete = get_dconcrete(folder_name)
 
@@ -61,11 +63,11 @@ if __name__ == '__main__':
         abstract_design: AbstractDesign = get_abstract_design(folder_name)
         dconcrete: DConcrete = abstract_design.to_concrete()
 
-        """Generate STL and evaluate"""
-        dconcrete.choose_default_components_for_empty_ones()
-
-        """find component"""
-        find_components(dconcrete)
-
-        dconcrete.export_all()
-        # dconcrete.evaluate()
+        # """Generate STL and evaluate"""
+        # dconcrete.choose_default_components_for_empty_ones()
+        #
+        # """find component"""
+        # find_components(dconcrete)
+        #
+        # dconcrete.export_all()
+        dconcrete.evaluate()
