@@ -37,6 +37,8 @@ class AbstractComponent:
         for component in structures[self.base_name]["Components"]:
             c_type = list(component.keys())[0]
             instance = get_instance_name(c_type, self.instance_n)
+            if c_type == "Hub4":
+                instance = get_instance_name(c_type, 100)
             component = Component(c_type=c_library.component_types[c_type], id=instance)
             self.structure.add(component)
 

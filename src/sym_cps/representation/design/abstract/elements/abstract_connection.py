@@ -25,6 +25,31 @@ class AbstractConnection:
         connection_str = f"{ax}{ay}{az}{self.component_a.type_short_id}{bx}{by}{bz}{self.component_b.type_short_id}"
         return connection_str
 
+    def get_connector(self, c_type: str, direction: str):
+        """Returns CConnector based on ctype and directions.
+        (flange cannot connect to a tube from the top because only motor can connect to top)"""
+
+        connectors_map = {
+            "Hub4": {
+                Direction.front: "Hub4__Side_Connector_2",
+                Direction.rear: "Hub4__Side_Connector_4",
+                Direction.left: "Hub4__Side_Connector_1",
+                Direction.right: "Hub4__Side_Connector_3",
+                Direction.top: "Hub4__Top_Connector",
+                Direction.bottom: "Hub4__Bottom_Connector"
+            },
+            "Flange": {
+                Direction.front: "Flange__SideConnector",
+                Direction.rear: "Flange__SideConnector",
+                Direction.left: "Flange__SideConnector",
+                Direction.right: "Flange__SideConnector",
+                Direction.top: "Flange__BottomConnector",
+                Direction.bottom: "Flange__BottomConnector"
+            },
+        }
+        connector = connectors_map[c_type][direction]
+        return c_library.connectors[connector]
+
     def to_concrete_connection(self) -> tuple[Connection, Connection]:
         ax, ay, az = self.component_a.grid_position
         bx, by, bz = self.component_b.grid_position
@@ -37,36 +62,46 @@ class AbstractConnection:
         component_a = self.component_a.interface_component
         component_b = self.component_b.interface_component
 
-        if self.direction_from_a_to_b == Direction.front:
-            if component_a.c_type.id == "Hub4":
-                """TODO check front side"""
-                connector_a = c_library.connectors["Hub4__Side_Connector_1"]
-            if component_a.c_type.id == "Flange":
-                connector_a = c_library.connectors["Flange__SideConnector"]
-            if component_b.c_type.id == "Hub4":
-                """TODO check rear side"""
-                connector_b = c_library.connectors["Hub4__Side_Connector_3"]
-            if component_b.c_type.id == "Flange":
-                connector_b = c_library.connectors["Flange__SideConnector"]
-        elif self.direction_from_a_to_b == Direction.top:
-            if component_a.c_type.id == "Hub4":
-                connector_a = c_library.connectors["Hub4__Top_Connector"]
-            if component_a.c_type.id == "Flange":
-                connector_a = c_library.connectors["Flange__TopConnector"]
-            if component_b.c_type.id == "Hub4":
-                connector_b = c_library.connectors["Hub4__Bottom_Connector"]
-            if component_b.c_type.id == "Flange":
-                connector_b = c_library.connectors["Flange__BottomConnector"]
-        else:
-            """TODO: Complete"""
+        connector_a = self.get_connector(component_a.c_type.id, self.direction_from_a_to_b)
+        connector_b = self.get_connector(component_b.c_type.id, self.direction_from_b_to_a)
+
+        # if self.direction_from_a_to_b == Direction.front:
+        #     if component_a.c_type.id == "Hub4":
+        #         """TODO check front side"""
+        #         connector_a = c_library.connectors["Hub4__Side_Connector_1"]
+        #     if component_a.c_type.id == "Flange":
+        #         connector_a = c_library.connectors["Flange__SideConnector"]
+        #     if component_b.c_type.id == "Hub4":
+        #         """TODO check rear side"""
+        #         connector_b = c_library.connectors["Hub4__Side_Connector_3"]
+        #     if component_b.c_type.id == "Flange":
+        #         connector_b = c_library.connectors["Flange__SideConnector"]
+        # elif self.direction_from_a_to_b == Direction.top:
+        #     if component_a.c_type.id == "Hub4":
+        #         connector_a = c_library.connectors["Hub4__Top_Connector"]
+        #     if component_a.c_type.id == "Flange":
+        #         connector_a = c_library.connectors["Flange__TopConnector"]
+        #     if component_b.c_type.id == "Hub4":
+        #         connector_b = c_library.connectors["Hub4__Bottom_Connector"]
+        #     if component_b.c_type.id == "Flange":
+        #         connector_b = c_library.connectors["Flange__BottomConnector"]
+        # elif self.direction_from_a_to_b == Direction.left:
+        #     """TODO: Complete"""
+
+        bottom_tube_connector = c_library.connectors["Tube__BaseConnection"]
+        top_tube_connector = c_library.connectors["Tube__EndConnection"]
+
+        if self.direction_from_a_to_b == Direction.top or self.direction_from_a_to_b == Direction.bottom:
+            bottom_tube_connector = c_library.connectors["Tube__OffsetConnection2"]
+            top_tube_connector = c_library.connectors["Tube__OffsetConnection1"]
 
         connection_a_tube = Connection(component_a=component_a,
                                        connector_a=connector_a,
                                        component_b=tube,
-                                       connector_b=c_library.connectors["Tube__BaseConnection"])
+                                       connector_b=bottom_tube_connector)
 
         connection_tube_b = Connection(component_a=tube,
-                                       connector_a=c_library.connectors["Tube__EndConnection"],
+                                       connector_a=top_tube_connector,
                                        component_b=component_b,
                                        connector_b=connector_b)
 
@@ -106,20 +141,42 @@ class AbstractConnection:
 
         if y == 0 and z == 0:
             if x > 0:
-                return Direction.front
+                return Direction.left
             if x < 0:
-                return Direction.rear
+                return Direction.right
         if x == 0 and z == 0:
             if y > 0:
-                return Direction.right
+                return Direction.rear
             if y < 0:
-                return Direction.left
+                return Direction.front
         if y == 0 and x == 0:
             if z > 0:
                 return Direction.top
             if z < 0:
                 return Direction.bottom
         raise Exception("ERROR in relative direction")
+
+    @property
+    def direction_from_b_to_a(self) -> Direction:
+        x, y, z = self.relative_position_from_b_to_a
+
+        if y == 0 and z == 0:
+            if x > 0:
+                return Direction.left
+            if x < 0:
+                return Direction.right
+        if x == 0 and z == 0:
+            if y > 0:
+                return Direction.rear
+            if y < 0:
+                return Direction.front
+        if y == 0 and x == 0:
+            if z > 0:
+                return Direction.top
+            if z < 0:
+                return Direction.bottom
+        raise Exception("ERROR in relative direction")
+
 
     @property
     def relative_position_from_a_to_b(self) -> tuple[int, int, int]:
