@@ -45,7 +45,7 @@ class AbstractDesign:
         for connection in self.abstract_connections:
             connections_ids += connection.type_id
             d = hashlib.md5(connections_ids.encode("utf-8")).digest()
-            d = base64.urlsafe_b64encode(d).decode('ascii')
+            d = base64.urlsafe_b64encode(d).decode("ascii")
             return str(d[:-2])
 
     def evaluate(self):

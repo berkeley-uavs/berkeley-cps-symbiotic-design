@@ -1,8 +1,7 @@
-from sym_cps.cli import _parse_design
-from sym_cps.grammar import AbstractGrid
-from sym_cps.representation.design.abstract import AbstractDesign
 import pickle
 
+from sym_cps.grammar import AbstractGrid
+from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.shared.paths import data_folder
 
 grid_test = 1

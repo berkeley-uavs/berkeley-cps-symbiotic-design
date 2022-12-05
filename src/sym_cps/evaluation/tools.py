@@ -125,7 +125,6 @@ def get_zip_metadata(zip_file: Path) -> Optional[object]:
         print(e)
 
 
-
 def match_msg_to_zip(msg: dramatiq.Message, zip_file: Path) -> bool:
     """
     Checks whether the given message produced the given zip archive.

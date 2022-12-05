@@ -1,7 +1,10 @@
 import numpy as np
 
 
-def plot_3d_grid(node_xyz: np.array, color_xyz: np.array, ):
+def plot_3d_grid(
+    node_xyz: np.array,
+    color_xyz: np.array,
+):
 
     # Extract node and edge positions from the layout
     node_xyz = np.array([graph.nodes[v]["position"] for v in sorted(graph)])

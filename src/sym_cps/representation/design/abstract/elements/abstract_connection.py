@@ -4,13 +4,14 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
+
 from sym_cps.grammar import Direction
-from sym_cps.representation.design.concrete import Connection, Component
+from sym_cps.representation.design.concrete import Component, Connection
 from sym_cps.shared.library import c_library
 from sym_cps.tools.strings import get_instance_name
 
 if TYPE_CHECKING:
-    from sym_cps.representation.design.abstract import AbstractComponent, Fuselage
+    from sym_cps.representation.design.abstract import AbstractComponent
 
 
 @dataclass
@@ -36,7 +37,7 @@ class AbstractConnection:
                 Direction.left: "Hub4__Side_Connector_1",
                 Direction.right: "Hub4__Side_Connector_3",
                 Direction.top: "Hub4__Top_Connector",
-                Direction.bottom: "Hub4__Bottom_Connector"
+                Direction.bottom: "Hub4__Bottom_Connector",
             },
             "Flange": {
                 Direction.front: "Flange__SideConnector",
@@ -44,7 +45,7 @@ class AbstractConnection:
                 Direction.left: "Flange__SideConnector",
                 Direction.right: "Flange__SideConnector",
                 Direction.top: "Flange__BottomConnector",
-                Direction.bottom: "Flange__BottomConnector"
+                Direction.bottom: "Flange__BottomConnector",
             },
         }
         connector = connectors_map[c_type][direction]
@@ -72,15 +73,13 @@ class AbstractConnection:
             bottom_tube_connector = c_library.connectors["Tube__OffsetConnection2"]
             top_tube_connector = c_library.connectors["Tube__OffsetConnection1"]
 
-        connection_a_tube = Connection(component_a=component_a,
-                                       connector_a=connector_a,
-                                       component_b=tube,
-                                       connector_b=bottom_tube_connector)
+        connection_a_tube = Connection(
+            component_a=component_a, connector_a=connector_a, component_b=tube, connector_b=bottom_tube_connector
+        )
 
-        connection_tube_b = Connection(component_a=tube,
-                                       connector_a=top_tube_connector,
-                                       component_b=component_b,
-                                       connector_b=connector_b)
+        connection_tube_b = Connection(
+            component_a=tube, connector_a=top_tube_connector, component_b=component_b, connector_b=connector_b
+        )
 
         return connection_a_tube, connection_tube_b
 
@@ -153,7 +152,6 @@ class AbstractConnection:
             if z < 0:
                 return Direction.bottom
         raise Exception("ERROR in relative direction")
-
 
     @property
     def relative_position_from_a_to_b(self) -> tuple[int, int, int]:

@@ -14,18 +14,19 @@ designs_numbers = [17]
 
 def get_dconcrete(design_folder_name: str) -> DConcrete:
     file = designs_folder / design_folder_name / "d_concrete.dat"
-    with open(file, 'rb') as pickle_file:
+    with open(file, "rb") as pickle_file:
         dconcrete: DConcrete = pickle.load(pickle_file)
         return dconcrete
 
 
 def get_abstract_design(design_folder_name: str) -> AbstractDesign:
     file = designs_folder / design_folder_name / "grid.dat"
-    with open(file, 'rb') as pickle_file:
+    with open(file, "rb") as pickle_file:
         grid: AbstractGrid = pickle.load(pickle_file)
         new_design = AbstractDesign(design_folder_name)
         new_design.parse_grid(grid)
         return new_design
+
 
 def find_components(design: DConcrete):
 
@@ -41,15 +42,17 @@ def find_components(design: DConcrete):
 
     selector.random_local_search(d_concrete=design)
 
+
 def set_direction(design: DConcrete):
-    #TODO Pier
+    # TODO Pier
     # find the propeller pair based on symmetry
     # assign the propeller in the same pair with different direction/proptype
     # if the propeller is facing up: one with 1/1 another with -1/-1
     # if the propeller is facing down: one with -1/1 another with direction 1/-1
     pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     for number in designs_numbers:
         # folder_name = f"_random_design_17"
