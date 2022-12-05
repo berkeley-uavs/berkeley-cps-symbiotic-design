@@ -37,11 +37,7 @@ class AbstractConnection:
                 Direction.left: "Hub4__Side_Connector_4",
                 Direction.right: "Hub4__Side_Connector_2",
                 Direction.top: "Hub4__Top_Connector",
-<<<<<<< HEAD
                 Direction.bottom: "Hub4__Center_Connector"
-=======
-                Direction.bottom: "Hub4__Bottom_Connector",
->>>>>>> f5dd61794acefc650eed5d08bd19245b68fa726b
             },
             "Flange": {
                 Direction.front: "Flange__SideConnector",

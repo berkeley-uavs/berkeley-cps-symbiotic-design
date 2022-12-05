@@ -270,12 +270,6 @@ pdm run suam-client direct2cad.process-design --design=../challenge_data/output/
 ```
 
 Evaluate designs from python
-<<<<<<< HEAD
-```bash
-pdm run python src/sym_cps/examples/evaluation.py
-```
-=======
->>>>>>> main
 
 ```bash
 pdm run python src/sym_cps/examples/evaluation.py
@@ -334,21 +328,6 @@ inside `eval_pipeline` folder.
 
 ### Apple Silicon
 
-<<<<<<< HEAD
-> NOTE:
-> Install 
-> [PDM](https://github.com/pdm-project/pdm)
-> manually.
->
-> You can install it with:
->
-> ```bash
-> python3 -m pip install --user pipx
-> pipx install pdm
-> ```
->
-> Now you can try running `make setup` again.
-=======
 For Mac M1 users, if you have architecture problems (i.e. some packages are not available for arm), you can try simulating x86_64 architecture and install the dependencies again.
 ```bash
 env /usr/bin/arch -x86_64 /bin/zsh
@@ -364,50 +343,12 @@ To run a x86 terminal by default in VSCode, add the following to your `settings.
    }},
 "terminal.integrated.defaultProfile.osx": "x86 bash"
 ```
->>>>>>> main
 
 To run a x86 terminal by default in PyCharm, go to Preferences/Tools/Terminal and set the shell path to be:
 
-<<<<<<< HEAD
-
-> NOTE: Apple Silicon
-> Make sure that you are running a x86 terminal.
-> You can run x86 terminal commands with Apple’s Rosetta 2 by launching:
->
-> ```bash
-> arch -x86_64 /bin/bash
-> ```
-> 
-
-
-> NOTE: VSCode and Apple Silicon
-> To run a x86 terminal by default in VSCode. Add the following to your `settings.json`
-> ```json
-> "terminal.integrated.profiles.osx": {
->    "x86 bash": {
->        "path": "/usr/bin/arch",
->        "args": ["-arch", "x86_64", "/bin/bash"]
->    }
->},
->"terminal.integrated.defaultProfile.osx": "x86 bash"
-> ```
-
-> NOTE: PyCharm and Apple Silicon
-> Go to Preferences/Tools/Terminal and set the shell path to be:
->  ```bash
->  env /usr/bin/arch -x86_64 /bin/zsh --login
-> ```
-
-
-
-## License
-
-[MIT](https://github.com/piergiuseppe/sym-cps/blob/master/LICENSE)
-=======
 ```bash
 env /usr/bin/arch -x86_64 /bin/zsh --login
 ```
->>>>>>> main
 
 ## Features and Credits
 

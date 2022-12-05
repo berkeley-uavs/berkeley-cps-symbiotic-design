@@ -129,11 +129,8 @@ class AbstractDesign:
         for abstract_connection in self.abstract_connections:
             concrete_connection_a, concrete_connection_b = abstract_connection.to_concrete_connection()
 
-<<<<<<< HEAD
             self.connections.add(concrete_connection_a)
             self.connections.add(concrete_connection_b)
-=======
->>>>>>> f5dd61794acefc650eed5d08bd19245b68fa726b
             d_concrete.connect(concrete_connection_a)
             d_concrete.connect(concrete_connection_b)
 
