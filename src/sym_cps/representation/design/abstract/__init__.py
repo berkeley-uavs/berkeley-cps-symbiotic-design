@@ -38,6 +38,7 @@ class AbstractDesign:
 
     def __hash__(self):
         return hash(self.abstract_grid)
+
     @property
     def id(self):
         connections_ids = ""
@@ -46,7 +47,6 @@ class AbstractDesign:
             d = hashlib.md5(connections_ids.encode("utf-8")).digest()
             d = base64.urlsafe_b64encode(d).decode('ascii')
             return str(d[:-2])
-
 
     def evaluate(self):
         self.save(folder_name=f"designs/{self.name}")
@@ -127,49 +127,10 @@ class AbstractDesign:
 
         """Connect Tubes to Hubs and Flanges"""
         for abstract_connection in self.abstract_connections:
-
             concrete_connection_a, concrete_connection_b = abstract_connection.to_concrete_connection()
-            
+
             d_concrete.connect(concrete_connection_a)
             d_concrete.connect(concrete_connection_b)
-
-            # tube = Component(
-            #     id=get_instance_name("Tube", tube_id),
-            #     library_component=tube_library,
-            # )
-            # d_concrete.add_node(tube)
-            #
-            # component_a = abstract_connection.component_a.interface_component
-            #
-            # direction = get_direction_of_tube(
-            #     component_a.c_type.id, abstract_connection.relative_position_from_a_to_b, "TOP"
-            # )
-            # new_connection = Connection.from_direction(component_a=tube, component_b=component_a, direction=direction)
-            #
-            # # TODO: I think there is a bug here?
-            # # vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
-            # vertex_a = d_concrete.get_node_by_instance(component_a.id)
-            # if vertex_a is None:
-            #     d_concrete.add_node(component_a)
-            #
-            # self.connections.add(new_connection)
-            # d_concrete.connect(new_connection)
-            #
-            # component_b = abstract_connection.component_b.interface_component
-            # direction = get_direction_of_tube(
-            #     component_b.c_type.id, abstract_connection.relative_position_from_b_to_a, "BOTTOM"
-            # )
-            # new_connection = Connection.from_direction(component_a=tube, component_b=component_b, direction=direction)
-            #
-            # # TODO: I think there is a bug here?
-            # # vertex_b = d_concrete.get_node_by_instance(component_b.id)
-            # vertex_b = d_concrete.get_node_by_instance(component_b.id)
-            # if vertex_b is None:
-            #     d_concrete.add_node(component_b)
-            #
-            # self.connections.add(new_connection)
-            # d_concrete.connect(new_connection)
-            # tube_id += 1
 
         """Connect Structures to themselves"""
         battery_controller = False
@@ -237,116 +198,6 @@ class AbstractDesign:
 
         return d_concrete
 
-    # def instantiate_hubs(self) -> dict:
-    #     hubs = []
-    #     for component in self.grid.values():
-    #         if component.base_name == "Connector":
-    #             new_hub = {"Hub6_instance_" + str(component.instance_n): {"CONNECTIONS": {}, "PARAMETERS": {}}}
-    #             hubs.append(new_hub)
-    #     return hubs
-
-    # def instantiate_tubes(self, num_hubs) -> dict:
-    #     """TODO"""
-    #     """
-    #     "Tube_instance_1": {
-    #         "CONNECTIONS": {
-    #             "Fuselage_str_instance_1__Hub4": "SIDE4-BOTTOM",
-    #             "Propeller_str_top_instance_2__Flange": "TOP-SIDE"
-    #         },
-    #         "PARAMETERS": {
-    #             "Tube__END_ROT": 0.0,
-    #             "Tube__Length": 400.0,
-    #             "Tube__Offset1": 0.0
-    #         }
-    #     },
-    #     "Tube_instance_2": {
-    #         "CONNECTIONS": {
-    #             "Fuselage_str_instance_1__Hub4": "SIDE1-BOTTOM",
-    #             "Propeller_str_top_instance_3__Flange": "TOP-SIDE"
-    #         },
-    #         "PARAMETERS": {
-    #             "Tube__END_ROT": 0.0,
-    #             "Tube__Length": 400.0,
-    #             "Tube__Offset1": 0.0
-    #         }
-    #     },
-    #     """
-    #     hub_counter = [1 for _ in range(num_hubs)]
-    #     fuselage_counter = {}
-    #     tubes = []
-    #     instance = 1
-    #     for connection in self.connections:
-    #         if connection.component_a.base_name == "Fuselage_str":
-    #             if not connection.component_a.instance_n in fuselage_counter.keys():
-    #                 fuselage_counter[connection.component_a.instance_n] = 1
-    #             else:
-    #                 fuselage_counter[connection.component_a.instance_n] += 1
-    #         if connection.component_b.base_name == "Fuselage_str":
-    #             if not connection.component_b.instance_n in fuselage_counter.keys():
-    #                 fuselage_counter[connection.component_b.instance_n] = 1
-    #             else:
-    #                 fuselage_counter[connection.component_b.instance_n] += 1
-    #
-    #         length = 400 * connection.euclid_distance
-    #         new_tube = self.get_tube(
-    #             connection.component_a, connection.component_b, length, instance, hub_counter, fuselage_counter
-    #         )
-    #
-    #         if connection.component_a.base_name == "Connector":
-    #             hub_counter[connection.component_a.instance_n - 1] += 1
-    #         if connection.component_b.base_name == "Connector":
-    #             hub_counter[connection.component_b.instance_n - 1] += 1
-    #
-    #         tubes.append(new_tube)
-    #         instance += 1
-    #         # Connect it based on connection.relative_position
-    #     return tubes
-
-    # def get_mapping(self, component):
-    #     mapping = {
-    #         "Propeller_str_top": component.id,
-    #         "Fuselage_str": component.id,
-    #         "Wing": component.id,
-    #         "Connector": "Hub4_instance_" + str(component.instance_n),
-    #     }
-    #     return mapping[component.base_name]
-
-    # def get_tube(self, current, other, length, instance, hub_counter, fuselage_counter):
-    #     comp_a = self.get_mapping(current)
-    #     comp_b = self.get_mapping(other)
-    #     tube_instance = "Tube_instance_" + str(instance)
-
-    #     new_tube = {
-    #         tube_instance: {
-    #             "CONNECTIONS": {},
-    #             "PARAMETERS": {"Tube__END_ROT": 0.0, "Tube__Length": length, "Tube__Offset1": 0.0},
-    #         }
-    #     }
-
-    #     if current.base_name == "Fuselage_str":
-    #         side = fuselage_counter[current.instance_n]
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_a + "__Hub4"] = "SIDE" + str(side) + "-BOTTOM"
-    #     elif current.base_name == "Wing":
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_a] = "BOTTOM"
-    #     elif current.base_name == "Propeller_str_top":
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_a + "__Flange"] = "TOP-SIDE"
-    #     elif current.base_name == "Connector":
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_a] = (
-    #             "SIDE" + str(hub_counter[current.instance_n - 1]) + "-BOTTOM"
-    #         )
-
-    #     if other.base_name == "Fuselage_str":
-    #         side = fuselage_counter[other.instance_n]
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Hub4"] = "SIDE" + str(side) + "-TOP"
-    #     elif other.base_name == "Wing":
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_b] = "TOP"
-    #     elif other.base_name == "Propeller_str_top":
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_b + "__Flange"] = "BOTTOM-SIDE"
-    #     elif other.base_name == "Connector":
-    #         new_tube[tube_instance]["CONNECTIONS"][comp_b] = "SIDE" + str(hub_counter[other.instance_n - 1]) + "-TOP"
-
-    #     return new_tube
-
     @property
     def grid_size(self) -> tuple[int, int, int]:
         max_x = 0
@@ -397,12 +248,16 @@ class AbstractDesign:
     def plot(self):
 
         graph = self.graph
-
+        list_xyz = [graph.nodes[v]["position"] for v in sorted(graph)]
+        print(list_xyz)
         # Extract node and edge positions from the layout
         node_xyz = np.array([graph.nodes[v]["position"] for v in sorted(graph)])
+        print(node_xyz)
         color_xyz = np.array([graph.nodes[v]["color"] for v in sorted(graph)])
+        print(color_xyz)
 
         edge_xyz = np.array([(graph.nodes[u]["position"], graph.nodes[v]["position"]) for u, v in graph.edges()])
+        print(edge_xyz)
 
         # Create the 3D figure
         fig = plt.figure()

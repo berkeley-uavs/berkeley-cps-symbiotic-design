@@ -65,29 +65,6 @@ class AbstractConnection:
         connector_a = self.get_connector(component_a.c_type.id, self.direction_from_a_to_b)
         connector_b = self.get_connector(component_b.c_type.id, self.direction_from_b_to_a)
 
-        # if self.direction_from_a_to_b == Direction.front:
-        #     if component_a.c_type.id == "Hub4":
-        #         """TODO check front side"""
-        #         connector_a = c_library.connectors["Hub4__Side_Connector_1"]
-        #     if component_a.c_type.id == "Flange":
-        #         connector_a = c_library.connectors["Flange__SideConnector"]
-        #     if component_b.c_type.id == "Hub4":
-        #         """TODO check rear side"""
-        #         connector_b = c_library.connectors["Hub4__Side_Connector_3"]
-        #     if component_b.c_type.id == "Flange":
-        #         connector_b = c_library.connectors["Flange__SideConnector"]
-        # elif self.direction_from_a_to_b == Direction.top:
-        #     if component_a.c_type.id == "Hub4":
-        #         connector_a = c_library.connectors["Hub4__Top_Connector"]
-        #     if component_a.c_type.id == "Flange":
-        #         connector_a = c_library.connectors["Flange__TopConnector"]
-        #     if component_b.c_type.id == "Hub4":
-        #         connector_b = c_library.connectors["Hub4__Bottom_Connector"]
-        #     if component_b.c_type.id == "Flange":
-        #         connector_b = c_library.connectors["Flange__BottomConnector"]
-        # elif self.direction_from_a_to_b == Direction.left:
-        #     """TODO: Complete"""
-
         bottom_tube_connector = c_library.connectors["Tube__BaseConnection"]
         top_tube_connector = c_library.connectors["Tube__EndConnection"]
 
