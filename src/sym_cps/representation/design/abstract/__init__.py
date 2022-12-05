@@ -129,7 +129,9 @@ class AbstractDesign:
         for abstract_connection in self.abstract_connections:
 
             concrete_connection_a, concrete_connection_b = abstract_connection.to_concrete_connection()
-            
+
+            self.connections.add(concrete_connection_a)
+            self.connections.add(concrete_connection_b)
             d_concrete.connect(concrete_connection_a)
             d_concrete.connect(concrete_connection_b)
 
@@ -190,7 +192,7 @@ class AbstractDesign:
                         new_connection = Connection.from_direction(
                             component_a=battery_controller_component, component_b=comp, direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
+                        vertex = d_concrete.get_node_by_instance(comp.id)
                         if vertex is None:
                             d_concrete.add_node(comp)
                         d_concrete.connect(new_connection)
@@ -199,7 +201,7 @@ class AbstractDesign:
                         new_connection = Connection.from_direction(
                             component_a=battery_controller_component, component_b=comp, direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(comp.c_type.id)
+                        vertex = d_concrete.get_node_by_instance(comp.id)
                         if vertex is None:
                             d_concrete.add_node(comp)
                         d_concrete.connect(new_connection)
@@ -214,7 +216,7 @@ class AbstractDesign:
                         new_connection = Connection.from_direction(
                             component_a=battery_controller_component, component_b=battery_component_2, direction="ANY"
                         )
-                        vertex = d_concrete.get_node_by_instance(battery_component_2.c_type.id)
+                        vertex = d_concrete.get_node_by_instance(battery_component_2.id)
                         if vertex is None:
                             d_concrete.add_node(battery_component_2)
                         d_concrete.connect(new_connection)
@@ -223,7 +225,7 @@ class AbstractDesign:
                     component_a = connections.component_a
                     component_b = connections.component_b
 
-                    vertex_a = d_concrete.get_node_by_instance(component_a.c_type.id)
+                    vertex_a = d_concrete.get_node_by_instance(component_a.id)
                     if vertex_a is None:
                         d_concrete.add_node(component_a)
 
