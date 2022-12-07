@@ -39,7 +39,7 @@ main() {
   docker container prune -f
 
   docker run \
-    -d \
+    -it \
     --name $container \
     --privileged \
     --workdir /root/host \
