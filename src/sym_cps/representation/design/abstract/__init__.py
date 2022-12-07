@@ -22,6 +22,7 @@ from sym_cps.representation.design.abstract.elements import (
 from sym_cps.representation.design.concrete import Component, Connection, DConcrete
 from sym_cps.representation.tools.optimize import find_components, set_direction
 from sym_cps.shared.library import c_library
+from sym_cps.shared.paths import designs_folder
 from sym_cps.tools.figures import plot_3d_grid
 from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.strings import (
@@ -286,19 +287,16 @@ class AbstractDesign:
 
         return graph
 
-    def save(self, folder_name: str | None = None):
+    def save(self):
         export: dict = {"NODES": {}, "EDGES": []}
         for position, component in self.grid.items():
             export["NODES"][component.id] = position
         for connection in self.abstract_connections:
             export["EDGES"].append((connection.component_a.id, connection.component_b.id))
 
-        if folder_name is None:
-            folder_name = "grammar"
-
-        save_to_file(export, file_name="grid", folder_name=folder_name)
-        save_to_file(self.abstract_grid, file_name="grid", folder_name=folder_name)
-        save_to_file(self.plot, file_name="grid", folder_name=folder_name)
+        save_to_file(export, absolute_path= designs_folder / self.name / "grid.json")
+        save_to_file(self.abstract_grid, absolute_path= designs_folder / self.name / "grid.dat")
+        save_to_file(self.plot, absolute_path= designs_folder / self.name / "grid.pdf")
 
     @property
     def plot(self):

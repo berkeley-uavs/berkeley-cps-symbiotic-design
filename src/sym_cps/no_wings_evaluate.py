@@ -25,6 +25,8 @@ def get_abstract_design(design_folder_name: str) -> AbstractDesign:
         grid: AbstractGrid = pickle.load(pickle_file)
         new_design = AbstractDesign(design_folder_name)
         new_design.parse_grid(grid)
+        print(new_design.name)
+        new_design.save()
         return new_design
 
 
