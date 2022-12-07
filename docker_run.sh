@@ -74,7 +74,6 @@ main() {
     --platform ${my_platform} \
     ${mount_arg} \
     ${port_arg} \
-    --rm \
     $image bash
 
 }
