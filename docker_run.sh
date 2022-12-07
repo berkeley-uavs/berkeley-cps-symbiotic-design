@@ -47,7 +47,12 @@ main() {
 #    ${mount_arg} \
 #    ${port_arg} \
 #    $image
-#  docker run -d --name sym_cps-repo --privileged --workdir /root/host -v .:/root/host
+  docker run -it --name sym_cps-repo --privileged --workdir /root/host \
+  -v /home/ubuntu/sym-cps/berkeley-cps-symbiotic-design:/root/host \
+  -v /home/ubuntu/sym-cps/challenge_data:/root/challenge_data \
+  -v /root/host/__pypackages__ \
+  -p 9922:22 \
+  pmallozzi/devenvs:base-310-symcps bash
 }
 
 main "$@"

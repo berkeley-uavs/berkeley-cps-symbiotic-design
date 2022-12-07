@@ -1,6 +1,3 @@
-echo "Updating repository from github..."
-git pull
-
 if [ $# -eq 0 ]
   then
     echo "No parameters provided. Launching bash"
@@ -18,7 +15,8 @@ else
           bash
           ;;
         *)
-          break
+          echo "Unknown option. Launching bash.."
+          bash
           ;;
       esac
     done
