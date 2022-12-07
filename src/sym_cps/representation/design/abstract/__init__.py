@@ -52,7 +52,7 @@ class AbstractDesign:
             d = base64.urlsafe_b64encode(d).decode("ascii")
             return str(d[:-2])
 
-    def optimize_and_evaluate_script(self):
+    def optimize_and_evaluate_script(self, no_optimization: bool = False):
         self.save(folder_name=f"designs/{self.name}")
 
         d_concrete = self.to_concrete()
@@ -60,7 +60,8 @@ class AbstractDesign:
         d_concrete.choose_default_components_for_empty_ones()
         d_concrete.export_all()
 
-        find_components(d_concrete)
+        if not no_optimization:
+            find_components(d_concrete)
 
         d_concrete.export_all()
 

@@ -52,11 +52,12 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
 
 
 def generate_random(args: Optional[List[str]] = None):
-    _stats_cleanup()
+    # _stats_cleanup()
     parser = argparse.ArgumentParser(prog="sym-cps")
     parser.add_argument("--n", type=int, default=1, help="Specify the number of  random designs")
     parser.add_argument("--n_wings_max", type=int, default=-1, help="Specify the max number of wings")
     parser.add_argument("--n_props_max", type=int, default=-1, help="Specify the max number of propellers")
+    parser.add_argument("--no_optimization", default=False, action='store_true')
     opts = parser.parse_args(args=args)
     print(f"args: {opts}")
 
@@ -73,7 +74,7 @@ def generate_random(args: Optional[List[str]] = None):
             design_tag, design_index, opts.n_wings_max, opts.n_props_max
         )
 
-        new_design.optimize_and_evaluate_script()
+        new_design.optimize_and_evaluate_script(opts.no_optimization)
 
 
 def _evaluate_grid_path(grid_file_path: Path):
