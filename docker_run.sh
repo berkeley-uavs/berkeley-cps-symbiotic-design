@@ -6,13 +6,6 @@ container=sym_cps
 image=pmallozzi/devenvs:base-310-symcps
 challenge_data_relative_path=../challenge_data/
 
-my_platform=""
-case $(uname -m) in
-x86_64 | i686 | i386) my_platform="linux/amd64" ;;
-arm64) my_platform="linux/arm64" ;;
-esac
-echo ${my_platform}
-
 resolve_relative_path() (
   # If the path is a directory, we just need to 'cd' into it and print the new path.
   if [ -d "$1" ]; then
@@ -33,20 +26,6 @@ resolve_relative_path() (
   fi
 )
 
-cleanup() {
-  echo "Checking if container already exists.."
-  if [[ $(docker ps -a --filter="name=$container" | grep -w "$container") ]]; then
-    docker stop $container
-    docker rm $container
-    echo "Cleaning up 1..."
-  elif [[ $(docker ps -a --filter="name=$container") ]]; then
-    docker rm $container || true
-    echo "Cleaning up 2..."
-  else
-    echo "No existing container found"
-  fi
-}
-
 main() {
 
   docker pull ${image}
@@ -56,22 +35,11 @@ main() {
   mount_arg=" -v ${repo_dir}:/root/host -v ${challenge_data_dir}:/root/challenge_data -v /root/host/__pypackages__"
   port_arg="-p ${port_ssh}:22"
 
-  echo $challenge_data_dir
-
-  which docker 2>&1 >/dev/null
-  if [ $? -ne 0 ]; then
-    echo "Error: the 'docker' command was not found.  Please install docker."
-    exit 1
-  fi
-
-  cleanup
-
   docker run \
-    -d \
+    -it \
     --name $container \
     --privileged \
     --workdir /root/host \
-    --platform ${my_platform} \
     ${mount_arg} \
     ${port_arg} \
     $image bash
