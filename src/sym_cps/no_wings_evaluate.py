@@ -61,4 +61,4 @@ def evaluate_existing_grid(folder_name):
 
 
 if __name__ == "__main__":
-    evaluate_existing_grid("1__grammar_kep0_w0_p2")
+    evaluate_existing_grid("fail_1__grammar_kep0_w0_p2")
