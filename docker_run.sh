@@ -67,7 +67,7 @@ main() {
   cleanup
 
   docker run \
-    -it \
+    -d \
     --name $container \
     --privileged \
     --workdir /root/host \
