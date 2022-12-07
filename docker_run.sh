@@ -37,16 +37,17 @@ main() {
 
   echo "Pruning containers"
   docker container prune -f
-
-  docker run \
-    -d \
-    --name $container \
-    --privileged \
-    --workdir /root/host \
-    ${mount_arg} \
-    ${port_arg} \
-    $image
-
+  echo ${mount_arg}
+  echo  ${port_arg}
+#  docker run \
+#    -d \
+#    --name $container \
+#    --privileged \
+#    --workdir /root/host \
+#    ${mount_arg} \
+#    ${port_arg} \
+#    $image
+#  docker run -d --name sym_cps-repo --privileged --workdir /root/host -v .:/root/host
 }
 
 main "$@"
