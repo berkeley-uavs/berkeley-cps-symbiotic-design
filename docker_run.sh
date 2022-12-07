@@ -37,7 +37,7 @@ main() {
 
   echo "Pruning containers"
   docker container prune -f
-  echo ${mount_arg}
+  echo "Launching "${mount_arg}
   echo  ${port_arg}
 
   docker run \

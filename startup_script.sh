@@ -21,3 +21,5 @@ else
       esac
     done
 fi
+
+tail -f /dev/null
