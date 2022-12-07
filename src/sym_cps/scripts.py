@@ -1,10 +1,13 @@
 import json
+import os
 import random
+import shutil
 import string
 from pathlib import Path
 
 from sym_cps.grammar.rules import generate_random_new_topology
 from sym_cps.representation.design.abstract import AbstractDesign
+from sym_cps.representation.tools.optimize import find_components
 from sym_cps.shared.paths import designs_folder, designs_generated_stats_path, random_topologies_generated_path
 from sym_cps.tools.my_io import save_to_file
 
@@ -12,19 +15,22 @@ from sym_cps.tools.my_io import save_to_file
 def _stats_cleanup():
     designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
     random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
-    designs_in_folder = [f.name for f in list(Path(designs_folder).iterdir())]
-    to_delete_stats = []
-    to_delete_generated = []
-    for k in designs_generated_stats.keys():
-        if k not in designs_in_folder:
-            to_delete_stats.append(k)
-    for k2, v2 in random_topologies_generated.items():
-        if v2 not in designs_in_folder:
-            to_delete_generated.append(k2)
-    for k in to_delete_stats:
-        del designs_generated_stats[k]
+    designs_in_folder = set(filter(lambda x: x[0].isdigit(), [f.name for f in list(Path(designs_folder).iterdir())]))
+    completed_designs = set(designs_generated_stats.keys())
 
-    for k in to_delete_generated:
+    designs_to_delete = designs_in_folder - completed_designs
+    designs_to_delete_hash = []
+
+    for design_to_delete in designs_to_delete:
+        for k, v in random_topologies_generated.items():
+            if design_to_delete == v:
+                designs_to_delete_hash.append(k)
+        design_dir = Path(designs_folder / design_to_delete)
+        print(f"Deleting {design_dir}")
+        if os.path.exists(design_dir) and os.path.isdir(design_dir):
+            shutil.rmtree(design_dir)
+
+    for k in designs_to_delete_hash:
         del random_topologies_generated[k]
 
     save_to_file(designs_generated_stats, absolute_path=designs_generated_stats_path)
@@ -83,19 +89,17 @@ if __name__ == "__main__":
         new_design.save(folder_name=f"designs/{new_design.name}")
 
         d_concrete = new_design.to_concrete()
-        for component in d_concrete.components:
-            if component.c_type.id == "Propeller":
-                print(component)
+
         d_concrete.choose_default_components_for_empty_ones()
 
         d_concrete.export_all()
 
-        # find_components(d_concrete)
-        #
-        # d_concrete.export_all()
-        #
-        # save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
-        #
-        # print(f"Design {d_concrete.name} generated")
-        # print(f"Evaluating..")
-        # d_concrete.evaluate()
+        find_components(d_concrete)
+
+        d_concrete.export_all()
+
+        save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
+
+        print(f"Design {d_concrete.name} generated")
+        print(f"Evaluating..")
+        d_concrete.evaluate()
