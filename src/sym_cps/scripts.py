@@ -28,7 +28,7 @@ def _stats_cleanup():
         design_dir = Path(designs_folder / design_to_delete)
         print(f"Deleting {design_dir}")
         if os.path.exists(design_dir) and os.path.isdir(design_dir):
-            shutil.rmtree(design_dir)
+            os.rename(design_dir, designs_folder / f"fail_{design_to_delete}")
 
     for k in designs_to_delete_hash:
         del random_topologies_generated[k]
