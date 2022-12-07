@@ -55,9 +55,10 @@ def set_direction(design: DConcrete):
 if __name__ == "__main__":
 
     for number in designs_numbers:
-        # folder_name = f"_random_design_17"
+        # folder_name = f"1__grammar_kep0_w0_p2"
         folder_name = f"2__grammar_yzac_w0_p3"
         # folder_name = f"_random_design_{number}"
+        # folder_name = f"_random_design_17"
 
         # """Get directly DConcrete"""
         # dconcrete: DConcrete = get_dconcrete(folder_name)

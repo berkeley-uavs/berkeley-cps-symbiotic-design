@@ -71,15 +71,12 @@ class AbstractConnection:
 
         if component_a.c_type.id == "Hub4":
             if self.direction_from_a_to_b == Direction.top or self.direction_from_a_to_b == Direction.bottom:
-                bottom_tube_connector = c_library.connectors["Tube__OffsetConnection1"]
-            # elif component_b.c_type.id == "Hub4":
-            #     tube.parameters["Tube__END_ROT"].value += 180.0
+                bottom_tube_connector = c_library.connectors["Tube__OffsetConnection2"]
 
         if (component_b.c_type.id == "Hub4" and
                 (self.direction_from_b_to_a == Direction.top or self.direction_from_b_to_a == Direction.bottom)):
-            top_tube_connector = c_library.connectors["Tube__OffsetConnection2"]
-        # elif component_b.c_type.id == "Hub4" and component_a.c_type.id == "Hub4":
-        #     tube.parameters["Tube__END_ROT"].value = 0.0
+            top_tube_connector = c_library.connectors["Tube__OffsetConnection1"]
+
 
 
         connection_a_tube = Connection(
