@@ -87,11 +87,11 @@ def plot_3d_grid(
     # fig.show()
     return fig
 
-
-fig = generate_empty_grid(8)
-fig.savefig(f"grid8.pdf", transparent=True)
-
-g = DirectionsGrid()
-fig = g.plot
-
-fig.savefig(f"direction.pdf", transparent=True)
+#
+# fig = generate_empty_grid(8)
+# fig.savefig(f"grid8.pdf", transparent=True)
+#
+# g = DirectionsGrid()
+# fig = g.plot
+#
+# fig.savefig(f"direction.pdf", transparent=True)
