@@ -29,7 +29,6 @@ def get_abstract_design(design_folder_name: str) -> AbstractDesign:
 
 
 def find_components(design: DConcrete):
-
     selector = SimplifiedSelector()
     c_library, seed_designs = parse_library_and_seed_designs()
     selector.set_library(library=c_library)
@@ -43,36 +42,21 @@ def find_components(design: DConcrete):
     selector.random_local_search(d_concrete=design)
 
 
-def set_direction(design: DConcrete):
-    # TODO Pier
-    # find the propeller pair based on symmetry
-    # assign the propeller in the same pair with different direction/proptype
-    # if the propeller is facing up: one with 1/1 another with -1/-1
-    # if the propeller is facing down: one with -1/1 another with direction 1/-1
-    pass
+def evaluate_existing_grid(folder_name):
+    abstract_design: AbstractDesign = get_abstract_design(folder_name)
+
+    dconcrete: DConcrete = abstract_design.to_concrete()
+
+    dconcrete.choose_default_components_for_empty_ones()
+
+    dconcrete.export_all()
+
+    find_components(dconcrete)
+
+    dconcrete.evaluate()
+
+    dconcrete.export_all()
 
 
 if __name__ == "__main__":
-
-    for number in designs_numbers:
-        # folder_name = f"_random_design_17"
-        folder_name = f"2__grammar_yzac_w0_p3"
-        # folder_name = f"_random_design_{number}"
-
-        # """Get directly DConcrete"""
-        # dconcrete: DConcrete = get_dconcrete(folder_name)
-
-        """Generate DConcrete from AbstractDesign"""
-        abstract_design: AbstractDesign = get_abstract_design(folder_name)
-        dconcrete: DConcrete = abstract_design.to_concrete()
-
-        # """Generate STL and evaluate"""
-        dconcrete.choose_default_components_for_empty_ones()
-        #
-        # """find component"""
-        find_components(dconcrete)
-
-        set_direction()
-        #
-        # dconcrete.export_all()
-        dconcrete.evaluate()
+    evaluate_existing_grid("1__grammar_kep0_w0_p2")
