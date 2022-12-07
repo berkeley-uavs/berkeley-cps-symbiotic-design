@@ -76,6 +76,11 @@ mount-drive:
 	mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
 
 
+.PHONY: start-ssh
+start-ssh:
+	echo "Starting ssh server..."
+	service ssh restart
+
 
 .PHONY: check
 check:
