@@ -39,13 +39,13 @@ main() {
   docker container prune -f
 
   docker run \
-    -it \
+    -d \
     --name $container \
     --privileged \
     --workdir /root/host \
     ${mount_arg} \
     ${port_arg} \
-    $image bash
+    $image
 
 }
 
