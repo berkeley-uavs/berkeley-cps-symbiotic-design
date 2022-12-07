@@ -56,9 +56,9 @@ class AbstractDesign:
         self.save(folder_name=f"designs/{self.name}")
 
         d_concrete = self.to_concrete()
-        d_concrete.export_all()
 
         d_concrete.choose_default_components_for_empty_ones()
+        d_concrete.export_all()
 
         find_components(d_concrete)
 
