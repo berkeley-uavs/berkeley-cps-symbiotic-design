@@ -35,11 +35,15 @@ main() {
   mount_arg=" -v ${repo_dir}:/root/host -v ${challenge_data_dir}:/root/challenge_data -v /root/host/__pypackages__"
   port_arg="-p ${port_ssh}:22"
 
+  echo "Pruning containers"
+  docker container prune -f
+
   docker run \
-    -it \
+    -d \
     --name $container \
     --privileged \
     --workdir /root/host \
+    --platform ${my_platform} \
     ${mount_arg} \
     ${port_arg} \
     $image bash
