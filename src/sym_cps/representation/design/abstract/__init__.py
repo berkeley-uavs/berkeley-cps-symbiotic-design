@@ -139,9 +139,12 @@ class AbstractDesign:
         propellers_right = dict(sorted(propellers_right.items()))
         propellers_left = dict(sorted(propellers_left.items()))
 
-        assignments_right = [-1]
+        assignments_right = []
         for pos_r, prop_right in propellers_right.items():
-            latest_dir = assignments_right[-1:][0]
+            if len(assignments_right) == 0:
+                latest_dir = -1
+            else:
+                latest_dir = assignments_right[-1:][0]
             prop_right.direction = latest_dir * -1
             print(f"Propeller in position {str(pos_r)} \t direction {prop_right.direction}")
             assignments_right.append(prop_right.direction)
@@ -153,6 +156,13 @@ class AbstractDesign:
         for elem in propellers_center.items():
             elem.direction = random.choice([-1, 1])
             print(f"Propeller in center \t direction {elem.direction}")
+
+        # print("CIAO")
+        # print(list(propellers_right.keys()))
+        # print(list(propellers_left.keys()))
+        # print(list(propellers_center.keys()))
+        # print("CIAOasd")
+
 
     def instantiate_hubs(self) -> dict:
         hubs = []

@@ -51,11 +51,11 @@ def evaluate_existing_grid(folder_name):
 
     dconcrete.export_all()
 
-    find_components(dconcrete)
-
-    dconcrete.evaluate()
-
-    dconcrete.export_all()
+    # find_components(dconcrete)
+    #
+    # dconcrete.evaluate()
+    #
+    # dconcrete.export_all()
 
 
 if __name__ == "__main__":
