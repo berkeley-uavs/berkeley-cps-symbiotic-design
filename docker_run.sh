@@ -55,6 +55,6 @@ main() {
 #  -v /root/host/__pypackages__ \
 #  -p 9922:22 \
 #  pmallozzi/devenvs:base-310-symcps
-#}
+}
 
 main "$@"
