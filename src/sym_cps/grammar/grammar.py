@@ -1,13 +1,27 @@
 from __future__ import annotations
 
+import itertools
 import json
+import random
 from dataclasses import dataclass
 from pathlib import Path
 
 from aenum import Enum
+from matplotlib.figure import Figure
 
-from sym_cps.grammar.symbols import Connector, Empty, Fuselage, Rotor, Symbol, SymbolType, Unoccupied, Wing
+from sym_cps.grammar.symbols import (
+    Connector,
+    Empty,
+    Fuselage,
+    Rotor,
+    Symbol,
+    SymbolType,
+    Unoccupied,
+    Wing,
+    symbols_colors,
+)
 from sym_cps.shared.paths import grammar_rules_processed_path
+from sym_cps.tools.figures import DirectionsGrid
 
 
 class Direction(Enum):
@@ -48,7 +62,7 @@ class Grammar:
 class Rule:
     conditions: ConditionSet
     production: Production
-    name: str = ""
+    name: str = "rule"
 
     """TODO"""
 
@@ -103,6 +117,8 @@ class ConditionSet:
             all_dirs[direction] = set()
             for symbol_type in symbol_types:
                 all_dirs[direction].add(SymbolType[symbol_type])
+            if len(all_dirs[direction]) == 0:
+                all_dirs[direction] = {SymbolType.ANY}
         return cls(
             front=all_dirs["front"],
             bottom=all_dirs["bottom"],
@@ -122,6 +138,52 @@ class ConditionSet:
             and state.top.symbol_type in self.top
             and state.rear.symbol_type in self.rear
         )
+
+    def draw_condition(self):
+        return Condition(
+            front=random.choice(list(self.front)),
+            bottom=random.choice(list(self.bottom)),
+            left=random.choice(list(self.left)),
+            right=random.choice(list(self.right)),
+            top=random.choice(list(self.top)),
+            rear=random.choice(list(self.rear)),
+        )
+
+    def get_all_conditions(self) -> list[Condition]:
+        conditions: list[Condition] = []
+        res = itertools.product(
+            list(self.front), list(self.bottom), list(self.left), list(self.right), list(self.top), list(self.rear)
+        )
+        for elem in res:
+            print(elem)
+        for (f, b, l, ri, t, re) in itertools.product(
+            *[list(self.front), list(self.bottom), list(self.left), list(self.right), list(self.top), list(self.rear)]
+        ):
+            conditions.append(Condition(f, b, l, ri, t, re))
+        return conditions
+
+
+@dataclass
+class Condition:
+    front: SymbolType
+    bottom: SymbolType
+    left: SymbolType
+    right: SymbolType
+    top: SymbolType
+    rear: SymbolType
+    ego: SymbolType = SymbolType.UNOCCUPIED
+
+    @property
+    def plot(self) -> Figure:
+        local_grid = DirectionsGrid(
+            front=symbols_colors[self.front],
+            bottom=symbols_colors[self.bottom],
+            left=symbols_colors[self.left],
+            right=symbols_colors[self.right],
+            top=symbols_colors[self.top],
+            rear=symbols_colors[self.rear],
+        )
+        return local_grid.plot
 
 
 @dataclass

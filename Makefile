@@ -53,6 +53,40 @@ check:
 	pdm run duty check-quality check-types check-docs
 	@$(DUTY) check-dependencies
 
+
+.PHONY: openvpn-connect
+openvpn-connect:
+	echo "Connecting to VPN..."
+	openvpn --config ../challenge_data/aws-cvpn-config.ovpn --daemon
+
+
+.PHONY: docker-broker-conf
+docker-broker-conf:
+	echo "Configuring broker..."
+	#pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+	mkdir /etc/xdg/SimpleUAM
+	mkdir /etc/xdg/SimpleUAM/config
+	cp ../challenge_data/data/broker.conf.yaml /etc/xdg/SimpleUAM/config
+
+
+.PHONY: mount-drive
+mount-drive:
+	echo "Mounting shared drive...(it can take some time...)"
+	mkdir -p ../challenge_data/aws
+	mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
+
+
+.PHONY: start-ssh
+start-ssh:
+	echo "Starting ssh server..."
+	service ssh restart
+
+
+.PHONY: check
+check:
+	pdm run duty check-quality check-types check-docs
+	@$(DUTY) check-dependencies
+
 .PHONY: uninstall
 uninstall:
 	rm -rf .coverage*

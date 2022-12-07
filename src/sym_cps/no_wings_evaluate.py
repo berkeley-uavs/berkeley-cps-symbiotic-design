@@ -25,11 +25,12 @@ def get_abstract_design(design_folder_name: str) -> AbstractDesign:
         grid: AbstractGrid = pickle.load(pickle_file)
         new_design = AbstractDesign(design_folder_name)
         new_design.parse_grid(grid)
+        print(new_design.name)
+        new_design.save()
         return new_design
 
 
 def find_components(design: DConcrete):
-
     selector = SimplifiedSelector()
     c_library, seed_designs = parse_library_and_seed_designs()
     selector.set_library(library=c_library)
@@ -43,13 +44,20 @@ def find_components(design: DConcrete):
     selector.random_local_search(d_concrete=design)
 
 
-def set_direction(design: DConcrete):
-    # TODO Pier
-    # find the propeller pair based on symmetry
-    # assign the propeller in the same pair with different direction/proptype
-    # if the propeller is facing up: one with 1/1 another with -1/-1
-    # if the propeller is facing down: one with -1/1 another with direction 1/-1
-    pass
+def evaluate_existing_grid(folder_name):
+    abstract_design: AbstractDesign = get_abstract_design(folder_name)
+
+    dconcrete: DConcrete = abstract_design.to_concrete()
+
+    dconcrete.choose_default_components_for_empty_ones()
+
+    dconcrete.export_all()
+
+    find_components(dconcrete)
+
+    dconcrete.evaluate()
+
+    dconcrete.export_all()
 
 
 if __name__ == "__main__":

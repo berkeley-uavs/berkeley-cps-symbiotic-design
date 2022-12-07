@@ -58,7 +58,7 @@ def modified_design():
     connections_mods = test_quad_from_topology.abstract_connections
     print(f"{len(connections_mods)} mod connections")
 
-    test_quad_from_topology.evaluate()
+    test_quad_from_topology.optimize_and_evaluate_script()
 
 
 if __name__ == "__main__":

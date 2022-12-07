@@ -97,7 +97,8 @@ class SimplifiedSelector:
         num_batteries, num_propellers, num_motors, num_batt_controllers = self.count_components(d_concrete=d_concrete)
         component_list = self.dconcrete_component_lists(d_concrete=d_concrete)
         self._uav_contract = UAVContract(table_dict=self._table_dict, num_motor=num_motors, num_battery=num_batteries)
-        self._uav_contract.set_contract_simplified()
+        propeller_info = self._get_propeller_info(d_concrete=d_concrete)
+        self._uav_contract.set_contract_simplified(propeller_direction=propeller_info)
 
         comps = []
         best_comp = None
@@ -346,6 +347,13 @@ class SimplifiedSelector:
         comp_batt = ret
 
     @staticmethod
+    def _get_propeller_info(d_concrete: DConcrete):
+        """What I need for this function
+        1. return the direction of each propeller to determine the coefficients of actual thrusts for upward
+        """
+        return None
+
+    @staticmethod
     def count_components(d_concrete: DConcrete):
         num_batteries = 0
         num_propellers = 0
@@ -498,7 +506,8 @@ class SimplifiedSelector:
 
         self._testquad_design.export(ExportType.JSON)
 
-        self._testquad_design.evaluate()
+        ret = self._testquad_design.evaluate()
+        print(ret)
 
 
 def draw_result(history: dict):

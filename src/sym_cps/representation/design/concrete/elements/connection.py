@@ -91,9 +91,14 @@ class Connection:
 
     @property
     def direction_b_respect_to_a(self):
-        return get_direction_from_components_and_connections(
-            self.component_a.c_type.id, self.component_b.c_type.id, self.connector_a.id, self.connector_b.id
-        )
+        dir = "UNKNOWN"
+        try:
+            dir = get_direction_from_components_and_connections(
+                self.component_a.c_type.id, self.component_b.c_type.id, self.connector_a.id, self.connector_b.id
+            )
+        except Exception as e:
+            print(e)
+        return dir
 
     def __eq__(self, other: object):
         if not isinstance(other, Connection):

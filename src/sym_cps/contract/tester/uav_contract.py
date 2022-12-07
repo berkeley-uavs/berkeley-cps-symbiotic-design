@@ -92,7 +92,11 @@ class UAVContract(object):
         )
         self._contracts["Motor"] = motor_contract
 
-    def add_propeller_simplified(self):
+    def add_propeller_simplified(self, propeller_direction: list):
+        """Propeller direction is used for considering those propeller not complete contributing to upward thrust
+        1.0 means full facing up. other number means the ratio that the thrust is used for thrust
+        """
+        thrust_multiplier = sum(propeller_direction)
         propeller_port_list = [
             ComponentInterface(name="rho", sort="real"),
             ComponentInterface(name="omega_prop", sort="real"),
@@ -117,7 +121,7 @@ class UAVContract(object):
                 == vs["C_p"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 5 / (2 * 3.14159265) ** 3,
                 vs["thrust"]
                 == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2)
-                * self._num_motor,
+                * thrust_multiplier,
                 vs["omega_prop"] >= 0,
             ]
 
@@ -130,7 +134,7 @@ class UAVContract(object):
         )
         self._contracts["Propeller"] = propeller_contract
 
-    def add_propeller(self):
+    def add_propeller(self, upward_ratio=1.0):
         propeller_port_list = [
             ComponentInterface(name="rho", sort="real"),
             ComponentInterface(name="omega_prop", sort="real"),
@@ -154,7 +158,8 @@ class UAVContract(object):
                 vs["torque_prop"]
                 == vs["C_p"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 5 / (2 * 3.14159265) ** 3,
                 vs["thrust"]
-                == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2),
+                == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2)
+                * upward_ratio,
                 vs["omega_prop"] >= 0,
             ]
 
@@ -222,18 +227,31 @@ class UAVContract(object):
         self.add_battery_controller()
         self.add_propeller()
 
-    def set_contract_simplified(self):
+    def set_contract_simplified(self, propeller_direction: list = None):
+        if propeller_direction is None:
+            propeller_direction = [1.0] * self._num_motor
+        if len(propeller_direction) != self._num_motor:
+            print("The direction list does not match the number of motors!")
+            return
+
         self.add_battery()
         self.add_motor()
         self.add_battery_controller_simplified()
-        self.add_propeller_simplified()
+        self.add_propeller_simplified(propeller_direction=propeller_direction)
 
         # system contract
 
-    def hackathon_property_interface_fn(self, component: LibraryComponent):
+    def hackathon_property_interface_fn(self, component: LibraryComponent, use_rpm_v_range: bool = False):
         if component.comp_type.id == "Propeller":
             return self.hackthon_get_propeller_property(
-                propeller=component, table_dict=self._table_dict, rpm=self._rpm_static, num_motor=1
+                propeller=component,
+                table_dict=self._table_dict,
+                rpm=self._rpm_static,
+                rpm2=self._rpm_upper,
+                v=self._speed,
+                v2=self._speed_upper,
+                num_motor=1,
+                use_rpm_v_range=use_rpm_v_range,
             )
         elif component.comp_type.id == "Battery":
             return self.hackthon_get_battery_property(battery=component, num_battery=self._num_battery)
