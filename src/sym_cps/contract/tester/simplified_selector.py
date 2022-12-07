@@ -349,7 +349,7 @@ class SimplifiedSelector:
     @staticmethod
     def _get_propeller_info(d_concrete: DConcrete):
         """What I need for this function
-            1. return the direction of each propeller to determine the coefficients of actual thrusts for upward
+        1. return the direction of each propeller to determine the coefficients of actual thrusts for upward
         """
         return None
 

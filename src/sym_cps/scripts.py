@@ -8,6 +8,7 @@ from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.shared.paths import designs_folder, designs_generated_stats_path, random_topologies_generated_path
 from sym_cps.tools.my_io import save_to_file
 
+
 def _stats_cleanup():
     designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
     random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
@@ -65,7 +66,7 @@ n_designs = 20
 n_wings_max = 0
 n_prop_max = -1
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     _stats_cleanup()
 
     index = get_latest_evaluated_design_number()

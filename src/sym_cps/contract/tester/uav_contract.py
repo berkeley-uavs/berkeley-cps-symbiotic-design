@@ -94,7 +94,7 @@ class UAVContract(object):
 
     def add_propeller_simplified(self, propeller_direction: list):
         """Propeller direction is used for considering those propeller not complete contributing to upward thrust
-           1.0 means full facing up. other number means the ratio that the thrust is used for thrust
+        1.0 means full facing up. other number means the ratio that the thrust is used for thrust
         """
         thrust_multiplier = sum(propeller_direction)
         propeller_port_list = [
@@ -134,7 +134,7 @@ class UAVContract(object):
         )
         self._contracts["Propeller"] = propeller_contract
 
-    def add_propeller(self, upward_ratio = 1.0):
+    def add_propeller(self, upward_ratio=1.0):
         propeller_port_list = [
             ComponentInterface(name="rho", sort="real"),
             ComponentInterface(name="omega_prop", sort="real"),
@@ -158,7 +158,8 @@ class UAVContract(object):
                 vs["torque_prop"]
                 == vs["C_p"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 5 / (2 * 3.14159265) ** 3,
                 vs["thrust"]
-                == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2) * upward_ratio,
+                == (vs["C_t"] * vs["rho"] * vs["omega_prop"] ** 2 * vs["diameter"] ** 4 / (2 * 3.14159265) ** 2)
+                * upward_ratio,
                 vs["omega_prop"] >= 0,
             ]
 
@@ -226,12 +227,12 @@ class UAVContract(object):
         self.add_battery_controller()
         self.add_propeller()
 
-    def set_contract_simplified(self, propeller_direction:list = None):
+    def set_contract_simplified(self, propeller_direction: list = None):
         if propeller_direction is None:
             propeller_direction = [1.0] * self._num_motor
         if len(propeller_direction) != self._num_motor:
             print("The direction list does not match the number of motors!")
-            return 
+            return
 
         self.add_battery()
         self.add_motor()

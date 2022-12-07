@@ -9,10 +9,19 @@ from pathlib import Path
 from aenum import Enum
 from matplotlib.figure import Figure
 
-from sym_cps.grammar.symbols import Connector, Empty, Fuselage, Rotor, Symbol, SymbolType, Unoccupied, Wing, \
-    symbols_colors
+from sym_cps.grammar.symbols import (
+    Connector,
+    Empty,
+    Fuselage,
+    Rotor,
+    Symbol,
+    SymbolType,
+    Unoccupied,
+    Wing,
+    symbols_colors,
+)
 from sym_cps.shared.paths import grammar_rules_processed_path
-from sym_cps.tools.figures import plot_3d_grid, DirectionsGrid
+from sym_cps.tools.figures import DirectionsGrid
 
 
 class Direction(Enum):
@@ -121,13 +130,13 @@ class ConditionSet:
 
     def matches(self, state: LocalState):
         return (
-                state.ego.symbol_type in self.ego
-                and state.front.symbol_type in self.front
-                and state.bottom.symbol_type in self.bottom
-                and state.left.symbol_type in self.left
-                and state.right.symbol_type in self.right
-                and state.top.symbol_type in self.top
-                and state.rear.symbol_type in self.rear
+            state.ego.symbol_type in self.ego
+            and state.front.symbol_type in self.front
+            and state.bottom.symbol_type in self.bottom
+            and state.left.symbol_type in self.left
+            and state.right.symbol_type in self.right
+            and state.top.symbol_type in self.top
+            and state.rear.symbol_type in self.rear
         )
 
     def draw_condition(self):
@@ -137,24 +146,19 @@ class ConditionSet:
             left=random.choice(list(self.left)),
             right=random.choice(list(self.right)),
             top=random.choice(list(self.top)),
-            rear=random.choice(list(self.rear)))
+            rear=random.choice(list(self.rear)),
+        )
 
     def get_all_conditions(self) -> list[Condition]:
         conditions: list[Condition] = []
-        res = itertools.product(list(self.front),
-                                                      list(self.bottom),
-                                                      list(self.left),
-                                                      list(self.right),
-                                                      list(self.top),
-                                                      list(self.rear))
+        res = itertools.product(
+            list(self.front), list(self.bottom), list(self.left), list(self.right), list(self.top), list(self.rear)
+        )
         for elem in res:
             print(elem)
-        for (f, b, l, ri, t, re) in itertools.product(*[list(self.front),
-                                                      list(self.bottom),
-                                                      list(self.left),
-                                                      list(self.right),
-                                                      list(self.top),
-                                                      list(self.rear)]):
+        for (f, b, l, ri, t, re) in itertools.product(
+            *[list(self.front), list(self.bottom), list(self.left), list(self.right), list(self.top), list(self.rear)]
+        ):
             conditions.append(Condition(f, b, l, ri, t, re))
         return conditions
 
@@ -177,7 +181,7 @@ class Condition:
             left=symbols_colors[self.left],
             right=symbols_colors[self.right],
             top=symbols_colors[self.top],
-            rear=symbols_colors[self.rear]
+            rear=symbols_colors[self.rear],
         )
         return local_grid.plot
 

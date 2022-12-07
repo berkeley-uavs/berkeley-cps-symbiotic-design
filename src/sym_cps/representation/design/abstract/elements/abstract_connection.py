@@ -37,14 +37,14 @@ class AbstractConnection:
                 Direction.left: "Hub4__Side_Connector_4",
                 Direction.right: "Hub4__Side_Connector_2",
                 Direction.top: "Hub4__Top_Connector",
-                Direction.bottom: "Hub4__Center_Connector"
+                Direction.bottom: "Hub4__Center_Connector",
             },
             "Flange": {
                 Direction.front: "Flange__SideConnector",
                 Direction.rear: "Flange__SideConnector",
                 Direction.left: "Flange__SideConnector",
                 Direction.right: "Flange__SideConnector",
-                Direction.top: "Flange__BottomConnector", # Flange__TopConnector ?
+                Direction.top: "Flange__BottomConnector",  # Flange__TopConnector ?
                 Direction.bottom: "Flange__BottomConnector",
             },
         }
@@ -75,12 +75,12 @@ class AbstractConnection:
             # elif component_b.c_type.id == "Hub4":
             #     tube.parameters["Tube__END_ROT"].value += 180.0
 
-        if (component_b.c_type.id == "Hub4" and
-                (self.direction_from_b_to_a == Direction.top or self.direction_from_b_to_a == Direction.bottom)):
+        if component_b.c_type.id == "Hub4" and (
+            self.direction_from_b_to_a == Direction.top or self.direction_from_b_to_a == Direction.bottom
+        ):
             top_tube_connector = c_library.connectors["Tube__OffsetConnection2"]
         # elif component_b.c_type.id == "Hub4" and component_a.c_type.id == "Hub4":
         #     tube.parameters["Tube__END_ROT"].value = 0.0
-
 
         connection_a_tube = Connection(
             component_a=component_a, connector_a=connector_a, component_b=tube, connector_b=bottom_tube_connector

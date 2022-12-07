@@ -76,7 +76,9 @@ class ContinuousProblemVisualizer(object):
         f_array = np.zeros(f_shape)
         for i in range(xv_array.shape[0]):
             for j in range(xv_array.shape[1]):
-                obj_vals, con_vals = self._problem.optimize_and_evaluate_script(np.array([xv_array[i, j], yv_array[i, j]]))
+                obj_vals, con_vals = self._problem.optimize_and_evaluate_script(
+                    np.array([xv_array[i, j], yv_array[i, j]])
+                )
                 f_array[i, j] = obj_vals.flatten()
         return f_array
 
@@ -100,7 +102,9 @@ class ContinuousProblemVisualizer(object):
         x_valid_array = np.zeros(x_valid_shape)
         for i in range(xv_array.shape[0]):
             for j in range(xv_array.shape[1]):
-                obj_vals, con_vals = self._problem.optimize_and_evaluate_script(np.array([xv_array[i, j], yv_array[i, j]]))
+                obj_vals, con_vals = self._problem.optimize_and_evaluate_script(
+                    np.array([xv_array[i, j], yv_array[i, j]])
+                )
                 x_valid_array[i, j] = con_vals.flatten()
         return x_valid_array
 

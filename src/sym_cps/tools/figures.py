@@ -3,7 +3,6 @@ from dataclasses import dataclass
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
-from sym_cps.tools.my_io import save_to_file
 
 direction_to_coordinates = {
     "ego": [0, 0, 0],
@@ -13,7 +12,6 @@ direction_to_coordinates = {
     "right": [1, 0, 0],
     "top": [0, 0, 1],
     "rear": [0, -1, 0],
-
 }
 
 
@@ -30,25 +28,19 @@ class DirectionsGrid:
     @property
     def plot(self):
         nodes = list(direction_to_coordinates.values())
-        colors = [
-            self.ego,
-            self.front,
-            self.bottom,
-            self.left,
-            self.right,
-            self.top,
-            self.rear]
+        colors = [self.ego, self.front, self.bottom, self.left, self.right, self.top, self.rear]
 
         node_xyz = np.array(nodes)
         color_xyz = np.array(colors)
-        edges=np.array([
-            [direction_to_coordinates["rear"], direction_to_coordinates["front"]],
-            [direction_to_coordinates["top"], direction_to_coordinates["bottom"]],
-             [direction_to_coordinates["left"], direction_to_coordinates["right"]]]
+        edges = np.array(
+            [
+                [direction_to_coordinates["rear"], direction_to_coordinates["front"]],
+                [direction_to_coordinates["top"], direction_to_coordinates["bottom"]],
+                [direction_to_coordinates["left"], direction_to_coordinates["right"]],
+            ]
         )
 
         return plot_3d_grid(node_xyz, color_xyz, edges)
-
 
 
 def generate_empty_grid(size: int):
@@ -62,6 +54,7 @@ def generate_empty_grid(size: int):
 
     return plot_3d_grid(np.array(node_xyz), np.array(color_xyz))
 
+
 def plot_3d_grid(
     node_xyz: np.array,
     color_xyz: np.array,
@@ -73,7 +66,7 @@ def plot_3d_grid(
     ax = fig.add_subplot(111, projection="3d")
 
     # Plot the nodes - alpha is scaled by "depth" automatically
-    ax.scatter(*node_xyz.T, s=100, c=color_xyz, edgecolors='black', linewidth=1)
+    ax.scatter(*node_xyz.T, s=100, c=color_xyz, edgecolors="black", linewidth=1)
 
     # Plot the edges
     if edge_xyz is not None:
@@ -96,9 +89,9 @@ def plot_3d_grid(
 
 
 fig = generate_empty_grid(8)
-fig.savefig(f'grid8.pdf', transparent=True)
+fig.savefig(f"grid8.pdf", transparent=True)
 
 g = DirectionsGrid()
 fig = g.plot
 
-fig.savefig(f'direction.pdf', transparent=True)
+fig.savefig(f"direction.pdf", transparent=True)

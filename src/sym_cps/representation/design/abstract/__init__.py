@@ -20,7 +20,7 @@ from sym_cps.representation.design.abstract.elements import (
     Wing,
 )
 from sym_cps.representation.design.concrete import Component, Connection, DConcrete
-from sym_cps.representation.tools.optimize import set_direction, find_components
+from sym_cps.representation.tools.optimize import find_components, set_direction
 from sym_cps.shared.library import c_library
 from sym_cps.tools.figures import plot_3d_grid
 from sym_cps.tools.my_io import save_to_file
@@ -149,12 +149,9 @@ class AbstractDesign:
             prop_left.direction = assignments_right[i] * -1
             print(f"Propeller in position {str(pos_l)} \t direction {prop_left.direction}")
 
-
         for elem in propellers_center.items():
             elem.direction = random.choice([-1, 1])
             print(f"Propeller in center \t direction {elem.direction}")
-
-
 
     def instantiate_hubs(self) -> dict:
         hubs = []

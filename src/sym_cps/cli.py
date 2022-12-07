@@ -1,29 +1,22 @@
 """Module that contains the command line application."""
 import argparse
-import json
 import pickle
-import random
-import string
 from pathlib import Path
 from typing import List, Optional
 
 from sym_cps.evaluation import evaluate_design
 from sym_cps.examples.library import export_library
 from sym_cps.grammar import AbstractGrid
-from sym_cps.grammar.rules import generate_random_new_topology
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
-from sym_cps.scripts import get_latest_evaluated_design_number, generate_random_instance_id, get_random_new_topology, \
-    _stats_cleanup
-from sym_cps.shared.paths import (
-    aws_folder,
-    data_folder,
-    designs_folder,
-    designs_generated_stats_path,
-    random_topologies_generated_path,
+from sym_cps.scripts import (
+    _stats_cleanup,
+    generate_random_instance_id,
+    get_latest_evaluated_design_number,
+    get_random_new_topology,
 )
-from sym_cps.tools.my_io import save_to_file
+from sym_cps.shared.paths import aws_folder, data_folder, designs_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_library
 
 
@@ -76,7 +69,9 @@ def generate_random(args: Optional[List[str]] = None):
         design_tag = f"grammar_{random_call_id}"
         design_index = i
 
-        new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, opts.n_wings_max, opts.n_props_max)
+        new_design: AbstractDesign = get_random_new_topology(
+            design_tag, design_index, opts.n_wings_max, opts.n_props_max
+        )
 
         new_design.optimize_and_evaluate_script()
 

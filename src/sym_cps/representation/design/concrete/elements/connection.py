@@ -100,8 +100,6 @@ class Connection:
             print(e)
         return dir
 
-
-
     def __eq__(self, other: object):
         if not isinstance(other, Connection):
             return NotImplementedError

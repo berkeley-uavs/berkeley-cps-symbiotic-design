@@ -102,10 +102,7 @@ class Propeller(AbstractComponent):
         self._direction = value
         for component in self.structure:
             if component.c_type.id == "Propeller":
-                component.update_parameters({
-                    "Propeller__Direction": value,
-                    "Propeller__Prop_type": value
-                })
+                component.update_parameters({"Propeller__Direction": value, "Propeller__Prop_type": value})
         if self._direction == 1:
             self.color = "lime"
         else:
