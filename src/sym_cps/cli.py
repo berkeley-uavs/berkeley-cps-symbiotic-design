@@ -14,6 +14,8 @@ from sym_cps.grammar.rules import generate_random_new_topology
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
+from sym_cps.scripts import get_latest_evaluated_design_number, generate_random_instance_id, get_random_new_topology, \
+    _stats_cleanup
 from sym_cps.shared.paths import (
     aws_folder,
     data_folder,
@@ -56,28 +58,6 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
     raise AttributeError
 
 
-def _stats_cleanup():
-    designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
-    random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
-    designs_in_folder = [f.name for f in list(Path(designs_folder).iterdir())]
-    to_delete_stats = []
-    to_delete_generated = []
-    for k in designs_generated_stats.keys():
-        if k not in designs_in_folder:
-            to_delete_stats.append(k)
-    for k2, v2 in random_topologies_generated.items():
-        if v2 not in designs_in_folder:
-            to_delete_generated.append(k2)
-    for k in to_delete_stats:
-        del designs_generated_stats[k]
-
-    for k in to_delete_generated:
-        del random_topologies_generated[k]
-
-    save_to_file(designs_generated_stats, absolute_path=designs_generated_stats_path)
-    save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path)
-
-
 def generate_random(args: Optional[List[str]] = None):
     _stats_cleanup()
     parser = argparse.ArgumentParser(prog="sym-cps")
@@ -86,37 +66,19 @@ def generate_random(args: Optional[List[str]] = None):
     parser.add_argument("--n_props_max", type=int, default=-1, help="Specify the max number of propellers")
     opts = parser.parse_args(args=args)
     print(f"args: {opts}")
-    index = 0
-    for path in Path(designs_folder).iterdir():
-        if path.is_dir():
-            path_split = str(path).split("__")
-            # print(path_split)
-            if len(path_split) > 1:
-                try:
-                    path_split_2 = str(path_split[0]).split("challenge_data/output/designs/")
-                    first_n = int(path_split_2[1])
-                    if first_n > index:
-                        index = first_n
-                except:
-                    continue
 
-    random_call_id = "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(4))
+    index = get_latest_evaluated_design_number()
+
+    random_call_id = generate_random_instance_id()
 
     for i in range((index + 1), (index + opts.n + 1)):
         print(f"Random iteration {i}")
         design_tag = f"grammar_{random_call_id}"
         design_index = i
 
-        new_design: AbstractDesign = generate_random_new_topology(
-            design_tag=design_tag,
-            design_index=design_index,
-            max_right_num_wings=opts.n_wings_max,
-            max_right_num_rotors=opts.n_props_max,
-        )
+        new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, opts.n_wings_max, opts.n_props_max)
 
-        a = new_design.plot
-
-        new_design.evaluate()
+        new_design.optimize_and_evaluate_script()
 
 
 def _evaluate_grid_path(grid_file_path: Path):
@@ -125,7 +87,7 @@ def _evaluate_grid_path(grid_file_path: Path):
         print(f"Building AbstractDesign")
         new_design = AbstractDesign(abstract_grid.name)
         new_design.parse_grid(abstract_grid)
-        new_design.evaluate()
+        new_design.optimize_and_evaluate_script()
 
 
 def evaluate_random(args: Optional[List[str]] = None):

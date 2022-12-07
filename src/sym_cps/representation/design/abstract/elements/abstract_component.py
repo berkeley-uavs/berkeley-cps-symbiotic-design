@@ -90,6 +90,26 @@ class Fuselage(AbstractComponent):
 @dataclass
 class Propeller(AbstractComponent):
     instance_n: int = 1
+    _direction: int = 1
+
+    @property
+    def direction(self) -> int:
+        return self._direction
+
+    # a setter function
+    @direction.setter
+    def direction(self, value: int):
+        self._direction = value
+        for component in self.structure:
+            if component.c_type.id == "Propeller":
+                component.update_parameters({
+                    "Propeller__Direction": value,
+                    "Propeller__Prop_type": value
+                })
+        if self._direction == 1:
+            self.color = "lime"
+        else:
+            self.color = "teal"
 
     def __post_init__(self):
         self.base_name = "Propeller_str_top"
@@ -97,6 +117,7 @@ class Propeller(AbstractComponent):
         self.add_structure_connections()
         self.color = "green"
         self.type_short_id = "P"
+        self.direction: int = 1
 
     def __hash__(self):
         return hash(self.id)

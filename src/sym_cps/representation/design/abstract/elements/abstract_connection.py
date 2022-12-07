@@ -44,7 +44,7 @@ class AbstractConnection:
                 Direction.rear: "Flange__SideConnector",
                 Direction.left: "Flange__SideConnector",
                 Direction.right: "Flange__SideConnector",
-                Direction.top: "Flange__BottomConnector",
+                Direction.top: "Flange__BottomConnector", # Flange__TopConnector ?
                 Direction.bottom: "Flange__BottomConnector",
             },
         }

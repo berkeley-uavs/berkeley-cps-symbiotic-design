@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import random
 from dataclasses import dataclass, field
 
 import matplotlib.pyplot as plt
@@ -19,7 +20,9 @@ from sym_cps.representation.design.abstract.elements import (
     Wing,
 )
 from sym_cps.representation.design.concrete import Component, Connection, DConcrete
+from sym_cps.representation.tools.optimize import set_direction, find_components
 from sym_cps.shared.library import c_library
+from sym_cps.tools.figures import plot_3d_grid
 from sym_cps.tools.my_io import save_to_file
 from sym_cps.tools.strings import (
     get_component_and_instance_type_from_instance_name,
@@ -35,6 +38,7 @@ class AbstractDesign:
     grid: dict[tuple, AbstractComponent] = field(default_factory=dict)
     abstract_connections: set[AbstractConnection] = field(default_factory=set)
     connections: set[Connection] = field(default_factory=set)
+    fuselage_position: tuple[int, int, int] = field(default_factory=tuple)
 
     def __hash__(self):
         return hash(self.abstract_grid)
@@ -48,15 +52,18 @@ class AbstractDesign:
             d = base64.urlsafe_b64encode(d).decode("ascii")
             return str(d[:-2])
 
-    def evaluate(self):
+    def optimize_and_evaluate_script(self):
         self.save(folder_name=f"designs/{self.name}")
 
-        print(f"Engering")
         d_concrete = self.to_concrete()
-        print(f"asdasd")
+        d_concrete.export_all()
 
         d_concrete.choose_default_components_for_empty_ones()
+
+        find_components(d_concrete)
+
         d_concrete.export_all()
+
         save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
 
         print(f"Design {d_concrete.name} generated")
@@ -94,6 +101,7 @@ class AbstractDesign:
                             position, Fuselage(grid_position=position, instance_n=connecter_inst)
                         )
                         connecter_inst += 1
+                        self.fuselage_position = (x_pos, y_pos, z_pos)
                     if "WING" in node_element:
                         self.add_abstract_component(position, Wing(grid_position=position, instance_n=wing_inst))
                         wing_inst += 1
@@ -109,6 +117,44 @@ class AbstractDesign:
         for position_a, connections in abstract_grid.adjacencies.items():
             for position_b in connections:
                 self.add_connection(position_a, position_b)
+
+        self.set_direction_rotors()
+
+    def set_direction_rotors(self):
+
+        propellers_right: dict[tuple[int, int, int], Propeller] = {}
+        propellers_left: dict[tuple[int, int, int], Propeller] = {}
+        propellers_center: dict[tuple[int, int, int], Propeller] = {}
+        for position, component in self.grid.items():
+            if isinstance(component, Propeller):
+                cx, cy, cz = position[0], position[1], position[2]
+                if cx == self.fuselage_position[0]:
+                    propellers_right[(cx, cy, cz)] = component
+                if cx > self.fuselage_position[0]:
+                    propellers_right[(cx, cy, cz)] = component
+                else:
+                    propellers_left[(cx, cy, cz)] = component
+
+        propellers_right = dict(sorted(propellers_right.items()))
+        propellers_left = dict(sorted(propellers_left.items()))
+
+        assignments_right = [-1]
+        for pos_r, prop_right in propellers_right.items():
+            latest_dir = assignments_right[-1:][0]
+            prop_right.direction = latest_dir * -1
+            print(f"Propeller in position {str(pos_r)} \t direction {prop_right.direction}")
+            assignments_right.append(prop_right.direction)
+
+        for i, (pos_l, prop_left) in enumerate(propellers_left.items()):
+            prop_left.direction = assignments_right[i] * -1
+            print(f"Propeller in position {str(pos_l)} \t direction {prop_left.direction}")
+
+
+        for elem in propellers_center.items():
+            elem.direction = random.choice([-1, 1])
+            print(f"Propeller in center \t direction {elem.direction}")
+
+
 
     def instantiate_hubs(self) -> dict:
         hubs = []
@@ -250,38 +296,9 @@ class AbstractDesign:
     def plot(self):
 
         graph = self.graph
-        list_xyz = [graph.nodes[v]["position"] for v in sorted(graph)]
-        print(list_xyz)
-        # Extract node and edge positions from the layout
+
         node_xyz = np.array([graph.nodes[v]["position"] for v in sorted(graph)])
-        print(node_xyz)
         color_xyz = np.array([graph.nodes[v]["color"] for v in sorted(graph)])
-        print(color_xyz)
-
         edge_xyz = np.array([(graph.nodes[u]["position"], graph.nodes[v]["position"]) for u, v in graph.edges()])
-        print(edge_xyz)
 
-        # Create the 3D figure
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection="3d")
-
-        # Plot the nodes - alpha is scaled by "depth" automatically
-        ax.scatter(*node_xyz.T, s=100, ec="w", c=color_xyz)
-
-        # Plot the edges
-        for vizedge in edge_xyz:
-            ax.plot(*vizedge.T, color="tab:gray")
-
-        # Turn gridlines off
-        ax.grid(False)
-        # Suppress tick labels
-        for dim in (ax.xaxis, ax.yaxis, ax.zaxis):
-            dim.set_ticks([])
-        # Set axes labels
-        ax.set_xlabel("x")
-        ax.set_ylabel("y")
-        ax.set_zlabel("z")
-
-        fig.tight_layout()
-        # fig.show()
-        return fig
+        return plot_3d_grid(node_xyz, color_xyz, edge_xyz)

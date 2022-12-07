@@ -67,10 +67,12 @@ if __name__ == "__main__":
         dconcrete: DConcrete = abstract_design.to_concrete()
 
         # """Generate STL and evaluate"""
-        # dconcrete.choose_default_components_for_empty_ones()
+        dconcrete.choose_default_components_for_empty_ones()
         #
         # """find component"""
-        # find_components(dconcrete)
+        find_components(dconcrete)
+
+        set_direction()
         #
         # dconcrete.export_all()
         dconcrete.evaluate()

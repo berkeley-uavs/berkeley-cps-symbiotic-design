@@ -13,6 +13,18 @@ class SymbolType(Enum):
     ROTOR = auto()
     WING = auto()
     CONNECTOR = auto()
+    ANY = auto()
+
+
+symbols_colors: dict = {
+    SymbolType.ANY: "white",
+    SymbolType.UNOCCUPIED: "white",
+    SymbolType.FUSELAGE: "red",
+    SymbolType.EMPTY: "black",
+    SymbolType.ROTOR: "green",
+    SymbolType.CONNECTOR: "grey",
+    SymbolType.WING: "blue",
+}
 
 
 @dataclass(frozen=True)
