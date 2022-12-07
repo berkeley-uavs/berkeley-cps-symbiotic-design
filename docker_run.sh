@@ -43,7 +43,6 @@ main() {
     --name $container \
     --privileged \
     --workdir /root/host \
-    --platform ${my_platform} \
     ${mount_arg} \
     ${port_arg} \
     $image bash
