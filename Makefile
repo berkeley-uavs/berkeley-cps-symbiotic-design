@@ -57,7 +57,7 @@ check:
 
 
 
-.PHONY: eval-init
+.PHONY: docker-init
 eval-init: docker-broker-conf openvpn-connect mount-drive
 
 

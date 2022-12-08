@@ -51,6 +51,7 @@ def get_latest_evaluated_design_number() -> int:
                         index = first_n
                 except:
                     continue
+    print(f"latest_index: {index}")
     return index
 
 
@@ -68,11 +69,10 @@ def get_random_new_topology(design_tag, design_index, n_wings_max=-1, n_props_ma
     return new_design
 
 
-def make_design(random_call_id: str, wings_max=0, n_props_max=-1):
-    design_tag = f"grammar_{random_call_id}"
+def make_design(tag: str, wings_max=0, n_props_max=-1):
+    design_tag = f"grammar_{tag}"
     design_index = get_latest_evaluated_design_number()
-
-    new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, wings_max, n_props_max)
+    new_design: AbstractDesign = get_random_new_topology(design_tag, design_index + 1, wings_max, n_props_max)
     new_design.save()
     d_concrete = new_design.to_concrete()
     d_concrete.choose_default_components_for_empty_ones()
@@ -130,38 +130,38 @@ def optimize_designs():
         grid_file = Path(design_to_opt) / "grid.dat"
         optimize_design(grid_file)
 
-
-n_designs = 20
-n_wings_max = 0
-n_prop_max = -1
-
-if __name__ == "__main__":
-
-    index = get_latest_evaluated_design_number()
-
-    random_call_id = generate_random_instance_id()
-
-    for i in range((index + 1), (index + n_designs + 1)):
-        print(f"Random iteration {i}")
-        design_tag = f"directions_props_grammar_{random_call_id}"
-        design_index = i
-
-        new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, n_wings_max, n_prop_max)
-
-        new_design.save(folder_name=f"designs/{new_design.name}")
-
-        d_concrete = new_design.to_concrete()
-
-        d_concrete.choose_default_components_for_empty_ones()
-
-        d_concrete.export_all()
-
-        find_components(d_concrete)
-
-        d_concrete.export_all()
-
-        save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
-
-        print(f"Design {d_concrete.name} generated")
-        print(f"Evaluating..")
-        d_concrete.evaluate()
+#
+# n_designs = 20
+# n_wings_max = 0
+# n_prop_max = -1
+#
+# if __name__ == "__main__":
+#
+#     index = get_latest_evaluated_design_number()
+#
+#     random_call_id = generate_random_instance_id()
+#
+#     for i in range((index + 1), (index + n_designs + 1)):
+#         print(f"Random iteration {i}")
+#         design_tag = f"directions_props_grammar_{random_call_id}"
+#         design_index = i
+#
+#         new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, n_wings_max, n_prop_max)
+#
+#         new_design.save(folder_name=f"designs/{new_design.name}")
+#
+#         d_concrete = new_design.to_concrete()
+#
+#         d_concrete.choose_default_components_for_empty_ones()
+#
+#         d_concrete.export_all()
+#
+#         find_components(d_concrete)
+#
+#         d_concrete.export_all()
+#
+#         save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
+#
+#         print(f"Design {d_concrete.name} generated")
+#         print(f"Evaluating..")
+#         d_concrete.evaluate()

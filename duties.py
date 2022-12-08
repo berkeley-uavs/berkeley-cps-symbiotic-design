@@ -314,6 +314,7 @@ def designs(ctx):
             pty=False,
         )
         ctx.run(f"cd {repo_folder}", title="", pty=False)
+        iteration += 1
 
 
 @duty(capture="both")
