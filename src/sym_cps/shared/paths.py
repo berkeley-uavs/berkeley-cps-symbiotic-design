@@ -31,7 +31,6 @@ fdm_tmp_folder: Path = fdm_root_folder / "tmp"
 fdm_extract_folder: Path = fdm_root_folder / "extract"
 prop_table_folder: Path = fdm_root_folder / "Tables" / "PropData"
 
-
 component_library_root_path_default: Path = data_folder / "ComponentLibrary" / "results_json"
 default_study_params_path = data_folder / "default_study_params" / "study_params.csv"
 
@@ -48,16 +47,15 @@ reverse_engineering_folder = data_folder / "reverse_engineering"
 connectors_components_path = reverse_engineering_folder / "connectors_components_backup.json"
 manual_connectors_components_path = reverse_engineering_folder / "manual_connections_learned.json"
 
-
 grammar_rules_path = reverse_engineering_folder / "grammar_rules.json"
 grammar_rules_path_new = reverse_engineering_folder / "grammar_rules_new.json"
 grammar_rules_processed_path = reverse_engineering_folder / "grammar_rules_processed.json"
 grammar_statistics = reverse_engineering_folder / "grammar_statistics.txt"
 
-
-designs_generated_stats_path = output_folder / "random_designs_stats.json"
-random_topologies_generated_path = output_folder / "random_topologies_generated.json"
-
+stats_folder = output_folder / "stats"
+designs_generated_stats_path = lambda tag: stats_folder / f"{tag}_random_designs_stats.json"
+random_topologies_generated_path = lambda tag: stats_folder / f"{tag}_random_topologies_generated.json"
+stats_file_path = output_folder / "stats.json"
 
 structures_path = reverse_engineering_folder / "analysis" / "structure.json"
 manual_default_parameters_path = output_folder / "reverse_engineering" / "shared_parameters_manual.json"

@@ -13,8 +13,8 @@ from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
 from sym_cps.representation.tools.optimize import find_components
 from sym_cps.scripts import generate_random_instance_id, get_latest_evaluated_design_number, get_random_new_topology, \
-    _stats_cleanup
-from sym_cps.shared.paths import aws_folder, data_folder, designs_folder
+    _stats_make
+from sym_cps.shared.paths import aws_folder, data_folder, designs_folder, random_session_seed
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_library
 
 
@@ -50,7 +50,6 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
 
 
 def generate_random(args: Optional[List[str]] = None):
-    _stats_cleanup()
 
     parser = argparse.ArgumentParser(prog="sym-cps")
     parser.add_argument("--n", type=int, default=1, help="Specify the number of  random designs")
@@ -63,6 +62,7 @@ def generate_random(args: Optional[List[str]] = None):
     index = get_latest_evaluated_design_number()
 
     random_call_id = generate_random_instance_id()
+    random_session_seed = str(random_call_id)
 
     for i in range((index + 1), (index + opts.n + 1)):
         print(f"Random iteration {i}")

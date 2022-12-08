@@ -220,7 +220,7 @@ class DConcrete:
         print(self.evaluation_results["status"])
         self.export(ExportType.EVALUATION)
         print("Evaluation completed")
-        designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
+        designs_generated_stats: dict = json.load(open(designs_generated_stats_path(self.name)))
         designs_generated_stats[self.name] = self.evaluation_results
         print(f"Result saved\n")
 
@@ -380,7 +380,7 @@ class DConcrete:
             print(f"Copying {self.evaluation_results['results_path']} to {absolute_folder}")
             shutil.copytree(self.evaluation_results["results_path"], absolute_folder / "Results")
             print(f"Saving statistics")
-            designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
+            designs_generated_stats: dict = json.load(open(designs_generated_stats_path, self.name))
             designs_generated_stats[self.name] = results
             save_to_file(
                 designs_generated_stats,

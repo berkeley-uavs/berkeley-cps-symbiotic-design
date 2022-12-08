@@ -33,7 +33,8 @@ BASIC_DUTIES = \
 	docs-serve \
 	format \
 	release \
-	results
+	designs \
+	optimize-contrats
 
 QUALITY_DUTIES = \
 	check-quality \
@@ -53,6 +54,11 @@ lock:
 check:
 	pdm run duty check-quality check-types check-docs
 	@$(DUTY) check-dependencies
+
+
+
+.PHONY: eval-init
+eval-init: docker-broker-conf openvpn-connect mount-drive
 
 
 .PHONY: openvpn-connect
