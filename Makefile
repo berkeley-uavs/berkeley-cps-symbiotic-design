@@ -76,6 +76,21 @@ mount-drive:
 	mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
 
 
+.PHONY: results
+mount-drive:
+	echo "Generating results script"
+	for((i=0; ;++i)); do
+		echo "Iteration $i"
+		pdm run generate_random "--n=1", "--n_wings_max=0"
+		cd ../challenge_data
+		git add --a
+		git commit -m "new result generated"
+		git push
+		echo "new result pushed to github"
+		cd ../host
+	done
+
+
 .PHONY: start-ssh
 start-ssh:
 	echo "Starting ssh server..."
