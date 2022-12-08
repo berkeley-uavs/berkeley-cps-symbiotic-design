@@ -298,7 +298,7 @@ def results(ctx):
     iteration = 0
     while True:
         print(f"Iteration: {iteration}")
-        ctx.run("pdm run generate_random '--n=1 --n_wings_max=0'", title="Running generate_random script", pty=False)
+        # ctx.run("pdm run generate_random --n=1 --n_wings_max=0", title="Running generate_random script", pty=False)
         ctx.run("cd ../challenge_data; git add --a; git commit -m 'new result generated'; git push;", title="Pushing results", pty=False)
         ctx.run("cd ../host", title="", pty=False)
 
