@@ -96,11 +96,11 @@ def optimize_design(grid_file_path: Path):
 
 def get_all_stat() -> tuple[dict, dict]:
     random_designs_stats_files = set(
-        filter(lambda x: x.contains("random_designs_stats"), [f.name for f in list(Path(stats_folder).iterdir())])
+        filter(lambda x: "random_designs_stats" in x, [f.name for f in list(Path(stats_folder).iterdir())])
     )
     random_topologies_generated_files = set(
         filter(
-            lambda x: x.contains("random_topologies_generated"), [f.name for f in list(Path(stats_folder).iterdir())]
+            lambda x: "random_topologies_generated" in x, [f.name for f in list(Path(stats_folder).iterdir())]
         )
     )
 
