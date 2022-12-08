@@ -326,10 +326,8 @@ def redesign(ctx):
     ctx.run(f"cd {repo_folder}")
 
     designs_in_folder = set(
-        filter(lambda x: not "_comp_opt" in x, [f.name for f in list(Path(designs_folder).iterdir())])
+        filter(lambda x: not "_comp_opt" in x, list(Path(designs_folder).iterdir()))
     )
-
-    print(f"Designs not optimized: {designs_in_folder}")
 
     for design_to_opt in designs_in_folder:
         grid_file = Path(design_to_opt) / "grid.dat"
@@ -353,10 +351,8 @@ def optimize_contracts(ctx):
     ctx.run(f"cd {repo_folder}")
 
     designs_in_folder = set(
-        filter(lambda x: not "_comp_opt" in x, [f.name for f in list(Path(designs_folder).iterdir())])
+        filter(lambda x: not "_comp_opt" in x, list(Path(designs_folder).iterdir()))
     )
-
-    print(f"Designs not optimized: {designs_in_folder}")
 
     for design_to_opt in designs_in_folder:
         grid_file = Path(design_to_opt) / "grid.dat"
