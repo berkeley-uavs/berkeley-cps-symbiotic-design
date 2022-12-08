@@ -296,6 +296,8 @@ def format(ctx):
 
 @duty(capture="both")
 def designs(ctx):
+    print("Connecting")
+    ctx.run("make connect")
     print("Generating Results Script")
     iteration = 0
     print(f"challenge_data folder: {challenge_data}")
