@@ -376,7 +376,7 @@ class DConcrete:
             print(f"Copying {self.evaluation_results['stp_file_path']} to {absolute_folder}")
             shutil.copy(self.evaluation_results["stp_file_path"], absolute_folder)
             print(f"Copying {self.evaluation_results['results_path']} to {absolute_folder}")
-            shutil.copytree(self.evaluation_results["results_path"], absolute_folder)
+            shutil.copytree(self.evaluation_results["results_path"], absolute_folder / "Results")
             print(f"Saving statistics")
             designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
             designs_generated_stats[self.name] = results

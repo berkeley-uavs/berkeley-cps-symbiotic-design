@@ -1,6 +1,7 @@
 """Module that contains the command line application."""
 import argparse
 import pickle
+from copy import deepcopy
 from pathlib import Path
 from typing import List, Optional
 
@@ -10,7 +11,9 @@ from sym_cps.grammar import AbstractGrid
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
-from sym_cps.scripts import generate_random_instance_id, get_latest_evaluated_design_number, get_random_new_topology
+from sym_cps.representation.tools.optimize import find_components
+from sym_cps.scripts import generate_random_instance_id, get_latest_evaluated_design_number, get_random_new_topology, \
+    _stats_cleanup
 from sym_cps.shared.paths import aws_folder, data_folder, designs_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_library
 
@@ -47,7 +50,8 @@ def _parse_design(args: Optional[List[str]] = None) -> DConcrete:
 
 
 def generate_random(args: Optional[List[str]] = None):
-    # _stats_cleanup()
+    _stats_cleanup()
+
     parser = argparse.ArgumentParser(prog="sym-cps")
     parser.add_argument("--n", type=int, default=1, help="Specify the number of  random designs")
     parser.add_argument("--n_wings_max", type=int, default=-1, help="Specify the max number of wings")
@@ -68,8 +72,18 @@ def generate_random(args: Optional[List[str]] = None):
         new_design: AbstractDesign = get_random_new_topology(
             design_tag, design_index, opts.n_wings_max, opts.n_props_max
         )
+        new_design.save()
+        d_concrete = new_design.to_concrete()
+        d_concrete.choose_default_components_for_empty_ones()
+        d_concrete.export_all()
+        d_concrete.evaluate()
 
-        new_design.optimize_and_evaluate_script(opts.no_optimization)
+        print(f"Optimizing Components")
+        new_d_concrete = deepcopy(d_concrete)
+        find_components(new_d_concrete)
+        d_concrete.export_all()
+        d_concrete.evaluate()
+
 
 
 def _evaluate_grid_path(grid_file_path: Path):

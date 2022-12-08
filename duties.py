@@ -26,7 +26,9 @@ from pathlib import Path
 from typing import List, Optional, Pattern
 from urllib.request import urlopen
 
+from sym_cps.cli import generate_random
 from sym_cps.shared.paths import challenge_data, repo_folder
+from sym_cps.tools.my_io import save_to_file
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -294,7 +296,7 @@ def format(ctx):
 
 
 
-@duty(capture="none")
+@duty(capture="both")
 def results(ctx):
     print("Generating Results Script")
     iteration = 0
@@ -305,7 +307,7 @@ def results(ctx):
     ctx.run(f"cd {repo_folder}")
     while True:
         print(f"Iteration: {iteration}")
-        ctx.run("pdm run generate_random --n=1 --n_wings_max=0", title="Running generate_random script", pty=False)
+        generate_random(["--n=1", "--n_wings_max=0"])
         ctx.run(f"cd {challenge_data}; git add --a; git commit -m 'new result generated'; git push", title="Pushing results", pty=False)
         ctx.run(f"cd {repo_folder}", title="", pty=False)
 
