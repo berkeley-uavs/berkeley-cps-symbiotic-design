@@ -68,7 +68,7 @@ def rename_if_already_exists(absolute_path: Path):
         else:
             new_name = f"{name}_ver_1" + suffix
         new_path = absolute_path.parent / new_name
-        print(f"New file name: {absolute_path}")
+        print(f"New file name: {new_path}")
     if absolute_path.is_dir():
         print(f"'Directory already exists: {absolute_path}")
         name = absolute_path.name
@@ -78,7 +78,7 @@ def rename_if_already_exists(absolute_path: Path):
         else:
             new_name = f"{name}_ver_1"
         new_path = absolute_path.parent / new_name
-        print(f"New dir name: {absolute_path}")
+        print(f"New dir name: {new_path}")
     return new_path
 def _write_file(file_content: str | dict | Figure | object, absolute_path: Path):
     absolute_path = rename_if_already_exists(absolute_path)
