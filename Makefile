@@ -79,10 +79,10 @@ mount-drive:
 .PHONY: results
 results:
 	echo "Generating results script"
-	iter=0
+	i=0
 	while true; \
 	do \
-		echo "Iteration ${iter}"; \
+		echo "Iteration ${i}"; \
 		pdm run generate_random "--n=1", "--n_wings_max=0"; \
 		cd ../challenge_data; \
 		git add --a; \
@@ -90,7 +90,7 @@ results:
 		git push; \
 		echo "new result pushed to github"; \
 		cd ../host; \
-		(( iter++ )); \
+		(( i++ )); \
 	done
 
 
