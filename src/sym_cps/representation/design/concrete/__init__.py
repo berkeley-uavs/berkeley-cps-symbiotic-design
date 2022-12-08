@@ -363,6 +363,8 @@ class DConcrete:
         elif file_type == ExportType.EVALUATION:
             results = deepcopy(self.evaluation_results)
             del results["stl_file_path"]
+            del results["stp_file_path"]
+            del results["results_path"]
             file_path = absolute_folder / "evaluation_results.json"
             save_to_file(
                 results,
@@ -371,6 +373,10 @@ class DConcrete:
             )
             print(f"Copying {self.evaluation_results['stl_file_path']} to {absolute_folder}")
             shutil.copy(self.evaluation_results["stl_file_path"], absolute_folder)
+            print(f"Copying {self.evaluation_results['stp_file_path']} to {absolute_folder}")
+            shutil.copy(self.evaluation_results["stp_file_path"], absolute_folder)
+            print(f"Copying {self.evaluation_results['results_path']} to {absolute_folder}")
+            shutil.copytree(self.evaluation_results["results_path"], absolute_folder)
             print(f"Saving statistics")
             designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
             designs_generated_stats[self.name] = results
