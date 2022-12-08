@@ -82,7 +82,7 @@ results:
 	iter=0
 	while true; \
 	do \
-		echo "Iteration $iter"; \
+		echo "Iteration ${iter}"; \
 		pdm run generate_random "--n=1", "--n_wings_max=0"; \
 		cd ../challenge_data; \
 		git add --a; \
