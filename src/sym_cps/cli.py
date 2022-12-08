@@ -12,9 +12,8 @@ from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
 from sym_cps.representation.tools.optimize import find_components
-from sym_cps.scripts import generate_random_instance_id, get_latest_evaluated_design_number, get_random_new_topology, \
-    _stats_make
-from sym_cps.shared.paths import aws_folder, data_folder, designs_folder, random_session_seed
+from sym_cps.scripts import generate_random_instance_id, get_latest_evaluated_design_number, get_random_new_topology
+from sym_cps.shared.paths import aws_folder, data_folder, designs_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_library
 
 
@@ -83,7 +82,6 @@ def generate_random(args: Optional[List[str]] = None):
         find_components(new_d_concrete)
         d_concrete.export_all()
         d_concrete.evaluate()
-
 
 
 def _evaluate_grid_path(grid_file_path: Path):

@@ -26,10 +26,8 @@ from pathlib import Path
 from typing import List, Optional, Pattern
 from urllib.request import urlopen
 
-from sym_cps.cli import generate_random
-from sym_cps.scripts import make_design, generate_random_instance_id, optimize_design
-from sym_cps.shared.paths import challenge_data, repo_folder, designs_folder
-from sym_cps.tools.my_io import save_to_file
+from sym_cps.scripts import generate_random_instance_id, make_design, optimize_design
+from sym_cps.shared.paths import challenge_data, designs_folder, repo_folder
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -60,10 +58,10 @@ def _unreleased(versions, last_release):
 
 
 def update_changelog(
-        inplace_file: str,
-        marker: str,
-        version_regex: str,
-        template_url: str,
+    inplace_file: str,
+    marker: str,
+    version_regex: str,
+    template_url: str,
 ) -> None:
     """
     Update the given changelog file in place.
@@ -302,8 +300,7 @@ def designs(ctx):
     iteration = 0
     print(f"challenge_data folder: {challenge_data}")
     print(f"repo folder: {repo_folder}")
-    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git pull",
-            title="Pulling results", pty=False)
+    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git pull", title="Pulling results", pty=False)
     ctx.run(f"cd {repo_folder}")
 
     instance_id = generate_random_instance_id()
@@ -313,7 +310,9 @@ def designs(ctx):
         make_design(instance_id)
         ctx.run(
             f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
-            title="Pushing results", pty=False)
+            title="Pushing results",
+            pty=False,
+        )
         ctx.run(f"cd {repo_folder}", title="", pty=False)
 
 
@@ -322,12 +321,12 @@ def optimize_contracts(ctx):
     print("Optimizing Existing Designs Using Contracts")
     print(f"challenge_data folder: {challenge_data}")
     print(f"repo folder: {repo_folder}")
-    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git pull",
-            title="Pulling results", pty=False)
+    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git pull", title="Pulling results", pty=False)
     ctx.run(f"cd {repo_folder}")
 
     designs_in_folder = set(
-        filter(lambda x: not x.contains("_comp_opt"), [f.name for f in list(Path(designs_folder).iterdir())]))
+        filter(lambda x: not x.contains("_comp_opt"), [f.name for f in list(Path(designs_folder).iterdir())])
+    )
 
     print(f"Designs not optimized: {designs_in_folder}")
 
@@ -336,7 +335,9 @@ def optimize_contracts(ctx):
         optimize_design(grid_file)
         ctx.run(
             f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
-            title="Pushing results", pty=False)
+            title="Pushing results",
+            pty=False,
+        )
         ctx.run(f"cd {repo_folder}", title="", pty=False)
 
 

@@ -322,6 +322,7 @@ def generate_random_new_topology(
     design_tag: str, design_index: int, max_right_num_rotors: int = -1, max_right_num_wings: int = -1
 ) -> AbstractDesign:
     from sym_cps.scripts import get_all_stat
+
     random_topologies_generated: dict = get_all_stat()[1]
 
     while True:

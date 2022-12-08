@@ -10,8 +10,7 @@ from sym_cps.grammar import AbstractGrid
 from sym_cps.grammar.rules import generate_random_new_topology
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.tools.optimize import find_components
-from sym_cps.shared.paths import designs_folder, designs_generated_stats_path, random_topologies_generated_path, \
-    stats_folder, stats_file_path
+from sym_cps.shared.paths import designs_folder, stats_file_path, stats_folder
 from sym_cps.tools.my_io import save_to_file
 
 
@@ -75,9 +74,7 @@ def make_design(random_call_id: str, wings_max=0, n_props_max=-1):
     design_tag = f"grammar_{random_call_id}"
     design_index = get_latest_evaluated_design_number()
 
-    new_design: AbstractDesign = get_random_new_topology(
-        design_tag, design_index, wings_max, n_props_max
-    )
+    new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, wings_max, n_props_max)
     new_design.save()
     d_concrete = new_design.to_concrete()
     d_concrete.choose_default_components_for_empty_ones()
@@ -101,9 +98,13 @@ def optimize_design(grid_file_path: Path):
 
 def get_all_stat() -> tuple[dict, dict]:
     random_designs_stats_files = set(
-        filter(lambda x: x.contains("random_designs_stats"), [f.name for f in list(Path(stats_folder).iterdir())]))
-    random_topologies_generated_files = set(filter(lambda x: x.contains("random_topologies_generated"),
-                                                   [f.name for f in list(Path(stats_folder).iterdir())]))
+        filter(lambda x: x.contains("random_designs_stats"), [f.name for f in list(Path(stats_folder).iterdir())])
+    )
+    random_topologies_generated_files = set(
+        filter(
+            lambda x: x.contains("random_topologies_generated"), [f.name for f in list(Path(stats_folder).iterdir())]
+        )
+    )
 
     random_designs_stats_dict = {}
     random_topologies_generated_dict = {}
@@ -121,7 +122,8 @@ def get_all_stat() -> tuple[dict, dict]:
 
 def optimize_designs():
     designs_in_folder = set(
-        filter(lambda x: not x.contains("_comp_opt"), [f.name for f in list(Path(designs_folder).iterdir())]))
+        filter(lambda x: not x.contains("_comp_opt"), [f.name for f in list(Path(designs_folder).iterdir())])
+    )
 
     print(f"Designs not optimized: {designs_in_folder}")
 
