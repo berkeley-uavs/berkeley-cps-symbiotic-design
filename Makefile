@@ -59,7 +59,7 @@ check:
 
 
 .PHONY: connect
-eval-init: docker-broker-conf openvpn-connect mount-drive
+eval-init: broker-conf openvpn-connect mount-drive
 
 
 .PHONY: openvpn-connect
@@ -68,8 +68,8 @@ openvpn-connect:
 	openvpn --config ../challenge_data/aws-cvpn-config.ovpn --daemon
 
 
-.PHONY: docker-broker-conf
-docker-broker-conf:
+.PHONY: broker-conf
+broker-conf:
 	echo "Configuring broker..."
 	pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
 #	mkdir /etc/xdg/SimpleUAM
