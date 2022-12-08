@@ -69,8 +69,6 @@ def get_random_new_topology(design_tag, design_index, n_wings_max=-1, n_props_ma
 
 
 def make_design(random_call_id: str, wings_max=0, n_props_max=-1):
-
-    print(f"Random iteration {i}")
     design_tag = f"grammar_{random_call_id}"
     design_index = get_latest_evaluated_design_number()
 
