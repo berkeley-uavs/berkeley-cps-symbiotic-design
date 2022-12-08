@@ -216,7 +216,6 @@ def extract_results(result_archive_path: Path, control_opt: bool = False) -> dic
         extract_folder = fdm_extract_folder
 
         # result_zip_file.extract(str(fdm_folder), extract_folder)
-        info = result_zip_file.getinfo(str(fdm_folder))
         files = [n for n in result_zip_file.namelist()
                  if n.startswith('/Results/')]
         result_zip_file.extractall(path=str(extract_folder), members=files)
