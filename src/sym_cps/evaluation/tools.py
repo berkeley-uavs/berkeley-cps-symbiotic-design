@@ -216,10 +216,9 @@ def extract_results(result_archive_path: Path, control_opt: bool = False) -> dic
         extract_folder = fdm_extract_folder
 
         # result_zip_file.extract(str(fdm_folder), extract_folder)
-        files = [n for n in result_zip_file.namelist()
-                 if n.startswith('/Results/')]
+        files = [n for n in result_zip_file.namelist()]
         print(files)
-        result_zip_file.extractall(path=str(extract_folder), members=files)
+        # result_zip_file.extractall(path=str(extract_folder), members=files)
         # result_zip_file.extract(member=info, path=str(extract_folder))
 
         fdm_extract_info["results_path"] = extract_folder / "Results"
