@@ -216,6 +216,9 @@ def extract_results(result_archive_path: Path, control_opt: bool = False) -> dic
         extract_folder = fdm_extract_folder
 
         result_zip_file.extract(str(fdm_folder), extract_folder)
+        info = result_zip_file.getinfo(str(fdm_folder))
+        result_zip_file.extract(member=info, path=str(extract_folder))
+
         fdm_extract_info["results_path"] = extract_folder / "Results"
 
         # extract stl file
