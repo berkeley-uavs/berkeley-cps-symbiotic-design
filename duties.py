@@ -294,7 +294,7 @@ def format(ctx):
 
 
 
-@duty(capture=None)
+@duty(capture="none")
 def results(ctx):
     print("Generating Results Script")
     iteration = 0
