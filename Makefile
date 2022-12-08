@@ -71,10 +71,10 @@ openvpn-connect:
 .PHONY: docker-broker-conf
 docker-broker-conf:
 	echo "Configuring broker..."
-	#pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
-	mkdir /etc/xdg/SimpleUAM
-	mkdir /etc/xdg/SimpleUAM/config
-	cp ../challenge_data/data/broker.conf.yaml /etc/xdg/SimpleUAM/config
+	pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+#	mkdir /etc/xdg/SimpleUAM
+#	mkdir /etc/xdg/SimpleUAM/config
+#	cp ../challenge_data/data/broker.conf.yaml /etc/xdg/SimpleUAM/config
 
 
 .PHONY: mount-drive
