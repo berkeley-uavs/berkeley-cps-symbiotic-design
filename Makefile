@@ -82,15 +82,15 @@ results:
 	iter=0
 	while true; \
 	do \
-		echo "Iteration $iter"
-		pdm run generate_random "--n=1", "--n_wings_max=0"
-		cd ../challenge_data
-		git add --a
-		git commit -m "new result generated"
-		git push
-		echo "new result pushed to github"
-		cd ../host
-		(( iter++ )) \
+		echo "Iteration $iter"; \
+		pdm run generate_random "--n=1", "--n_wings_max=0"; \
+		cd ../challenge_data; \
+		git add --a; \
+		git commit -m "new result generated"; \
+		git push; \
+		echo "new result pushed to github"; \
+		cd ../host; \
+		(( iter++ )); \
 	done
 
 
