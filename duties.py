@@ -318,6 +318,33 @@ def designs(ctx):
 
 
 @duty(capture="both")
+def redesign(ctx):
+    print("Re-Evaluating existing designs")
+    print(f"challenge_data folder: {challenge_data}")
+    print(f"repo folder: {repo_folder}")
+    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git clean -f -d; git pull", title="Pulling results", pty=False)
+    ctx.run(f"cd {repo_folder}")
+
+    designs_in_folder = set(
+        filter(lambda x: not x.contains("_comp_opt"), [f.name for f in list(Path(designs_folder).iterdir())])
+    )
+
+    print(f"Designs not optimized: {designs_in_folder}")
+
+    for design_to_opt in designs_in_folder:
+        grid_file = Path(design_to_opt) / "grid.dat"
+        optimize_design(grid_file)
+        ctx.run(
+            f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
+            title="Pushing results",
+            pty=False,
+        )
+        ctx.run(f"cd {repo_folder}", title="", pty=False)
+
+
+
+
+@duty(capture="both")
 def optimize_contracts(ctx):
     print("Optimizing Existing Designs Using Contracts")
     print(f"challenge_data folder: {challenge_data}")
