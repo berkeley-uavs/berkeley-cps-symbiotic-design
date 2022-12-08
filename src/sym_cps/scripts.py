@@ -129,7 +129,7 @@ def optimize_designs():
 
     for design_to_opt in designs_in_folder:
         grid_file = Path(design_to_opt) / "grid.dat"
-        optimize_design(grid_file)
+        evaluate_grid(grid_file, optimize=True)
 
 #
 # n_designs = 20

@@ -58,6 +58,7 @@ def save_to_file(
 
 def _write_file(file_content: str | dict | Figure | object, absolute_path: Path):
     if absolute_path.is_file():
+        print(f"File already exists: {absolute_path}")
         name = absolute_path.name
         suffix = absolute_path.suffix
         index = name.split("_ver_")
@@ -66,6 +67,7 @@ def _write_file(file_content: str | dict | Figure | object, absolute_path: Path)
         else:
             new_name = f"{name}_ver_1" + suffix
         absolute_path = absolute_path.parent / new_name
+        print(f"New file name: {absolute_path}")
     if isinstance(file_content, OrderedDict):
         with open(absolute_path, "w") as f:
             file_content = json.dumps(file_content, indent=4)
