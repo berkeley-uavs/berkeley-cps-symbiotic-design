@@ -96,11 +96,11 @@ def evaluate_grid(grid_file_path: Path, optimize: bool = True):
 
 def get_all_stat() -> tuple[dict, dict]:
     random_designs_stats_files = list(
-        filter(lambda x: "random_designs_stats" in x, list(str(Path(stats_folder).iterdir())))
+        filter(lambda x: "random_designs_stats" in str(x), list(Path(stats_folder).iterdir()))
     )
     random_topologies_generated_files = list(
         filter(
-            lambda x: "random_topologies_generated" in x, list(str(Path(stats_folder).iterdir()))
+            lambda x: "random_topologies_generated" in str(x), list(Path(stats_folder).iterdir())
         )
     )
     print(random_designs_stats_files)
