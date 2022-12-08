@@ -78,9 +78,9 @@ mount-drive:
 
 .PHONY: results
 results:
-	echo "Generating results script"
-	i=0
-	echo "$i"
+	echo "Generating results script"; \
+	i=0; \
+	echo "$i"; \
 	while true; \
 	do \
 		echo "Iteration:"; \
