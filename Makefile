@@ -80,7 +80,7 @@ mount-drive:
 results:
 	echo "Generating results script"
 	iter=0
-	while true
+	while true; \
 	do
 		echo "Iteration $iter"
 		pdm run generate_random "--n=1", "--n_wings_max=0"
