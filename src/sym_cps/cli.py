@@ -10,12 +10,7 @@ from sym_cps.grammar import AbstractGrid
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.representation.design.human import HumanDesign
-from sym_cps.scripts import (
-    _stats_cleanup,
-    generate_random_instance_id,
-    get_latest_evaluated_design_number,
-    get_random_new_topology,
-)
+from sym_cps.scripts import generate_random_instance_id, get_latest_evaluated_design_number, get_random_new_topology
 from sym_cps.shared.paths import aws_folder, data_folder, designs_folder
 from sym_cps.tools.update_library import export_all_designs, update_dat_files_library
 
@@ -57,7 +52,7 @@ def generate_random(args: Optional[List[str]] = None):
     parser.add_argument("--n", type=int, default=1, help="Specify the number of  random designs")
     parser.add_argument("--n_wings_max", type=int, default=-1, help="Specify the max number of wings")
     parser.add_argument("--n_props_max", type=int, default=-1, help="Specify the max number of propellers")
-    parser.add_argument("--no_optimization", default=False, action='store_true')
+    parser.add_argument("--no_optimization", default=False, action="store_true")
     opts = parser.parse_args(args=args)
     print(f"args: {opts}")
 

@@ -77,7 +77,7 @@ mount-drive:
 
 
 .PHONY: results
-mount-drive:
+results:
 	echo "Generating results script"
 	for((i=0; ;++i)); do
 		echo "Iteration $i"
