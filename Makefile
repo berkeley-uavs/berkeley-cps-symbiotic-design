@@ -59,7 +59,7 @@ check:
 
 
 .PHONY: connect
-eval-init: openvpn-connect mount-drive
+eval-init: docker-broker-conf openvpn-connect mount-drive
 
 
 .PHONY: openvpn-connect

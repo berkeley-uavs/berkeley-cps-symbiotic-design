@@ -24,9 +24,6 @@ RUN mkdir host ide
 COPY . /root/host
 WORKDIR /root/host
 
-RUN mkdir /etc/xdg/SimpleUAM
-RUN mkdir /etc/xdg/SimpleUAM/config
-COPY ../challenge_data/data/broker.conf.yaml /etc/xdg/SimpleUAM/config
 
 RUN pdm config python.use_venv false
 RUN pdm install
