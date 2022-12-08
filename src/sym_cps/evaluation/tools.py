@@ -286,3 +286,4 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
 
 if __name__ == '__main__':
     test_folder = Path("/root/challenge_data/aws/d2c_results/process-design-2022-12-08-51a1892c55cf-j4sb5vw0qi.zip")
+    extract_results(test_folder)
