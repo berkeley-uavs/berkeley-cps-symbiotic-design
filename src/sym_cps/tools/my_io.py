@@ -60,7 +60,7 @@ def rename_if_already_exists(absolute_path: Path):
     new_path = absolute_path
     if absolute_path.is_file():
         print(f"File already exists: {absolute_path}")
-        name = absolute_path.name
+        name = absolute_path.stem
         suffix = absolute_path.suffix
         index = name.split("_ver_")
         if len(index) > 1:
@@ -71,7 +71,7 @@ def rename_if_already_exists(absolute_path: Path):
         print(f"New file name: {new_path}")
     if absolute_path.is_dir():
         print(f"'Directory already exists: {absolute_path}")
-        name = absolute_path.name
+        name = absolute_path.stem
         index = name.split("_ver_")
         if len(index) > 1:
             new_name = f"{name}_ver_{int(index[1]) + 1}"
