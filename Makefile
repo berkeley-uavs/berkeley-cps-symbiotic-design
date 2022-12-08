@@ -32,7 +32,8 @@ BASIC_DUTIES = \
 	docs-regen \
 	docs-serve \
 	format \
-	release
+	release \
+	results
 
 QUALITY_DUTIES = \
 	check-quality \
@@ -75,24 +76,6 @@ mount-drive:
 	mkdir -p ../challenge_data/aws
 	mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
 
-
-.PHONY: results
-results:
-	echo "Generating results script"
-	i=0
-	while true; \
-	do \
-		echo "Iteration:"; \
-		echo $$i; \
-		pdm run generate_random "--n=1", "--n_wings_max=0"; \
-		cd ../challenge_data; \
-		git add --a; \
-		git commit -m "new result generated"; \
-		git push; \
-		echo "new result pushed to github"; \
-		cd ../host; \
-		(( i++ )); \
-	done
 
 
 .PHONY: start-ssh
