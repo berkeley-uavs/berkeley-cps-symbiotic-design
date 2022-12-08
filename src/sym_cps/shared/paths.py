@@ -11,12 +11,12 @@ settings = Dynaconf(
 )
 
 this_file = Path(os.path.dirname(__file__))
-root: Path = this_file.parent.parent.parent
+repo_folder: Path = this_file.parent.parent.parent
 
 if hasattr(settings, "challenge_data_relative_path"):
-    challenge_data = (root / settings.challenge_data_relative_path).resolve()
+    challenge_data = (repo_folder / settings.challenge_data_relative_path).resolve()
 else:
-    challenge_data = (root / "../challenge_data").resolve()
+    challenge_data = (repo_folder / "../challenge_data").resolve()
 
 data_folder: Path = challenge_data / "data"
 output_folder: Path = challenge_data / "output"

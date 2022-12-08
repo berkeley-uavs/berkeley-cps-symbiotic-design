@@ -54,7 +54,7 @@ class AbstractDesign:
             return str(d[:-2])
 
     def optimize_and_evaluate_script(self, no_optimization: bool = False):
-        self.save(folder_name=f"designs/{self.name}")
+        self.save()
 
         d_concrete = self.to_concrete()
 

@@ -26,6 +26,8 @@ from pathlib import Path
 from typing import List, Optional, Pattern
 from urllib.request import urlopen
 
+from sym_cps.shared.paths import challenge_data, repo_folder
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 from duty import duty
@@ -296,11 +298,13 @@ def format(ctx):
 def results(ctx):
     print("Generating Results Script")
     iteration = 0
+    print(f"challenge_data folder: {challenge_data}")
+    print(f"repo folder: {repo_folder}")
     while True:
         print(f"Iteration: {iteration}")
         ctx.run("pdm run generate_random --n=1 --n_wings_max=0", title="Running generate_random script", pty=True)
-        ctx.run("cd ../challenge_data; git add --a; git commit -m 'new result generated'; git push;", title="Pushing results", pty=False)
-        ctx.run("cd ../host", title="", pty=False)
+        ctx.run(f"cd {challenge_data}; git add --a; git commit -m 'new result generated'; git push;", title="Pushing results", pty=False)
+        ctx.run(f"cd {repo_folder}", title="", pty=False)
 
 @duty
 def release(ctx, version):
