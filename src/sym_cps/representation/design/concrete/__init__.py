@@ -25,7 +25,7 @@ from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level
 from sym_cps.shared.paths import designs_folder, designs_generated_stats_path, output_folder
-from sym_cps.tools.my_io import save_to_file
+from sym_cps.tools.my_io import save_to_file, rename_if_already_exists
 from sym_cps.tools.strings import repr_dictionary, tab
 
 
@@ -371,12 +371,18 @@ class DConcrete:
                 file_name=f"evaluation_results.json",
                 absolute_path=absolute_folder,
             )
-            print(f"Copying {self.evaluation_results['stl_file_path']} to {absolute_folder}")
-            shutil.copy(self.evaluation_results["stl_file_path"], absolute_folder)
-            print(f"Copying {self.evaluation_results['stp_file_path']} to {absolute_folder}")
-            shutil.copy(self.evaluation_results["stp_file_path"], absolute_folder)
-            print(f"Copying {self.evaluation_results['results_path']} to {absolute_folder}")
-            shutil.copytree(self.evaluation_results["results_path"], absolute_folder / "Results")
+
+            stl_path = rename_if_already_exists(absolute_folder / "uav_gen.stl")
+            stp_path = rename_if_already_exists(absolute_folder / "uav_asm.stp")
+            results_folder = rename_if_already_exists(absolute_folder / "Results")
+
+            print(f"Copying {self.evaluation_results['stl_file_path']} to {stl_path}")
+            shutil.copy(self.evaluation_results["stl_file_path"], stl_path)
+            print(f"Copying {self.evaluation_results['stp_file_path']} to {stp_path}")
+            shutil.copy(self.evaluation_results["stp_file_path"], stp_path)
+            print(f"Copying {self.evaluation_results['results_path']} to {results_folder}")
+            shutil.copytree(self.evaluation_results["results_path"], results_folder)
+
             print(f"Saving statistics")
             designs_generated_stats: dict = {}
             designs_generated_stats[self.name] = results
