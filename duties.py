@@ -28,6 +28,7 @@ from urllib.request import urlopen
 
 from sym_cps.scripts import generate_random_instance_id, make_design, evaluate_grid
 from sym_cps.shared.paths import challenge_data, designs_folder, repo_folder
+from sym_cps.tools.my_io import save_to_file
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -308,11 +309,12 @@ def designs(ctx):
     while True:
         print(f"Iteration: {iteration}")
         make_design(instance_id)
-        ctx.run(
+        output = ctx.run(
             f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
             title="Pushing results",
             pty=False,
         )
+        save_to_file(str(output), file_name=f"{instance_id}_{iteration}_{output}", folder_name="console_output")
         ctx.run(f"cd {repo_folder}", title="", pty=False)
         iteration += 1
 
