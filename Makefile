@@ -34,7 +34,8 @@ BASIC_DUTIES = \
 	format \
 	release \
 	designs \
-	optimize-contrats
+	optimize-contrats \
+	redesign
 
 QUALITY_DUTIES = \
 	check-quality \

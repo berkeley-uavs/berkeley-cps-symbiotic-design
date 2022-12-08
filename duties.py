@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import List, Optional, Pattern
 from urllib.request import urlopen
 
-from sym_cps.scripts import generate_random_instance_id, make_design, optimize_design
+from sym_cps.scripts import generate_random_instance_id, make_design, evaluate_grid
 from sym_cps.shared.paths import challenge_data, designs_folder, repo_folder
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -333,7 +333,7 @@ def redesign(ctx):
 
     for design_to_opt in designs_in_folder:
         grid_file = Path(design_to_opt) / "grid.dat"
-        optimize_design(grid_file)
+        evaluate_grid(grid_file, False)
         ctx.run(
             f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
             title="Pushing results",
@@ -360,7 +360,7 @@ def optimize_contracts(ctx):
 
     for design_to_opt in designs_in_folder:
         grid_file = Path(design_to_opt) / "grid.dat"
-        optimize_design(grid_file)
+        evaluate_grid(grid_file, optimize=True)
         ctx.run(
             f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
             title="Pushing results",

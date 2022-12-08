@@ -80,29 +80,18 @@ def make_design(tag: str, wings_max=0, n_props_max=-1):
     d_concrete.evaluate()
 
 
-
-def evaluate_grid(grid_file_path: Path):
+def evaluate_grid(grid_file_path: Path, optimize: bool = True):
     with open(grid_file_path, "rb") as pickle_file:
         abstract_grid: AbstractGrid = pickle.load(pickle_file)
         print(f"Building AbstractDesign")
         new_design = AbstractDesign(abstract_grid.name)
         new_design.parse_grid(abstract_grid)
         d_concrete = new_design.to_concrete()
-        find_components(d_concrete)
+        if optimize:
+            find_components(d_concrete)
         d_concrete.export_all()
         d_concrete.evaluate()
 
-def optimize_design(grid_file_path: Path):
-    with open(grid_file_path, "rb") as pickle_file:
-        abstract_grid: AbstractGrid = pickle.load(pickle_file)
-        abstract_grid.name = abstract_grid.name + "_comp_opt"
-        print(f"Building AbstractDesign")
-        new_design = AbstractDesign(abstract_grid.name)
-        new_design.parse_grid(abstract_grid)
-        d_concrete = new_design.to_concrete()
-        find_components(d_concrete)
-        d_concrete.export_all()
-        d_concrete.evaluate()
 
 
 def get_all_stat() -> tuple[dict, dict]:
