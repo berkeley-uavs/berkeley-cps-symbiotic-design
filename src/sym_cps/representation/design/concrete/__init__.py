@@ -362,6 +362,8 @@ class DConcrete:
 
         elif file_type == ExportType.EVALUATION:
             results = deepcopy(self.evaluation_results)
+            if self.evaluation_results["status"] == "FAIL":
+                return
             del results["stl_file_path"]
             del results["stp_file_path"]
             del results["results_path"]
