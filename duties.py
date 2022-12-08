@@ -321,7 +321,7 @@ def optimize_contracts(ctx):
     print("Optimizing Existing Designs Using Contracts")
     print(f"challenge_data folder: {challenge_data}")
     print(f"repo folder: {repo_folder}")
-    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git pull", title="Pulling results", pty=False)
+    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git clean -f -d; git pull", title="Pulling results", pty=False)
     ctx.run(f"cd {repo_folder}")
 
     designs_in_folder = set(
