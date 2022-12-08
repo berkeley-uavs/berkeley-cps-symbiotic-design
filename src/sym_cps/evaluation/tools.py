@@ -196,7 +196,7 @@ def polling_results(msg, timeout: int = 800):
     return result_archive
 
 
-def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
+def extract_results(result_archive_path: Path, control_opt: bool = False) -> dict:
 
     print("Extracting results from result zip file...")
     fdm_extract_info = {}  # the object for collecting the score and stl files
