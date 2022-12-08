@@ -233,13 +233,13 @@ def extract_results(result_archive_path: Path, control_opt: bool = False) -> dic
             info = result_zip_file.getinfo(str(stl_member))
             info.filename = f"uav_gen.stl"
             result_zip_file.extract(member=info, path=str(extract_folder))
-        fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
+            fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
 
         if stp_file.is_file():
             info = result_zip_file.getinfo(str(stp_member))
             info.filename = f"uav_asm.stp"
             result_zip_file.extract(member=info, path=str(extract_folder))
-        fdm_extract_info["stp_file_path"] = str(extract_folder / info.filename)
+            fdm_extract_info["stp_file_path"] = str(extract_folder / info.filename)
 
         output_file_names = []
         for fdm_test in folders:
