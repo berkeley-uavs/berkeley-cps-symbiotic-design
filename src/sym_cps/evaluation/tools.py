@@ -216,8 +216,7 @@ def extract_results(result_archive_path: Path, control_opt: bool = False) -> dic
         extract_folder = fdm_extract_folder
 
         # result_zip_file.extract(str(fdm_folder), extract_folder)
-        files = [n for n in result_zip_file.namelist()
-                 if n.startswith('Results/') and not n.endswith('/')]
+        files = [n for n in result_zip_file.namelist() if n.startswith("Results/") and not n.endswith("/")]
         result_zip_file.extractall(path=str(extract_folder), members=files)
         # result_zip_file.extract(member=info, path=str(extract_folder))
 
@@ -289,6 +288,6 @@ def extract_results(result_archive_path: Path, control_opt: bool = False) -> dic
     return fdm_extract_info
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_folder = Path("/root/challenge_data/aws/d2c_results/process-design-2022-12-08-51a1892c55cf-j4sb5vw0qi.zip")
     extract_results(test_folder)
