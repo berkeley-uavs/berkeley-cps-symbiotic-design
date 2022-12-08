@@ -87,6 +87,7 @@ def evaluate_grid(grid_file_path: Path, optimize: bool = True):
         new_design = AbstractDesign(abstract_grid.name)
         new_design.parse_grid(abstract_grid)
         d_concrete = new_design.to_concrete()
+        d_concrete.choose_default_components_for_empty_ones()
         if optimize:
             find_components(d_concrete)
         d_concrete.export_all()
