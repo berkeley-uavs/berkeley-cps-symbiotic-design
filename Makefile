@@ -80,6 +80,7 @@ mount-drive:
 results:
 	echo "Generating results script"
 	i=0
+	echo "$i"
 	while true; \
 	do \
 		echo "Iteration:"; \
