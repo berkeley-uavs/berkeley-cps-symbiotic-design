@@ -335,6 +335,7 @@ def generate_random_new_topology(
         abstract_design.parse_grid(grid)
         print(f"{abstract_design.id}")
         if abstract_design.n_propellers not in n_propellers_optimized:
+            print(f"Optimized components for {abstract_design.n_propellers} missing")
             continue
         if abstract_design.id not in random_topologies_generated.keys():
             break
