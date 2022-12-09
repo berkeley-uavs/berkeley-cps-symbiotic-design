@@ -32,10 +32,10 @@ class AbstractConnection:
 
         connectors_map = {
             "Hub4": {
-                Direction.front: "Hub4__Side_Connector_3",
-                Direction.rear: "Hub4__Side_Connector_1",
-                Direction.left: "Hub4__Side_Connector_4",
-                Direction.right: "Hub4__Side_Connector_2",
+                Direction.front: "Hub4__Side_Connector_1",
+                Direction.rear: "Hub4__Side_Connector_3",
+                Direction.left: "Hub4__Side_Connector_2",
+                Direction.right: "Hub4__Side_Connector_4",
                 Direction.top: "Hub4__Top_Connector",
                 Direction.bottom: "Hub4__Bottom_Connector",
             },
@@ -69,13 +69,13 @@ class AbstractConnection:
         bottom_tube_connector = c_library.connectors["Tube__BaseConnection"]
         top_tube_connector = c_library.connectors["Tube__EndConnection"]
 
-        if component_a.c_type.id == "Hub4":
-            if self.direction_from_a_to_b == Direction.bottom:
-                bottom_tube_connector = c_library.connectors["Tube__OffsetConnection2"]
-
-        if component_b.c_type.id == "Hub4":
-            if self.direction_from_b_to_a == Direction.bottom:
-                top_tube_connector = c_library.connectors["Tube__OffsetConnection1"]
+        # if component_a.c_type.id == "Hub4":
+        #     if self.direction_from_a_to_b == Direction.bottom:
+        #         bottom_tube_connector = c_library.connectors["Tube__OffsetConnection2"]
+        #
+        # if component_b.c_type.id == "Hub4":
+        #     if self.direction_from_b_to_a == Direction.bottom:
+        #         top_tube_connector = c_library.connectors["Tube__OffsetConnection1"]
 
 
         connection_a_tube = Connection(
