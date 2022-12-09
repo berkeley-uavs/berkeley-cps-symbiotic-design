@@ -50,7 +50,7 @@ def generate_empty_grid(size: int):
         for y in range(0, size + 1):
             for z in range(0, size + 1):
                 node_xyz.append([x, y, z])
-                color_xyz.append("grey")
+                color_xyz.append("white")
 
     return plot_3d_grid(np.array(node_xyz), np.array(color_xyz))
 
@@ -88,11 +88,11 @@ def plot_3d_grid(
     return fig
 
 
-#
-# fig = generate_empty_grid(8)
-# fig.savefig(f"grid8.pdf", transparent=True)
-#
-# g = DirectionsGrid()
-# fig = g.plot
-#
-# fig.savefig(f"direction.pdf", transparent=True)
+
+fig = generate_empty_grid(2)
+fig.savefig(f"grid4.pdf", transparent=True)
+
+g = DirectionsGrid()
+fig = g.plot
+
+fig.savefig(f"direction.pdf", transparent=True)
