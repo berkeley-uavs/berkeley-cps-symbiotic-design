@@ -321,7 +321,9 @@ def components_count(design):
 def generate_random_new_topology(
     design_tag: str, design_index: int, max_right_num_rotors: int = -1, max_right_num_wings: int = -1
 ) -> AbstractDesign:
-    random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
+    from sym_cps.scripts import get_all_stat
+
+    random_topologies_generated: dict = get_all_stat()[1]
 
     while True:
         grid: AbstractGrid = generate_random_topology(
@@ -336,7 +338,7 @@ def generate_random_new_topology(
     abstract_design.name = design_id
     abstract_design.abstract_grid.name = design_id
     random_topologies_generated[abstract_design.id] = design_id
-    save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path)
+    save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path(design_id))
 
     return abstract_design
 

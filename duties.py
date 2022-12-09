@@ -26,6 +26,9 @@ from pathlib import Path
 from typing import List, Optional, Pattern
 from urllib.request import urlopen
 
+from sym_cps.scripts import generate_random_instance_id, make_design, evaluate_grid
+from sym_cps.shared.paths import challenge_data, designs_folder, repo_folder
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 from duty import duty
@@ -289,6 +292,79 @@ def format(ctx):
     )
     ctx.run(f"isort {PY_SRC}", title="Ordering imports", pty=PTY)
     ctx.run(f"black {PY_SRC}", title="Formatting code", pty=PTY)
+
+
+@duty(capture="both")
+def designs(ctx):
+    print("Connecting")
+    ctx.run("make connect")
+    print("Generating Results Script")
+    iteration = 0
+    print(f"challenge_data folder: {challenge_data}")
+    print(f"repo folder: {repo_folder}")
+    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git pull", title="Pulling results", pty=False)
+    ctx.run(f"cd {repo_folder}")
+
+    instance_id = generate_random_instance_id()
+
+    while True:
+        print(f"Iteration: {iteration}")
+        make_design(instance_id)
+        ctx.run(
+            f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
+            title="Pushing results",
+            pty=False,
+        )
+        ctx.run(f"cd {repo_folder}", title="", pty=False)
+        iteration += 1
+
+
+@duty(capture="both")
+def redesign(ctx):
+    print("Re-Evaluating existing designs")
+    print(f"challenge_data folder: {challenge_data}")
+    print(f"repo folder: {repo_folder}")
+    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git clean -f -d; git pull", title="Pulling results", pty=False)
+    ctx.run(f"cd {repo_folder}")
+
+    designs_in_folder = set(
+        filter(lambda x: not "_comp_opt" in str(x), list(Path(designs_folder).iterdir()))
+    )
+
+    for design_to_opt in designs_in_folder:
+        grid_file = Path(design_to_opt) / "grid.dat"
+        evaluate_grid(grid_file, False)
+        ctx.run(
+            f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
+            title="Pushing results",
+            pty=False,
+        )
+        ctx.run(f"cd {repo_folder}", title="", pty=False)
+
+
+
+
+@duty(capture="both")
+def optimize_contracts(ctx):
+    print("Optimizing Existing Designs Using Contracts")
+    print(f"challenge_data folder: {challenge_data}")
+    print(f"repo folder: {repo_folder}")
+    ctx.run(f"cd {challenge_data}; git reset --hard origin/main; git clean -f -d; git pull", title="Pulling results", pty=False)
+    ctx.run(f"cd {repo_folder}")
+
+    designs_in_folder = set(
+        filter(lambda x: not "_comp_opt" in str(x), list(Path(designs_folder).iterdir()))
+    )
+
+    for design_to_opt in designs_in_folder:
+        grid_file = Path(design_to_opt) / "grid.dat"
+        evaluate_grid(grid_file, optimize=True)
+        ctx.run(
+            f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
+            title="Pushing results",
+            pty=False,
+        )
+        ctx.run(f"cd {repo_folder}", title="", pty=False)
 
 
 @duty

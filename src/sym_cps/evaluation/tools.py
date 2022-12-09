@@ -196,7 +196,7 @@ def polling_results(msg, timeout: int = 800):
     return result_archive
 
 
-def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
+def extract_results(result_archive_path: Path, control_opt: bool = False) -> dict:
 
     print("Extracting results from result zip file...")
     fdm_extract_info = {}  # the object for collecting the score and stl files
@@ -214,17 +214,33 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
         folders = [fdm_test for fdm_test in fdm_folder.iterdir()]
 
         extract_folder = fdm_extract_folder
+
+        # result_zip_file.extract(str(fdm_folder), extract_folder)
+        files = [n for n in result_zip_file.namelist() if n.startswith("Results/") and not n.endswith("/")]
+        result_zip_file.extractall(path=str(extract_folder), members=files)
+        # result_zip_file.extract(member=info, path=str(extract_folder))
+
+        fdm_extract_info["results_path"] = extract_folder / "Results"
+
         # extract stl file
         stl_folder = zipfile.Path(result_zip_file) / "workingdir"
         stl_file = stl_folder / "uav_gen.stl"
+        stp_file = stl_folder / "uav_asm.stp"
         stl_member = Path("workingdir", "uav_gen.stl")
+        stp_member = Path("workingdir", "uav_asm.stp")
 
         if stl_file.is_file():
             info = result_zip_file.getinfo(str(stl_member))
             info.filename = f"uav_gen.stl"
             result_zip_file.extract(member=info, path=str(extract_folder))
+            fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
 
-        fdm_extract_info["stl_file_path"] = str(extract_folder / info.filename)
+        if stp_file.is_file():
+            info = result_zip_file.getinfo(str(stp_member))
+            info.filename = f"uav_asm.stp"
+            result_zip_file.extract(member=info, path=str(extract_folder))
+            fdm_extract_info["stp_file_path"] = str(extract_folder / info.filename)
+
         output_file_names = []
         for fdm_test in folders:
             fdm_input = fdm_test / "fdmTB" / "flightDynFast.inp"
@@ -270,3 +286,8 @@ def extract_results(result_archive_path: Path, control_opt: bool) -> dict:
 
     # TODO: return the score, corresponding control parameters, and optionally other information from fdm_input/fdm_output if needed.
     return fdm_extract_info
+
+
+if __name__ == "__main__":
+    test_folder = Path("/root/challenge_data/aws/d2c_results/process-design-2022-12-08-51a1892c55cf-j4sb5vw0qi.zip")
+    extract_results(test_folder)

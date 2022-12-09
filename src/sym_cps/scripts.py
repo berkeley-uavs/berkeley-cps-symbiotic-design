@@ -1,20 +1,21 @@
 import json
 import os
+import pickle
 import random
 import shutil
 import string
 from pathlib import Path
 
+from sym_cps.grammar import AbstractGrid
 from sym_cps.grammar.rules import generate_random_new_topology
 from sym_cps.representation.design.abstract import AbstractDesign
 from sym_cps.representation.tools.optimize import find_components
-from sym_cps.shared.paths import designs_folder, designs_generated_stats_path, random_topologies_generated_path
+from sym_cps.shared.paths import designs_folder, stats_file_path, stats_folder
 from sym_cps.tools.my_io import save_to_file
 
 
-def _stats_cleanup():
-    designs_generated_stats: dict = json.load(open(designs_generated_stats_path))
-    random_topologies_generated: dict = json.load(open(random_topologies_generated_path))
+def _stats_make():
+    designs_generated_stats, random_topologies_generated = get_all_stat()
     designs_in_folder = set(filter(lambda x: x[0].isdigit(), [f.name for f in list(Path(designs_folder).iterdir())]))
     completed_designs = set(designs_generated_stats.keys())
 
@@ -26,15 +27,14 @@ def _stats_cleanup():
             if design_to_delete == v:
                 designs_to_delete_hash.append(k)
         design_dir = Path(designs_folder / design_to_delete)
-        print(f"Deleting {design_dir}")
+        print(f"Renaming {design_dir}")
         if os.path.exists(design_dir) and os.path.isdir(design_dir):
-            os.rename(design_dir, designs_folder / f"fail_{design_to_delete}")
+            shutil.move(design_dir, designs_folder / f"fail_{design_to_delete}")
 
     for k in designs_to_delete_hash:
         del random_topologies_generated[k]
 
-    save_to_file(designs_generated_stats, absolute_path=designs_generated_stats_path)
-    save_to_file(random_topologies_generated, absolute_path=random_topologies_generated_path)
+    save_to_file(designs_generated_stats, absolute_path=stats_file_path)
 
 
 def get_latest_evaluated_design_number() -> int:
@@ -51,6 +51,7 @@ def get_latest_evaluated_design_number() -> int:
                         index = first_n
                 except:
                     continue
+    print(f"latest_index: {index}")
     return index
 
 
@@ -68,38 +69,100 @@ def get_random_new_topology(design_tag, design_index, n_wings_max=-1, n_props_ma
     return new_design
 
 
-n_designs = 20
-n_wings_max = 0
-n_prop_max = -1
+def make_design(tag: str, wings_max=0, n_props_max=-1):
+    design_tag = f"grammar_{tag}"
+    design_index = get_latest_evaluated_design_number()
+    new_design: AbstractDesign = get_random_new_topology(design_tag, design_index + 1, wings_max, n_props_max)
+    new_design.save()
+    d_concrete = new_design.to_concrete()
+    d_concrete.choose_default_components_for_empty_ones()
+    d_concrete.export_all()
+    d_concrete.evaluate()
 
-if __name__ == "__main__":
-    _stats_cleanup()
 
-    index = get_latest_evaluated_design_number()
-
-    random_call_id = generate_random_instance_id()
-
-    for i in range((index + 1), (index + n_designs + 1)):
-        print(f"Random iteration {i}")
-        design_tag = f"directions_props_grammar_{random_call_id}"
-        design_index = i
-
-        new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, n_wings_max, n_prop_max)
-
-        new_design.save(folder_name=f"designs/{new_design.name}")
-
+def evaluate_grid(grid_file_path: Path, optimize: bool = True):
+    with open(grid_file_path, "rb") as pickle_file:
+        abstract_grid: AbstractGrid = pickle.load(pickle_file)
+        print(f"Building AbstractDesign")
+        new_design = AbstractDesign(abstract_grid.name)
+        new_design.parse_grid(abstract_grid)
         d_concrete = new_design.to_concrete()
-
         d_concrete.choose_default_components_for_empty_ones()
-
+        if optimize:
+            find_components(d_concrete)
         d_concrete.export_all()
-
-        find_components(d_concrete)
-
-        d_concrete.export_all()
-
-        save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
-
-        print(f"Design {d_concrete.name} generated")
-        print(f"Evaluating..")
         d_concrete.evaluate()
+
+
+
+def get_all_stat() -> tuple[dict, dict]:
+    random_designs_stats_files = list(
+        filter(lambda x: "random_designs_stats" in str(x), list(Path(stats_folder).iterdir()))
+    )
+    random_topologies_generated_files = list(
+        filter(
+            lambda x: "random_topologies_generated" in str(x), list(Path(stats_folder).iterdir())
+        )
+    )
+    print(random_designs_stats_files)
+    print(random_topologies_generated_files)
+    random_designs_stats_dict = {}
+    random_topologies_generated_dict = {}
+
+    for stat_file in random_designs_stats_files:
+        stat_file_dict: dict = json.load(open(stat_file))
+        random_designs_stats_dict.update(stat_file_dict)
+
+    for gen_file in random_topologies_generated_files:
+        gen_file_dict: dict = json.load(open(gen_file))
+        random_topologies_generated_dict.update(gen_file_dict)
+
+    return random_designs_stats_dict, random_topologies_generated_dict
+
+
+def optimize_designs():
+    designs_in_folder = set(
+        filter(lambda x: not x.contains("_comp_opt"), [f.name for f in list(Path(designs_folder).iterdir())])
+    )
+
+    print(f"Designs not optimized: {designs_in_folder}")
+
+    for design_to_opt in designs_in_folder:
+        grid_file = Path(design_to_opt) / "grid.dat"
+        evaluate_grid(grid_file, optimize=True)
+
+#
+# n_designs = 20
+# n_wings_max = 0
+# n_prop_max = -1
+#
+# if __name__ == "__main__":
+#
+#     index = get_latest_evaluated_design_number()
+#
+#     random_call_id = generate_random_instance_id()
+#
+#     for i in range((index + 1), (index + n_designs + 1)):
+#         print(f"Random iteration {i}")
+#         design_tag = f"directions_props_grammar_{random_call_id}"
+#         design_index = i
+#
+#         new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, n_wings_max, n_prop_max)
+#
+#         new_design.save(folder_name=f"designs/{new_design.name}")
+#
+#         d_concrete = new_design.to_concrete()
+#
+#         d_concrete.choose_default_components_for_empty_ones()
+#
+#         d_concrete.export_all()
+#
+#         find_components(d_concrete)
+#
+#         d_concrete.export_all()
+#
+#         save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
+#
+#         print(f"Design {d_concrete.name} generated")
+#         print(f"Evaluating..")
+#         d_concrete.evaluate()

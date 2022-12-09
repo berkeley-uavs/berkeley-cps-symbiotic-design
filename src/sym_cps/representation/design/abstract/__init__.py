@@ -54,7 +54,7 @@ class AbstractDesign:
             return str(d[:-2])
 
     def optimize_and_evaluate_script(self, no_optimization: bool = False):
-        self.save(folder_name=f"designs/{self.name}")
+        self.save()
 
         d_concrete = self.to_concrete()
 
@@ -163,7 +163,6 @@ class AbstractDesign:
         # print(list(propellers_left.keys()))
         # print(list(propellers_center.keys()))
         # print("CIAOasd")
-
 
     def instantiate_hubs(self) -> dict:
         hubs = []
@@ -294,9 +293,9 @@ class AbstractDesign:
         for connection in self.abstract_connections:
             export["EDGES"].append((connection.component_a.id, connection.component_b.id))
 
-        save_to_file(export, absolute_path= designs_folder / self.name / "grid.json")
-        save_to_file(self.abstract_grid, absolute_path= designs_folder / self.name / "grid.dat")
-        save_to_file(self.plot, absolute_path= designs_folder / self.name / "grid.pdf")
+        save_to_file(export, absolute_path=designs_folder / self.name / "grid.json")
+        save_to_file(self.abstract_grid, absolute_path=designs_folder / self.name / "grid.dat")
+        save_to_file(self.plot, absolute_path=designs_folder / self.name / "grid.pdf")
 
     @property
     def plot(self):

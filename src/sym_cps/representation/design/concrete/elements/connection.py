@@ -97,7 +97,8 @@ class Connection:
                 self.component_a.c_type.id, self.component_b.c_type.id, self.connector_a.id, self.connector_b.id
             )
         except Exception as e:
-            print(e)
+            pass
+            # print(e)
         return dir
 
     def __eq__(self, other: object):

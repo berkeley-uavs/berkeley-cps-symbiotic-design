@@ -20,7 +20,12 @@ def get_dconcrete(design_folder_name: str) -> DConcrete:
 
 
 def get_abstract_design(design_folder_name: str) -> AbstractDesign:
+    print(designs_folder)
+    print(design_folder_name)
+
     file = designs_folder / design_folder_name / "grid.dat"
+    print(file)
+
     with open(file, "rb") as pickle_file:
         grid: AbstractGrid = pickle.load(pickle_file)
         new_design = AbstractDesign(design_folder_name)

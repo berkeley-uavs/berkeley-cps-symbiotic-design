@@ -38,7 +38,7 @@ main() {
   echo "Pruning containers"
   docker container prune -f
   echo "Launching "${mount_arg}
-  echo  ${port_arg}
+  echo ${port_arg}
 
   docker run \
     -d \
@@ -47,14 +47,14 @@ main() {
     --workdir /root/host \
     ${mount_arg} \
     ${port_arg} \
-    $image
+    $image $1
 
-#  docker run -d --name sym_cps-repo --privileged --workdir /root/host \
-#  -v /home/ubuntu/sym-cps/berkeley-cps-symbiotic-design:/root/host \
-#  -v /home/ubuntu/sym-cps/challenge_data:/root/challenge_data \
-#  -v /root/host/__pypackages__ \
-#  -p 9922:22 \
-#  pmallozzi/devenvs:base-310-symcps
+  #  docker run -d --name sym_cps-repo --privileged --workdir /root/host \
+  #  -v /home/ubuntu/sym-cps/berkeley-cps-symbiotic-design:/root/host \
+  #  -v /home/ubuntu/sym-cps/challenge_data:/root/challenge_data \
+  #  -v /root/host/__pypackages__ \
+  #  -p 9922:22 \
+  #  pmallozzi/devenvs:base-310-symcps
 }
 
 main "$@"

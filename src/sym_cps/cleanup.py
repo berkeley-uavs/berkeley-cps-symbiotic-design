@@ -1,4 +1,4 @@
-from sym_cps.scripts import _stats_cleanup
+from sym_cps.scripts import _stats_make
 
-if __name__ == '__main__':
-    _stats_cleanup()
+if __name__ == "__main__":
+    _stats_make()

@@ -32,7 +32,10 @@ BASIC_DUTIES = \
 	docs-regen \
 	docs-serve \
 	format \
-	release
+	release \
+	designs \
+	optimize-contrats \
+	redesign
 
 QUALITY_DUTIES = \
 	check-quality \
@@ -54,19 +57,24 @@ check:
 	@$(DUTY) check-dependencies
 
 
+
+.PHONY: connect
+eval-init: broker-conf openvpn-connect mount-drive
+
+
 .PHONY: openvpn-connect
 openvpn-connect:
 	echo "Connecting to VPN..."
 	openvpn --config ../challenge_data/aws-cvpn-config.ovpn --daemon
 
 
-.PHONY: docker-broker-conf
-docker-broker-conf:
+.PHONY: broker-conf
+broker-conf:
 	echo "Configuring broker..."
-	#pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
-	mkdir /etc/xdg/SimpleUAM
-	mkdir /etc/xdg/SimpleUAM/config
-	cp ../challenge_data/data/broker.conf.yaml /etc/xdg/SimpleUAM/config
+	pdm run suam-config install --no-symlink --input=../challenge_data/data/broker.conf.yaml
+#	mkdir /etc/xdg/SimpleUAM
+#	mkdir /etc/xdg/SimpleUAM/config
+#	cp ../challenge_data/data/broker.conf.yaml /etc/xdg/SimpleUAM/config
 
 
 .PHONY: mount-drive
@@ -74,6 +82,7 @@ mount-drive:
 	echo "Mounting shared drive...(it can take some time...)"
 	mkdir -p ../challenge_data/aws
 	mount -t nfs 10.0.137.113:/fsx/ ../challenge_data/aws
+
 
 
 .PHONY: start-ssh
