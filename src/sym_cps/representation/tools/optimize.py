@@ -1,9 +1,14 @@
+import json
+
 from sym_cps.contract.tester.simplified_selector import SimplifiedSelector
 from sym_cps.representation.design.concrete import DConcrete
 from sym_cps.shared.library import c_library
+from sym_cps.shared.paths import best_component_choices_path
+from sym_cps.tools.my_io import save_to_file
 
 
 def find_components(design: DConcrete):
+    design.name += "_comp_opt"
     selector = SimplifiedSelector()
     selector.set_library(library=c_library)
     print(type(design))
@@ -11,9 +16,25 @@ def find_components(design: DConcrete):
     print(len(design.components))
     for comp in design.components:
         print(comp.id, comp.library_component.id)
-    design.name += "_comp_opt"
-
-    selector.random_local_search(d_concrete=design)
+    if best_component_choices_path.is_file():
+        best_component_choices = json.load(open(best_component_choices_path))
+    else:
+        best_component_choices = {}
+    n = design.n_propellers
+    if n in best_component_choices.keys():
+        best_motor, best_batt, best_prop = best_component_choices[n]
+        new_components = {}
+        if best_motor is not None:
+            new_components["Motor"] = best_motor
+        if best_batt is not None:
+            new_components["Battery"] = best_batt
+        if best_prop is not None:
+            new_components["Propeller"] = best_prop
+        design.replace_all_components(new_components)
+        return
+    best_motor, best_batt, best_prop = selector.random_local_search(d_concrete=design)
+    best_component_choices[n] = (best_motor, best_batt, best_prop)
+    save_to_file(best_component_choices, absolute_path=best_component_choices_path)
 
 
 def set_direction(design: DConcrete):

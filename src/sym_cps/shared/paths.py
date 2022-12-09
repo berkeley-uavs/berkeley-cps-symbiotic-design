@@ -58,6 +58,7 @@ random_topologies_generated_path = lambda tag: stats_folder / f"{tag}_random_top
 stats_file_path = output_folder / "stats.json"
 
 structures_path = reverse_engineering_folder / "analysis" / "structure.json"
+best_component_choices_path = output_folder / "reverse_engineering" / "best_component_choices.json"
 manual_default_parameters_path = output_folder / "reverse_engineering" / "shared_parameters_manual.json"
 learned_default_params_path = output_folder / "reverse_engineering" / "shared_parameters.json"
 component_selection_path = output_folder / "reverse_engineering" / "component_choice.json"
