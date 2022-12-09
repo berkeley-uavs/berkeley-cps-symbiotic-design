@@ -325,10 +325,9 @@ def generate_random_new_topology(
     from sym_cps.scripts.general import get_all_stat
     random_topologies_generated: dict = get_all_stat()[1]
 
-    n_propellers_optimized = list(json.load(open(best_component_choices_path)).keys())
+    n_propellers_optimized = [int(k) for k in list(json.load(open(best_component_choices_path)).keys())]
     print(best_component_choices_path)
     print(n_propellers_optimized)
-    return
     while True:
         grid: AbstractGrid = generate_random_topology(
             max_right_num_rotors=max_right_num_rotors, max_right_num_wings=max_right_num_wings
