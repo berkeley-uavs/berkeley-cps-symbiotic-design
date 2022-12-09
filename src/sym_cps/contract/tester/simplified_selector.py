@@ -469,6 +469,7 @@ class SimplifiedSelector:
         self.replace_with_component(
             design_concrete=d_concrete, motor=best_motor, battery=best_batt, propeller=best_prop
         )
+        return best_motor, best_batt, best_prop
 
     def runTest(self):
         self._c_library, self._seed_designs = parse_library_and_seed_designs()

@@ -23,6 +23,7 @@ from sym_cps.representation.design.concrete.elements.design_parameters import De
 from sym_cps.representation.design.concrete.elements.parameter import Parameter
 from sym_cps.representation.library.elements.c_type import CType
 from sym_cps.representation.library.elements.library_component import LibraryComponent
+from sym_cps.shared.library import c_library
 from sym_cps.shared.objects import ExportType, export_type_to_topology_level
 from sym_cps.shared.paths import designs_folder, designs_generated_stats_path, output_folder
 from sym_cps.tools.my_io import save_to_file, rename_if_already_exists
@@ -116,6 +117,14 @@ class DConcrete:
         if self.n_nodes > 0:
             return set(self.graph.vs()["component"])
         return set()
+
+    @property
+    def n_propellers(self) -> int:
+        n_props = 0
+        for component in self.components:
+            if component.c_type.id == "Propeller":
+                n_props += 1
+        return n_props
 
     @property
     def parameters(self) -> set[Parameter | None]:
@@ -622,3 +631,9 @@ class DConcrete:
         )
 
         return ret + s1
+
+    def replace_all_components(self, components_ids: dict[str, str]):
+        for component_type_id, library_component_id in components_ids.items():
+            for component in self.components:
+                if component.c_type.id == component_type_id:
+                    component.library_component = c_library.components[library_component_id]
