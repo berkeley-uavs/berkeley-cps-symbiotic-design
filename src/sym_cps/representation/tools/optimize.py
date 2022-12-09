@@ -23,14 +23,13 @@ def find_components(design: DConcrete):
     n = str(design.n_propellers)
     if n in best_component_choices.keys():
         print(f"Optimized components found for {n} propellers")
-        best_motor, best_batt, best_prop = best_component_choices[n]
         new_components = {}
         if "Motor" in best_component_choices[n].keys():
-            new_components["Motor"] = best_motor
+            new_components["Motor"] = best_component_choices[n]["Motor"]
         if "Battery" in best_component_choices[n].keys():
-            new_components["Battery"] = best_batt
+            new_components["Battery"] = best_component_choices[n]["Battery"]
         if "Propeller" in best_component_choices[n].keys():
-            new_components["Propeller"] = best_prop
+            new_components["Propeller"] = best_component_choices[n]["Propeller"]
         design.replace_all_components(new_components)
         return
     best_motor, best_batt, best_prop = selector.random_local_search(d_concrete=design)
