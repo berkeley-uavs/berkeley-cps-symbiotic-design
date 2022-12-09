@@ -69,13 +69,15 @@ def get_random_new_topology(design_tag, design_index, n_wings_max=-1, n_props_ma
     return new_design
 
 
-def make_design(tag: str, wings_max=0, n_props_max=-1):
+def make_design(tag: str, wings_max=0, n_props_max=-1, optimize: bool = True):
     design_tag = f"grammar_{tag}"
     design_index = get_latest_evaluated_design_number()
     new_design: AbstractDesign = get_random_new_topology(design_tag, design_index + 1, wings_max, n_props_max)
     new_design.save()
     d_concrete = new_design.to_concrete()
     d_concrete.choose_default_components_for_empty_ones()
+    if optimize:
+        find_components(d_concrete)
     d_concrete.export_all()
     d_concrete.evaluate()
 
