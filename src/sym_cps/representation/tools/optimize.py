@@ -34,16 +34,16 @@ def find_components(design: DConcrete):
         return
     best_motor, best_batt, best_prop = selector.random_local_search(d_concrete=design)
     print(f"N={n}")
-    print(f"BEST-Motor={best_motor}")
-    print(f"BEST-Battery={best_batt}")
-    print(f"BEST-Propeller={best_prop}")
+    print(f"BEST-Motor={best_motor.id}")
+    print(f"BEST-Battery={best_batt.id}")
+    print(f"BEST-Propeller={best_prop.id}")
     best_component_choices[n] = {}
     if best_motor is not None:
-        best_component_choices[n]["Motor"] = best_motor
+        best_component_choices[n]["Motor"] = best_motor.id
     if best_batt is not None:
-        best_component_choices[n]["Battery"] = best_batt
+        best_component_choices[n]["Battery"] = best_batt.id
     if best_prop is not None:
-        best_component_choices[n]["Propeller"] = best_prop
+        best_component_choices[n]["Propeller"] = best_prop.id
     save_to_file(best_component_choices, absolute_path=best_component_choices_path)
 
 
