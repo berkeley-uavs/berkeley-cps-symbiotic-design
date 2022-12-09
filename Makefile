@@ -59,7 +59,7 @@ check:
 
 
 .PHONY: connect
-eval-init: broker-conf openvpn-connect mount-drive
+connect: broker-conf openvpn-connect mount-drive
 
 
 .PHONY: openvpn-connect
