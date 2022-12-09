@@ -19,9 +19,10 @@ def find_components(design: DConcrete):
     if best_component_choices_path.is_file():
         best_component_choices = json.load(open(best_component_choices_path))
     else:
-        best_component_choices: dict[int, dict[str]] = {}
-    n = design.n_propellers
+        best_component_choices: dict[str, dict[str]] = {}
+    n = str(design.n_propellers)
     if n in best_component_choices.keys():
+        print(f"Optimized components found for {n} propellers")
         best_motor, best_batt, best_prop = best_component_choices[n]
         new_components = {}
         if "Motor" in best_component_choices[n].keys():
