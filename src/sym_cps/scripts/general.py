@@ -98,6 +98,8 @@ def evaluate_grid(grid_file_path: Path, optimize: bool = True):
 
 
 def get_all_stat() -> tuple[dict, dict]:
+    if not stats_folder.is_dir():
+        return {},{}
     random_designs_stats_files = list(
         filter(lambda x: "random_designs_stats" in str(x), list(Path(stats_folder).iterdir()))
     )
