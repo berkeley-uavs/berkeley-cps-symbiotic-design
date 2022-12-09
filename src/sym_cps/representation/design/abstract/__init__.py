@@ -86,6 +86,15 @@ class AbstractDesign:
         abstract_connection = AbstractConnection(abstract_component_a, abstract_component_b)
         self.abstract_connections.add(abstract_connection)
 
+
+    @property
+    def n_propellers(self) -> int:
+        n_props = 0
+        for component in self.grid.values():
+            if isinstance(component, Propeller):
+                n_props += 1
+        return n_props
+
     def parse_grid(self, abstract_grid: AbstractGrid):
         self.abstract_grid = abstract_grid
         self.abstract_grid.name = self.name

@@ -6,7 +6,7 @@ import random
 
 from sym_cps.grammar import AbstractGrid
 from sym_cps.representation.design.abstract import AbstractDesign
-from sym_cps.shared.paths import data_folder, random_topologies_generated_path
+from sym_cps.shared.paths import data_folder, random_topologies_generated_path, best_component_choices_path
 from sym_cps.tools.my_io import save_to_file
 
 rule_dict_path_constant = data_folder / "reverse_engineering" / "grammar_rules.json"
@@ -325,6 +325,8 @@ def generate_random_new_topology(
     from sym_cps.scripts.general import get_all_stat
     random_topologies_generated: dict = get_all_stat()[1]
 
+    n_propellers_optimized = list(json.load(open(best_component_choices_path)).keys())
+
     while True:
         grid: AbstractGrid = generate_random_topology(
             max_right_num_rotors=max_right_num_rotors, max_right_num_wings=max_right_num_wings
@@ -332,8 +334,11 @@ def generate_random_new_topology(
         abstract_design: AbstractDesign = AbstractDesign("")
         abstract_design.parse_grid(grid)
         print(f"{abstract_design.id}")
+        if abstract_design.n_propellers not in n_propellers_optimized:
+            continue
         if abstract_design.id not in random_topologies_generated.keys():
             break
+
     design_id = f"{design_index}__{design_tag}_w{grid.n_wings}_p{grid.n_props}"
     abstract_design.name = design_id
     abstract_design.abstract_grid.name = design_id
