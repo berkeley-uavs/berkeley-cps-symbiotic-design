@@ -27,4 +27,4 @@ for ri, rule in enumerate(grammar.rules):
         image = imageio.v2.imread(f"./img/{rule.name}_{t}.png")
         frames.append(image)
 
-    imageio.mimsave(f"./{rule.name}{ri}.gif", frames, fps=5)
+    # imageio.mimsave(f"./{rule.name}{ri}.gif", frames, fps=5)

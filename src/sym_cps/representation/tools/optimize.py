@@ -19,21 +19,31 @@ def find_components(design: DConcrete):
     if best_component_choices_path.is_file():
         best_component_choices = json.load(open(best_component_choices_path))
     else:
-        best_component_choices = {}
+        best_component_choices: dict[int, dict[str]] = {}
     n = design.n_propellers
     if n in best_component_choices.keys():
         best_motor, best_batt, best_prop = best_component_choices[n]
         new_components = {}
-        if best_motor is not None:
+        if "Motor" in best_component_choices[n].keys():
             new_components["Motor"] = best_motor
-        if best_batt is not None:
+        if "Battery" in best_component_choices[n].keys():
             new_components["Battery"] = best_batt
-        if best_prop is not None:
+        if "Propeller" in best_component_choices[n].keys():
             new_components["Propeller"] = best_prop
         design.replace_all_components(new_components)
         return
     best_motor, best_batt, best_prop = selector.random_local_search(d_concrete=design)
-    best_component_choices[n] = (best_motor, best_batt, best_prop)
+    print(f"N={n}")
+    print(f"BEST-Motor={best_motor}")
+    print(f"BEST-Battery={best_batt}")
+    print(f"BEST-Propeller={best_prop}")
+    best_component_choices[n] = {}
+    if best_motor is not None:
+        best_component_choices[n]["Motor"] = best_motor
+    if best_batt is not None:
+        best_component_choices[n]["Battery"] = best_batt
+    if best_prop is not None:
+        best_component_choices[n]["Propeller"] = best_prop
     save_to_file(best_component_choices, absolute_path=best_component_choices_path)
 
 
