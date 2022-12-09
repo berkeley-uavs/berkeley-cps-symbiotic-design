@@ -57,6 +57,8 @@ def save_to_file(
 
 
 def rename_if_already_exists(absolute_path: Path):
+    if "design_swri" in str(absolute_path):
+        return absolute_path
     new_path = absolute_path
     if absolute_path.is_file():
         print(f"File already exists: {absolute_path}")
