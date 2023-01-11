@@ -15,6 +15,7 @@ def save_to_file(
     file_name: str | None = None,
     folder_name: str | None = None,
     absolute_path: Path | None = None,
+    sort: bool = True,
 ) -> Path:
 
     from sym_cps.shared.paths import output_folder
@@ -50,7 +51,7 @@ def save_to_file(
     if not os.path.exists(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
 
-    _write_file(file_content, file_path)
+    _write_file(file_content, file_path, sort=sort)
 
     print(f"{file_name} saved in {str(file_path)}")
     return file_path
@@ -82,7 +83,7 @@ def rename_if_already_exists(absolute_path: Path):
         new_path = absolute_path.parent / new_name
         print(f"New dir name: {new_path}")
     return new_path
-def _write_file(file_content: str | dict | Figure | object, absolute_path: Path):
+def _write_file(file_content: str | dict | Figure | object, absolute_path: Path, sort: bool = True):
     absolute_path = rename_if_already_exists(absolute_path)
     if isinstance(file_content, OrderedDict):
         with open(absolute_path, "w") as f:
@@ -91,7 +92,8 @@ def _write_file(file_content: str | dict | Figure | object, absolute_path: Path)
         f.close()
     elif isinstance(file_content, dict):
         # file_content_origin = file_content
-        file_content = sort_dictionary(file_content)
+        if sort:
+            file_content = sort_dictionary(file_content)
         file_content = json.dumps(file_content, indent=4)
         if Path(absolute_path).suffix != ".json":
             absolute_path_str = str(absolute_path) + ".json"

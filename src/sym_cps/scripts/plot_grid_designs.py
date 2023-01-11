@@ -27,11 +27,11 @@ def gen_designs():
 
         create_frame(figure=new_design.plot, title=f"{i}", iter=i)
 
-
-gen_designs()
-frames = []
-for i in range(50):
-    image = imageio.v2.imread(f"./designs/{i}.png")
-    frames.append(image)
-
-imageio.mimsave(f"./designs.gif", frames, fps=5)
+#
+# gen_designs()
+# frames = []
+# for i in range(50):
+#     image = imageio.v2.imread(f"./designs/{i}.png")
+#     frames.append(image)
+#
+# imageio.mimsave(f"./designs.gif", frames, fps=5)

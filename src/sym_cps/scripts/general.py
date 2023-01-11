@@ -1,4 +1,5 @@
 import json
+import operator
 import os
 import pickle
 import random
@@ -17,11 +18,26 @@ from sym_cps.tools.my_io import save_to_file
 def _stats_make():
     designs_generated_stats, random_topologies_generated = get_all_stat()
     designs_in_folder = set(filter(lambda x: x[0].isdigit(), [f.name for f in list(Path(designs_folder).iterdir())]))
-    completed_designs = set(designs_generated_stats.keys())
 
-    designs_to_delete = designs_in_folder - completed_designs
+    """Not NONE score"""
+    total_score = {}
+    for design_id, scores in designs_generated_stats.items():
+        vs = [v[0] for v in scores.values() if isinstance(v, list)]
+        if len(vs) == 0:
+            continue
+        total_score[design_id] = sum(vs)
+
+    sorted_total_score = dict(sorted(total_score.items(), key=operator.itemgetter(1), reverse=True))
+    final_dictionary = {}
+    for design_id, tot_score in sorted_total_score.items():
+        all_scores = designs_generated_stats[design_id]
+        all_scores["total"] = tot_score
+        final_dictionary[design_id] = all_scores
+
+    """Cleaning up folder"""
+    non_zero_score = set(total_score.keys())
+    designs_to_delete = designs_in_folder - non_zero_score
     designs_to_delete_hash = []
-
     for design_to_delete in designs_to_delete:
         for k, v in random_topologies_generated.items():
             if design_to_delete == v:
@@ -30,11 +46,10 @@ def _stats_make():
         print(f"Renaming {design_dir}")
         if os.path.exists(design_dir) and os.path.isdir(design_dir):
             shutil.move(design_dir, designs_folder / f"fail_{design_to_delete}")
-
     for k in designs_to_delete_hash:
         del random_topologies_generated[k]
 
-    save_to_file(designs_generated_stats, absolute_path=stats_file_path)
+    save_to_file(final_dictionary, absolute_path=stats_file_path)
 
 
 def get_latest_evaluated_design_number() -> int:
@@ -96,10 +111,9 @@ def evaluate_grid(grid_file_path: Path, optimize: bool = True):
         d_concrete.evaluate()
 
 
-
 def get_all_stat() -> tuple[dict, dict]:
     if not stats_folder.is_dir():
-        return {},{}
+        return {}, {}
     random_designs_stats_files = list(
         filter(lambda x: "random_designs_stats" in str(x), list(Path(stats_folder).iterdir()))
     )
@@ -136,38 +150,5 @@ def optimize_designs():
         evaluate_grid(grid_file, optimize=True)
 
 
-n_designs = 80
-n_wings_max = 5
-n_prop_max = -1
-
 if __name__ == "__main__":
-
-    index = get_latest_evaluated_design_number()
-
-    random_call_id = generate_random_instance_id()
-
-    for i in range((index + 1), (index + n_designs + 1)):
-        print(f"Random iteration {i}")
-        design_tag = f"directions_props_grammar_{random_call_id}"
-        design_index = i
-
-        new_design: AbstractDesign = get_random_new_topology(design_tag, design_index, n_wings_max, n_prop_max)
-
-        new_design.save()
-
-        # d_concrete = new_design.to_concrete()
-        #
-        # d_concrete.choose_default_components_for_empty_ones()
-        #
-        # d_concrete.export_all()
-        #
-        # find_components(d_concrete)
-        #
-        # d_concrete.export_all()
-        #
-        # save_to_file(d_concrete, file_name="d_concrete", folder_name=f"designs/{self.name}")
-        #
-        # print(f"Design {d_concrete.name} generated")
-        # print(f"Evaluating..")
-        # d_concrete.evaluate()
-
+    _stats_make()
