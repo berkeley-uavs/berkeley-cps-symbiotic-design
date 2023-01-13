@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import List, Optional, Pattern
 from urllib.request import urlopen
 
-from sym_cps.scripts import generate_random_instance_id, make_design, evaluate_grid
+from sym_cps.scripts import generate_random_instance_id, make_design, evaluate_grid, make_stats
 from sym_cps.shared.paths import challenge_data, designs_folder, repo_folder
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -310,6 +310,7 @@ def designs(ctx):
     while True:
         print(f"Iteration: {iteration}")
         make_design(instance_id)
+        make_stats()
         ctx.run(
             f"cd {challenge_data}; git pull; git add --a; git commit -m 'new result generated'; git push",
             title="Pushing results",

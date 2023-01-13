@@ -1,5 +1,6 @@
 import base64
 import hashlib
+from pathlib import Path
 
 
 def tab(stringable_object) -> str:
@@ -132,3 +133,14 @@ def make_hashable(o):
         return tuple(sorted(make_hashable(e) for e in o))
 
     return o
+
+
+def get_speeds_from_metrics(metric_file: Path) -> list[float]:
+    speeds = []
+    with open(metric_file) as f:
+        for line in f:
+            if line.startswith(" Max_Lateral_Speed_(m/s)"):
+                max_speed = float(line.split(" Max_Lateral_Speed_(m/s)")[1].strip())
+                speeds.append(max_speed)
+    return speeds
+

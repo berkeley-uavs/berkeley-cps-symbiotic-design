@@ -15,16 +15,17 @@ def create_frame(figure: Figure, title: str, iter: int):
     plt.close(figure)
 
 
-grammar = Grammar.from_json(rules_json_path=grammar_rules_processed_path)
+if __name__ == '__main__':
+    grammar = Grammar.from_json(rules_json_path=grammar_rules_processed_path)
 
-for ri, rule in enumerate(grammar.rules):
-    conditions = rule.conditions.get_all_conditions()
-    selection = random.choices(conditions, k=10)
-    for i, condition in enumerate(conditions):
-        create_frame(figure=condition.plot, title=f"{rule.name}", iter=i)
-    frames = []
-    for t in range(len(conditions)):
-        image = imageio.v2.imread(f"./img/{rule.name}_{t}.png")
-        frames.append(image)
+    for ri, rule in enumerate(grammar.rules):
+        conditions = rule.conditions.get_all_conditions()
+        selection = random.choices(conditions, k=10)
+        for i, condition in enumerate(conditions):
+            create_frame(figure=condition.plot, title=f"{rule.name}", iter=i)
+        frames = []
+        for t in range(len(conditions)):
+            image = imageio.v2.imread(f"./img/{rule.name}_{t}.png")
+            frames.append(image)
 
-    # imageio.mimsave(f"./{rule.name}{ri}.gif", frames, fps=5)
+        # imageio.mimsave(f"./{rule.name}{ri}.gif", frames, fps=5)

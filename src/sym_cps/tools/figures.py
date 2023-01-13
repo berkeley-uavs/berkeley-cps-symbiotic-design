@@ -88,11 +88,12 @@ def plot_3d_grid(
     return fig
 
 
+if __name__ == '__main__':
 
-fig = generate_empty_grid(2)
-fig.savefig(f"grid4.pdf", transparent=True)
+    fig = generate_empty_grid(2)
+    fig.savefig(f"grid4.pdf", transparent=True)
 
-g = DirectionsGrid()
-fig = g.plot
+    g = DirectionsGrid()
+    fig = g.plot
 
-fig.savefig(f"direction.pdf", transparent=True)
+    fig.savefig(f"direction.pdf", transparent=True)

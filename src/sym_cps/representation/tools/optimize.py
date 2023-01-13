@@ -8,7 +8,7 @@ from sym_cps.tools.my_io import save_to_file
 
 
 def find_components(design: DConcrete):
-    design.name += "_comp_opt"
+    # design.name += "_comp_opt"
     selector = SimplifiedSelector()
     selector.set_library(library=c_library)
     print(type(design))

@@ -337,6 +337,11 @@ class DConcrete:
                 file_name=f"topology_summary_{ab_level}.json",
                 absolute_path=absolute_folder,
             )
+        # elif file_type == ExportType.DAT:
+        #     return save_to_file(
+        #         file_name=f"topology_summary_{ab_level}.json",
+        #         absolute_path=absolute_folder,
+        #     )
         elif file_type == ExportType.JSON:
             return save_to_file(
                 self.to_design_swri,
@@ -416,6 +421,7 @@ class DConcrete:
         self.export(ExportType.TOPOLOGY_2)
         self.export(ExportType.TOPOLOGY_3)
         self.export(ExportType.TOPOLOGY_4)
+        # self.export(ExportType.DAT)
 
     def __eq__(self, other: object):
         from sym_cps.isomorphisms.tools import edge_comparison, node_comparison

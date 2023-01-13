@@ -17,6 +17,7 @@ class ExportType(Enum):
     TOPOLOGY_2 = auto()
     TOPOLOGY_3 = auto()
     TOPOLOGY_4 = auto()
+    DAT = auto()
 
 
 def export_type_to_topology_level(export_type: ExportType) -> int:
