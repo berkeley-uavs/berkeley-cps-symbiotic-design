@@ -66,9 +66,13 @@ def evaluate_existing_grid(folder_name):
 
 
 if __name__ == "__main__":
-
-    for number in designs_numbers:
-        folder_name = f"20__grammar_4li7_w0_p4"
+    # Names of designs with 3 side tubes per propeller
+    path_names = ["fail_42__grammar_sa3v_w0_p5", "fail_52__grammar_9ivs_w0_p4", "fail_4__grammar_q3e2_w0_p6", "fail_48__grammar_9ivs_w0_p2"]
+    # Names with 2 side tubes
+    # fail_39__grammar_sa3v_w0_p6
+    # fail_49__grammar_9ivs_w0_p4
+    for number in path_names:
+        folder_name = f"fail_42__grammar_sa3v_w0_p5"
         # folder_name = f"2__grammar_yzac_w0_p3"
         # folder_name = f"_random_design_{number}"
         # folder_name = f"_random_design_17"

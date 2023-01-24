@@ -34,10 +34,13 @@ class AbstractComponent:
 
     def add_structure_components(self):
         structures: dict = json.load(open(structures_path))
+        ax, ay, az = self.grid_position
         for component in structures[self.base_name]["Components"]:
             c_type = list(component.keys())[0]
-            instance = get_instance_name(c_type, self.instance_n)
+            instance = get_instance_name(c_type, int(f"{ax}{ay}{az}"))
             component = Component(c_type=c_library.component_types[c_type], id=instance)
+            if c_type == "Tube":
+                component.parameters["Tube__Length"].value = 10.0
             self.structure.add(component)
 
             if structures[self.base_name]["InterfaceComponent"] == c_type:
